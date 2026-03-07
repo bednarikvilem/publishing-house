@@ -1,20 +1,20 @@
 # Newspaper Website - Functional Requirements
 
-## 1. Introduction
+## 0. Introduction
 
 This document describes the functional requirements for a web-based
 newspaper platform. 
 
 ------------------------------------------------------------------------
 
-## 2. Overview
+## 1. Overview
 
 The system is a web-based platform for publishing newspapers and articles.
 Users can browse articles, search for content, and interact with articles through comments and likes.
 Authors can create and manage articles, while editorial staff review and approve them before publication.
 The platform supports multiple newspapers managed within a publishing house
 
-## 3. User Roles and Permissions
+## 2. User Roles and Permissions
 
 The system supports the following roles (higher roles inherit permissions of lower roles):
 
@@ -26,9 +26,9 @@ Newspaper Manager
 Director
 System Administrator
 
-## 4. Role Definitions
+## 3. Role Definitions
 
-### 4.1 Visitor
+### 3.1 Visitor
 
 A visitor is any user who accesses the website without authentication.
 
@@ -46,7 +46,7 @@ A visitor shall not be able to:
 - Comment on articles
 - Like articles
 
-### 4.2 Subscriber
+### 3.2 Subscriber
 
 A subscriber is a user with a valid account.
 
