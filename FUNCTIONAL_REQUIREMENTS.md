@@ -7,148 +7,316 @@ newspaper platform.
 
 ------------------------------------------------------------------------
 
-## 2. User Roles
+## 2. Overview
 
-### 2.1 Visitor (User who does not have an account)
+The system is a web-based platform for publishing newspapers and articles.
+Users can browse articles, search for content, and interact with articles through comments and likes.
+Authors can create and manage articles, while editorial staff review and approve them before publication.
+The platform supports multiple newspapers managed within a publishing house
 
-A visitor is any user accessing the website without logging in.
+## 3. User Roles and Permissions
+
+The system supports the following roles (higher roles inherit permissions of lower roles):
+
+Visitor
+Subscriber
+Author
+Editor
+Newspaper Manager
+Director
+System Administrator
+
+## 4. Role Definitions
+
+### 4.1 Visitor
+
+A visitor is any user who accesses the website without authentication.
 
 A visitor shall be able to:
-- Create an account and become a Subscriber
-- Log in and switch into a Subscriber mode
+- Create an account
+- Log in
 - View the homepage
-- Browse articles
-- Read the **preview** of individual articles
+- Browse published articles
+- View the articles previews
 - View articles by category
-- View articles written by specific authors
 - Search for articles
 
-### 2.2 Subscriber (User with valid account)
+A visitor shall not be able to:
+- Read full articled restricted to subsribers
+- Comment on articles
+- Like articles
+
+### 4.2 Subscriber
 
 A subscriber is a user with a valid account.
 
 A subscriber shall be able to:
+- Log in and log out
 - View the homepage
 - Browse articles
-- Read individual articles
+- Read full articles
 - View articles by category
 - View articles written by specific authors
 - Search for articles
 - Leave comments on articles
-- Like articles
+- Like or unlike articles
+- View their own profile
 
-### 2.3 Author (User who can manage articles)
+### 3.3 Author
 
-An author is a registered user in the **administration system** who can create and manage articles.
+An author is a registered user who can create and manage articles.
 
 An author shall be able to:
-- Log in to the administration system
+- Access the administration panel
 - Create new articles
-- Send articles to revision by the administrator
+- Submit articles for editorial review
 - Edit their own articles
 - Delete their own articles
 - Upload images for articles
-- View a list of their published articles
+- Assigne categories to articles
+- View a list of their articles
+- View the status of their articles
 
-### 2.4 Administrator
+Authors cannot publish articles directly.
 
-The administrator manages the platform.
+### 3.4 Editor
+
+An editor is responsible for reviewing articles submitted by authors.
+
+An editor shall be able to:
+- View submitted articles
+- Edit submitted articles
+- Approve articles
+- Reject articles with feedback
+- Request revisions from authors
+
+Approved articles proceed to the Newspaper Manager.
+
+### 3.5 Newspaper Manager
+
+A newspaper manager supervises a specific newspaper.
+
+A newspaper manager shall be able to:
+- Manage articles belonging to their newspaper
+- Approve editor-reviewed articles
+- Schedule articles for publication
+- Assign editors to articles
+- Manage categories for their newspaper
+
+### 3.6 Director
+
+A director oversees the publishing house and approves final publication.
+
+A director shall be able to:
+- Approve newspapers for publication
+- Manage multiple newspapers
+- Review publication statistics
+- Approve high-level editorial decisions
+
+### 3.7 System Administrator
+
+The system administrator manages the technical platform.
 
 An administrator shall be able to:
-- Add a new author
-- Add a new article category
-- Edit or delete any article
-- Review a new article
-- Publish a new article
+- Create and manage user accounts
+- Assign roles to users
+- Add or remove authors and editors
+- Create and manage categories
+- Delete any article
+- Manage system configuration
+- Moderate comments
 
 ------------------------------------------------------------------------
 
-## 3. Article Management
+## 4. Article Management
 
 The system shall allow authors to create and manage articles.
 
-The system shall:
-- Allow authors to create articles with a title and content
-- Allow authors to assign a category to an article
-- Store the publication date of each article
-- Associate each article with an author
-- Display articles on the website
+Each article shall exist in one of the following states:
+- Draft
+- Submitted
+- Under review
+- Approved by Editor
+- Approved by Manager
+- Published 
+- Rejected (Optional)
+
+Workflow:
+- Author creates article -> Draft
+- Author submits article -> Submitted
+- Editor reviews article -> Under Review
+- Editor approves -> Approved by Editor
+- Manager approves -> Approved by Manager
+- Article becomes Published
+- Rejected articles return to the author for editing.
 
 ------------------------------------------------------------------------
 
-## 4. Article Viewing
+## 5. Article Management
 
-Visitors shall be able to read articles.
+The system shall allow authors and editors to manage articles.
 
 The system shall:
-- Display a list of recent articles on the homepage
-- Display the full content of an article on an article page
-- Show the author name and publication date
-- Display images included in the article
-- Provide navigation back to category or homepage
+- Allow article creation with:
+    - Title
+    - Text content
+    - Images
+    - Categories
+- Store publication date
+- Store author information
+- Store article status
+- Track revision history
+
+Each article shall include:
+- Title
+- Author
+- Publication date
+- Category
+- Article content
+- Images (Optional)
+- Comments
+- Number of likes
 
 ------------------------------------------------------------------------
 
-## 5. Categories
+## 6. Article Viewing
+
+Visitors and subscribers shall be able to read articles.
+
+The system shall:
+- Display recent articles on the homepage
+- Display article previews
+- Display full article content
+- Show:
+    - author name
+    - publication date
+    - category
+- Display article images
+- Provide navigation to related article
+
+
+------------------------------------------------------------------------
+
+## 7. Categories
 
 Articles shall be organized into categories.
 
-The system shall:
-- Allow categories to be created
-- Allow articles to be assigned to categories
-- Display articles grouped by category
-- Allow users to browse articles by category
+The system shall allow:
+- Creation of categories
+- Editing of categories
+- Deleting categories (only if empty)
 
-Example categories: - Politics - Technology - Sports - Culture
+Example categories:
+- Politics
+- Technology
+- Sports
+- Culture
+- Pokémon Go
+- Yu-Gi-Oh!
 
 ------------------------------------------------------------------------
 
-## 6. Author Pages
+## 8. Author Pages
 
 Each author shall have a profile page.
 
+The system shall display:
+- Author name
+- Author biography
+- List of published articles 
+- Profile picture (Optional)
+
+------------------------------------------------------------------------
+
+## 9. Comments
+
+Subscribers shall be able to comment on articles.
+
+The system shall allow:
+- Creating comments
+- Editing own comments
+- Deleting own comments
+
+Administrators and editors shall be able to:
+- Delete inappropriate comments
+- Moderate comment discussions
+
+------------------------------------------------------------------------
+
+## 10. Article likes
+
+Subscribers shall be able to like articles.
+
 The system shall:
-- Display the author name
-- Display a list of articles written by the author
+- Allow one like per user per article
+- Allow removing a like
+- Display total number of likes
+
+Visitors cannot like articles.
 
 ------------------------------------------------------------------------
 
-## 7. Search
+## 11. Search functionality
 
-The system shall provide article search functionality.
+The system shall provide search functionality.
 
-Users shall be able to:
-- Search articles by keywords
-- View a list of matching articles
+Users shall be able to search articles by:
+- keywords
+- title
+- article content
+- author name
+- category
+- date
+
+Search results shall display:
+- article title
+- preview text
+- author
+- publication date
 
 ------------------------------------------------------------------------
 
-## 8. Navigation
+## 12. Navigation
 
 The website shall provide clear navigation.
 
 The system shall include:
 - A main navigation menu
-- Links to major categories
-- Links to the homepage
-- Links to author pages
+- Category menu
+- Author pages
+- Homepage Links
+- Search bar
 - Breadcrumb navigation (optional)
 
 ------------------------------------------------------------------------
 
-## 9. Responsive Design
+## 13. Responsive Design
 
-The website shall be usable on different screen sizes.
+The system shall support multiple devices:
+- Desktop browsers
+- Tablet devices
+- Mobile devices
 
-The system shall:
-- Support desktop browsers
-- Support tablet devices
-- Support mobile devices
+The layout shall adapt to screen size.
 
 ------------------------------------------------------------------------
 
-## 10. Error Handling
+## 14. Error Handling
 
-The system shall:
-- Display a message when an article is not found
-- Display a message when a search returns no results
+The system shall display appropriate messages when errors occur.
+
+Examples include:
+- Article not found
+- Search returned no results
+- Invalid login credentials
+- Unauthorized access attempt
+- Failed article submission
+
+------------------------------------------------------------------------
+
+## 15. Security Requirements
+
+The system shall ensure basic security measures:
+- Password hashing
+- Authentication and authorization
+- Input validation
