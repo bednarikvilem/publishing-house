@@ -152,7 +152,7 @@ Workflow:
 
 ------------------------------------------------------------------------
 
-## 5. Article Management
+## 5. Article Structure
 
 The system shall allow authors and editors to manage articles.
 
