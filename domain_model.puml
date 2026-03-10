@@ -1,0 +1,172 @@
+@startuml
+
+' =====================
+' Users and Roles
+' =====================
+
+class User <<entity>> {
+  id
+  username
+  email
+  passwordHash
+  role
+  biography
+  profilePicture
+}
+
+enum Role {
+  Visitor
+  Subscriber
+  Author
+  Editor
+  NewspaperManager
+  Director
+  SystemAdministrator
+}
+
+User --> Role
+
+
+' =====================
+' Publishing Structure
+' =====================
+
+class PublishingHouse <<entity>> {
+  id
+  name
+}
+
+class Newspaper <<entity>> {
+  id
+  name
+  description
+}
+
+PublishingHouse "1" -- "*" Newspaper
+
+
+' =====================
+' Article System
+' =====================
+
+class Article <<entity>> {
+  id
+  title
+  content
+  publicationDate
+  status
+}
+
+enum ArticleStatus {
+  Draft
+  Submitted
+  UnderReview
+  ApprovedByEditor
+  ApprovedByManager
+  Published
+  Rejected
+}
+
+Article --> ArticleStatus
+
+User "1" -- "*" Article : writes
+Newspaper "1" -- "*" Article : publishes
+
+
+' =====================
+' Categories
+' =====================
+
+class Category <<entity>> {
+  id
+  name
+}
+
+Article "*" -- "*" Category
+
+
+' =====================
+' Article Images
+' =====================
+
+class Image <<entity>> {
+  id
+  url
+  caption
+}
+
+Article "1" -- "*" Image
+
+
+' =====================
+' Comments
+' =====================
+
+class Comment <<entity>> {
+  id
+  content
+  createdAt
+}
+
+User "1" -- "*" Comment : writes
+Article "1" -- "*" Comment
+
+
+' =====================
+' Likes
+' =====================
+
+class Like <<entity>> {
+  createdAt
+}
+
+User "1" -- "*" Like
+Article "1" -- "*" Like
+
+
+' =====================
+' Article Review Workflow
+' =====================
+
+class ArticleReview <<entity>> {
+  id
+  decision
+  feedback
+  reviewedAt
+}
+
+enum ReviewDecision {
+  Approve
+  Reject
+  RequestRevision
+}
+
+Article "1" -- "*" ArticleReview
+User "1" -- "*" ArticleReview : reviewer
+
+
+' =====================
+' Article Scheduling
+' =====================
+
+class PublicationSchedule <<entity>> {
+  scheduledDate
+}
+
+Article "1" -- "0..1" PublicationSchedule
+
+
+' =====================
+' Revision History
+' =====================
+
+class ArticleRevision <<entity>> {
+  id
+  editedAt
+  contentSnapshot
+}
+
+Article "1" -- "*" ArticleRevision
+User "1" -- "*" ArticleRevision : edits
+
+@enduml
