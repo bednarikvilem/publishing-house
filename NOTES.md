@@ -15,3 +15,6 @@
 
 * subscriptions
     - I wouldnt go into that and just pretend that they do not have to pay and subscription and it is enough to create and account and log in
+
+* email communication
+    - In project requirements is required email communication (possible uses: registration confirmation, article approval/rejection notifications, password reset, etc)
