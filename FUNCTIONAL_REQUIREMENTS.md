@@ -42,7 +42,7 @@ A visitor shall be able to:
 - Search for articles
 
 A visitor shall not be able to:
-- Read full articled restricted to subsribers
+- Read full articles restricted to subscribers
 - Comment on articles
 - Like articles
 
@@ -73,7 +73,7 @@ An author shall be able to:
 - Edit their own articles
 - Delete their own articles
 - Upload images for articles
-- Assigne categories to articles
+- Assign categories to articles
 - View a list of their articles
 - View the status of their articles
 
