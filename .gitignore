@@ -1,3 +1,7 @@
+# build outputs
+apps/web/dist
+apps/server/dist
+
 # dependencies (bun install)
 node_modules
 
