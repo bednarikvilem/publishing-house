@@ -14,17 +14,26 @@ Users can browse articles, search for content, and interact with articles throug
 Authors can create and manage articles, while editorial staff review and approve them before publication.
 The platform supports multiple newspapers managed within a publishing house
 
+Email communication is required for:
+- Registration confirmation
+- Article approval/rejection notifications
+- Password reset
+
+Subscription payments are not required; creating an account is sufficient
+
 ## 2. User Roles and Permissions
 
 The system supports the following roles (higher roles inherit permissions of lower roles):
 
 Visitor
-Subscriber
+Registered User (base for all other roles)
 Author
 Editor
 Newspaper Manager
 Director
 System Administrator
+
+Note: Roles are assigned by the System Administrator. Once a role is assigned, the user interface adapts to the new role after login.
 
 ## 3. Role Definitions
 
@@ -46,18 +55,14 @@ A visitor shall not be able to:
 - Comment on articles
 - Like articles
 
-### 3.2 Subscriber
+### 3.2 Registred User
 
-A subscriber is a user with a valid account.
+A registered user has a valid account.
 
-A subscriber shall be able to:
+A registred user shall be able to:
 - Log in and log out
-- View the homepage
 - Browse articles
 - Read full articles
-- View articles by category
-- View articles written by specific authors
-- Search for articles
 - Leave comments on articles
 - Like or unlike articles
 - View their own profile
@@ -67,7 +72,7 @@ A subscriber shall be able to:
 An author is a registered user who can create and manage articles.
 
 An author shall be able to:
-- Access the administration panel
+- Access the author panel
 - Create new articles
 - Submit articles for editorial review
 - Edit their own articles
@@ -81,7 +86,7 @@ Authors cannot publish articles directly.
 
 ### 3.4 Editor
 
-An editor is responsible for reviewing articles submitted by authors.
+An editor reviews articles submitted by authors.
 
 An editor shall be able to:
 - View submitted articles
@@ -103,23 +108,26 @@ A newspaper manager shall be able to:
 - Assign editors to articles
 - Manage categories for their newspaper
 
+Difference vs Director:
+- The Newspaper Manager acts at the level of a single newspaper
+- They make operational editorial decisions (article approval, scheduling, editor assignment)
+
 ### 3.6 Director
 
 A director oversees the publishing house and approves final publication.
 
 A director shall be able to:
-- Approve newspapers for publication
-- Manage multiple newspapers
-- Review publication statistics
-- Approve high-level editorial decisions
+- Approve newspapers for publication (final step) 
+- Manage multiple newspapers (e.g., view and oversee all newspapers under the publishing house)
+- Review publication statistics (optional: number of published articles, total comments, likes, editor performance)
+- Make high-level editorial decisions (e.g., approving changes in categories, assigning managers, setting publication policies)
 
 ### 3.7 System Administrator
 
 The system administrator manages the technical platform.
 
 An administrator shall be able to:
-- Create and manage user accounts
-- Assign roles to users
+- Assign roles to registered users (no need to create user accounts; users self-register)
 - Add or remove authors and editors
 - Create and manage categories
 - Delete any article
