@@ -4,27 +4,30 @@
 ' Users and Roles
 ' =====================
 
-class User <<entity>> {
-  id
+class CommonUser <<entity>> {
+  uuid
   username
   email
   passwordHash
-  role
+}
+
+class ContentAdministrator <<entity>> {
   biography
   profilePicture
 }
 
 enum Role {
-  Visitor
-  Subscriber
-  Author
-  Editor
-  NewspaperManager
-  Director
-  SystemAdministrator
+  VISITOR
+  SUBSCRIBER
+  AUTHOR
+  EDITOR
+  NEWSPAPER_MANAGER
+  DIRECTOR
+  SYSTEM_ADMINISTRATOR
 }
 
-User --> Role
+CommonUser --> "1..*" Role
+CommonUser <|-- ContentAdministrator
 
 
 ' =====================
@@ -32,17 +35,16 @@ User --> Role
 ' =====================
 
 class PublishingHouse <<entity>> {
-  id
+  uuid
   name
 }
 
 class Newspaper <<entity>> {
-  id
+  uuid
   name
-  description
 }
 
-PublishingHouse "1" -- "*" Newspaper
+PublishingHouse *-- "*" Newspaper
 
 
 ' =====================
@@ -50,27 +52,26 @@ PublishingHouse "1" -- "*" Newspaper
 ' =====================
 
 class Article <<entity>> {
-  id
   title
+  perex
   content
-  publicationDate
-  status
+  publicationTimestamp
 }
 
-enum ArticleStatus {
-  Draft
-  Submitted
-  UnderReview
-  ApprovedByEditor
-  ApprovedByManager
-  Published
-  Rejected
+enum ArticleState {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  APPROVED_BY_EDITOR
+  APPROVED_BY_MANAGER
+  PUBLISHED
+  REJECTED
 }
 
-Article --> ArticleStatus
+Article "*" --> "1" ArticleState
 
-User "1" -- "*" Article : writes
-Newspaper "1" -- "*" Article : publishes
+ContentAdministrator "1" -- "*" Article : writes
+Newspaper o-- "*" Article : publishes
 
 
 ' =====================
@@ -78,11 +79,11 @@ Newspaper "1" -- "*" Article : publishes
 ' =====================
 
 class Category <<entity>> {
-  id
+  uuid
   name
 }
 
-Article "*" -- "*" Category
+Article "*" -- "1" Category
 
 
 ' =====================
@@ -90,12 +91,11 @@ Article "*" -- "*" Category
 ' =====================
 
 class Image <<entity>> {
-  id
   url
   caption
 }
 
-Article "1" -- "*" Image
+Article *-- "1..*" Image
 
 
 ' =====================
@@ -103,12 +103,11 @@ Article "1" -- "*" Image
 ' =====================
 
 class Comment <<entity>> {
-  id
   content
-  createdAt
+  createTimestamp
 }
 
-User "1" -- "*" Comment : writes
+CommonUser "1" -- "*" Comment : writes
 Article "1" -- "*" Comment
 
 
@@ -116,12 +115,12 @@ Article "1" -- "*" Comment
 ' Likes
 ' =====================
 
-class Like <<entity>> {
-  createdAt
+class Reaction <<entity>> {
+    createTimestamp
 }
 
-User "1" -- "*" Like
-Article "1" -- "*" Like
+CommonUser "1" -- "*" Reaction
+NewspaperElement "1" -- "*" Reaction
 
 
 ' =====================
@@ -129,44 +128,34 @@ Article "1" -- "*" Like
 ' =====================
 
 class ArticleReview <<entity>> {
-  id
-  decision
   feedback
-  reviewedAt
+  reviewTimmestamp
 }
 
 enum ReviewDecision {
-  Approve
-  Reject
-  RequestRevision
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
 }
 
 Article "1" -- "*" ArticleReview
-User "1" -- "*" ArticleReview : reviewer
+ContentAdministrator "1" <-- "*" ArticleReview : reviewer
+ArticleReview "*" --> "1" ReviewDecision
 
-
-' =====================
-' Article Scheduling
-' =====================
-
-class PublicationSchedule <<entity>> {
-  scheduledDate
+abstract class NewspaperElement {
+  uuid
 }
 
-Article "1" -- "0..1" PublicationSchedule
+Article "1" --|> NewspaperElement
+Comment "1" --|> NewspaperElement
 
-
-' =====================
-' Revision History
-' =====================
-
-class ArticleRevision <<entity>> {
-  id
-  editedAt
-  contentSnapshot
+enum Emotion {
+  LIKE
+  DISLIKE
+  INTERESTING
+  USEFUL
 }
 
-Article "1" -- "*" ArticleRevision
-User "1" -- "*" ArticleRevision : edits
+Reaction "*" --> "1" Emotion
 
 @enduml
