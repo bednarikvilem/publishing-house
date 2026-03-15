@@ -128,7 +128,7 @@ The system administrator manages the technical platform.
 
 An administrator shall be able to:
 - Assign roles to registered users (no need to create user accounts; users self-register)
-- Add or remove authors and editors
+- Remove users from roles
 - Create and manage categories
 - Delete any article
 - Manage system configuration
@@ -143,7 +143,7 @@ The system shall allow authors to create and manage articles.
 Each article shall exist in one of the following states:
 - Draft
 - Submitted
-- Under review
+- In review
 - Approved by Editor
 - Approved by Manager
 - Published 
@@ -152,11 +152,12 @@ Each article shall exist in one of the following states:
 Workflow:
 - Author creates article -> Draft
 - Author submits article -> Submitted
+- Manager assigns article to Editor -> Assigned to Editor
 - Editor reviews article -> Under Review
 - Editor approves -> Approved by Editor
 - Manager approves -> Approved by Manager
-- Article becomes Published
-- Rejected articles return to the author for editing.
+- Director approves -> Published
+- Rejected articles return to the author for editing. -> Draft
 
 ------------------------------------------------------------------------
 
@@ -170,9 +171,10 @@ The system shall:
     - Text content
     - Images
     - Categories
+    - Keywords
 - Store publication date
 - Store author information
-- Store article status
+- Store article state
 - Track revision history
 
 Each article shall include:
@@ -180,9 +182,11 @@ Each article shall include:
 - Author
 - Publication date
 - Category
+- Keywords
+- Article preview
 - Article content
-- Images (Optional)
-- Comments
+- Images (At least on required)
+- Comments section
 - Number of likes
 
 ------------------------------------------------------------------------
@@ -305,7 +309,7 @@ The system shall support multiple devices:
 - Tablet devices
 - Mobile devices
 
-The layout shall adapt to screen size.
+The layout shall respond to screen size.
 
 ------------------------------------------------------------------------
 
@@ -328,3 +332,14 @@ The system shall ensure basic security measures:
 - Password hashing
 - Authentication and authorization
 - Input validation
+
+## Audit logging
+
+The system shall maintain an audit log recording every operation performed by users or system processes.
+
+The audit log of an operation will include:
+- timestamp
+- user ID
+- operation type
+- target object
+- result (success/failure)
