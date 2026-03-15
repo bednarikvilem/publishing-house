@@ -73,6 +73,21 @@ Article "*" --> "1" ArticleState
 ContentAdministrator "1" -- "*" Article : writes
 Newspaper o-- "*" Article : publishes
 
+abstract class NewspaperElement {
+  uuid
+}
+
+Article "1" --|> NewspaperElement
+Comment "1" --|> NewspaperElement
+
+enum Emotion {
+  LIKE
+  DISLIKE
+  INTERESTING
+  USEFUL
+}
+
+Reaction "*" --> "1" Emotion
 
 ' =====================
 ' Categories
@@ -142,20 +157,5 @@ Article "1" -- "*" ArticleReview
 ContentAdministrator "1" <-- "*" ArticleReview : reviewer
 ArticleReview "*" --> "1" ReviewDecision
 
-abstract class NewspaperElement {
-  uuid
-}
-
-Article "1" --|> NewspaperElement
-Comment "1" --|> NewspaperElement
-
-enum Emotion {
-  LIKE
-  DISLIKE
-  INTERESTING
-  USEFUL
-}
-
-Reaction "*" --> "1" Emotion
 
 @enduml

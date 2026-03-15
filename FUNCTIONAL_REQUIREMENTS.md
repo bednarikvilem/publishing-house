@@ -46,14 +46,14 @@ A visitor shall be able to:
 - Log in
 - View the homepage
 - Browse published articles
-- View the articles previews
+- View the articles previews (perex)
 - View articles by category
 - Search for articles
 
 A visitor shall not be able to:
-- Read full articles restricted to subscribers
+- Read full articles restricted to Registered Users
 - Comment on articles
-- Like articles
+- Leave reactions on articles
 
 ### 3.2 Registred User
 
@@ -64,7 +64,7 @@ A registred user shall be able to:
 - Browse articles
 - Read full articles
 - Leave comments on articles
-- Like or unlike articles
+- Leave reactions on articles
 - View their own profile
 
 ### 3.3 Author
@@ -79,6 +79,7 @@ An author shall be able to:
 - Delete their own articles
 - Upload images for articles
 - Assign categories to articles
+- Assign keywords to articles
 - View a list of their articles
 - View the status of their articles
 
@@ -90,7 +91,6 @@ An editor reviews articles submitted by authors.
 
 An editor shall be able to:
 - View submitted articles
-- Edit submitted articles
 - Approve articles
 - Reject articles with feedback
 - Request revisions from authors
@@ -105,7 +105,7 @@ A newspaper manager shall be able to:
 - Manage articles belonging to their newspaper
 - Approve editor-reviewed articles
 - Schedule articles for publication
-- Assign editors to articles
+- Assign editors to authors
 - Manage categories for their newspaper
 
 Difference vs Director:
@@ -129,7 +129,6 @@ The system administrator manages the technical platform.
 An administrator shall be able to:
 - Assign roles to registered users (no need to create user accounts; users self-register)
 - Remove users from roles
-- Create and manage categories
 - Delete any article
 - Manage system configuration
 - Moderate comments
@@ -146,7 +145,7 @@ Each article shall exist in one of the following states:
 - In review
 - Approved by Editor
 - Approved by Manager
-- Published 
+- Published (Approved by Director)
 - Rejected (Optional)
 
 Workflow:
@@ -183,7 +182,7 @@ Each article shall include:
 - Publication date
 - Category
 - Keywords
-- Article preview
+- Article preview (perex)
 - Article content
 - Images (At least on required)
 - Comments section
@@ -197,7 +196,7 @@ Visitors and subscribers shall be able to read articles.
 
 The system shall:
 - Display recent articles on the homepage
-- Display article previews
+- Display article previews (perex)
 - Display full article content
 - Show:
     - author name
@@ -282,7 +281,7 @@ Users shall be able to search articles by:
 
 Search results shall display:
 - article title
-- preview text
+- preview text (perex)
 - author
 - publication date
 
