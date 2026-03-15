@@ -333,7 +333,7 @@ The system shall ensure basic security measures:
 - Authentication and authorization
 - Input validation
 
-## Audit logging
+## 16. Audit logging
 
 The system shall maintain an audit log recording every operation performed by users or system processes.
 
