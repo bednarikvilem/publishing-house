@@ -10,7 +10,7 @@ newspaper platform.
 ## 1. Overview
 
 The system is a web-based platform for publishing newspapers and articles.
-Users can browse articles, search for content, and interact with articles through comments and likes.
+Users can browse articles, search for content, and interact with articles through comments and reactions.
 Authors can create and manage articles, while editorial staff review and approve them before publication.
 The platform supports multiple newspapers managed within a publishing house
 
@@ -52,7 +52,7 @@ A visitor shall be able to:
 
 A visitor shall not be able to:
 - Read full articles restricted to Registered Users
-- Comment on articles
+- Comment on articles and other comments
 - Leave reactions on articles
 
 ### 3.2 Registred User
@@ -61,9 +61,12 @@ A registered user has a valid account.
 
 A registred user shall be able to:
 - Log in and log out
-- Browse articles
-- Read full articles
-- Leave comments on articles
+- View the homepage
+- Browse published articles
+- View full articles
+- View articles by category
+- Search for articles
+- Comment on articles and other comments
 - Leave reactions on articles
 - View their own profile
 
@@ -73,14 +76,14 @@ An author is a registered user who can create and manage articles.
 
 An author shall be able to:
 - Access the author panel
-- Create new articles
-- Submit articles for editorial review
-- Edit their own articles
+- Create new article draft
+- Submit their unpublished articles for editorial review
+- Edit their unpublished articles (drafts)
 - Delete their own articles
-- Upload images for articles
-- Assign categories to articles
-- Assign keywords to articles
-- View a list of their articles
+- Upload images for their unpublished articles (drafts)
+- Assign categories to their unpublished articles (drafts)
+- Assign keywords to their unpublished articles (drafts)
+- View a list of their unpublished articles (drafts)
 - View the status of their articles
 
 Authors cannot publish articles directly.
@@ -90,9 +93,9 @@ Authors cannot publish articles directly.
 An editor reviews articles submitted by authors.
 
 An editor shall be able to:
-- View submitted articles
-- Approve articles
-- Reject articles with feedback
+- View submitted articles assigned to them
+- Approve articles assigned to them
+- Reject articles assigned to them with feedback
 - Request revisions from authors
 
 Approved articles proceed to the Newspaper Manager.
@@ -105,7 +108,7 @@ A newspaper manager shall be able to:
 - Manage articles belonging to their newspaper
 - Approve editor-reviewed articles
 - Schedule articles for publication
-- Assign editors to authors
+- Assign editors to articles
 - Manage categories for their newspaper
 
 Difference vs Director:
@@ -119,7 +122,7 @@ A director oversees the publishing house and approves final publication.
 A director shall be able to:
 - Approve newspapers for publication (final step) 
 - Manage multiple newspapers (e.g., view and oversee all newspapers under the publishing house)
-- Review publication statistics (optional: number of published articles, total comments, likes, editor performance)
+- Review publication statistics (optional: number of published articles, total comments, reactions, editor performance)
 - Make high-level editorial decisions (e.g., approving changes in categories, assigning managers, setting publication policies)
 
 ### 3.7 System Administrator
@@ -145,7 +148,8 @@ Each article shall exist in one of the following states:
 - In review
 - Approved by Editor
 - Approved by Manager
-- Published (Approved by Director)
+- Approved by Director
+- Published
 - Rejected
 
 Workflow:
@@ -154,7 +158,8 @@ Workflow:
 - Manager assigns article to Editor -> In review
 - Editor approves -> Approved by Editor
 - Manager approves -> Approved by Manager
-- Director approves -> Published
+- Director approves -> Approved by Director
+- Time of publication -> Published
 - Editor, manager or director returns the article for editing. -> Draft
 - Editor, manager or director rejects the article. -> Rejected
 
@@ -167,6 +172,7 @@ The system shall allow authors and editors to manage articles.
 The system shall:
 - Allow article creation with:
     - Title
+    - Preview (perex)
     - Text content
     - Images
     - Categories
@@ -202,6 +208,7 @@ The system shall:
     - author name
     - publication date
     - category
+    - keywords
 - Display article images
 - Provide navigation to related article
 
@@ -214,7 +221,6 @@ Articles shall be organized into categories.
 
 The system shall allow:
 - Creation of categories
-- Editing of categories
 - Deleting categories (only if empty)
 
 Example categories:
@@ -224,6 +230,7 @@ Example categories:
 - Culture
 - Pokémon Go
 - Yu-Gi-Oh!
+- Bridgerton
 
 ------------------------------------------------------------------------
 
@@ -235,7 +242,7 @@ The system shall display:
 - Author name
 - Author biography
 - List of published articles 
-- Profile picture (Optional)
+- Profile picture
 
 ------------------------------------------------------------------------
 
@@ -245,8 +252,6 @@ Subscribers shall be able to comment on articles.
 
 The system shall allow:
 - Creating comments
-- Editing own comments
-- Deleting own comments
 
 Administrators and editors shall be able to:
 - Delete inappropriate comments
@@ -254,16 +259,16 @@ Administrators and editors shall be able to:
 
 ------------------------------------------------------------------------
 
-## 10. Article likes
+## 10. Article reactions
 
-Subscribers shall be able to like articles.
+Subscribers shall be able to leave reactions on articles.
 
 The system shall:
-- Allow one like per user per article
-- Allow removing a like
-- Display total number of likes
+- Allow one reaction per user per article
+- Allow removing a reaction
+- Display total number of reactions
 
-Visitors cannot like articles.
+Visitors cannot leave reactions on articles.
 
 ------------------------------------------------------------------------
 
@@ -277,13 +282,14 @@ Users shall be able to search articles by:
 - article content
 - author name
 - category
-- date
+- publication date
 
 Search results shall display:
 - article title
 - preview text (perex)
 - author
 - publication date
+- first image in the article galery (images belonging to the article)
 
 ------------------------------------------------------------------------
 
