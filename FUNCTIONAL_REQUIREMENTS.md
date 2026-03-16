@@ -146,17 +146,17 @@ Each article shall exist in one of the following states:
 - Approved by Editor
 - Approved by Manager
 - Published (Approved by Director)
-- Rejected (Optional)
+- Rejected
 
 Workflow:
 - Author creates article -> Draft
 - Author submits article -> Submitted
-- Manager assigns article to Editor -> Assigned to Editor
-- Editor reviews article -> Under Review
+- Manager assigns article to Editor -> In review
 - Editor approves -> Approved by Editor
 - Manager approves -> Approved by Manager
 - Director approves -> Published
-- Rejected articles return to the author for editing. -> Draft
+- Editor, manager or director returns the article for editing. -> Draft
+- Editor, manager or director rejects the article. -> Rejected
 
 ------------------------------------------------------------------------
 
