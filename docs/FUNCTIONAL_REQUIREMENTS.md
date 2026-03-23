@@ -55,11 +55,11 @@ A visitor shall not be able to:
 - Comment on articles and other comments
 - Leave reactions on articles
 
-### 3.2 Registred User
+## 3.2 Registered User
 
 A registered user has a valid account.
 
-A registred user shall be able to:
+A registered user shall be able to:
 - Log in and log out
 - View the homepage
 - Browse published articles
@@ -77,7 +77,7 @@ An author is a registered user who can create and manage articles.
 An author shall be able to:
 - Access the author panel
 - Create new article draft
-- Submit their unpublished articles for editorial review
+- Submit their unpublished articles for editorial review (at least one image required before submission)
 - Edit their unpublished articles (drafts)
 - Delete their own articles
 - Upload images for their unpublished articles (drafts)

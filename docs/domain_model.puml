@@ -18,7 +18,7 @@ class ContentAdministrator <<entity>> {
 
 enum Role {
   VISITOR
-  SUBSCRIBER
+  REGISTERED_USER
   AUTHOR
   EDITOR
   NEWSPAPER_MANAGER
@@ -45,6 +45,8 @@ class Newspaper <<entity>> {
 }
 
 PublishingHouse *-- "*" Newspaper
+ContentAdministrator "1" -- "1..*" Newspaper : manages (Manager)
+ContentAdministrator "1" -- "1..*" PublishingHouse : oversees (Director)
 
 
 ' =====================
@@ -55,6 +57,7 @@ class Article <<entity>> {
   title
   perex
   content
+  keywords
   publicationTimestamp
 }
 
@@ -64,6 +67,7 @@ enum ArticleState {
   IN_REVIEW
   APPROVED_BY_EDITOR
   APPROVED_BY_MANAGER
+  APPROVED_BY_DIRECTOR
   PUBLISHED
   REJECTED
 }
