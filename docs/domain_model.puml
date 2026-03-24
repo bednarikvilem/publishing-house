@@ -77,22 +77,6 @@ Article "*" --> "1" ArticleState
 ContentAdministrator "1" -- "*" Article : writes
 Newspaper o-- "*" Article : publishes
 
-abstract class NewspaperElement {
-  uuid
-}
-
-Article "1" --|> NewspaperElement
-Comment "1" --|> NewspaperElement
-
-enum Emotion {
-  LIKE
-  DISLIKE
-  INTERESTING
-  USEFUL
-}
-
-Reaction "*" --> "1" Emotion
-
 ' =====================
 ' Categories
 ' =====================
@@ -134,12 +118,12 @@ Article "1" -- "*" Comment
 ' Likes
 ' =====================
 
-class Reaction <<entity>> {
+class Like <<entity>> {
     createTimestamp
 }
 
-CommonUser "1" -- "*" Reaction
-NewspaperElement "1" -- "*" Reaction
+CommonUser "1" -- "*" Like
+Article "1" -- "*" Like
 
 
 ' =====================
