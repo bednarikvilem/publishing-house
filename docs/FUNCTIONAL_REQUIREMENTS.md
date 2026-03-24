@@ -10,7 +10,7 @@ newspaper platform.
 ## 1. Overview
 
 The system is a web-based platform for publishing newspapers and articles.
-Users can browse articles, search for content, and interact with articles through comments and reactions.
+Users can browse articles, search for content, and interact with articles through comments and likes.
 Authors can create and manage articles, while editorial staff review and approve them before publication.
 The platform supports multiple newspapers managed within a publishing house
 
@@ -42,18 +42,19 @@ Note: Roles are assigned by the System Administrator. Once a role is assigned, t
 A visitor is any user who accesses the website without authentication.
 
 A visitor shall be able to:
-- Create an account
+- Register
 - Log in
 - View the homepage
 - Browse published articles
 - View the articles previews (perex)
 - View articles by category
+- View author profiles
 - Search for articles
 
 A visitor shall not be able to:
 - Read full articles restricted to Registered Users
 - Comment on articles and other comments
-- Leave reactions on articles
+- Like articles
 
 ## 3.2 Registered User
 
@@ -65,10 +66,13 @@ A registered user shall be able to:
 - Browse published articles
 - View full articles
 - View articles by category
-- Search for articles
-- Comment on articles and other comments
-- Leave reactions on articles
+- View author profiles
 - View their own profile
+- Update their own profile
+- Search for articles
+- Comment on articles
+- Like articles
+- Reset password
 
 ### 3.3 Author
 
@@ -122,7 +126,7 @@ A director oversees the publishing house and approves final publication.
 A director shall be able to:
 - Approve newspapers for publication (final step) 
 - Manage multiple newspapers (e.g., view and oversee all newspapers under the publishing house)
-- Review publication statistics (optional: number of published articles, total comments, reactions, editor performance)
+- Review publication statistics (optional: number of published articles, total comments, likes, editor performance)
 - Make high-level editorial decisions (e.g., approving changes in categories, assigning managers, setting publication policies)
 
 ### 3.7 System Administrator
@@ -259,16 +263,16 @@ Administrators and editors shall be able to:
 
 ------------------------------------------------------------------------
 
-## 10. Article reactions
+## 10. Article likes
 
-Subscribers shall be able to leave reactions on articles.
+Subscribers shall be able to like articles.
 
 The system shall:
-- Allow one reaction per user per article
-- Allow removing a reaction
-- Display total number of reactions
+- Allow one like per user per article
+- Allow removing a like
+- Display total number of likes
 
-Visitors cannot leave reactions on articles.
+Visitors cannot like on articles.
 
 ------------------------------------------------------------------------
 
