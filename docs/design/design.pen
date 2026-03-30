@@ -14781,7 +14781,8 @@
                           "fill": "#ffffff99",
                           "content": "March 23, 2026",
                           "fontFamily": "Inter",
-                          "fontSize": 12
+                          "fontSize": 12,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -14813,7 +14814,8 @@
               "content": "In a landmark moment for American governance, a bipartisan group of senators today unveiled the most ambitious infrastructure proposal in decades — a sweeping $2.3 trillion package that promises to reshape the nation's roads, bridges, broadband networks, and clean energy systems over the next eight years.",
               "lineHeight": 1.7,
               "fontFamily": "Inter",
-              "fontSize": 16
+              "fontSize": 16,
+              "fontWeight": "normal"
             },
             {
               "type": "line",
@@ -14836,7 +14838,8 @@
               "content": "The proposal, which has been months in the making, represents a rare moment of bipartisan cooperation in an increasingly polarized Washington. Led by Senators from both parties, the plan addresses what experts have long called a crisis-level deterioration of American infrastructure while also investing heavily in the technologies of the future.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14848,7 +14851,8 @@
               "content": "In a landmark moment for American governance, Senate leaders from both parties stood together Tuesday to announce what they called the most ambitious infrastructure package in the nation's history. The $2.3 trillion proposal aims to modernize everything from crumbling highways to rural broadband networks, marking a rare show of bipartisan cooperation in an increasingly divided Congress.",
               "lineHeight": 1.7,
               "fontFamily": "Inter",
-              "fontSize": 16
+              "fontSize": 16,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14881,7 +14885,8 @@
               "content": "At the heart of the proposal lies an unprecedented $890 billion allocation for transportation infrastructure. The plan would fund the repair or replacement of more than 45,000 structurally deficient bridges, resurface hundreds of thousands of miles of highways, and expand public transit systems in both urban and rural communities across the country.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14893,7 +14898,8 @@
               "content": "The proposal, which has been months in the making, represents a significant shift in Washington's approach to infrastructure spending. Unlike previous attempts that stalled along party lines, this package was crafted through extensive negotiations between senior members of both parties, with input from governors, mayors, and industry leaders across the country.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14918,7 +14924,8 @@
               "content": "At the heart of the plan is a massive investment in the nation's transportation infrastructure. With an estimated 45,000 bridges classified as structurally deficient and countless miles of highway in desperate need of repair, the transportation crisis has been building for decades. The bill allocates $621 billion specifically for roads, bridges, and major transit projects.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14943,7 +14950,8 @@
               "content": "Perhaps the most transformative element of the package is its commitment to universal broadband access. The plan dedicates $100 billion to ensuring that every American household has access to affordable, high-speed internet by 2030. This provision has drawn particular support from rural legislators, who have long argued that the digital divide is holding back economic development in their communities.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -14965,7 +14973,8 @@
               "content": "Perhaps the most forward-looking element of the proposal is its $420 billion investment in universal broadband access. The plan aims to bring high-speed internet to every American household by 2030, with particular emphasis on rural and underserved communities that have been left behind in the digital revolution.",
               "lineHeight": 1.8,
               "fontFamily": "Inter",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -15347,6 +15356,1048 @@
                 "thickness": 1,
                 "fill": "$--muted-foreground"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "IXObu",
+      "x": 11780,
+      "y": 0,
+      "name": "Mobile Login Page",
+      "width": 390,
+      "height": 844,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "aMC33",
+          "name": "Mobile Header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "$--background",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$--border"
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "TKXi4",
+              "name": "logo",
+              "fill": "$--foreground",
+              "content": "The Daily Chronicle",
+              "fontFamily": "Outfit",
+              "fontSize": 18,
+              "fontWeight": "900",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "icon_font",
+              "id": "eFmND",
+              "name": "menuIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "menu",
+              "iconFontFamily": "lucide",
+              "fill": "$--foreground"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BmPe7",
+          "name": "Main Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            48,
+            20
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "gqZrb",
+              "name": "Login Card",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bYpWg",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Juq4h",
+                      "name": "brandLogo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 24,
+                      "fontWeight": "900",
+                      "letterSpacing": -0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "eMtOW",
+                      "name": "brandSub",
+                      "fill": "$--muted-foreground",
+                      "content": "Sign in to your account",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IOtqG",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "5tw1u",
+                      "type": "ref",
+                      "ref": "1415a",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "emailInput",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "QRy7x": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "BX0XX": {
+                          "width": "fill_container",
+                          "content": "Email Address"
+                        },
+                        "i0Z3E": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "SDRKn": {
+                          "content": "you@example.com"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GJlXF",
+                      "name": "Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "u1ebK",
+                          "name": "Password Label Row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "JQPlg",
+                              "name": "passLabel",
+                              "fill": "$--foreground",
+                              "content": "Password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ODEuy",
+                              "name": "forgotLink",
+                              "fill": "$--muted-foreground",
+                              "content": "Forgot password?",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DjIOY",
+                          "name": "Password Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "oorAi",
+                              "name": "passPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Enter your password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "0DooB",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "zGjKg",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "signInBtn",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 116,
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "x": 128,
+                          "content": "Sign In"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "62ugo",
+                      "name": "Divider Row",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "line",
+                          "id": "9xhVQ",
+                          "name": "divLeft",
+                          "width": "fill_container",
+                          "height": 0,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$--border"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "T0CjI",
+                          "name": "divText",
+                          "fill": "$--muted-foreground",
+                          "content": "or",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "line",
+                          "id": "I9JSG",
+                          "name": "divRight",
+                          "width": "fill_container",
+                          "height": 0,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$--border"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "DzMvn",
+                      "type": "ref",
+                      "ref": "C10zH",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "googleBtn",
+                      "x": 0,
+                      "y": 84,
+                      "descendants": {
+                        "l8v2I": {
+                          "x": 116,
+                          "enabled": false
+                        },
+                        "poRwU": {
+                          "x": 78.5,
+                          "content": "Continue with Google"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Gfdgk",
+                  "name": "Signup Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qhH17",
+                      "name": "signupText",
+                      "fill": "$--muted-foreground",
+                      "content": "Don't have an account?",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iAkq6",
+                      "name": "signupLink",
+                      "fill": "$--foreground",
+                      "content": "Sign up",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cVsUk",
+          "name": "Mobile Footer",
+          "width": "fill_container",
+          "fill": "$--foreground",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            32,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "LNkcV",
+              "name": "Footer Nav",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vlyCu",
+                  "name": "Categories",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qecGP",
+                      "name": "catTitle",
+                      "fill": "$--background",
+                      "content": "Categories",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "odDJG",
+                      "name": "cat1",
+                      "fill": "$--muted-foreground",
+                      "content": "Politics",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LfZnH",
+                      "name": "cat2",
+                      "fill": "$--muted-foreground",
+                      "content": "Technology",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Vl8pM",
+                      "name": "cat3",
+                      "fill": "$--muted-foreground",
+                      "content": "Sports",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "v0eni",
+                      "name": "cat4",
+                      "fill": "$--muted-foreground",
+                      "content": "Opinion",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "CPR5n",
+              "name": "divider",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$--muted-foreground"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "BSUef",
+      "x": 12270,
+      "y": 0,
+      "name": "Mobile Sign Up Page",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "BWQ9X",
+          "name": "Mobile Header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "$--background",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$--border"
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ZffQv",
+              "name": "logo",
+              "fill": "$--foreground",
+              "content": "The Daily Chronicle",
+              "fontFamily": "Outfit",
+              "fontSize": 18,
+              "fontWeight": "900",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "icon_font",
+              "id": "UU4wZ",
+              "name": "menuIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "menu",
+              "iconFontFamily": "lucide",
+              "fill": "$--foreground"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "770dy",
+          "name": "Main Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            32,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "XvpAo",
+              "name": "Sign Up Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000a",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "layout": "vertical",
+              "gap": 28,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZXXTi",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2L5fp",
+                      "name": "brandLogo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "900",
+                      "letterSpacing": -0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "HNuez",
+                      "name": "brandSub",
+                      "fill": "$--muted-foreground",
+                      "content": "Create your account",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Rj8uz",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "eBe9g",
+                      "name": "Name Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ctgI6",
+                          "name": "nameLabel",
+                          "fill": "$--foreground",
+                          "content": "Full Name",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "F3LaR",
+                          "name": "Name Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jHGX0",
+                              "name": "namePlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "John Doe",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eUXCr",
+                      "name": "Email Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pDLlT",
+                          "name": "emailLabel",
+                          "fill": "$--foreground",
+                          "content": "Email Address",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "i2HAY",
+                          "name": "Email Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "y6aYA",
+                              "name": "emailPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "you@example.com",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OJvg8",
+                      "name": "Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mOPEQ",
+                          "name": "passLabel",
+                          "fill": "$--foreground",
+                          "content": "Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "unymB",
+                          "name": "Password Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "2NGXP",
+                              "name": "passPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Enter your password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "5V9TK",
+                      "name": "Confirm Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "PFNKJ",
+                          "name": "confirmLabel",
+                          "fill": "$--foreground",
+                          "content": "Confirm Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xBIoC",
+                          "name": "Confirm Password Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "OTJHD",
+                              "name": "confirmPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Confirm your password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "1qOCy",
+                  "name": "Terms",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yt3Va",
+                      "name": "termsText",
+                      "fill": "$--muted-foreground",
+                      "content": "By signing up, you agree to our",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IDEoe",
+                      "name": "termsLink",
+                      "fill": "$--foreground",
+                      "content": "Terms & Privacy Policy",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rrfZb",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GVQIr",
+                      "name": "Create Account Button",
+                      "width": "fill_container",
+                      "fill": "$--primary",
+                      "cornerRadius": 6,
+                      "padding": [
+                        10,
+                        16
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BRBYv",
+                          "name": "signUpLabel",
+                          "fill": "$--primary-foreground",
+                          "content": "Create Account",
+                          "textAlign": "center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mow8u",
+                      "name": "Divider Row",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "line",
+                          "id": "A3TbE",
+                          "name": "divLeft",
+                          "width": "fill_container",
+                          "height": 0,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$--border"
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "zeT7Q",
+                          "name": "divText",
+                          "fill": "$--muted-foreground",
+                          "content": "or",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "line",
+                          "id": "4Dom3",
+                          "name": "divRight",
+                          "width": "fill_container",
+                          "height": 0,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$--border"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "7k98G",
+                      "name": "Google Button",
+                      "width": "fill_container",
+                      "fill": "$--background",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0000000d",
+                        "offset": {
+                          "x": 0,
+                          "y": 1
+                        },
+                        "blur": 1.75
+                      },
+                      "padding": [
+                        10,
+                        16
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zf7Wr",
+                          "name": "googleLabel",
+                          "fill": "$--foreground",
+                          "content": "Sign up with Google",
+                          "textAlign": "center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JPJKJ",
+                  "name": "Login Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "3Bgw8",
+                      "name": "signInText",
+                      "fill": "$--muted-foreground",
+                      "content": "Already have an account?",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eQGDm",
+                      "name": "signInLink",
+                      "fill": "$--foreground",
+                      "content": "Sign in",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pR6QD",
+          "name": "Mobile Footer",
+          "width": "fill_container",
+          "fill": "$--foreground",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            32,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "MyC1p",
+              "name": "Footer Brand",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YiOTA",
+                  "name": "footerLogo",
+                  "fill": "$--background",
+                  "content": "The Daily Chronicle",
+                  "fontFamily": "Outfit",
+                  "fontSize": 16,
+                  "fontWeight": "900",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "v17vT",
+                  "name": "footerDesc",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Your trusted source for breaking news, in-depth analysis, and compelling stories from around the world.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "TEFG0",
+              "name": "divider",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$--muted-foreground"
+              }
+            },
+            {
+              "type": "text",
+              "id": "eJ6Aj",
+              "name": "footerBottom",
+              "fill": "$--muted-foreground",
+              "content": "© 2026 The Daily Chronicle. All rights reserved.",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
             }
           ]
         }
