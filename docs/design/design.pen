@@ -7399,7 +7399,7 @@
         {
           "type": "frame",
           "id": "PFJIy",
-          "name": "Footer",
+          "name": "Desktop Footer",
           "width": "fill_container",
           "fill": "$--foreground",
           "layout": "vertical",
@@ -7676,55 +7676,6 @@
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "fSBqD",
-                  "name": "Social Icons",
-                  "gap": 16,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "rrr2U",
-                      "name": "socialX",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "twitter",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "6Wroj",
-                      "name": "socialFb",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "facebook",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "9jvJd",
-                      "name": "socialIn",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "linkedin",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "vh3aa",
-                      "name": "socialRss",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "rss",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    }
-                  ]
                 }
               ]
             }
@@ -9233,8 +9184,8 @@
         },
         {
           "type": "frame",
-          "id": "hVTH5",
-          "name": "Footer",
+          "id": "FyPNT",
+          "name": "f1",
           "width": "fill_container",
           "fill": "$--foreground",
           "layout": "vertical",
@@ -9246,7 +9197,7 @@
           "children": [
             {
               "type": "frame",
-              "id": "GqrVp",
+              "id": "eLbg0",
               "name": "Footer Top",
               "width": "fill_container",
               "gap": 64,
@@ -9254,7 +9205,7 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "TLsJI",
+                  "id": "72ZqF",
                   "name": "Footer Brand",
                   "width": 300,
                   "layout": "vertical",
@@ -9262,7 +9213,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "4f6pt",
+                      "id": "2fn5C",
                       "name": "brandName",
                       "fill": "$--background",
                       "content": "The Daily Chronicle",
@@ -9273,7 +9224,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "mcbwh",
+                      "id": "VX3gu",
                       "name": "brandDesc",
                       "fill": "$--muted-foreground",
                       "textGrowth": "fixed-width",
@@ -9288,21 +9239,21 @@
                 },
                 {
                   "type": "frame",
-                  "id": "n2DIK",
+                  "id": "gXtOL",
                   "name": "Footer Nav",
                   "gap": 64,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "gqgWQ",
+                      "id": "vvMha",
                       "name": "Categories",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "UZdT0",
-                          "name": "col1t",
+                          "id": "4al74",
+                          "name": "col1Title",
                           "fill": "$--background",
                           "content": "Categories",
                           "fontFamily": "Outfit",
@@ -9311,7 +9262,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "9DvYi",
+                          "id": "WlM93",
                           "name": "col1i1",
                           "fill": "$--muted-foreground",
                           "content": "Politics",
@@ -9321,7 +9272,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "iTndo",
+                          "id": "tjGY9",
                           "name": "col1i2",
                           "fill": "$--muted-foreground",
                           "content": "Technology",
@@ -9331,7 +9282,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "LwtQc",
+                          "id": "0iEz8",
                           "name": "col1i3",
                           "fill": "$--muted-foreground",
                           "content": "Sports",
@@ -9341,7 +9292,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "zrjom",
+                          "id": "CSVyz",
                           "name": "col1i4",
                           "fill": "$--muted-foreground",
                           "content": "Culture",
@@ -9351,7 +9302,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "PD56D",
+                          "id": "bCxS5",
                           "name": "col1i5",
                           "fill": "$--muted-foreground",
                           "content": "Entertainment",
@@ -9363,15 +9314,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "ndNys",
+                      "id": "pGJIV",
                       "name": "Company",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "ePDoU",
-                          "name": "col2t",
+                          "id": "taJDn",
+                          "name": "col2Title",
                           "fill": "$--background",
                           "content": "Company",
                           "fontFamily": "Outfit",
@@ -9380,7 +9331,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "ZATKE",
+                          "id": "O3FF2",
                           "name": "col2i1",
                           "fill": "$--muted-foreground",
                           "content": "About Us",
@@ -9390,7 +9341,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "EghnB",
+                          "id": "dpAbU",
                           "name": "col2i2",
                           "fill": "$--muted-foreground",
                           "content": "Careers",
@@ -9400,7 +9351,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "Er3nT",
+                          "id": "ddwOa",
                           "name": "col2i3",
                           "fill": "$--muted-foreground",
                           "content": "Contact",
@@ -9410,7 +9361,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "0xXN5",
+                          "id": "todKo",
                           "name": "col2i4",
                           "fill": "$--muted-foreground",
                           "content": "Advertise",
@@ -9422,15 +9373,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "84i1R",
+                      "id": "MUvLD",
                       "name": "Legal",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "isQMN",
-                          "name": "col3t",
+                          "id": "jayEH",
+                          "name": "col3Title",
                           "fill": "$--background",
                           "content": "Legal",
                           "fontFamily": "Outfit",
@@ -9439,7 +9390,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "bCeGu",
+                          "id": "CGqqm",
                           "name": "col3i1",
                           "fill": "$--muted-foreground",
                           "content": "Privacy Policy",
@@ -9449,7 +9400,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "et4Yu",
+                          "id": "uKOEN",
                           "name": "col3i2",
                           "fill": "$--muted-foreground",
                           "content": "Terms of Service",
@@ -9459,7 +9410,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "BEPYU",
+                          "id": "AtBH5",
                           "name": "col3i3",
                           "fill": "$--muted-foreground",
                           "content": "Cookie Policy",
@@ -9469,7 +9420,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "PlNDX",
+                          "id": "Oklmf",
                           "name": "col3i4",
                           "fill": "$--muted-foreground",
                           "content": "Accessibility",
@@ -9485,7 +9436,7 @@
             },
             {
               "type": "line",
-              "id": "zzDA2",
+              "id": "yPcsL",
               "name": "divider",
               "width": "fill_container",
               "height": 0,
@@ -9496,7 +9447,7 @@
             },
             {
               "type": "frame",
-              "id": "CYKEi",
+              "id": "SYQ7m",
               "name": "Footer Bottom",
               "width": "fill_container",
               "justifyContent": "space_between",
@@ -9504,62 +9455,13 @@
               "children": [
                 {
                   "type": "text",
-                  "id": "D6nmY",
+                  "id": "EPLDK",
                   "name": "copyright",
                   "fill": "$--muted-foreground",
                   "content": "© 2026 The Daily Chronicle. All rights reserved.",
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "867zR",
-                  "name": "Social Icons",
-                  "gap": 16,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "qdbju",
-                      "name": "s1",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "twitter",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "aos0a",
-                      "name": "s2",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "facebook",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "EnwJA",
-                      "name": "s3",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "linkedin",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "MYLrg",
-                      "name": "s4",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "rss",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    }
-                  ]
                 }
               ]
             }
@@ -10101,10 +10003,9 @@
         },
         {
           "type": "frame",
-          "id": "rQkxL",
-          "name": "Footer",
-          "width": 1440,
-          "height": 327,
+          "id": "pvQn4",
+          "name": "f2",
+          "width": "fill_container",
           "fill": "$--foreground",
           "layout": "vertical",
           "gap": 32,
@@ -10115,15 +10016,15 @@
           "children": [
             {
               "type": "frame",
-              "id": "bi7l9",
-              "name": "footerTop",
+              "id": "KUABj",
+              "name": "Footer Top",
               "width": "fill_container",
               "gap": 64,
               "justifyContent": "space_between",
               "children": [
                 {
                   "type": "frame",
-                  "id": "so4IZ",
+                  "id": "1EbQN",
                   "name": "Footer Brand",
                   "width": 300,
                   "layout": "vertical",
@@ -10131,7 +10032,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "ENDuk",
+                      "id": "DMFv0",
                       "name": "brandName",
                       "fill": "$--background",
                       "content": "The Daily Chronicle",
@@ -10142,7 +10043,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "tmccm",
+                      "id": "YWDet",
                       "name": "brandDesc",
                       "fill": "$--muted-foreground",
                       "textGrowth": "fixed-width",
@@ -10157,21 +10058,21 @@
                 },
                 {
                   "type": "frame",
-                  "id": "3dNwD",
+                  "id": "PApT7",
                   "name": "Footer Nav",
                   "gap": 64,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "0xt18",
+                      "id": "deeZU",
                       "name": "Categories",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "Xpv4B",
-                          "name": "col1t",
+                          "id": "US2O9",
+                          "name": "col1Title",
                           "fill": "$--background",
                           "content": "Categories",
                           "fontFamily": "Outfit",
@@ -10180,7 +10081,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "MnAic",
+                          "id": "k3hc6",
                           "name": "col1i1",
                           "fill": "$--muted-foreground",
                           "content": "Politics",
@@ -10190,7 +10091,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "GlYKx",
+                          "id": "fd2Ff",
                           "name": "col1i2",
                           "fill": "$--muted-foreground",
                           "content": "Technology",
@@ -10200,7 +10101,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "o8h2L",
+                          "id": "ltulz",
                           "name": "col1i3",
                           "fill": "$--muted-foreground",
                           "content": "Sports",
@@ -10210,7 +10111,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "4RxhL",
+                          "id": "JBxZr",
                           "name": "col1i4",
                           "fill": "$--muted-foreground",
                           "content": "Culture",
@@ -10220,7 +10121,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "d1NmL",
+                          "id": "QCRc7",
                           "name": "col1i5",
                           "fill": "$--muted-foreground",
                           "content": "Entertainment",
@@ -10232,15 +10133,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "Qjjxj",
+                      "id": "4OTF1",
                       "name": "Company",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "VC9Uu",
-                          "name": "col2t",
+                          "id": "vcO5p",
+                          "name": "col2Title",
                           "fill": "$--background",
                           "content": "Company",
                           "fontFamily": "Outfit",
@@ -10249,7 +10150,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "LmvY0",
+                          "id": "LZVFG",
                           "name": "col2i1",
                           "fill": "$--muted-foreground",
                           "content": "About Us",
@@ -10259,7 +10160,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "GK6nS",
+                          "id": "b3wsX",
                           "name": "col2i2",
                           "fill": "$--muted-foreground",
                           "content": "Careers",
@@ -10269,7 +10170,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "QJK2h",
+                          "id": "wfR7u",
                           "name": "col2i3",
                           "fill": "$--muted-foreground",
                           "content": "Contact",
@@ -10279,7 +10180,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "IMoCf",
+                          "id": "Mz6tc",
                           "name": "col2i4",
                           "fill": "$--muted-foreground",
                           "content": "Advertise",
@@ -10291,15 +10192,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "irm3H",
+                      "id": "oQc15",
                       "name": "Legal",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "XBCzt",
-                          "name": "col3t",
+                          "id": "6UtMK",
+                          "name": "col3Title",
                           "fill": "$--background",
                           "content": "Legal",
                           "fontFamily": "Outfit",
@@ -10308,7 +10209,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "ix9X2",
+                          "id": "yX4s0",
                           "name": "col3i1",
                           "fill": "$--muted-foreground",
                           "content": "Privacy Policy",
@@ -10318,7 +10219,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "Ar24f",
+                          "id": "F2Ov1",
                           "name": "col3i2",
                           "fill": "$--muted-foreground",
                           "content": "Terms of Service",
@@ -10328,7 +10229,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "p4frS",
+                          "id": "SOLXP",
                           "name": "col3i3",
                           "fill": "$--muted-foreground",
                           "content": "Cookie Policy",
@@ -10338,7 +10239,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "Fq3pR",
+                          "id": "k1tAl",
                           "name": "col3i4",
                           "fill": "$--muted-foreground",
                           "content": "Accessibility",
@@ -10354,7 +10255,7 @@
             },
             {
               "type": "line",
-              "id": "eiIFh",
+              "id": "5LuvL",
               "name": "divider",
               "width": "fill_container",
               "height": 0,
@@ -10365,70 +10266,21 @@
             },
             {
               "type": "frame",
-              "id": "qkddm",
-              "name": "footerBottom",
+              "id": "AdWp8",
+              "name": "Footer Bottom",
               "width": "fill_container",
               "justifyContent": "space_between",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "uSXHL",
+                  "id": "WHW61",
                   "name": "copyright",
                   "fill": "$--muted-foreground",
                   "content": "© 2026 The Daily Chronicle. All rights reserved.",
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "b9PNu",
-                  "name": "Social Icons",
-                  "gap": 16,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "TB6q6",
-                      "name": "s1",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "twitter",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "B25gj",
-                      "name": "s2",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "facebook",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "uXO2c",
-                      "name": "s3",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "linkedin",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "AggAG",
-                      "name": "s4",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "rss",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    }
-                  ]
                 }
               ]
             }
@@ -11099,10 +10951,9 @@
         },
         {
           "type": "frame",
-          "id": "yp9Ev",
-          "name": "Footer",
-          "width": 1440,
-          "height": 327,
+          "id": "Uzhah",
+          "name": "f3",
+          "width": "fill_container",
           "fill": "$--foreground",
           "layout": "vertical",
           "gap": 32,
@@ -11113,15 +10964,15 @@
           "children": [
             {
               "type": "frame",
-              "id": "N5zy7",
-              "name": "footerTop",
+              "id": "35aU0",
+              "name": "Footer Top",
               "width": "fill_container",
               "gap": 64,
               "justifyContent": "space_between",
               "children": [
                 {
                   "type": "frame",
-                  "id": "qvIAK",
+                  "id": "eFl7Y",
                   "name": "Footer Brand",
                   "width": 300,
                   "layout": "vertical",
@@ -11129,7 +10980,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "meBJc",
+                      "id": "9FtJy",
                       "name": "brandName",
                       "fill": "$--background",
                       "content": "The Daily Chronicle",
@@ -11140,7 +10991,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "6NC50",
+                      "id": "EOv9l",
                       "name": "brandDesc",
                       "fill": "$--muted-foreground",
                       "textGrowth": "fixed-width",
@@ -11155,21 +11006,21 @@
                 },
                 {
                   "type": "frame",
-                  "id": "r6xZL",
+                  "id": "Cycp4",
                   "name": "Footer Nav",
                   "gap": 64,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "XCgAU",
+                      "id": "PtAei",
                       "name": "Categories",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "vBvuR",
-                          "name": "col1t",
+                          "id": "XUYDm",
+                          "name": "col1Title",
                           "fill": "$--background",
                           "content": "Categories",
                           "fontFamily": "Outfit",
@@ -11178,7 +11029,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "Zue1G",
+                          "id": "TtxXJ",
                           "name": "col1i1",
                           "fill": "$--muted-foreground",
                           "content": "Politics",
@@ -11188,7 +11039,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "n3fB6",
+                          "id": "VOQNS",
                           "name": "col1i2",
                           "fill": "$--muted-foreground",
                           "content": "Technology",
@@ -11198,7 +11049,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "FXIsD",
+                          "id": "SCHeQ",
                           "name": "col1i3",
                           "fill": "$--muted-foreground",
                           "content": "Sports",
@@ -11208,7 +11059,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "RKzHw",
+                          "id": "0eMXh",
                           "name": "col1i4",
                           "fill": "$--muted-foreground",
                           "content": "Culture",
@@ -11218,7 +11069,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "6YMK5",
+                          "id": "pDemg",
                           "name": "col1i5",
                           "fill": "$--muted-foreground",
                           "content": "Entertainment",
@@ -11230,15 +11081,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "xNwcQ",
+                      "id": "8e33R",
                       "name": "Company",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "sE1bY",
-                          "name": "col2t",
+                          "id": "gI11M",
+                          "name": "col2Title",
                           "fill": "$--background",
                           "content": "Company",
                           "fontFamily": "Outfit",
@@ -11247,7 +11098,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "d4khZ",
+                          "id": "dy3H0",
                           "name": "col2i1",
                           "fill": "$--muted-foreground",
                           "content": "About Us",
@@ -11257,7 +11108,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "XkKAH",
+                          "id": "OZr8M",
                           "name": "col2i2",
                           "fill": "$--muted-foreground",
                           "content": "Careers",
@@ -11267,7 +11118,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "kpsML",
+                          "id": "Dtl25",
                           "name": "col2i3",
                           "fill": "$--muted-foreground",
                           "content": "Contact",
@@ -11277,7 +11128,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "zkNSh",
+                          "id": "n60Sl",
                           "name": "col2i4",
                           "fill": "$--muted-foreground",
                           "content": "Advertise",
@@ -11289,15 +11140,15 @@
                     },
                     {
                       "type": "frame",
-                      "id": "Awtbz",
+                      "id": "S9125",
                       "name": "Legal",
                       "layout": "vertical",
                       "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "xmBOE",
-                          "name": "col3t",
+                          "id": "SFuVK",
+                          "name": "col3Title",
                           "fill": "$--background",
                           "content": "Legal",
                           "fontFamily": "Outfit",
@@ -11306,7 +11157,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "Cv9yW",
+                          "id": "NQBet",
                           "name": "col3i1",
                           "fill": "$--muted-foreground",
                           "content": "Privacy Policy",
@@ -11316,7 +11167,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "WyzCO",
+                          "id": "iKq2r",
                           "name": "col3i2",
                           "fill": "$--muted-foreground",
                           "content": "Terms of Service",
@@ -11326,7 +11177,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "DZOJZ",
+                          "id": "0pvvM",
                           "name": "col3i3",
                           "fill": "$--muted-foreground",
                           "content": "Cookie Policy",
@@ -11336,7 +11187,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "vsQ5p",
+                          "id": "uCHOz",
                           "name": "col3i4",
                           "fill": "$--muted-foreground",
                           "content": "Accessibility",
@@ -11352,7 +11203,7 @@
             },
             {
               "type": "line",
-              "id": "FdVII",
+              "id": "4j6U1",
               "name": "divider",
               "width": "fill_container",
               "height": 0,
@@ -11363,70 +11214,21 @@
             },
             {
               "type": "frame",
-              "id": "KVZRw",
-              "name": "footerBottom",
+              "id": "U4SPi",
+              "name": "Footer Bottom",
               "width": "fill_container",
               "justifyContent": "space_between",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "3HTG5",
+                  "id": "RuPeV",
                   "name": "copyright",
                   "fill": "$--muted-foreground",
                   "content": "© 2026 The Daily Chronicle. All rights reserved.",
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "NBUDR",
-                  "name": "Social Icons",
-                  "gap": 16,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon_font",
-                      "id": "gcZmZ",
-                      "name": "s1",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "twitter",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "ZMnUE",
-                      "name": "s2",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "facebook",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "cfgBZ",
-                      "name": "s3",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "linkedin",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    },
-                    {
-                      "type": "icon_font",
-                      "id": "teiLn",
-                      "name": "s4",
-                      "width": 18,
-                      "height": 18,
-                      "iconFontName": "rss",
-                      "iconFontFamily": "lucide",
-                      "fill": "$--muted-foreground"
-                    }
-                  ]
                 }
               ]
             }
@@ -12336,16 +12138,287 @@
         },
         {
           "type": "frame",
-          "id": "35Sfl",
-          "name": "Footer",
+          "id": "hVL2d",
+          "name": "f4",
           "width": "fill_container",
-          "height": "fit_content(0)",
           "fill": "$--foreground",
           "layout": "vertical",
           "gap": 32,
           "padding": [
             48,
             64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "0u4tp",
+              "name": "Footer Top",
+              "width": "fill_container",
+              "gap": 64,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "M9rAI",
+                  "name": "Footer Brand",
+                  "width": 300,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "9hQ0G",
+                      "name": "brandName",
+                      "fill": "$--background",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 24,
+                      "fontWeight": "800",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "ms4Vo",
+                      "name": "brandDesc",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": 300,
+                      "content": "Your trusted source for breaking news, in-depth analysis, and compelling stories from around the world.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r4gN3",
+                  "name": "Footer Nav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Xn3oq",
+                      "name": "Categories",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QmDou",
+                          "name": "col1Title",
+                          "fill": "$--background",
+                          "content": "Categories",
+                          "fontFamily": "Outfit",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "R9LzC",
+                          "name": "col1i1",
+                          "fill": "$--muted-foreground",
+                          "content": "Politics",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "voKi6",
+                          "name": "col1i2",
+                          "fill": "$--muted-foreground",
+                          "content": "Technology",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xf1v9",
+                          "name": "col1i3",
+                          "fill": "$--muted-foreground",
+                          "content": "Sports",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "f5j8p",
+                          "name": "col1i4",
+                          "fill": "$--muted-foreground",
+                          "content": "Culture",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cUGgM",
+                          "name": "col1i5",
+                          "fill": "$--muted-foreground",
+                          "content": "Entertainment",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aQKEe",
+                      "name": "Company",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OHquB",
+                          "name": "col2Title",
+                          "fill": "$--background",
+                          "content": "Company",
+                          "fontFamily": "Outfit",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qZBwp",
+                          "name": "col2i1",
+                          "fill": "$--muted-foreground",
+                          "content": "About Us",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RFGck",
+                          "name": "col2i2",
+                          "fill": "$--muted-foreground",
+                          "content": "Careers",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "8pRYY",
+                          "name": "col2i3",
+                          "fill": "$--muted-foreground",
+                          "content": "Contact",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cPyaZ",
+                          "name": "col2i4",
+                          "fill": "$--muted-foreground",
+                          "content": "Advertise",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dx1EG",
+                      "name": "Legal",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EJbwX",
+                          "name": "col3Title",
+                          "fill": "$--background",
+                          "content": "Legal",
+                          "fontFamily": "Outfit",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Rnl8e",
+                          "name": "col3i1",
+                          "fill": "$--muted-foreground",
+                          "content": "Privacy Policy",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "9CTwb",
+                          "name": "col3i2",
+                          "fill": "$--muted-foreground",
+                          "content": "Terms of Service",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Tbb73",
+                          "name": "col3i3",
+                          "fill": "$--muted-foreground",
+                          "content": "Cookie Policy",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Wn6dT",
+                          "name": "col3i4",
+                          "fill": "$--muted-foreground",
+                          "content": "Accessibility",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "HBB0U",
+              "name": "divider",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$--muted-foreground"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "cOsOa",
+              "name": "Footer Bottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JD6OE",
+                  "name": "copyright",
+                  "fill": "$--muted-foreground",
+                  "content": "© 2026 The Daily Chronicle. All rights reserved.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
           ]
         }
       ]
@@ -14497,99 +14570,99 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "XOYqy",
-          "name": "Mobile Footer",
+          "id": "IjScY",
+          "type": "ref",
+          "ref": "qOkYt",
           "width": "fill_container",
-          "fill": "$--foreground",
-          "layout": "vertical",
-          "gap": 32,
-          "padding": [
-            32,
-            20
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "PZN4V",
-              "name": "Footer Nav",
+          "name": "mf1",
+          "x": 0,
+          "y": 6230,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
               "width": "fill_container",
-              "gap": 24,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "bpdyF",
-                  "name": "Categories",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 10,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "RUKeB",
-                      "name": "footCatsTitle",
-                      "fill": "$--background",
-                      "content": "Categories",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "IazKM",
-                      "name": "footCat1",
-                      "fill": "$--muted-foreground",
-                      "content": "Politics",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "uyKGb",
-                      "name": "footCat2",
-                      "fill": "$--muted-foreground",
-                      "content": "Technology",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "I6l3I",
-                      "name": "footCat3",
-                      "fill": "$--muted-foreground",
-                      "content": "Sports",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "YvLty",
-                      "name": "footCat4",
-                      "fill": "$--muted-foreground",
-                      "content": "Opinion",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
+              "x": 20,
+              "y": 32,
+              "height": "fit_content"
             },
-            {
-              "type": "line",
-              "id": "4KzkL",
-              "name": "divider",
+            "hLKNz": {
               "width": "fill_container",
-              "height": 0,
-              "stroke": {
-                "thickness": 1,
-                "fill": "$--muted-foreground"
-              }
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 120,
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "y": 158,
+              "height": "fit_content"
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "y": 292,
+              "height": "fit_content"
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 574,
+              "height": "fit_content"
+            },
+            "rkpQb": {
+              "y": 0
             }
-          ]
+          }
         }
       ]
     },
@@ -15265,99 +15338,99 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "eF1zq",
-          "name": "Mobile Footer",
+          "id": "giwOm",
+          "type": "ref",
+          "ref": "qOkYt",
           "width": "fill_container",
-          "fill": "$--foreground",
-          "layout": "vertical",
-          "gap": 32,
-          "padding": [
-            32,
-            20
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "EJBHx",
-              "name": "Footer Nav",
+          "name": "mf2",
+          "x": 0,
+          "y": 3926,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
               "width": "fill_container",
-              "gap": 24,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "yFHEm",
-                  "name": "Categories",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 10,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "WpjEN",
-                      "name": "footCatsTitle",
-                      "fill": "$--background",
-                      "content": "Categories",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "unZCa",
-                      "name": "footCat1",
-                      "fill": "$--muted-foreground",
-                      "content": "Politics",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "WXAej",
-                      "name": "footCat2",
-                      "fill": "$--muted-foreground",
-                      "content": "Technology",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "pB3fX",
-                      "name": "footCat3",
-                      "fill": "$--muted-foreground",
-                      "content": "Sports",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "9bDbc",
-                      "name": "footCat4",
-                      "fill": "$--muted-foreground",
-                      "content": "Opinion",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
+              "x": 20,
+              "y": 32,
+              "height": "fit_content"
             },
-            {
-              "type": "line",
-              "id": "CfKJg",
-              "name": "divider",
+            "hLKNz": {
               "width": "fill_container",
-              "height": 0,
-              "stroke": {
-                "thickness": 1,
-                "fill": "$--muted-foreground"
-              }
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 120,
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "y": 158,
+              "height": "fit_content"
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "y": 292,
+              "height": "fit_content"
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 574,
+              "height": "fit_content"
+            },
+            "rkpQb": {
+              "y": 0
             }
-          ]
+          }
         }
       ]
     },
@@ -15368,7 +15441,6 @@
       "y": 0,
       "name": "Mobile Login Page",
       "width": 390,
-      "height": 844,
       "fill": "$--background",
       "layout": "vertical",
       "children": [
@@ -15421,7 +15493,6 @@
           "id": "BmPe7",
           "name": "Main Content",
           "width": "fill_container",
-          "height": "fill_container",
           "layout": "vertical",
           "padding": [
             48,
@@ -15707,100 +15778,99 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "cVsUk",
-          "name": "Mobile Footer",
+          "id": "1c3zW",
+          "type": "ref",
+          "ref": "qOkYt",
           "width": "fill_container",
-          "fill": "$--foreground",
-          "layout": "vertical",
-          "gap": 32,
-          "padding": [
-            32,
-            20
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "LNkcV",
-              "name": "Footer Nav",
+          "name": "mf3",
+          "x": 0,
+          "y": 629,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
               "width": "fill_container",
-              "layout": "vertical",
-              "gap": 24,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "vlyCu",
-                  "name": "Categories",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 10,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "qecGP",
-                      "name": "catTitle",
-                      "fill": "$--background",
-                      "content": "Categories",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "odDJG",
-                      "name": "cat1",
-                      "fill": "$--muted-foreground",
-                      "content": "Politics",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "LfZnH",
-                      "name": "cat2",
-                      "fill": "$--muted-foreground",
-                      "content": "Technology",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "Vl8pM",
-                      "name": "cat3",
-                      "fill": "$--muted-foreground",
-                      "content": "Sports",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "v0eni",
-                      "name": "cat4",
-                      "fill": "$--muted-foreground",
-                      "content": "Opinion",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
+              "x": 20,
+              "y": 32,
+              "height": "fit_content"
             },
-            {
-              "type": "line",
-              "id": "CPR5n",
-              "name": "divider",
+            "hLKNz": {
               "width": "fill_container",
-              "height": 0,
-              "stroke": {
-                "thickness": 1,
-                "fill": "$--muted-foreground"
-              }
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 120,
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "y": 158,
+              "height": "fit_content"
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "y": 292,
+              "height": "fit_content"
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 574,
+              "height": "fit_content"
+            },
+            "rkpQb": {
+              "y": 0
             }
-          ]
+          }
         }
       ]
     },
@@ -16332,67 +16402,375 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "pR6QD",
-          "name": "Mobile Footer",
+          "id": "hSsjA",
+          "type": "ref",
+          "ref": "qOkYt",
           "width": "fill_container",
-          "fill": "$--foreground",
+          "name": "mf4",
+          "x": 0,
+          "y": 787,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 32,
+              "height": "fit_content"
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 120,
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "y": 158,
+              "height": "fit_content"
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "y": 292,
+              "height": "fit_content"
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 574,
+              "height": "fit_content"
+            },
+            "rkpQb": {
+              "y": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qOkYt",
+      "x": 12730,
+      "y": 0,
+      "name": "Mobile Footer",
+      "reusable": true,
+      "width": 390,
+      "fill": "$--foreground",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        32,
+        20
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "NfAFs",
+          "name": "Footer Brand",
+          "width": "fill_container",
           "layout": "vertical",
-          "gap": 24,
-          "padding": [
-            32,
-            20
-          ],
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "hpH8u",
+              "name": "brandName",
+              "fill": "$--background",
+              "content": "The Daily Chronicle",
+              "fontFamily": "Outfit",
+              "fontSize": 16,
+              "fontWeight": "900",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "text",
+              "id": "hLKNz",
+              "name": "brandDesc",
+              "fill": "$--muted-foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your trusted source for breaking news, in-depth analysis, and compelling stories from around the world.",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "JonJM",
+          "name": "Footer Nav",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
           "children": [
             {
               "type": "frame",
-              "id": "MyC1p",
-              "name": "Footer Brand",
+              "id": "0T35y",
+              "name": "Categories",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 8,
               "children": [
                 {
                   "type": "text",
-                  "id": "YiOTA",
-                  "name": "footerLogo",
+                  "id": "TCRSM",
+                  "name": "col1Title",
                   "fill": "$--background",
-                  "content": "The Daily Chronicle",
+                  "content": "Categories",
                   "fontFamily": "Outfit",
-                  "fontSize": 16,
-                  "fontWeight": "900",
-                  "letterSpacing": -0.5
+                  "fontSize": 14,
+                  "fontWeight": "700"
                 },
                 {
                   "type": "text",
-                  "id": "v17vT",
-                  "name": "footerDesc",
+                  "id": "jo684",
+                  "name": "col1i1",
                   "fill": "$--muted-foreground",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Your trusted source for breaking news, in-depth analysis, and compelling stories from around the world.",
-                  "lineHeight": 1.5,
+                  "content": "Politics",
                   "fontFamily": "Inter",
-                  "fontSize": 12,
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "pkpwU",
+                  "name": "col1i2",
+                  "fill": "$--muted-foreground",
+                  "content": "Technology",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "zWSiy",
+                  "name": "col1i3",
+                  "fill": "$--muted-foreground",
+                  "content": "Sports",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "pdQXS",
+                  "name": "col1i4",
+                  "fill": "$--muted-foreground",
+                  "content": "Culture",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "NbSD1",
+                  "name": "col1i5",
+                  "fill": "$--muted-foreground",
+                  "content": "Entertainment",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
                   "fontWeight": "normal"
                 }
               ]
             },
             {
-              "type": "line",
-              "id": "TEFG0",
-              "name": "divider",
+              "type": "frame",
+              "id": "dYcBk",
+              "name": "Company",
               "width": "fill_container",
-              "height": 0,
-              "stroke": {
-                "thickness": 1,
-                "fill": "$--muted-foreground"
-              }
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6sqS5",
+                  "name": "col2Title",
+                  "fill": "$--background",
+                  "content": "Company",
+                  "fontFamily": "Outfit",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "31xem",
+                  "name": "col2i1",
+                  "fill": "$--muted-foreground",
+                  "content": "About Us",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "G7e05",
+                  "name": "col2i2",
+                  "fill": "$--muted-foreground",
+                  "content": "Careers",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "OTfxT",
+                  "name": "col2i3",
+                  "fill": "$--muted-foreground",
+                  "content": "Contact",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "5DLUs",
+                  "name": "col2i4",
+                  "fill": "$--muted-foreground",
+                  "content": "Advertise",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
             },
             {
+              "type": "frame",
+              "id": "6J6Pa",
+              "name": "Legal",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Q2GrF",
+                  "name": "col3Title",
+                  "fill": "$--background",
+                  "content": "Legal",
+                  "fontFamily": "Outfit",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "OKH6Z",
+                  "name": "col3i1",
+                  "fill": "$--muted-foreground",
+                  "content": "Privacy Policy",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "TbhKS",
+                  "name": "col3i2",
+                  "fill": "$--muted-foreground",
+                  "content": "Terms of Service",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "MR5aT",
+                  "name": "col3i3",
+                  "fill": "$--muted-foreground",
+                  "content": "Cookie Policy",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "oKoZ4",
+                  "name": "col3i4",
+                  "fill": "$--muted-foreground",
+                  "content": "Accessibility",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "line",
+          "id": "7DHeb",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$--muted-foreground"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "Uzvnf",
+          "name": "Footer Bottom",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
               "type": "text",
-              "id": "eJ6Aj",
-              "name": "footerBottom",
+              "id": "rkpQb",
+              "name": "copyright",
               "fill": "$--muted-foreground",
               "content": "© 2026 The Daily Chronicle. All rights reserved.",
               "fontFamily": "Inter",
