@@ -1,7 +1,7 @@
 **Public (Visitor-accessible)**
 
 - [x]  Homepage  - Recent/featured articles with previews (perex), category navigation, search bar
-- []  Category Page - Articles filtered by a specific category (Politics, Technology, etc.)
+- [x]  Category Page - Articles filtered by a specific category (Politics, Technology, etc.)
 - [x]  Article Detail  - Full article content, author, date, category, keywords, images, comments section, like count; full text gated for registered users
 - [ ]  Author Profile - Author name, bio, profile picture, list of published articles
 - [ ]  Search Results - Results listing title, perex, author, date, first image
@@ -50,3 +50,4 @@
 **Special / Onboarding**
 
 - [ ]  First-Login Profile - Forced profile picture + bio completion when a user is first assigned a content role
+
