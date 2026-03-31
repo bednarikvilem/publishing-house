@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.01994370166805,
+                  "y": 24.019943701668048,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -12426,8 +12426,8 @@
     {
       "type": "frame",
       "id": "y1aFV",
-      "x": 10800,
-      "y": 0,
+      "x": 3000,
+      "y": 3300,
       "name": "Mobile Homepage",
       "width": 390,
       "fill": "$--background",
@@ -14640,8 +14640,8 @@
     {
       "type": "frame",
       "id": "nc4Gr",
-      "x": 11290,
-      "y": 0,
+      "x": 3490,
+      "y": 3300,
       "name": "Mobile Article Page",
       "width": 390,
       "fill": "$--background",
@@ -15379,8 +15379,8 @@
     {
       "type": "frame",
       "id": "IXObu",
-      "x": 11780,
-      "y": 0,
+      "x": 3980,
+      "y": 3300,
       "name": "Mobile Login Page",
       "width": 390,
       "fill": "$--background",
@@ -15794,8 +15794,8 @@
     {
       "type": "frame",
       "id": "BSUef",
-      "x": 12270,
-      "y": 0,
+      "x": 4470,
+      "y": 3300,
       "name": "Mobile Sign Up Page",
       "width": 390,
       "fill": "$--background",
@@ -16388,8 +16388,8 @@
     {
       "type": "frame",
       "id": "qOkYt",
-      "x": 12730,
-      "y": 0,
+      "x": 500,
+      "y": 3800,
       "name": "Mobile Footer",
       "reusable": true,
       "width": 390,
@@ -16671,8 +16671,8 @@
     {
       "type": "frame",
       "id": "tNeqM",
-      "x": 13160,
-      "y": 0,
+      "x": 0,
+      "y": 3800,
       "name": "Mobile Header",
       "reusable": true,
       "width": "fill_container(390)",
@@ -16717,8 +16717,8 @@
     {
       "type": "frame",
       "id": "bKZQ8",
-      "x": 13650,
-      "y": 0,
+      "x": 4960,
+      "y": 3300,
       "name": "Mobile Category Page",
       "width": 390,
       "fill": "$--background",
