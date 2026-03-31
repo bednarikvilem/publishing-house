@@ -3,7 +3,7 @@
 - [x]  Homepage  - Recent/featured articles with previews (perex), category navigation, search bar
 - [x]  Category Page - Articles filtered by a specific category (Politics, Technology, etc.)
 - [x]  Article Detail  - Full article content, author, date, category, keywords, images, comments section, like count; full text gated for registered users
-- [ ]  Author Profile - Author name, bio, profile picture, list of published articles
+- [x]  Author Profile - Author name, bio, profile picture, list of published articles
 - [ ]  Search Results - Results listing title, perex, author, date, first image
 - [x]  Login Page - Email/password login form
 - [x]  Registration  - Sign-up form; triggers email confirmation

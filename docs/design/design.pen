@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.019943701668048,
+                  "y": 24.01994370166805,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -19360,6 +19360,876 @@
           "name": "footer",
           "x": 0,
           "y": 2123
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "7MsZu",
+      "x": 6430,
+      "y": 3300,
+      "name": "Mobile Author Profile Page",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "eDgtm",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "header",
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "A0oAE",
+          "name": "Profile Section",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            32,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uiFIy",
+              "name": "Profile Picture",
+              "metadata": {
+                "type": "unsplash",
+                "username": "nikita_pishchugin",
+                "link": "https://unsplash.com/@nikita_pishchugin",
+                "author": "Nikita Pishchugin"
+              },
+              "clip": true,
+              "width": 96,
+              "height": 96,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1744980139746-a7c68148c228?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1Njl8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              },
+              "cornerRadius": 48
+            },
+            {
+              "type": "frame",
+              "id": "G9q5P",
+              "name": "Author Info",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SGCaK",
+                  "name": "authorName",
+                  "fill": "$--foreground",
+                  "content": "Sarah Mitchell",
+                  "textAlign": "center",
+                  "fontFamily": "Outfit",
+                  "fontSize": 24,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "UPGus",
+                  "name": "authorRole",
+                  "fill": "$--primary",
+                  "content": "Senior Political Correspondent",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "DzF41",
+                  "name": "authorBio",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sarah Mitchell is an award-winning journalist with over 15 years of experience covering politics, policy, and government affairs. She has reported from Capitol Hill, the White House, and international summits across the globe. Her investigative work has earned multiple press association honors.",
+                  "lineHeight": 1.6,
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rgIFZ",
+              "name": "Stats Row",
+              "width": "fill_container",
+              "gap": 24,
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ydGOn",
+                  "name": "Stat Articles",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Zo69w",
+                      "name": "stat1num",
+                      "fill": "$--foreground",
+                      "content": "142",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zBz3x",
+                      "name": "stat1label",
+                      "fill": "$--muted-foreground",
+                      "content": "Articles",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kYPNn",
+                  "name": "Stat Years",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PGiIP",
+                      "name": "stat2num",
+                      "fill": "$--foreground",
+                      "content": "15",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pXcxs",
+                      "name": "stat2label",
+                      "fill": "$--muted-foreground",
+                      "content": "Years",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MczSQ",
+                  "name": "Stat Awards",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MnRi9",
+                      "name": "stat3num",
+                      "fill": "$--foreground",
+                      "content": "2.4k",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TVxoB",
+                      "name": "stat3label",
+                      "fill": "$--muted-foreground",
+                      "content": "Likes",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JmEOa",
+              "name": "Social Links",
+              "width": "fill_container",
+              "gap": 12,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "InPzk",
+                  "name": "Twitter",
+                  "fill": "$--secondary",
+                  "cornerRadius": 20,
+                  "padding": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "rPaNi",
+                      "name": "twIcn",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "twitter",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--foreground"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Re8xH",
+                  "name": "LinkedIn",
+                  "fill": "$--secondary",
+                  "cornerRadius": 20,
+                  "padding": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Ib9E4",
+                      "name": "liIcn",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "linkedin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--foreground"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "P2com",
+                  "name": "Email",
+                  "fill": "$--secondary",
+                  "cornerRadius": 20,
+                  "padding": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "t1D6f",
+                      "name": "mailIcn",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "mail",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--foreground"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "line",
+          "id": "58l6d",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "align": "center",
+            "thickness": 1,
+            "fill": "$--border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "ABT2g",
+          "name": "Published Articles",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "HW3qt",
+              "name": "Section Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UTvWR",
+                  "name": "sectionTitle",
+                  "fill": "$--foreground",
+                  "content": "Published Articles",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                },
+                {
+                  "type": "text",
+                  "id": "ocZkx",
+                  "name": "articleCount",
+                  "fill": "$--muted-foreground",
+                  "content": "142 total",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kCxZ7",
+              "name": "Article Card 1",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000d",
+                "offset": {
+                  "x": 0,
+                  "y": 1
+                },
+                "blur": 1.75
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bFv7k",
+                  "name": "Card Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "elimendeinagella",
+                    "link": "https://unsplash.com/@elimendeinagella",
+                    "author": "Elimende Inagella"
+                  },
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 180,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1605434896470-f710855e4d56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1MzJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    8,
+                    8,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Iv6oE",
+                  "name": "Card Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "g4GKn",
+                      "name": "Badge",
+                      "fill": "$--secondary",
+                      "cornerRadius": 16,
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "001G1",
+                          "name": "card1badgeT",
+                          "fill": "$--secondary-foreground",
+                          "content": "Politics",
+                          "lineHeight": 1.33,
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "nxaws",
+                      "name": "card1title",
+                      "fill": "$--foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Outfit",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GqIzx",
+                      "name": "card1desc",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "5Wmor",
+                      "name": "Meta",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oXD06",
+                          "name": "card1date",
+                          "fill": "$--muted-foreground",
+                          "content": "Mar 28, 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "r2rV7",
+                          "name": "card1dot",
+                          "fill": "$--muted-foreground",
+                          "content": "·",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xk81P",
+                          "name": "card1read",
+                          "fill": "$--muted-foreground",
+                          "content": "8 min read",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lbvJF",
+              "name": "Article Card 2",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000d",
+                "offset": {
+                  "x": 0,
+                  "y": 1
+                },
+                "blur": 1.75
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ldXPL",
+                  "name": "Card Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "afrocentricafrican",
+                    "link": "https://unsplash.com/@afrocentricafrican",
+                    "author": "Yaw Afari"
+                  },
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 180,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1650680715004-a878bcd66aa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1NDF8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    8,
+                    8,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rdepj",
+                  "name": "Card Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lLPgq",
+                      "name": "Badge",
+                      "fill": "$--secondary",
+                      "cornerRadius": 16,
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dGAVS",
+                          "name": "card2badgeT",
+                          "fill": "$--secondary-foreground",
+                          "content": "Politics",
+                          "lineHeight": 1.33,
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "mXfme",
+                      "name": "card2title",
+                      "fill": "$--foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "White House Unveils Ambitious Climate Action Plan for Federal Agencies",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Outfit",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pPpCW",
+                      "name": "card2desc",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The executive order mandates all federal buildings achieve net-zero emissions by 2035, setting a new standard for government sustainability.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GydZv",
+                      "name": "Meta",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ENvK7",
+                          "name": "card2date",
+                          "fill": "$--muted-foreground",
+                          "content": "Mar 25, 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zOEfd",
+                          "name": "card2dot",
+                          "fill": "$--muted-foreground",
+                          "content": "·",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LWHmf",
+                          "name": "card2read",
+                          "fill": "$--muted-foreground",
+                          "content": "6 min read",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "05NBj",
+              "name": "Article Card 3",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000d",
+                "offset": {
+                  "x": 0,
+                  "y": 1
+                },
+                "blur": 1.75
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bcUB5",
+                  "name": "Card Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "creepyhands",
+                    "link": "https://unsplash.com/@creepyhands",
+                    "author": "Eric Brehm"
+                  },
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 180,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1589927725301-dda06a332802?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1NDd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    8,
+                    8,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Je1mR",
+                  "name": "Card Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "T3AoZ",
+                      "name": "Badge",
+                      "fill": "$--secondary",
+                      "cornerRadius": 16,
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KGBrL",
+                          "name": "card3badgeT",
+                          "fill": "$--secondary-foreground",
+                          "content": "Politics",
+                          "lineHeight": 1.33,
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ii0iQ",
+                      "name": "card3title",
+                      "fill": "$--foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Bipartisan Coalition Forms to Address National Housing Crisis",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Outfit",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jrllz",
+                      "name": "card3desc",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Lawmakers from both parties propose a $500 billion housing initiative aimed at increasing affordable housing stock across all 50 states.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "on6vK",
+                      "name": "Meta",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vAz9z",
+                          "name": "card3date",
+                          "fill": "$--muted-foreground",
+                          "content": "Mar 22, 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uP4Qq",
+                          "name": "card3dot",
+                          "fill": "$--muted-foreground",
+                          "content": "·",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Uu742",
+                          "name": "card3read",
+                          "fill": "$--muted-foreground",
+                          "content": "10 min read",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PAVaA",
+              "name": "Load More Wrapper",
+              "width": "fill_container",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2XmZa",
+                  "name": "Load More Button",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hWzzb",
+                      "name": "loadMoreText",
+                      "fill": "$--foreground",
+                      "content": "Load More Articles",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "2pgow",
+                      "name": "loadMoreIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "chevron-down",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--foreground"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "vihGt",
+          "type": "ref",
+          "ref": "qOkYt",
+          "name": "footer",
+          "x": 0,
+          "y": 1948
         }
       ]
     }
