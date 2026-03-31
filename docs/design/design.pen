@@ -1,5 +1,5 @@
 {
-  "version": "2.9",
+  "version": "2.10",
   "children": [
     {
       "type": "frame",
@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.01994370166805,
+                  "y": 24.019943701668048,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -16729,7 +16729,18 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "header",
-          "x": 0
+          "x": 0,
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -16909,628 +16920,132 @@
           "padding": 20,
           "children": [
             {
-              "type": "frame",
-              "id": "Hj1to",
-              "name": "Article Card 1",
-              "clip": true,
+              "id": "MHYe3",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "7CR1p",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "zachlez",
-                    "link": "https://unsplash.com/@zachlez",
-                    "author": "Zach Lezniewicz"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "c1",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1713046631632-ed7e33793cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTI2Nzd8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "HxvDu",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "v7TsQ",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "7qNkw",
-                          "name": "card1badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Category Name",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "17hi3",
-                      "name": "card1title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Breaking: Major Policy Reform Announced by Government Officials",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "bUJSm",
-                      "name": "card1desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Government officials have unveiled a comprehensive reform package that addresses key concerns raised by citizens across the country.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "yJpLH",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "RcjVS",
-                          "name": "card1author",
-                          "fill": "$--muted-foreground",
-                          "content": "Sarah Mitchell",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "uJ7tX",
-                          "name": "card1dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "S4yFD",
-                          "name": "card1date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 28, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Category Name"
+                },
+                "fTcCi": {
+                  "content": "Breaking: Major Policy Reform Announced by Government Officials"
+                },
+                "ivEis": {
+                  "content": "Government officials have unveiled a comprehensive reform package that addresses key concerns raised by citizens across the country."
+                },
+                "PWwD3": {
+                  "content": "Sarah Mitchell"
+                },
+                "GBzgh": {
+                  "content": "Mar 28, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "maHYz",
-              "name": "Article Card 2",
-              "clip": true,
+              "id": "vCdtb",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "irxqT",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "jankolar",
-                    "link": "https://unsplash.com/@jankolar",
-                    "author": "Jan Antonin Kolar"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "c2",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1543959106-6a907a6b50cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTI2ODl8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "emcFo",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "rVqRq",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "P9UjP",
-                          "name": "card2badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Category Name",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "AjWM6",
-                      "name": "card2title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Industry Leaders Gather for Annual Summit on Innovation and Growth",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "rrrfo",
-                      "name": "card2desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Top executives and thought leaders discuss the future of their industry at this year's highly anticipated global conference.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "5sKpl",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "dY99E",
-                          "name": "card2author",
-                          "fill": "$--muted-foreground",
-                          "content": "James Cooper",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "BzyWF",
-                          "name": "card2dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "GgrKr",
-                          "name": "card2date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 27, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Category Name"
+                },
+                "fTcCi": {
+                  "content": "Industry Leaders Gather for Annual Summit on Innovation and Growth"
+                },
+                "ivEis": {
+                  "content": "Top executives and thought leaders discuss the future of their industry at this year's highly anticipated global conference."
+                },
+                "PWwD3": {
+                  "content": "James Cooper"
+                },
+                "GBzgh": {
+                  "content": "Mar 27, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "38L0G",
-              "name": "Article Card 3",
-              "clip": true,
+              "id": "Mu7St",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "kRT4G",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "aucklandmuseum",
-                    "link": "https://unsplash.com/@aucklandmuseum",
-                    "author": "Auckland War Memorial Museum Tāmaki Paenga Hira"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "c3",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1765206720351-1db6275637ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTI3MDN8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "eUupZ",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "9QzPF",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Uufiq",
-                          "name": "card3badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Category Name",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "zj4D7",
-                      "name": "card3title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "New Research Reveals Surprising Trends in Public Opinion Polls",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "yYT7f",
-                      "name": "card3desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "A comprehensive study shows shifting attitudes among key demographics, challenging conventional wisdom about voter priorities.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "fPnGU",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "NeuLm",
-                          "name": "card3author",
-                          "fill": "$--muted-foreground",
-                          "content": "Elena Rodriguez",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "ThIzn",
-                          "name": "card3dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "4sIAE",
-                          "name": "card3date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 25, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Category Name"
+                },
+                "fTcCi": {
+                  "content": "New Research Reveals Surprising Trends in Public Opinion Polls"
+                },
+                "ivEis": {
+                  "content": "A comprehensive study shows shifting attitudes among key demographics, challenging conventional wisdom about voter priorities."
+                },
+                "PWwD3": {
+                  "content": "Elena Rodriguez"
+                },
+                "GBzgh": {
+                  "content": "Mar 25, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "lmtWc",
-              "name": "Article Card 4",
-              "clip": true,
+              "id": "9BwDm",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "nIyo4",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "silverkblack",
-                    "link": "https://unsplash.com/@silverkblack",
-                    "author": "Vitaly Gariev"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "c4",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1758519289152-d64650d13c7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTI3MjB8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "CT8gR",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "NNCMF",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ZQFZd",
-                          "name": "card4badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Category Name",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "FtbAL",
-                      "name": "card4title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Exclusive Interview: Leading Expert Shares Vision for the Future",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "n7711",
-                      "name": "card4desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "In a candid conversation, one of the field's most respected voices discusses emerging challenges and opportunities ahead.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "SO1hG",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "yRkI0",
-                          "name": "card4author",
-                          "fill": "$--muted-foreground",
-                          "content": "David Chen",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "GDJbE",
-                          "name": "card4dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "PU1Qw",
-                          "name": "card4date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 24, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Category Name"
+                },
+                "fTcCi": {
+                  "content": "Exclusive Interview: Leading Expert Shares Vision for the Future"
+                },
+                "ivEis": {
+                  "content": "In a candid conversation, one of the field's most respected voices discusses emerging challenges and opportunities ahead."
+                },
+                "PWwD3": {
+                  "content": "David Chen"
+                },
+                "GBzgh": {
+                  "content": "Mar 24, 2026"
                 }
-              ]
+              }
             },
             {
               "type": "frame",
@@ -17593,7 +17108,90 @@
           "ref": "qOkYt",
           "name": "footer",
           "x": 0,
-          "y": 2014
+          "y": 2014,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
         }
       ]
     },
@@ -17612,7 +17210,18 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "header",
-          "x": 0
+          "x": 0,
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -17792,628 +17401,132 @@
           "padding": 20,
           "children": [
             {
-              "type": "frame",
-              "id": "VK8gW",
-              "name": "Article Card 1",
-              "clip": true,
+              "id": "UYYXJ",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "uUk78",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "elimendeinagella",
-                    "link": "https://unsplash.com/@elimendeinagella",
-                    "author": "Elimende Inagella"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "p1",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1605434896470-f710855e4d56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyNjl8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "ZTerb",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "MhGFJ",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "aGCuu",
-                          "name": "card1badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "BTdbA",
-                      "name": "card1title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "3VmBO",
-                      "name": "card1desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ZXXV1",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "m9Sxx",
-                          "name": "card1author",
-                          "fill": "$--muted-foreground",
-                          "content": "Sarah Mitchell",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "eDM9c",
-                          "name": "card1dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Ifl5L",
-                          "name": "card1date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 28, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Senate Passes Landmark Digital Privacy Bill After Months of Debate"
+                },
+                "ivEis": {
+                  "content": "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information."
+                },
+                "PWwD3": {
+                  "content": "Sarah Mitchell"
+                },
+                "GBzgh": {
+                  "content": "Mar 28, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "fUiyj",
-              "name": "Article Card 2",
-              "clip": true,
+              "id": "dYub2",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "kKU9j",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "ligio_pereira",
-                    "link": "https://unsplash.com/@ligio_pereira",
-                    "author": "Ligio Pereira"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "p2",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1761723818201-2b86e46e8cc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyNzB8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "Li4n0",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "qCB14",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "bcAzZ",
-                          "name": "card2badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "tCdhS",
-                      "name": "card2title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "EU Trade Negotiations Enter Final Phase With New Tariff Proposals",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "RZ1Yb",
-                      "name": "card2desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "European leaders are pushing for reduced tariffs on green technology imports as part of a broader trade modernization effort.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "QnVt8",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "qF0sA",
-                          "name": "card2author",
-                          "fill": "$--muted-foreground",
-                          "content": "James Cooper",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "yg9J8",
-                          "name": "card2dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "5X553",
-                          "name": "card2date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 27, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "EU Trade Negotiations Enter Final Phase With New Tariff Proposals"
+                },
+                "ivEis": {
+                  "content": "European leaders are pushing for reduced tariffs on green technology imports as part of a broader trade modernization effort."
+                },
+                "PWwD3": {
+                  "content": "James Cooper"
+                },
+                "GBzgh": {
+                  "content": "Mar 27, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "YKXdF",
-              "name": "Article Card 3",
-              "clip": true,
+              "id": "MpRO0",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "MJkym",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "bykurt",
-                    "link": "https://unsplash.com/@bykurt",
-                    "author": "ONUR KURT"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "p3",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1648418282469-2d37c8f0cb5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyNzB8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "PuOTA",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "nj2Pn",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MEua5",
-                          "name": "card3badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "WpQ5Z",
-                      "name": "card3title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Local Elections Show Surge in Youth Voter Turnout Across Major Cities",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "AMlPE",
-                      "name": "card3desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Record numbers of voters under 30 participated in municipal elections, signaling a significant shift in political engagement.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "0PlzV",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "nAhQq",
-                          "name": "card3author",
-                          "fill": "$--muted-foreground",
-                          "content": "Elena Rodriguez",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "aOSSJ",
-                          "name": "card3dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "o3Tgo",
-                          "name": "card3date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 25, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Local Elections Show Surge in Youth Voter Turnout Across Major Cities"
+                },
+                "ivEis": {
+                  "content": "Record numbers of voters under 30 participated in municipal elections, signaling a significant shift in political engagement."
+                },
+                "PWwD3": {
+                  "content": "Elena Rodriguez"
+                },
+                "GBzgh": {
+                  "content": "Mar 25, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "0XgCY",
-              "name": "Article Card 4",
-              "clip": true,
+              "id": "Sx09p",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "B4VX9",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "avechenri",
-                    "link": "https://unsplash.com/@avechenri",
-                    "author": "avechenri"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "p4",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1681652361278-2026aa02ad0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyNzF8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "iGbhl",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "8s53J",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "1oJTV",
-                          "name": "card4badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "iSfrf",
-                      "name": "card4title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Federal Reserve Announces New Economic Stimulus Package for 2026",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "i9xJC",
-                      "name": "card4desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The central bank unveils a comprehensive plan to boost economic growth while maintaining inflation targets in a challenging fiscal environment.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "R0OuZ",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "v6kAf",
-                          "name": "card4author",
-                          "fill": "$--muted-foreground",
-                          "content": "David Chen",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "2b8b8",
-                          "name": "card4dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "rMIrF",
-                          "name": "card4date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 24, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Federal Reserve Announces New Economic Stimulus Package for 2026"
+                },
+                "ivEis": {
+                  "content": "The central bank unveils a comprehensive plan to boost economic growth while maintaining inflation targets in a challenging fiscal environment."
+                },
+                "PWwD3": {
+                  "content": "David Chen"
+                },
+                "GBzgh": {
+                  "content": "Mar 24, 2026"
                 }
-              ]
+              }
             },
             {
               "type": "frame",
@@ -18476,7 +17589,90 @@
           "ref": "qOkYt",
           "name": "footer",
           "x": 0,
-          "y": 2035
+          "y": 2035,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
         }
       ]
     },
@@ -18495,7 +17691,18 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "header",
-          "x": 0
+          "x": 0,
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -18667,7 +17874,7 @@
         },
         {
           "type": "frame",
-          "id": "euBNE",
+          "id": "GtKz6",
           "name": "Articles List",
           "width": "fill_container",
           "layout": "vertical",
@@ -18675,632 +17882,144 @@
           "padding": 20,
           "children": [
             {
-              "type": "frame",
-              "id": "e007j",
-              "name": "Article Card 1",
-              "clip": true,
+              "id": "H4rj5",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "NrOCn",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "iamrohitchoudhari",
-                    "link": "https://unsplash.com/@iamrohitchoudhari",
-                    "author": "Rohit Choudhari"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "t1",
+              "x": 20,
+              "y": 20,
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1763198217110-07b5350aa179?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyOTB8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "ZBNBM",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "rDM7F",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "bgbeF",
-                          "name": "card1badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Technology",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "anFxm",
-                      "name": "card1title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "OpenAI Unveils Next-Generation AI Model With Unprecedented Reasoning Capabilities",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "ph84L",
-                      "name": "card1desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The new model demonstrates remarkable advances in logical reasoning and problem-solving, raising both excitement and ethical questions across the industry.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "fGKTO",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "lzQar",
-                          "name": "card1author",
-                          "fill": "$--muted-foreground",
-                          "content": "Alex Thompson",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "VEaVj",
-                          "name": "card1dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "gL66m",
-                          "name": "card1date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 29, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "OpenAI Unveils Next-Generation AI Model With Unprecedented Reasoning Capabilities"
+                },
+                "ivEis": {
+                  "content": "The new model demonstrates remarkable advances in logical reasoning and problem-solving, raising both excitement and ethical questions across the industry."
+                },
+                "PWwD3": {
+                  "content": "Alex Thompson"
+                },
+                "GBzgh": {
+                  "content": "Mar 29, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "WDkk4",
-              "name": "Article Card 2",
-              "clip": true,
+              "id": "3Vxkd",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "RN887",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "ort",
-                    "link": "https://unsplash.com/@ort",
-                    "author": "Bram Van Oost"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "t2",
+              "x": 20,
+              "y": 460,
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1713869782574-aa4cc08f4952?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyOTF8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "gwL9I",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "3CuNu",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "xN6sn",
-                          "name": "card2badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Technology",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "d5AZK",
-                      "name": "card2title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Apple Announces Revolutionary Mixed Reality Headset at Spring Keynote",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "FCXtz",
-                      "name": "card2desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The tech giant's latest wearable promises to blur the line between digital and physical worlds with breakthrough spatial computing features.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Z0Cfu",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "NO0NE",
-                          "name": "card2author",
-                          "fill": "$--muted-foreground",
-                          "content": "Maya Patel",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "RWDmb",
-                          "name": "card2dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "eyqmB",
-                          "name": "card2date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 27, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "Apple Announces Revolutionary Mixed Reality Headset at Spring Keynote"
+                },
+                "ivEis": {
+                  "content": "The tech giant's latest wearable promises to blur the line between digital and physical worlds with breakthrough spatial computing features."
+                },
+                "PWwD3": {
+                  "content": "Maya Patel"
+                },
+                "GBzgh": {
+                  "content": "Mar 27, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "oDytG",
-              "name": "Article Card 3",
-              "clip": true,
+              "id": "DBmKt",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "m2m6K",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "rohanphoto",
-                    "link": "https://unsplash.com/@rohanphoto",
-                    "author": "Rohan"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "t3",
+              "x": 20,
+              "y": 877,
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1655036387197-566206c80980?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyOTJ8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "8JlgO",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "T4cLE",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "iChSV",
-                          "name": "card3badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Technology",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "ShlUI",
-                      "name": "card3title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Global Cybersecurity Summit Addresses Rising Threat of AI-Powered Attacks",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "2D6xv",
-                      "name": "card3desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Security experts warn that artificial intelligence is being weaponized by cybercriminals at an alarming rate, demanding new defensive strategies.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "D08ID",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MtvE5",
-                          "name": "card3author",
-                          "fill": "$--muted-foreground",
-                          "content": "Ryan O'Connor",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "roB4V",
-                          "name": "card3dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "qlpIm",
-                          "name": "card3date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 26, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "Global Cybersecurity Summit Addresses Rising Threat of AI-Powered Attacks"
+                },
+                "ivEis": {
+                  "content": "Security experts warn that artificial intelligence is being weaponized by cybercriminals at an alarming rate, demanding new defensive strategies."
+                },
+                "PWwD3": {
+                  "content": "Ryan O'Connor"
+                },
+                "GBzgh": {
+                  "content": "Mar 26, 2026"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "uES6C",
-              "name": "Article Card 4",
-              "clip": true,
+              "id": "9pHiX",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "MLDec",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "sahil_ibn_sarafudeen",
-                    "link": "https://unsplash.com/@sahil_ibn_sarafudeen",
-                    "author": "Sahil ibn Sarafudeen"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "t4",
+              "x": 20,
+              "y": 1317,
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1657644684092-a93bb2cd3439?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTMyOTJ8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "NTDdQ",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "2rTFu",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "QxvZU",
-                          "name": "card4badgeText",
-                          "fill": "$--secondary-foreground",
-                          "content": "Technology",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "aeCxX",
-                      "name": "card4title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "SpaceX Successfully Tests Starship for Mars Colony Mission Preparation",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "K68fN",
-                      "name": "card4desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The latest test flight brings humanity one step closer to establishing a permanent presence on Mars, with new life support systems validated in orbit.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "FfMrC",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Unay5",
-                          "name": "card4author",
-                          "fill": "$--muted-foreground",
-                          "content": "Lisa Chang",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "text",
-                          "id": "iLiEc",
-                          "name": "card4dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "lYShe",
-                          "name": "card4date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 24, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "SpaceX Successfully Tests Starship for Mars Colony Mission Preparation"
+                },
+                "ivEis": {
+                  "content": "The latest test flight brings humanity one step closer to establishing a permanent presence on Mars, with new life support systems validated in orbit."
+                },
+                "PWwD3": {
+                  "content": "Lisa Chang"
+                },
+                "GBzgh": {
+                  "content": "Mar 24, 2026"
                 }
-              ]
+              }
             },
             {
               "type": "frame",
-              "id": "xkh4G",
+              "id": "MT7J2",
               "name": "Load More Wrapper",
               "width": "fill_container",
               "padding": [
@@ -19311,7 +18030,7 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "CTQ7S",
+                  "id": "oTLxa",
                   "name": "Load More Button",
                   "cornerRadius": 6,
                   "stroke": {
@@ -19329,8 +18048,8 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "8sgAz",
-                      "name": "loadMoreText",
+                      "id": "nTFl3",
+                      "name": "loadTxt",
                       "fill": "$--foreground",
                       "content": "Load More Articles",
                       "fontFamily": "Inter",
@@ -19339,8 +18058,8 @@
                     },
                     {
                       "type": "icon_font",
-                      "id": "ijevt",
-                      "name": "loadMoreIcon",
+                      "id": "a0zSF",
+                      "name": "loadIcon",
                       "width": 16,
                       "height": 16,
                       "iconFontName": "chevron-down",
@@ -19359,7 +18078,90 @@
           "ref": "qOkYt",
           "name": "footer",
           "x": 0,
-          "y": 2123
+          "y": 2123,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
         }
       ]
     },
@@ -19378,7 +18180,17 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "header",
-          "y": 0
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -19701,472 +18513,100 @@
               ]
             },
             {
-              "type": "frame",
-              "id": "kCxZ7",
-              "name": "Article Card 1",
-              "clip": true,
+              "id": "9X3ZY",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "bFv7k",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "elimendeinagella",
-                    "link": "https://unsplash.com/@elimendeinagella",
-                    "author": "Elimende Inagella"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "a1",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1605434896470-f710855e4d56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1MzJ8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "Iv6oE",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "g4GKn",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "001G1",
-                          "name": "card1badgeT",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "nxaws",
-                      "name": "card1title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "GqIzx",
-                      "name": "card1desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "5Wmor",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "oXD06",
-                          "name": "card1date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 28, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "r2rV7",
-                          "name": "card1dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "xk81P",
-                          "name": "card1read",
-                          "fill": "$--muted-foreground",
-                          "content": "8 min read",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Senate Passes Landmark Digital Privacy Bill After Months of Debate"
+                },
+                "ivEis": {
+                  "content": "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information."
+                },
+                "PWwD3": {
+                  "content": "Mar 28, 2026"
+                },
+                "GBzgh": {
+                  "content": "8 min read"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "lbvJF",
-              "name": "Article Card 2",
-              "clip": true,
+              "id": "Mpj4B",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ldXPL",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "afrocentricafrican",
-                    "link": "https://unsplash.com/@afrocentricafrican",
-                    "author": "Yaw Afari"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "a2",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1650680715004-a878bcd66aa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1NDF8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "rdepj",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "lLPgq",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "dGAVS",
-                          "name": "card2badgeT",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "mXfme",
-                      "name": "card2title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "White House Unveils Ambitious Climate Action Plan for Federal Agencies",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "pPpCW",
-                      "name": "card2desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The executive order mandates all federal buildings achieve net-zero emissions by 2035, setting a new standard for government sustainability.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "GydZv",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ENvK7",
-                          "name": "card2date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 25, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "zOEfd",
-                          "name": "card2dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "LWHmf",
-                          "name": "card2read",
-                          "fill": "$--muted-foreground",
-                          "content": "6 min read",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "White House Unveils Ambitious Climate Action Plan for Federal Agencies"
+                },
+                "ivEis": {
+                  "content": "The executive order mandates all federal buildings achieve net-zero emissions by 2035, setting a new standard for government sustainability."
+                },
+                "PWwD3": {
+                  "content": "Mar 25, 2026"
+                },
+                "GBzgh": {
+                  "content": "6 min read"
                 }
-              ]
+              }
             },
             {
-              "type": "frame",
-              "id": "05NBj",
-              "name": "Article Card 3",
-              "clip": true,
+              "id": "URcm4",
+              "type": "ref",
+              "ref": "6pQPs",
               "width": "fill_container",
-              "fill": "$--card",
-              "cornerRadius": 8,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$--border"
-              },
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#0000000d",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 1.75
-              },
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "bcUB5",
-                  "name": "Card Image",
-                  "metadata": {
-                    "type": "unsplash",
-                    "username": "creepyhands",
-                    "link": "https://unsplash.com/@creepyhands",
-                    "author": "Eric Brehm"
-                  },
-                  "clip": true,
-                  "width": "fill_container",
-                  "height": 180,
+              "name": "a3",
+              "descendants": {
+                "QtX7r": {
                   "fill": {
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1589927725301-dda06a332802?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM1NDd8&ixlib=rb-4.1.0&q=80&w=1080",
                     "mode": "fill"
-                  },
-                  "cornerRadius": [
-                    8,
-                    8,
-                    0,
-                    0
-                  ]
+                  }
                 },
-                {
-                  "type": "frame",
-                  "id": "Je1mR",
-                  "name": "Card Content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "T3AoZ",
-                      "name": "Badge",
-                      "fill": "$--secondary",
-                      "cornerRadius": 16,
-                      "padding": [
-                        2,
-                        8
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "KGBrL",
-                          "name": "card3badgeT",
-                          "fill": "$--secondary-foreground",
-                          "content": "Politics",
-                          "lineHeight": 1.33,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "ii0iQ",
-                      "name": "card3title",
-                      "fill": "$--foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Bipartisan Coalition Forms to Address National Housing Crisis",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Outfit",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "jrllz",
-                      "name": "card3desc",
-                      "fill": "$--muted-foreground",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Lawmakers from both parties propose a $500 billion housing initiative aimed at increasing affordable housing stock across all 50 states.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "on6vK",
-                      "name": "Meta",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "vAz9z",
-                          "name": "card3date",
-                          "fill": "$--muted-foreground",
-                          "content": "Mar 22, 2026",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "uP4Qq",
-                          "name": "card3dot",
-                          "fill": "$--muted-foreground",
-                          "content": "·",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Uu742",
-                          "name": "card3read",
-                          "fill": "$--muted-foreground",
-                          "content": "10 min read",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Bipartisan Coalition Forms to Address National Housing Crisis"
+                },
+                "ivEis": {
+                  "content": "Lawmakers from both parties propose a $500 billion housing initiative aimed at increasing affordable housing stock across all 50 states."
+                },
+                "PWwD3": {
+                  "content": "Mar 22, 2026"
+                },
+                "GBzgh": {
+                  "content": "10 min read"
                 }
-              ]
+              }
             },
             {
               "type": "frame",
@@ -20229,7 +18669,249 @@
           "ref": "qOkYt",
           "name": "footer",
           "x": 0,
-          "y": 1948
+          "y": 1948,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "6pQPs",
+      "x": 1000,
+      "y": 3800,
+      "name": "Mobile Article Card",
+      "reusable": true,
+      "clip": true,
+      "width": 350,
+      "fill": "$--card",
+      "cornerRadius": 8,
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$--border"
+      },
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#0000000d",
+        "offset": {
+          "x": 0,
+          "y": 1
+        },
+        "blur": 1.75
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "QtX7r",
+          "name": "Card Image",
+          "metadata": {
+            "type": "unsplash",
+            "username": "charlesdeluvio",
+            "link": "https://unsplash.com/@charlesdeluvio",
+            "author": "charlesdeluvio"
+          },
+          "clip": true,
+          "width": "fill_container",
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1585241936939-be4099591252?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzQ5NTM5MjR8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "cornerRadius": [
+            8,
+            8,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YpZxt",
+          "name": "Card Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "lIFrf",
+              "name": "Badge",
+              "fill": "$--secondary",
+              "cornerRadius": 16,
+              "padding": [
+                2,
+                8
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YYt0D",
+                  "name": "badgeText",
+                  "fill": "$--secondary-foreground",
+                  "content": "Category",
+                  "lineHeight": 1.33,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "fTcCi",
+              "name": "title",
+              "fill": "$--foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Article Title Goes Here",
+              "lineHeight": 1.3,
+              "fontFamily": "Outfit",
+              "fontSize": 18,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "ivEis",
+              "name": "desc",
+              "fill": "$--muted-foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Article description text goes here with a brief summary of the content.",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "O96HL",
+              "name": "Meta",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PWwD3",
+                  "name": "metaLeft",
+                  "fill": "$--muted-foreground",
+                  "content": "Author Name",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Eg1qR",
+                  "name": "metaDot",
+                  "fill": "$--muted-foreground",
+                  "content": "·",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "GBzgh",
+                  "name": "metaRight",
+                  "fill": "$--muted-foreground",
+                  "content": "Mar 28, 2026",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
