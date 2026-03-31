@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.019943701668048,
+                  "y": 24.01994370166805,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -12434,48 +12434,16 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "z1qLt",
-          "name": "Mobile Header",
-          "width": "fill_container",
-          "height": 56,
-          "fill": "$--background",
-          "stroke": {
-            "align": "inside",
-            "thickness": {
-              "bottom": 1
-            },
-            "fill": "$--border"
-          },
-          "padding": [
-            0,
-            16
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "text",
-              "id": "eCQ6K",
-              "name": "logo",
-              "fill": "$--foreground",
-              "content": "The Daily Chronicle",
-              "fontFamily": "Outfit",
-              "fontSize": 18,
-              "fontWeight": "900",
-              "letterSpacing": -0.5
-            },
-            {
-              "type": "icon_font",
-              "id": "f21TJ",
-              "name": "menuIcon",
-              "width": 24,
-              "height": 24,
-              "iconFontName": "menu",
-              "iconFontFamily": "lucide",
-              "fill": "$--foreground"
+          "id": "VtVDr",
+          "type": "ref",
+          "ref": "tNeqM",
+          "x": 0,
+          "y": 0,
+          "descendants": {
+            "og111": {
+              "enabled": true
             }
-          ]
+          }
         },
         {
           "type": "frame",
@@ -14652,15 +14620,6 @@
               "width": "fill_container",
               "x": 20,
               "y": 550
-            },
-            "Uzvnf": {
-              "width": "fill_container",
-              "x": 20,
-              "y": 574,
-              "height": "fit_content"
-            },
-            "rkpQb": {
-              "y": 0
             }
           }
         }
@@ -14677,47 +14636,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "HbR91",
-          "name": "Mobile Header",
-          "width": "fill_container",
-          "height": 56,
-          "fill": "$--background",
-          "stroke": {
-            "align": "inside",
-            "thickness": {
-              "bottom": 1
-            },
-            "fill": "$--border"
-          },
-          "padding": [
-            0,
-            16
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "text",
-              "id": "bjw8M",
-              "name": "Logo",
-              "fill": "$--foreground",
-              "content": "The Daily Chronicle",
-              "fontFamily": "Outfit",
-              "fontSize": 18,
-              "fontWeight": "900"
-            },
-            {
-              "type": "icon_font",
-              "id": "S6B5E",
-              "name": "menuIcon",
-              "width": 24,
-              "height": 24,
-              "iconFontName": "menu",
-              "iconFontFamily": "lucide",
-              "fill": "$--foreground"
-            }
-          ]
+          "id": "Itjin",
+          "type": "ref",
+          "ref": "tNeqM",
+          "x": 0,
+          "y": 0
         },
         {
           "type": "frame",
@@ -15420,15 +15343,6 @@
               "width": "fill_container",
               "x": 20,
               "y": 550
-            },
-            "Uzvnf": {
-              "width": "fill_container",
-              "x": 20,
-              "y": 574,
-              "height": "fit_content"
-            },
-            "rkpQb": {
-              "y": 0
             }
           }
         }
@@ -15445,48 +15359,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "aMC33",
-          "name": "Mobile Header",
-          "width": "fill_container",
-          "height": 56,
-          "fill": "$--background",
-          "stroke": {
-            "align": "inside",
-            "thickness": {
-              "bottom": 1
-            },
-            "fill": "$--border"
-          },
-          "padding": [
-            0,
-            16
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "text",
-              "id": "TKXi4",
-              "name": "logo",
-              "fill": "$--foreground",
-              "content": "The Daily Chronicle",
-              "fontFamily": "Outfit",
-              "fontSize": 18,
-              "fontWeight": "900",
-              "letterSpacing": -0.5
-            },
-            {
-              "type": "icon_font",
-              "id": "eFmND",
-              "name": "menuIcon",
-              "width": 24,
-              "height": 24,
-              "iconFontName": "menu",
-              "iconFontFamily": "lucide",
-              "fill": "$--foreground"
-            }
-          ]
+          "id": "RvWXV",
+          "type": "ref",
+          "ref": "tNeqM",
+          "x": 0,
+          "y": 0
         },
         {
           "type": "frame",
@@ -15570,10 +15447,13 @@
                         },
                         "i0Z3E": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 26
                         },
                         "SDRKn": {
-                          "content": "you@example.com"
+                          "content": "you@example.com",
+                          "x": 12,
+                          "y": 10
                         }
                       }
                     },
@@ -15675,7 +15555,8 @@
                         },
                         "8tnXG": {
                           "x": 128,
-                          "content": "Sign In"
+                          "content": "Sign In",
+                          "y": 8
                         }
                       }
                     },
@@ -15737,7 +15618,8 @@
                         },
                         "poRwU": {
                           "x": 78.5,
-                          "content": "Continue with Google"
+                          "content": "Continue with Google",
+                          "y": 8
                         }
                       }
                     }
@@ -15860,15 +15742,6 @@
               "width": "fill_container",
               "x": 20,
               "y": 550
-            },
-            "Uzvnf": {
-              "width": "fill_container",
-              "x": 20,
-              "y": 574,
-              "height": "fit_content"
-            },
-            "rkpQb": {
-              "y": 0
             }
           }
         }
@@ -15885,48 +15758,11 @@
       "layout": "vertical",
       "children": [
         {
-          "type": "frame",
-          "id": "BWQ9X",
-          "name": "Mobile Header",
-          "width": "fill_container",
-          "height": 56,
-          "fill": "$--background",
-          "stroke": {
-            "align": "inside",
-            "thickness": {
-              "bottom": 1
-            },
-            "fill": "$--border"
-          },
-          "padding": [
-            0,
-            16
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "text",
-              "id": "ZffQv",
-              "name": "logo",
-              "fill": "$--foreground",
-              "content": "The Daily Chronicle",
-              "fontFamily": "Outfit",
-              "fontSize": 18,
-              "fontWeight": "900",
-              "letterSpacing": -0.5
-            },
-            {
-              "type": "icon_font",
-              "id": "UU4wZ",
-              "name": "menuIcon",
-              "width": 24,
-              "height": 24,
-              "iconFontName": "menu",
-              "iconFontFamily": "lucide",
-              "fill": "$--foreground"
-            }
-          ]
+          "id": "CzAE3",
+          "type": "ref",
+          "ref": "tNeqM",
+          "x": 0,
+          "y": 0
         },
         {
           "type": "frame",
@@ -16484,15 +16320,6 @@
               "width": "fill_container",
               "x": 20,
               "y": 550
-            },
-            "Uzvnf": {
-              "width": "fill_container",
-              "x": 20,
-              "y": 574,
-              "height": "fit_content"
-            },
-            "rkpQb": {
-              "y": 0
             }
           }
         }
@@ -16778,6 +16605,52 @@
               "fontWeight": "normal"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "tNeqM",
+      "x": 13160,
+      "y": 0,
+      "name": "Mobile Header",
+      "reusable": true,
+      "width": "fill_container(390)",
+      "height": 56,
+      "fill": "$--background",
+      "stroke": {
+        "align": "inside",
+        "thickness": {
+          "bottom": 1
+        },
+        "fill": "$--border"
+      },
+      "padding": [
+        0,
+        16
+      ],
+      "justifyContent": "space_between",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "5OpRe",
+          "name": "Logo",
+          "fill": "$--foreground",
+          "content": "The Daily Chronicle",
+          "fontFamily": "Outfit",
+          "fontSize": 18,
+          "fontWeight": "900"
+        },
+        {
+          "type": "icon_font",
+          "id": "og111",
+          "name": "menuIcon",
+          "width": 24,
+          "height": 24,
+          "iconFontName": "menu",
+          "iconFontFamily": "lucide",
+          "fill": "$--foreground"
         }
       ]
     }
