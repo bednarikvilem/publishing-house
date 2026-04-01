@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.01994370166805,
+                  "y": 24.019943701668048,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.01994370166805
+              "y": 24.019943701668048
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -5144,7 +5144,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -7420,7 +7421,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -8871,7 +8873,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -9353,7 +9356,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -9964,7 +9968,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -17706,7 +17711,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -17737,6 +17743,9 @@
                   "height": "fit_content",
                   "x": 12,
                   "y": 12
+                },
+                "6wD7F/wVlpW": {
+                  "x": 6.5
                 },
                 "1pghT": {
                   "x": 42,
@@ -17843,7 +17852,8 @@
                 },
                 "6FzOY": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "7Fug7": {
                   "width": "fill_container",
@@ -17882,7 +17892,8 @@
                 },
                 "mAnTM": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "sXVE5": {
                   "width": "fill_container",
@@ -18101,19 +18112,25 @@
                       "name": "nameInput",
                       "x": 48,
                       "y": 89,
+                      "height": "fit_content",
                       "descendants": {
                         "QRy7x": {
-                          "width": "fill_container"
+                          "width": "fill_container",
+                          "height": "fit_content"
                         },
                         "BX0XX": {
                           "width": "fill_container",
                           "content": "Article Name"
                         },
                         "i0Z3E": {
-                          "width": "fill_container"
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "y": 26
                         },
                         "SDRKn": {
-                          "content": "Enter the article headline..."
+                          "content": "Enter the article headline...",
+                          "x": 12,
+                          "y": 10
                         }
                       }
                     },
@@ -18125,9 +18142,11 @@
                       "name": "previewInput",
                       "x": 48,
                       "y": 183,
+                      "height": "fit_content",
                       "descendants": {
                         "uAcGD": {
-                          "width": "fill_container"
+                          "width": "fill_container",
+                          "height": "fit_content"
                         },
                         "a78kl": {
                           "width": "fill_container",
@@ -18135,10 +18154,13 @@
                         },
                         "pzw5I": {
                           "width": "fill_container",
-                          "height": 100
+                          "height": 100,
+                          "y": 26
                         },
                         "S4qWY": {
-                          "content": "Write a short preview that will appear in article listings..."
+                          "content": "Write a short preview that will appear in article listings...",
+                          "x": 12,
+                          "y": 8
                         }
                       }
                     },
@@ -18622,12 +18644,20 @@
                               "name": "deleteBtn",
                               "x": 0,
                               "y": 0,
+                              "width": "fit_content",
+                              "height": "fit_content",
                               "descendants": {
+                                "PqjlB": {
+                                  "x": 16,
+                                  "y": 8
+                                },
                                 "RDx8O": {
                                   "iconFontName": "trash-2"
                                 },
                                 "NDadS": {
-                                  "content": "Delete"
+                                  "content": "Delete",
+                                  "x": 42,
+                                  "y": 8
                                 }
                               }
                             }
@@ -18647,12 +18677,20 @@
                               "name": "draftBtn",
                               "x": 0,
                               "y": 0,
+                              "width": "fit_content",
+                              "height": "fit_content",
                               "descendants": {
+                                "l8v2I": {
+                                  "x": 16,
+                                  "y": 8
+                                },
                                 "HDFDp": {
                                   "iconFontName": "save"
                                 },
                                 "poRwU": {
-                                  "content": "Save as Draft"
+                                  "content": "Save as Draft",
+                                  "x": 42,
+                                  "y": 8
                                 }
                               }
                             },
@@ -18663,12 +18701,20 @@
                               "name": "submitBtn",
                               "x": 159,
                               "y": 0,
+                              "width": "fit_content",
+                              "height": "fit_content",
                               "descendants": {
+                                "8jVfJ": {
+                                  "x": 16,
+                                  "y": 8
+                                },
                                 "WNalu": {
                                   "iconFontName": "send"
                                 },
                                 "8tnXG": {
-                                  "content": "Submit Article"
+                                  "content": "Submit Article",
+                                  "x": 42,
+                                  "y": 8
                                 }
                               }
                             }
@@ -20146,7 +20192,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -20177,6 +20224,9 @@
                   "height": "fit_content",
                   "x": 12,
                   "y": 12
+                },
+                "6wD7F/wVlpW": {
+                  "x": 6.5
                 },
                 "1pghT": {
                   "x": 42,
@@ -20283,7 +20333,8 @@
                 },
                 "6FzOY": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "7Fug7": {
                   "width": "fill_container",
@@ -20322,7 +20373,8 @@
                 },
                 "mAnTM": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "sXVE5": {
                   "width": "fill_container",
@@ -21343,7 +21395,8 @@
             },
             "9ToY3": {
               "width": "fit_content",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 293
             }
           }
         },
@@ -21374,6 +21427,9 @@
                   "height": "fit_content",
                   "x": 12,
                   "y": 12
+                },
+                "6wD7F/wVlpW": {
+                  "x": 6.5
                 },
                 "1pghT": {
                   "x": 42,
@@ -21480,7 +21536,8 @@
                 },
                 "6FzOY": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "7Fug7": {
                   "width": "fill_container",
@@ -21519,7 +21576,8 @@
                 },
                 "mAnTM": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 170
                 },
                 "sXVE5": {
                   "width": "fill_container",
@@ -21822,7 +21880,9 @@
                               "y": 0,
                               "descendants": {
                                 "wVlpW": {
-                                  "content": "JD"
+                                  "content": "JD",
+                                  "x": 10.5,
+                                  "y": 10
                                 }
                               }
                             },
@@ -22133,19 +22193,25 @@
               "name": "nameInput",
               "x": 16,
               "y": 64,
+              "height": "fit_content",
               "descendants": {
                 "QRy7x": {
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "height": "fit_content"
                 },
                 "BX0XX": {
                   "width": "fill_container",
                   "content": "Article Name"
                 },
                 "i0Z3E": {
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "y": 26
                 },
                 "SDRKn": {
-                  "content": "Enter the article headline..."
+                  "content": "Enter the article headline...",
+                  "x": 12,
+                  "y": 10
                 }
               }
             },
@@ -22157,9 +22223,11 @@
               "name": "previewInput",
               "x": 16,
               "y": 150,
+              "height": "fit_content",
               "descendants": {
                 "uAcGD": {
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "height": "fit_content"
                 },
                 "a78kl": {
                   "width": "fill_container",
@@ -22167,10 +22235,13 @@
                 },
                 "pzw5I": {
                   "width": "fill_container",
-                  "height": 100
+                  "height": 100,
+                  "y": 26
                 },
                 "S4qWY": {
-                  "content": "Write a short preview that will appear in article listings..."
+                  "content": "Write a short preview that will appear in article listings...",
+                  "x": 12,
+                  "y": 8
                 }
               }
             },
@@ -22555,16 +22626,19 @@
                       "name": "submitBtn",
                       "x": 0,
                       "y": 0,
+                      "height": "fit_content",
                       "descendants": {
                         "8jVfJ": {
-                          "x": 26.5
+                          "x": 26.5,
+                          "y": 8
                         },
                         "WNalu": {
                           "iconFontName": "send"
                         },
                         "8tnXG": {
                           "x": 52.5,
-                          "content": "Submit Article"
+                          "content": "Submit Article",
+                          "y": 8
                         }
                       }
                     },
@@ -22576,16 +22650,19 @@
                       "name": "draftBtn",
                       "x": 184,
                       "y": 0,
+                      "height": "fit_content",
                       "descendants": {
                         "l8v2I": {
-                          "x": 39
+                          "x": 39,
+                          "y": 8
                         },
                         "HDFDp": {
                           "iconFontName": "save"
                         },
                         "poRwU": {
                           "x": 65,
-                          "content": "Save Draft"
+                          "content": "Save Draft",
+                          "y": 8
                         }
                       }
                     }
@@ -22599,16 +22676,19 @@
                   "name": "deleteBtn",
                   "x": 0,
                   "y": 46,
+                  "height": "fit_content",
                   "descendants": {
                     "PqjlB": {
-                      "x": 144.5
+                      "x": 144.5,
+                      "y": 8
                     },
                     "RDx8O": {
                       "iconFontName": "trash-2"
                     },
                     "NDadS": {
                       "x": 170.5,
-                      "content": "Delete"
+                      "content": "Delete",
+                      "y": 8
                     }
                   }
                 }
@@ -22836,6 +22916,1640 @@
               "height": "fit_content",
               "x": 20,
               "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xJkRY",
+      "x": 7900,
+      "y": 3300,
+      "name": "Mobile Search Results Page",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "srQWW",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "header",
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "emmgK",
+          "name": "Search Section",
+          "width": "fill_container",
+          "fill": "$--background",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            16,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "CoNnu",
+              "name": "searchLabel",
+              "fill": "$--foreground",
+              "content": "Search Results",
+              "fontFamily": "Outfit",
+              "fontSize": 22,
+              "fontWeight": "800",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "frame",
+              "id": "O4lo7",
+              "name": "Search Bar",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 8,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "37sFs",
+                  "name": "searchIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "tnC2X",
+                  "name": "searchText",
+                  "fill": "$--foreground",
+                  "content": "climate change policy",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VbTR8",
+          "name": "Filter Bar",
+          "width": "fill_container",
+          "padding": [
+            12,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "AF3um",
+              "name": "countText",
+              "fill": "$--foreground",
+              "content": "12 Results",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "line",
+          "id": "y1WOT",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "align": "center",
+            "thickness": 1,
+            "fill": "$--border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "9XcKw",
+          "name": "Search Results List",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "id": "XTm4z",
+              "type": "ref",
+              "ref": "6pQPs",
+              "width": "fill_container",
+              "height": "fit_content",
+              "name": "result1",
+              "x": 20,
+              "y": 20,
+              "descendants": {
+                "QtX7r": {
+                  "width": "fill_container"
+                },
+                "YpZxt": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "lIFrf": {
+                  "width": "fit_content",
+                  "height": "fit_content"
+                },
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "New Climate Change Policy Sparks Debate Among World Leaders",
+                  "width": "fill_container"
+                },
+                "ivEis": {
+                  "content": "Global leaders are divided over the newly proposed climate initiative, with some praising its ambition while others question its feasibility.",
+                  "width": "fill_container"
+                },
+                "O96HL": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "PWwD3": {
+                  "content": "Sarah Mitchell"
+                },
+                "GBzgh": {
+                  "content": "Mar 30, 2026"
+                }
+              }
+            },
+            {
+              "id": "ULzEV",
+              "type": "ref",
+              "ref": "6pQPs",
+              "width": "fill_container",
+              "height": "fit_content",
+              "name": "result2",
+              "x": 20,
+              "y": 416,
+              "descendants": {
+                "QtX7r": {
+                  "width": "fill_container"
+                },
+                "YpZxt": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "lIFrf": {
+                  "width": "fit_content",
+                  "height": "fit_content"
+                },
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "AI Models Now Predict Climate Patterns With Unprecedented Accuracy",
+                  "width": "fill_container"
+                },
+                "ivEis": {
+                  "content": "Researchers have developed machine learning systems that can forecast extreme weather events weeks in advance, transforming disaster preparedness.",
+                  "width": "fill_container"
+                },
+                "O96HL": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "PWwD3": {
+                  "content": "James Cooper"
+                },
+                "GBzgh": {
+                  "content": "Mar 28, 2026"
+                }
+              }
+            },
+            {
+              "id": "PgYBK",
+              "type": "ref",
+              "ref": "6pQPs",
+              "width": "fill_container",
+              "height": "fit_content",
+              "name": "result3",
+              "x": 20,
+              "y": 856,
+              "descendants": {
+                "QtX7r": {
+                  "width": "fill_container"
+                },
+                "YpZxt": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "lIFrf": {
+                  "width": "fit_content",
+                  "height": "fit_content"
+                },
+                "YYt0D": {
+                  "content": "Politics"
+                },
+                "fTcCi": {
+                  "content": "Senate Committee Advances Landmark Environmental Protection Bill",
+                  "width": "fill_container"
+                },
+                "ivEis": {
+                  "content": "The bipartisan legislation aims to reduce carbon emissions by 50% over the next decade through a combination of incentives and regulations.",
+                  "width": "fill_container"
+                },
+                "O96HL": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "PWwD3": {
+                  "content": "Elena Rodriguez"
+                },
+                "GBzgh": {
+                  "content": "Mar 26, 2026"
+                }
+              }
+            },
+            {
+              "id": "alzov",
+              "type": "ref",
+              "ref": "6pQPs",
+              "width": "fill_container",
+              "height": "fit_content",
+              "name": "result4",
+              "x": 20,
+              "y": 1296,
+              "descendants": {
+                "QtX7r": {
+                  "width": "fill_container"
+                },
+                "YpZxt": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "lIFrf": {
+                  "width": "fit_content",
+                  "height": "fit_content"
+                },
+                "YYt0D": {
+                  "content": "Technology"
+                },
+                "fTcCi": {
+                  "content": "Green Tech Startups Attract Record Investment in Climate Solutions",
+                  "width": "fill_container"
+                },
+                "ivEis": {
+                  "content": "Venture capital funding for climate technology companies has surged to an all-time high as investors bet on sustainable innovation.",
+                  "width": "fill_container"
+                },
+                "O96HL": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "PWwD3": {
+                  "content": "David Chen"
+                },
+                "GBzgh": {
+                  "content": "Mar 24, 2026"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "kDcVN",
+              "name": "Load More Wrapper",
+              "width": "fill_container",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WavPd",
+                  "name": "Load More Button",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HJgJJ",
+                      "name": "loadMoreText",
+                      "fill": "$--foreground",
+                      "content": "Load More Results",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tW9Hq",
+          "type": "ref",
+          "ref": "qOkYt",
+          "height": "fit_content",
+          "name": "footer",
+          "x": 0,
+          "y": 1974,
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "hLKNz": {
+              "width": "fill_container"
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "7DHeb": {
+              "width": "fill_container"
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "34DBy",
+      "x": 15452,
+      "y": 0,
+      "name": "Password Reset Request Page",
+      "width": 1440,
+      "height": 1024,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "rIjKH",
+          "type": "ref",
+          "ref": "oEaiX",
+          "name": "header1",
+          "y": 0,
+          "descendants": {
+            "PQeVK": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "Y96WM": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 48,
+              "y": 18
+            },
+            "n4vGz": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 216,
+              "y": 5.5
+            },
+            "rm7Ld": {
+              "x": 64
+            },
+            "6FKVs": {
+              "x": 138
+            },
+            "mNIs5": {
+              "x": 241
+            },
+            "Iq526": {
+              "x": 309
+            },
+            "0jxkj": {
+              "x": 382
+            },
+            "I9dEb": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 1011,
+              "y": 14
+            },
+            "77fnW": {
+              "height": "fit_content",
+              "y": 1.5
+            },
+            "OE9fC": {
+              "x": 12,
+              "y": 8.5
+            },
+            "PY4GT": {
+              "x": 36,
+              "y": 8
+            },
+            "kP4l9": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "9ToY3": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 293
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "uttVi",
+          "name": "Main Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            48,
+            0
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "6LWoM",
+              "name": "Reset Card",
+              "width": 420,
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000a",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "layout": "vertical",
+              "gap": 32,
+              "padding": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AkH8Z",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tX13y",
+                      "name": "logo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 26,
+                      "fontWeight": "900",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "BHBoi",
+                      "name": "subtitle",
+                      "fill": "$--muted-foreground",
+                      "content": "Reset your password",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SjEms",
+                      "name": "description",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9POnW",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "rUK8B",
+                      "type": "ref",
+                      "ref": "1415a",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "emailInput",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "QRy7x": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "BX0XX": {
+                          "width": "fill_container",
+                          "content": "Email Address"
+                        },
+                        "i0Z3E": {
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "y": 26
+                        },
+                        "SDRKn": {
+                          "content": "you@example.com",
+                          "x": 12,
+                          "y": 10
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pgpCV",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "JM1fa",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "resetBtn",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 103,
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "x": 116,
+                          "content": "Send Reset Link",
+                          "y": 8
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nZrON",
+                  "name": "Back Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JbEtO",
+                      "name": "backText",
+                      "fill": "$--muted-foreground",
+                      "content": "Remember your password?",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Nq3ls",
+                      "name": "backLink",
+                      "fill": "$--foreground",
+                      "content": "Sign in",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "wI0OQ",
+          "type": "ref",
+          "ref": "l42ZL",
+          "height": "fit_content",
+          "name": "footer1",
+          "y": 685,
+          "descendants": {
+            "E4ryO": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "2XM1c": {
+              "height": "fit_content"
+            },
+            "FZbbe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "4cyWp": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "iDTTe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "YFpAI": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "CQQos": {
+              "width": "fill_container"
+            },
+            "M87Z5": {
+              "height": "fit_content",
+              "width": "fill_container"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Dgd9W",
+      "x": 17000,
+      "y": 0,
+      "name": "Set New Password Page",
+      "width": 1440,
+      "height": 1024,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "RPs6N",
+          "type": "ref",
+          "ref": "oEaiX",
+          "name": "header2",
+          "y": 0,
+          "descendants": {
+            "PQeVK": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "n4vGz": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "0jxkj": {
+              "x": 382
+            },
+            "I9dEb": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "77fnW": {
+              "height": "fit_content"
+            },
+            "kP4l9": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "9ToY3": {
+              "height": "fit_content",
+              "width": "fit_content"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "sqwYo",
+          "name": "Main Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            48,
+            0
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "McFiC",
+              "name": "New Password Card",
+              "width": 420,
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000a",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "layout": "vertical",
+              "gap": 32,
+              "padding": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "n0WCB",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oVY9n",
+                      "name": "logo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 26,
+                      "fontWeight": "900",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "13LUw",
+                      "name": "subtitle",
+                      "fill": "$--muted-foreground",
+                      "content": "Set new password",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6A5uZ",
+                      "name": "description",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your new password must be at least 8 characters long.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qUDHx",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "v38xs",
+                      "name": "New Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "N4FfV",
+                          "name": "passLabel",
+                          "fill": "$--foreground",
+                          "content": "New Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "y5RAH",
+                          "name": "Password Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GcRy0",
+                              "name": "passPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Enter new password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PUagv",
+                      "name": "Confirm Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iUZiE",
+                          "name": "confirmLabel",
+                          "fill": "$--foreground",
+                          "content": "Confirm Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "7s3Ps",
+                          "name": "Confirm Input",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "84BmE",
+                              "name": "confirmPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Confirm new password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MMPf7",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "8lgqQ",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "submitBtn",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 103.5,
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "x": 116.5,
+                          "content": "Reset Password"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "M2b4N",
+                  "name": "Back Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "k953G",
+                      "name": "backText2",
+                      "fill": "$--muted-foreground",
+                      "content": "Remember your password?",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Dd2Vk",
+                      "name": "backLink2",
+                      "fill": "$--foreground",
+                      "content": "Sign in",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SMKMb",
+          "type": "ref",
+          "ref": "l42ZL",
+          "height": "fit_content",
+          "name": "footer2",
+          "y": 685,
+          "descendants": {
+            "E4ryO": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "2XM1c": {
+              "height": "fit_content"
+            },
+            "FZbbe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "4cyWp": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "iDTTe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "YFpAI": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "CQQos": {
+              "width": "fill_container"
+            },
+            "M87Z5": {
+              "height": "fit_content",
+              "width": "fill_container"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "CAhdc",
+      "x": 8390,
+      "y": 3300,
+      "name": "Mobile Password Reset Request",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "WEG8s",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "h1",
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "MyDa9",
+          "name": "Main Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            48,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "TKWZx",
+              "name": "Reset Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000a",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "layout": "vertical",
+              "gap": 28,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wwULT",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LZDDj",
+                      "name": "logo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "900",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "pFjE4",
+                      "name": "subtitle",
+                      "fill": "$--muted-foreground",
+                      "content": "Reset your password",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nksqO",
+                      "name": "description",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ASKak",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "gZPOb",
+                      "type": "ref",
+                      "ref": "1415a",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "email1",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "QRy7x": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "BX0XX": {
+                          "width": "fill_container",
+                          "content": "Email Address"
+                        },
+                        "i0Z3E": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "SDRKn": {
+                          "content": "you@example.com"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S3TXJ",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "VsL6V",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "btn1",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 84,
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "x": 97,
+                          "content": "Send Reset Link"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BttS2",
+                  "name": "Back Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pbFBl",
+                      "name": "bt1",
+                      "fill": "$--muted-foreground",
+                      "content": "Remember your password?",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YRMg5",
+                      "name": "bl1",
+                      "fill": "$--foreground",
+                      "content": "Sign in",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Y3AdL",
+          "type": "ref",
+          "ref": "qOkYt",
+          "height": "fit_content",
+          "name": "f1",
+          "x": 0,
+          "y": 527,
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "hLKNz": {
+              "width": "fill_container"
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "7DHeb": {
+              "width": "fill_container"
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UfttX",
+      "x": 8880,
+      "y": 3300,
+      "name": "Mobile Set New Password",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "3erPU",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "h2",
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "Nkv51",
+          "name": "Main Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            48,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "vjH6q",
+              "name": "New Password Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000000a",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 12
+              },
+              "layout": "vertical",
+              "gap": 28,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TKPQm",
+                  "name": "Brand Section",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WJ31R",
+                      "name": "logo",
+                      "fill": "$--foreground",
+                      "content": "The Daily Chronicle",
+                      "fontFamily": "Outfit",
+                      "fontSize": 22,
+                      "fontWeight": "900",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "06oBT",
+                      "name": "subtitle",
+                      "fill": "$--muted-foreground",
+                      "content": "Set new password",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YQVHQ",
+                      "name": "description",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your new password must be at least 8 characters long.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "APOde",
+                  "name": "Form Fields",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "8m2PO",
+                      "name": "New Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "m0nyB",
+                          "name": "passLabel",
+                          "fill": "$--foreground",
+                          "content": "New Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "FtS9w",
+                          "name": "passInput",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bBj4o",
+                              "name": "passPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Enter new password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mSsKL",
+                      "name": "Confirm Password Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kqIsq",
+                          "name": "confirmLabel",
+                          "fill": "$--foreground",
+                          "content": "Confirm Password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Kx4ai",
+                          "name": "confirmInput",
+                          "width": "fill_container",
+                          "fill": "$--background",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--input"
+                          },
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "SMJqW",
+                              "name": "confirmPlaceholder",
+                              "fill": "$--muted-foreground",
+                              "content": "Confirm new password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "6mBSJ",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "4HBjA",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "height": "fit_content",
+                      "name": "btn2",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 84.5,
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "x": 97.5,
+                          "content": "Reset Password"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ukke0",
+                  "name": "Back Prompt",
+                  "width": "fill_container",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Zg3wc",
+                      "name": "bt2",
+                      "fill": "$--muted-foreground",
+                      "content": "Remember your password?",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XHgOU",
+                      "name": "bl2",
+                      "fill": "$--foreground",
+                      "content": "Sign in",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "A1SWN",
+          "type": "ref",
+          "ref": "qOkYt",
+          "height": "fit_content",
+          "name": "f2",
+          "x": 0,
+          "y": 589,
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "hLKNz": {
+              "width": "fill_container"
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "7DHeb": {
+              "width": "fill_container"
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content"
             }
           }
         }

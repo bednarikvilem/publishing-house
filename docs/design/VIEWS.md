@@ -7,7 +7,7 @@
 - [x]  Search Results - Results listing title, perex, author, date, first image
 - [x]  Login Page - Email/password login form
 - [x]  Registration  - Sign-up form; triggers email confirmation
-- [ ]  Password Reset - Request reset + set new password (email flow)
+- [x]  Password Reset - Request reset + set new password (email flow)
 - [ ]  404 / Error - Not found, unauthorized access, etc.
 
 **Registered User**
