@@ -16,9 +16,9 @@
 
 **Author Panel**
 
-- [ ]  Author Dashboard - List of own articles with status badges (Draft, Submitted, In Review, etc.)
+- [x]  Author Dashboard - List of own articles with status badges (Draft, Submitted, In Review, etc.)
 - [x]  Article Editor - Create/edit draft — title, perex, content, images, category, keywords
-- [ ]  Article Status Detail - View feedback/rejection reason from editor/manager
+- [x]  Article Status Detail - View feedback/rejection reason from editor/manager
 
 **Editor Panel**
 

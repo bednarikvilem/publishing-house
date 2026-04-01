@@ -22829,12 +22829,675 @@
           }
         },
         {
+          "type": "frame",
+          "id": "r37bq",
+          "name": "Scroll Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "VLaVb",
+              "name": "titleText",
+              "fill": "$--foreground",
+              "content": "My Articles",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "cS7kj",
+              "name": "Article List",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KvSd4",
+                  "name": "Row - Draft",
+                  "width": "fill_container",
+                  "cornerRadius": [
+                    8,
+                    8,
+                    0,
+                    0
+                  ],
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zOW9p",
+                      "name": "row1top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "CUIG5",
+                          "name": "row1title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Senate Unveils Bipartisan Infrastructure Plan",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "MUh0K",
+                          "name": "row1actions",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "WhfpC",
+                              "name": "row1badge",
+                              "fill": "$--muted",
+                              "cornerRadius": 16,
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--border"
+                              },
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "nNDkL",
+                                  "name": "row1badgeText",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Draft",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "Sd3zs",
+                              "name": "row1edit",
+                              "width": 16,
+                              "height": 16,
+                              "iconFontName": "pencil",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--muted-foreground"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "neARc",
+                      "name": "row1preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A new proposal aims to allocate $500 billion toward modernizing roads, bridges, and broadband infrastructure.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LhWtH",
+                  "name": "Row - Submitted",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zxKXV",
+                      "name": "row2top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "C4dyy",
+                          "name": "row2title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "EU Trade Negotiations Enter Final Phase",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ECMmz",
+                          "name": "row2badge",
+                          "fill": "#2563eb18",
+                          "cornerRadius": 16,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "sLKNq",
+                              "name": "row2badgeText",
+                              "fill": "#2563eb",
+                              "content": "Submitted",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Cofyw",
+                      "name": "row2preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "European Union officials signal optimism as years-long trade talks approach a decisive moment.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "73DHw",
+                  "name": "Row - In Review",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "4oUdL",
+                      "name": "row3top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "8eXtt",
+                          "name": "row3title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "OpenAI Unveils Next-Gen AI Model",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "8iiOR",
+                          "name": "row3badge",
+                          "fill": "#ea580c18",
+                          "cornerRadius": 16,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "wBVBi",
+                              "name": "row3badgeText",
+                              "fill": "#ea580c",
+                              "content": "In Review",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "jcZaB",
+                      "name": "row3preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The latest model promises unprecedented reasoning capabilities, sparking excitement and concern.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PNFgE",
+                  "name": "Row - Published",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "F2Mlm",
+                      "name": "row4top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3gRab",
+                          "name": "row4title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Champions League Semi-Finals Preview",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Lnbtx",
+                          "name": "row4badge",
+                          "fill": "#16a34a18",
+                          "cornerRadius": 16,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qeXlJ",
+                              "name": "row4badgeText",
+                              "fill": "#16a34a",
+                              "content": "Published",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "OaQEC",
+                      "name": "row4preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "An in-depth look at the matchups, key players, and tactical battles defining this year's semifinal stage.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vjqnc",
+                  "name": "Row - Rejected",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "J6Twp",
+                      "name": "row5top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "fEVOu",
+                          "name": "row5title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Local Elections: What to Watch For",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "LC8en",
+                          "name": "row5badge",
+                          "fill": "#dc262618",
+                          "cornerRadius": 16,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "z0s8T",
+                              "name": "row5badgeText",
+                              "fill": "#dc2626",
+                              "content": "Rejected",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "UNQT1",
+                      "name": "row5preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Key races across the country could reshape the political landscape heading into next year's midterms.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r2vje",
+                  "name": "Row - Draft 2",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "D61CY",
+                      "name": "row6top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "p3Fuw",
+                          "name": "row6title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Global Climate Summit Reaches Historic Agreement",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rHARG",
+                          "name": "row6actions",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ypK2B",
+                              "name": "row6badge",
+                              "fill": "$--muted",
+                              "cornerRadius": 16,
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--border"
+                              },
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "OVGGv",
+                                  "name": "row6badgeText",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Draft",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "99VYk",
+                              "name": "row6edit",
+                              "width": 16,
+                              "height": 16,
+                              "iconFontName": "pencil",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--muted-foreground"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "c1KpC",
+                      "name": "row6preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "World leaders commit to ambitious new carbon reduction targets in a watershed moment for climate policy.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Racz2",
+                  "name": "Row - Published 2",
+                  "width": "fill_container",
+                  "cornerRadius": [
+                    0,
+                    0,
+                    8,
+                    8
+                  ],
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xsNe8",
+                      "name": "row7top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "W8si0",
+                          "name": "row7title",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Tech Giants Report Record Quarterly Earnings",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "3i1eR",
+                          "name": "row7badge",
+                          "fill": "#16a34a18",
+                          "cornerRadius": 16,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "m9ckk",
+                              "name": "row7badgeText",
+                              "fill": "#16a34a",
+                              "content": "Published",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "BMypI",
+                      "name": "row7preview",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Major technology companies exceed analyst expectations, driven by strong demand for cloud services and AI.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "hevH3",
           "type": "ref",
           "ref": "qOkYt",
           "name": "footer",
           "x": 0,
-          "y": 56,
+          "y": 868,
           "height": "fit_content",
           "descendants": {
             "NfAFs": {
@@ -22924,7 +23587,7 @@
     {
       "type": "frame",
       "id": "xJkRY",
-      "x": 7900,
+      "x": 8355,
       "y": 3300,
       "name": "Mobile Search Results Page",
       "width": 390,
@@ -23076,32 +23739,47 @@
                 },
                 "YpZxt": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "y": 180
                 },
                 "lIFrf": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 16
                 },
                 "YYt0D": {
-                  "content": "Politics"
+                  "content": "Politics",
+                  "x": 8,
+                  "y": 2
                 },
                 "fTcCi": {
                   "content": "New Climate Change Policy Sparks Debate Among World Leaders",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 44
                 },
                 "ivEis": {
                   "content": "Global leaders are divided over the newly proposed climate initiative, with some praising its ambition while others question its feasibility.",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 98
                 },
                 "O96HL": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 169
                 },
                 "PWwD3": {
                   "content": "Sarah Mitchell"
                 },
+                "Eg1qR": {
+                  "x": 90
+                },
                 "GBzgh": {
-                  "content": "Mar 30, 2026"
+                  "content": "Mar 30, 2026",
+                  "x": 102
                 }
               }
             },
@@ -23120,32 +23798,47 @@
                 },
                 "YpZxt": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "y": 180
                 },
                 "lIFrf": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 16
                 },
                 "YYt0D": {
-                  "content": "Technology"
+                  "content": "Technology",
+                  "x": 8,
+                  "y": 2
                 },
                 "fTcCi": {
                   "content": "AI Models Now Predict Climate Patterns With Unprecedented Accuracy",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 44
                 },
                 "ivEis": {
                   "content": "Researchers have developed machine learning systems that can forecast extreme weather events weeks in advance, transforming disaster preparedness.",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 121
                 },
                 "O96HL": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 213
                 },
                 "PWwD3": {
                   "content": "James Cooper"
                 },
+                "Eg1qR": {
+                  "x": 92
+                },
                 "GBzgh": {
-                  "content": "Mar 28, 2026"
+                  "content": "Mar 28, 2026",
+                  "x": 104
                 }
               }
             },
@@ -23164,32 +23857,47 @@
                 },
                 "YpZxt": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "y": 180
                 },
                 "lIFrf": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 16
                 },
                 "YYt0D": {
-                  "content": "Politics"
+                  "content": "Politics",
+                  "x": 8,
+                  "y": 2
                 },
                 "fTcCi": {
                   "content": "Senate Committee Advances Landmark Environmental Protection Bill",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 44
                 },
                 "ivEis": {
                   "content": "The bipartisan legislation aims to reduce carbon emissions by 50% over the next decade through a combination of incentives and regulations.",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 121
                 },
                 "O96HL": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 213
                 },
                 "PWwD3": {
                   "content": "Elena Rodriguez"
                 },
+                "Eg1qR": {
+                  "x": 101
+                },
                 "GBzgh": {
-                  "content": "Mar 26, 2026"
+                  "content": "Mar 26, 2026",
+                  "x": 113
                 }
               }
             },
@@ -23208,32 +23916,47 @@
                 },
                 "YpZxt": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "y": 180
                 },
                 "lIFrf": {
                   "width": "fit_content",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 16
                 },
                 "YYt0D": {
-                  "content": "Technology"
+                  "content": "Technology",
+                  "x": 8,
+                  "y": 2
                 },
                 "fTcCi": {
                   "content": "Green Tech Startups Attract Record Investment in Climate Solutions",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 44
                 },
                 "ivEis": {
                   "content": "Venture capital funding for climate technology companies has surged to an all-time high as investors bet on sustainable innovation.",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "x": 16,
+                  "y": 98
                 },
                 "O96HL": {
                   "width": "fill_container",
-                  "height": "fit_content"
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 169
                 },
                 "PWwD3": {
                   "content": "David Chen"
                 },
+                "Eg1qR": {
+                  "x": 75
+                },
                 "GBzgh": {
-                  "content": "Mar 24, 2026"
+                  "content": "Mar 24, 2026",
+                  "x": 87
                 }
               }
             },
@@ -23293,33 +24016,83 @@
           "descendants": {
             "NfAFs": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
             },
             "hLKNz": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "y": 28
             },
             "JonJM": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
             },
             "0T35y": {
               "width": "fill_container",
               "height": "fit_content"
             },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
             "dYcBk": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
             },
             "6J6Pa": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
             },
             "7DHeb": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
             },
             "Uzvnf": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
             }
           }
         }
@@ -23342,6 +24115,7 @@
           "ref": "oEaiX",
           "name": "header1",
           "y": 0,
+          "height": "fit_content",
           "descendants": {
             "PQeVK": {
               "height": "fit_content",
@@ -23604,33 +24378,84 @@
           "descendants": {
             "E4ryO": {
               "height": "fit_content",
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 48
             },
             "2XM1c": {
               "height": "fit_content"
             },
+            "2Y682": {
+              "y": 42
+            },
             "FZbbe": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 914
             },
             "4cyWp": {
               "height": "fit_content",
               "width": "fit_content"
             },
+            "e5kAV": {
+              "y": 30
+            },
+            "mKovl": {
+              "y": 59
+            },
+            "zPhE1": {
+              "y": 88
+            },
+            "SjpEK": {
+              "y": 117
+            },
+            "Q0in7": {
+              "y": 146
+            },
             "iDTTe": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 157
+            },
+            "IFHKl": {
+              "y": 30
+            },
+            "nGfg3": {
+              "y": 59
+            },
+            "VSQTI": {
+              "y": 88
+            },
+            "adEr2": {
+              "y": 117
             },
             "YFpAI": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 285
+            },
+            "LxwsE": {
+              "y": 30
+            },
+            "erkj7": {
+              "y": 59
+            },
+            "rakm7": {
+              "y": 88
+            },
+            "4q4sL": {
+              "y": 117
             },
             "CQQos": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 243
             },
             "M87Z5": {
               "height": "fit_content",
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 275
             }
           }
         }
@@ -23653,24 +24478,56 @@
           "ref": "oEaiX",
           "name": "header2",
           "y": 0,
+          "height": "fit_content",
           "descendants": {
             "PQeVK": {
               "height": "fit_content",
               "width": "fill_container"
             },
+            "Y96WM": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 48,
+              "y": 18
+            },
             "n4vGz": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 216,
+              "y": 5.5
+            },
+            "rm7Ld": {
+              "x": 64
+            },
+            "6FKVs": {
+              "x": 138
+            },
+            "mNIs5": {
+              "x": 241
+            },
+            "Iq526": {
+              "x": 309
             },
             "0jxkj": {
               "x": 382
             },
             "I9dEb": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 1011,
+              "y": 14
             },
             "77fnW": {
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 1.5
+            },
+            "OE9fC": {
+              "x": 12,
+              "y": 8.5
+            },
+            "PY4GT": {
+              "x": 36,
+              "y": 8
             },
             "kP4l9": {
               "height": "fit_content",
@@ -23678,7 +24535,8 @@
             },
             "9ToY3": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 293
             }
           }
         },
@@ -23906,7 +24764,8 @@
                         },
                         "8tnXG": {
                           "x": 116.5,
-                          "content": "Reset Password"
+                          "content": "Reset Password",
+                          "y": 8
                         }
                       }
                     }
@@ -23956,33 +24815,84 @@
           "descendants": {
             "E4ryO": {
               "height": "fit_content",
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 48
             },
             "2XM1c": {
               "height": "fit_content"
             },
+            "2Y682": {
+              "y": 42
+            },
             "FZbbe": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 914
             },
             "4cyWp": {
               "height": "fit_content",
               "width": "fit_content"
             },
+            "e5kAV": {
+              "y": 30
+            },
+            "mKovl": {
+              "y": 59
+            },
+            "zPhE1": {
+              "y": 88
+            },
+            "SjpEK": {
+              "y": 117
+            },
+            "Q0in7": {
+              "y": 146
+            },
             "iDTTe": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 157
+            },
+            "IFHKl": {
+              "y": 30
+            },
+            "nGfg3": {
+              "y": 59
+            },
+            "VSQTI": {
+              "y": 88
+            },
+            "adEr2": {
+              "y": 117
             },
             "YFpAI": {
               "height": "fit_content",
-              "width": "fit_content"
+              "width": "fit_content",
+              "x": 285
+            },
+            "LxwsE": {
+              "y": 30
+            },
+            "erkj7": {
+              "y": 59
+            },
+            "rakm7": {
+              "y": 88
+            },
+            "4q4sL": {
+              "y": 117
             },
             "CQQos": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 243
             },
             "M87Z5": {
               "height": "fit_content",
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 64,
+              "y": 275
             }
           }
         }
@@ -23991,8 +24901,8 @@
     {
       "type": "frame",
       "id": "CAhdc",
-      "x": 8390,
-      "y": 3300,
+      "x": 9339,
+      "y": 3280,
       "name": "Mobile Password Reset Request",
       "width": 390,
       "fill": "$--background",
@@ -24003,7 +24913,17 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "h1",
-          "y": 0
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -24117,10 +25037,13 @@
                         },
                         "i0Z3E": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 26
                         },
                         "SDRKn": {
-                          "content": "you@example.com"
+                          "content": "you@example.com",
+                          "x": 12,
+                          "y": 10
                         }
                       }
                     }
@@ -24150,7 +25073,8 @@
                         },
                         "8tnXG": {
                           "x": 97,
-                          "content": "Send Reset Link"
+                          "content": "Send Reset Link",
+                          "y": 8
                         }
                       }
                     }
@@ -24201,33 +25125,83 @@
           "descendants": {
             "NfAFs": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
             },
             "hLKNz": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "y": 28
             },
             "JonJM": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
             },
             "0T35y": {
               "width": "fill_container",
               "height": "fit_content"
             },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
             "dYcBk": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
             },
             "6J6Pa": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
             },
             "7DHeb": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
             },
             "Uzvnf": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
             }
           }
         }
@@ -24236,7 +25210,7 @@
     {
       "type": "frame",
       "id": "UfttX",
-      "x": 8880,
+      "x": 8824,
       "y": 3300,
       "name": "Mobile Set New Password",
       "width": 390,
@@ -24248,7 +25222,17 @@
           "type": "ref",
           "ref": "tNeqM",
           "name": "h2",
-          "y": 0
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
         },
         {
           "type": "frame",
@@ -24472,7 +25456,8 @@
                         },
                         "8tnXG": {
                           "x": 97.5,
-                          "content": "Reset Password"
+                          "content": "Reset Password",
+                          "y": 8
                         }
                       }
                     }
@@ -24523,33 +25508,1050 @@
           "descendants": {
             "NfAFs": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
             },
             "hLKNz": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "y": 28
             },
             "JonJM": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
             },
             "0T35y": {
               "width": "fill_container",
               "height": "fit_content"
             },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
             "dYcBk": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
             },
             "6J6Pa": {
               "width": "fill_container",
-              "height": "fit_content"
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
             },
             "7DHeb": {
-              "width": "fill_container"
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
             },
             "Uzvnf": {
               "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Zx59f",
+      "x": 7880,
+      "y": 3300,
+      "name": "Mobile Article Status Detail",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "7q2qI",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "header",
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
+        },
+        {
+          "type": "line",
+          "id": "PSdu5",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "align": "center",
+            "thickness": 1,
+            "fill": "$--border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "HHNVd",
+          "name": "Scroll Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "C30GS",
+              "name": "Title Bar",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "p8DUg",
+                  "name": "titleText",
+                  "fill": "$--foreground",
+                  "content": "Article Review",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "EI64p",
+                  "name": "statusBadge",
+                  "fill": "#ea580c18",
+                  "cornerRadius": 16,
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iQCHE",
+                      "name": "statusText",
+                      "fill": "#ea580c",
+                      "content": "In Review",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Q9fKP",
+              "name": "Article Info Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SWoyu",
+                  "name": "articleLabel",
+                  "fill": "$--muted-foreground",
+                  "content": "ARTICLE",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "text",
+                  "id": "Qtr3M",
+                  "name": "articleName",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "OpenAI Unveils Next-Gen AI Model",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "fNTEO",
+                  "name": "articlePreview",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The latest model promises unprecedented reasoning capabilities, sparking both excitement and concern among industry experts.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "Wrhkl",
+              "name": "divider1",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "align": "center",
+                "thickness": 1,
+                "fill": "$--border"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "JvSTl",
+              "name": "Reviewer Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "y3HYy",
+                  "name": "reviewerLabel",
+                  "fill": "$--foreground",
+                  "content": "Reviewed by",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "WAaHm",
+                  "name": "Reviewer Info",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "GSyTp",
+                      "type": "ref",
+                      "ref": "DpPVg",
+                      "width": 36,
+                      "height": 36,
+                      "name": "reviewerAvatar",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "wVlpW": {
+                          "x": 9.5,
+                          "y": 8.5,
+                          "content": "JD",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2eYid",
+                      "name": "reviewerDetails",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I3c8N",
+                          "name": "reviewerName",
+                          "fill": "$--foreground",
+                          "content": "James Davidson",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RYO9m",
+                          "name": "reviewerRole",
+                          "fill": "$--muted-foreground",
+                          "content": "Senior Editor",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "hKswL",
+              "name": "divider2",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "align": "center",
+                "thickness": 1,
+                "fill": "$--border"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "CrEX1",
+              "name": "Feedback Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "h5rnd",
+                  "name": "feedbackLabel",
+                  "fill": "$--foreground",
+                  "content": "Reviewer Feedback",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "hfAGm",
+                  "name": "Feedback Content",
+                  "width": "fill_container",
+                  "fill": "$--card",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iRfFe",
+                      "name": "feedbackText",
+                      "fill": "$--foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The article presents a strong overview of the new AI model's capabilities. However, I'd recommend expanding on the following points before publication:\n\n1. Include more direct quotes from industry experts to strengthen credibility.\n2. The section on safety concerns needs more depth — consider referencing the recent EU AI Act provisions.\n3. The concluding paragraph feels rushed. Please expand on the broader implications for the tech industry.\n\nOverall, solid investigative work. With these revisions, this will be ready for publication.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JR2XL",
+                      "name": "feedbackDate",
+                      "fill": "$--muted-foreground",
+                      "content": "Reviewed on March 28, 2026",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3SRVM",
+          "type": "ref",
+          "ref": "qOkYt",
+          "name": "footer",
+          "x": 0,
+          "y": 828,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
               "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TRQUU",
+      "x": 18527,
+      "y": 0,
+      "name": "Search Results Page",
+      "width": 1440,
+      "height": 1600,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "sj5FG",
+          "type": "ref",
+          "ref": "oEaiX",
+          "name": "header2",
+          "y": 0,
+          "height": "fit_content",
+          "descendants": {
+            "PQeVK": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "Y96WM": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 48,
+              "y": 18
+            },
+            "n4vGz": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 216,
+              "y": 5.5
+            },
+            "rm7Ld": {
+              "x": 64
+            },
+            "6FKVs": {
+              "x": 138
+            },
+            "mNIs5": {
+              "x": 241
+            },
+            "Iq526": {
+              "x": 309
+            },
+            "0jxkj": {
+              "x": 382
+            },
+            "I9dEb": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 1011,
+              "y": 14
+            },
+            "77fnW": {
+              "height": "fit_content",
+              "y": 1.5
+            },
+            "OE9fC": {
+              "x": 12,
+              "y": 8.5
+            },
+            "PY4GT": {
+              "x": 36,
+              "y": 8
+            },
+            "kP4l9": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "9ToY3": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 293
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "5OMvx",
+          "name": "Main Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            48,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "2bZ6o",
+              "name": "Search Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wPaIL",
+                  "name": "searchTitle",
+                  "fill": "$--foreground",
+                  "content": "Search Results",
+                  "fontFamily": "Outfit",
+                  "fontSize": 32,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "w8gYm",
+                  "name": "Search Bar",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$--card",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "PLxm8",
+                      "name": "searchIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evwQP",
+                      "name": "searchText",
+                      "fill": "$--foreground",
+                      "content": "climate change policy",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nxi80",
+              "name": "Filter Bar",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6Gxjr",
+                  "name": "countText",
+                  "fill": "$--foreground",
+                  "content": "12 Results",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "line",
+              "id": "kVyKs",
+              "name": "divider",
+              "width": "fill_container",
+              "height": 0,
+              "stroke": {
+                "align": "center",
+                "thickness": 1,
+                "fill": "$--border"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "5sUbi",
+              "name": "Search Results Grid",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "okPSa",
+                  "name": "Row 1",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "id": "PZEfo",
+                      "type": "ref",
+                      "ref": "6pQPs",
+                      "width": "fill_container",
+                      "name": "card1",
+                      "height": "fit_content",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "QtX7r": {
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1580576079917-b66047bed513?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzUwNzQxNjJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          }
+                        },
+                        "YpZxt": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "lIFrf": {
+                          "x": 16,
+                          "y": 16
+                        },
+                        "YYt0D": {
+                          "content": "Politics",
+                          "x": 8,
+                          "y": 2
+                        },
+                        "fTcCi": {
+                          "width": "fill_container",
+                          "content": "New Climate Change Policy Sparks Debate Among World Leaders",
+                          "x": 16,
+                          "y": 44
+                        },
+                        "ivEis": {
+                          "width": "fill_container",
+                          "content": "Global leaders are divided over the newly proposed climate initiative, with some praising its ambition while others question its feasibility.",
+                          "x": 16,
+                          "y": 75
+                        },
+                        "O96HL": {
+                          "width": "fill_container",
+                          "y": 125
+                        },
+                        "PWwD3": {
+                          "content": "Sarah Mitchell"
+                        },
+                        "GBzgh": {
+                          "content": "Mar 30, 2026"
+                        }
+                      }
+                    },
+                    {
+                      "id": "pI46R",
+                      "type": "ref",
+                      "ref": "6pQPs",
+                      "width": "fill_container",
+                      "name": "card2",
+                      "height": "fit_content",
+                      "x": 668,
+                      "y": 0,
+                      "descendants": {
+                        "QtX7r": {
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1763110305836-17790330be78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzUwNzQxNjJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          }
+                        },
+                        "YpZxt": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "lIFrf": {
+                          "x": 16,
+                          "y": 16
+                        },
+                        "YYt0D": {
+                          "content": "Technology",
+                          "x": 8,
+                          "y": 2
+                        },
+                        "fTcCi": {
+                          "width": "fill_container",
+                          "content": "AI Models Now Predict Climate Patterns With Unprecedented Accuracy",
+                          "x": 16,
+                          "y": 44
+                        },
+                        "ivEis": {
+                          "width": "fill_container",
+                          "content": "Researchers have developed machine learning systems that can forecast extreme weather events weeks in advance, transforming disaster preparedness.",
+                          "x": 16,
+                          "y": 75
+                        },
+                        "O96HL": {
+                          "width": "fill_container",
+                          "y": 125
+                        },
+                        "PWwD3": {
+                          "content": "James Cooper"
+                        },
+                        "GBzgh": {
+                          "content": "Mar 28, 2026"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RnVbm",
+                  "name": "Row 2",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "id": "oJQOV",
+                      "type": "ref",
+                      "ref": "6pQPs",
+                      "width": "fill_container",
+                      "name": "card3",
+                      "height": "fit_content",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "QtX7r": {
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1659536959956-93b0e33df737?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzUwNzQxNjN8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          }
+                        },
+                        "YpZxt": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "YYt0D": {
+                          "content": "Politics"
+                        },
+                        "fTcCi": {
+                          "width": "fill_container",
+                          "content": "Senate Committee Advances Landmark Environmental Protection Bill"
+                        },
+                        "ivEis": {
+                          "width": "fill_container",
+                          "content": "The bipartisan legislation aims to reduce carbon emissions by 50% over the next decade through a combination of incentives and regulations."
+                        },
+                        "O96HL": {
+                          "width": "fill_container",
+                          "y": 125
+                        },
+                        "PWwD3": {
+                          "content": "Elena Rodriguez"
+                        },
+                        "GBzgh": {
+                          "content": "Mar 26, 2026"
+                        }
+                      }
+                    },
+                    {
+                      "id": "qcpUT",
+                      "type": "ref",
+                      "ref": "6pQPs",
+                      "width": "fill_container",
+                      "name": "card4",
+                      "height": "fit_content",
+                      "x": 668,
+                      "y": 0,
+                      "descendants": {
+                        "QtX7r": {
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1645520718652-9342896b0eec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzUwNzQxNjR8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          }
+                        },
+                        "YpZxt": {
+                          "width": "fill_container",
+                          "height": "fit_content"
+                        },
+                        "YYt0D": {
+                          "content": "Technology"
+                        },
+                        "fTcCi": {
+                          "width": "fill_container",
+                          "content": "Green Tech Startups Attract Record Investment in Climate Solutions"
+                        },
+                        "ivEis": {
+                          "width": "fill_container",
+                          "content": "Venture capital funding for climate technology companies has surged to an all-time high as investors bet on sustainable innovation."
+                        },
+                        "O96HL": {
+                          "width": "fill_container",
+                          "y": 125
+                        },
+                        "PWwD3": {
+                          "content": "David Chen"
+                        },
+                        "GBzgh": {
+                          "content": "Mar 24, 2026"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Pgixd",
+                  "name": "Load More Wrapper",
+                  "width": "fill_container",
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Q6E0A",
+                      "name": "Load More Button",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        32
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AVKOC",
+                          "name": "loadMoreText",
+                          "fill": "$--foreground",
+                          "content": "Load More Results",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jqDLH",
+          "type": "ref",
+          "ref": "l42ZL",
+          "height": "fit_content",
+          "name": "footer2",
+          "y": 1261,
+          "descendants": {
+            "E4ryO": {
+              "height": "fit_content",
+              "width": "fill_container",
+              "x": 64,
+              "y": 48
+            },
+            "2XM1c": {
+              "height": "fit_content"
+            },
+            "2Y682": {
+              "y": 42
+            },
+            "FZbbe": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 914
+            },
+            "4cyWp": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "e5kAV": {
+              "y": 30
+            },
+            "mKovl": {
+              "y": 59
+            },
+            "zPhE1": {
+              "y": 88
+            },
+            "SjpEK": {
+              "y": 117
+            },
+            "Q0in7": {
+              "y": 146
+            },
+            "iDTTe": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 157
+            },
+            "IFHKl": {
+              "y": 30
+            },
+            "nGfg3": {
+              "y": 59
+            },
+            "VSQTI": {
+              "y": 88
+            },
+            "adEr2": {
+              "y": 117
+            },
+            "YFpAI": {
+              "height": "fit_content",
+              "width": "fit_content",
+              "x": 285
+            },
+            "LxwsE": {
+              "y": 30
+            },
+            "erkj7": {
+              "y": 59
+            },
+            "rakm7": {
+              "y": 88
+            },
+            "4q4sL": {
+              "y": 117
+            },
+            "CQQos": {
+              "width": "fill_container",
+              "x": 64,
+              "y": 243
+            },
+            "M87Z5": {
+              "height": "fit_content",
+              "width": "fill_container",
+              "x": 64,
+              "y": 275
             }
           }
         }
