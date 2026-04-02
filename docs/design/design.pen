@@ -3888,7 +3888,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.019943701668048,
+                  "y": 24.01994370166805,
                   "width": "fill_container",
                   "height": "fit_content",
                   "descendants": {
@@ -3966,7 +3966,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -4046,7 +4046,7 @@
             "L6Ngo": {
               "width": "fill_container",
               "height": "fit_content",
-              "y": 24.019943701668048
+              "y": 24.01994370166805
             },
             "L6Ngo/RO4Ll": {
               "x": 39,
@@ -24901,8 +24901,8 @@
     {
       "type": "frame",
       "id": "CAhdc",
-      "x": 9339,
-      "y": 3280,
+      "x": 9314,
+      "y": 3300,
       "name": "Mobile Password Reset Request",
       "width": 390,
       "fill": "$--background",
@@ -26220,11 +26220,14 @@
                         },
                         "YpZxt": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 220
                         },
                         "lIFrf": {
                           "x": 16,
-                          "y": 16
+                          "y": 16,
+                          "width": "fit_content",
+                          "height": "fit_content"
                         },
                         "YYt0D": {
                           "content": "Politics",
@@ -26245,13 +26248,19 @@
                         },
                         "O96HL": {
                           "width": "fill_container",
-                          "y": 125
+                          "y": 125,
+                          "height": "fit_content",
+                          "x": 16
                         },
                         "PWwD3": {
                           "content": "Sarah Mitchell"
                         },
+                        "Eg1qR": {
+                          "x": 90
+                        },
                         "GBzgh": {
-                          "content": "Mar 30, 2026"
+                          "content": "Mar 30, 2026",
+                          "x": 102
                         }
                       }
                     },
@@ -26277,11 +26286,14 @@
                         },
                         "YpZxt": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 220
                         },
                         "lIFrf": {
                           "x": 16,
-                          "y": 16
+                          "y": 16,
+                          "width": "fit_content",
+                          "height": "fit_content"
                         },
                         "YYt0D": {
                           "content": "Technology",
@@ -26302,13 +26314,19 @@
                         },
                         "O96HL": {
                           "width": "fill_container",
-                          "y": 125
+                          "y": 125,
+                          "height": "fit_content",
+                          "x": 16
                         },
                         "PWwD3": {
                           "content": "James Cooper"
                         },
+                        "Eg1qR": {
+                          "x": 92
+                        },
                         "GBzgh": {
-                          "content": "Mar 28, 2026"
+                          "content": "Mar 28, 2026",
+                          "x": 104
                         }
                       }
                     }
@@ -26343,28 +26361,47 @@
                         },
                         "YpZxt": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 220
+                        },
+                        "lIFrf": {
+                          "width": "fit_content",
+                          "height": "fit_content",
+                          "x": 16,
+                          "y": 16
                         },
                         "YYt0D": {
-                          "content": "Politics"
+                          "content": "Politics",
+                          "x": 8,
+                          "y": 2
                         },
                         "fTcCi": {
                           "width": "fill_container",
-                          "content": "Senate Committee Advances Landmark Environmental Protection Bill"
+                          "content": "Senate Committee Advances Landmark Environmental Protection Bill",
+                          "x": 16,
+                          "y": 44
                         },
                         "ivEis": {
                           "width": "fill_container",
-                          "content": "The bipartisan legislation aims to reduce carbon emissions by 50% over the next decade through a combination of incentives and regulations."
+                          "content": "The bipartisan legislation aims to reduce carbon emissions by 50% over the next decade through a combination of incentives and regulations.",
+                          "x": 16,
+                          "y": 75
                         },
                         "O96HL": {
                           "width": "fill_container",
-                          "y": 125
+                          "y": 125,
+                          "height": "fit_content",
+                          "x": 16
                         },
                         "PWwD3": {
                           "content": "Elena Rodriguez"
                         },
+                        "Eg1qR": {
+                          "x": 101
+                        },
                         "GBzgh": {
-                          "content": "Mar 26, 2026"
+                          "content": "Mar 26, 2026",
+                          "x": 113
                         }
                       }
                     },
@@ -26390,28 +26427,47 @@
                         },
                         "YpZxt": {
                           "width": "fill_container",
-                          "height": "fit_content"
+                          "height": "fit_content",
+                          "y": 220
+                        },
+                        "lIFrf": {
+                          "width": "fit_content",
+                          "height": "fit_content",
+                          "x": 16,
+                          "y": 16
                         },
                         "YYt0D": {
-                          "content": "Technology"
+                          "content": "Technology",
+                          "x": 8,
+                          "y": 2
                         },
                         "fTcCi": {
                           "width": "fill_container",
-                          "content": "Green Tech Startups Attract Record Investment in Climate Solutions"
+                          "content": "Green Tech Startups Attract Record Investment in Climate Solutions",
+                          "x": 16,
+                          "y": 44
                         },
                         "ivEis": {
                           "width": "fill_container",
-                          "content": "Venture capital funding for climate technology companies has surged to an all-time high as investors bet on sustainable innovation."
+                          "content": "Venture capital funding for climate technology companies has surged to an all-time high as investors bet on sustainable innovation.",
+                          "x": 16,
+                          "y": 75
                         },
                         "O96HL": {
                           "width": "fill_container",
-                          "y": 125
+                          "y": 125,
+                          "height": "fit_content",
+                          "x": 16
                         },
                         "PWwD3": {
                           "content": "David Chen"
                         },
+                        "Eg1qR": {
+                          "x": 75
+                        },
                         "GBzgh": {
-                          "content": "Mar 24, 2026"
+                          "content": "Mar 24, 2026",
+                          "x": 87
                         }
                       }
                     }
@@ -26552,6 +26608,1243 @@
               "width": "fill_container",
               "x": 64,
               "y": 275
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "H1FSO",
+      "x": 20067,
+      "y": 0,
+      "name": "User Profile Page",
+      "width": 1440,
+      "height": 1700,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "Ussb6",
+          "type": "ref",
+          "ref": "oEaiX",
+          "height": "fit_content",
+          "name": "header",
+          "y": 0,
+          "descendants": {
+            "PQeVK": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "n4vGz": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "I9dEb": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "77fnW": {
+              "height": "fit_content"
+            },
+            "kP4l9": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "9ToY3": {
+              "height": "fit_content",
+              "width": "fit_content"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "XZ6J7",
+          "name": "Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "RwOxD",
+              "name": "Main Content",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "6VEd3",
+                  "name": "Scroll Content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 28,
+                  "padding": [
+                    32,
+                    48
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QjBeT",
+                      "name": "Page Title Row",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MUISK",
+                          "name": "titleText",
+                          "fill": "$--foreground",
+                          "content": "My Profile",
+                          "fontFamily": "Outfit",
+                          "fontSize": 28,
+                          "fontWeight": "800",
+                          "letterSpacing": -0.5
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2KXyC",
+                      "name": "Profile Info Card",
+                      "width": "fill_container",
+                      "fill": "$--card",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "layout": "vertical",
+                      "gap": 24,
+                      "padding": 32,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yqXmJ",
+                          "name": "cardTitle",
+                          "fill": "$--foreground",
+                          "content": "Profile Information",
+                          "fontFamily": "Outfit",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YBlQj",
+                          "name": "Avatar Section",
+                          "width": "fill_container",
+                          "gap": 20,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "TJfSK",
+                              "type": "ref",
+                              "ref": "HWTb9",
+                              "width": 80,
+                              "height": 80,
+                              "name": "avatar",
+                              "x": 0,
+                              "y": 2.5,
+                              "descendants": {
+                                "wVlpW": {
+                                  "content": "SM",
+                                  "fontSize": 24
+                                }
+                              }
+                            },
+                            {
+                              "type": "frame",
+                              "id": "OUnva",
+                              "name": "Avatar Actions",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "SnFkK",
+                                  "name": "avatarLabel",
+                                  "fill": "$--foreground",
+                                  "content": "Profile Picture",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "qPmCI",
+                                  "name": "avatarDesc",
+                                  "fill": "$--muted-foreground",
+                                  "content": "JPG, PNG or GIF. Max 2MB.",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "id": "Z38Ko",
+                                  "type": "ref",
+                                  "ref": "C10zH",
+                                  "height": "fit_content",
+                                  "name": "uploadBtn",
+                                  "x": 0,
+                                  "y": 49,
+                                  "descendants": {
+                                    "l8v2I": {
+                                      "enabled": false
+                                    },
+                                    "poRwU": {
+                                      "content": "Change Photo"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "76Fwh",
+                          "name": "Name Fields Row",
+                          "width": "fill_container",
+                          "gap": 20,
+                          "children": [
+                            {
+                              "id": "TaLhv",
+                              "type": "ref",
+                              "ref": "uHFal",
+                              "width": "fill_container",
+                              "height": "fit_content",
+                              "name": "firstName",
+                              "x": 0,
+                              "y": 0,
+                              "descendants": {
+                                "QRy7x": {
+                                  "width": "fill_container",
+                                  "height": "fit_content"
+                                },
+                                "BX0XX": {
+                                  "width": "fill_container",
+                                  "content": "First Name"
+                                },
+                                "i0Z3E": {
+                                  "width": "fill_container",
+                                  "height": "fit_content"
+                                },
+                                "SDRKn": {
+                                  "content": "Sarah",
+                                  "fill": "$--foreground"
+                                }
+                              }
+                            },
+                            {
+                              "id": "3tDlE",
+                              "type": "ref",
+                              "ref": "uHFal",
+                              "width": "fill_container",
+                              "height": "fit_content",
+                              "name": "lastName",
+                              "x": 650,
+                              "y": 0,
+                              "descendants": {
+                                "QRy7x": {
+                                  "width": "fill_container",
+                                  "height": "fit_content"
+                                },
+                                "BX0XX": {
+                                  "width": "fill_container",
+                                  "content": "Last Name"
+                                },
+                                "i0Z3E": {
+                                  "width": "fill_container",
+                                  "height": "fit_content"
+                                },
+                                "SDRKn": {
+                                  "content": "Mitchell",
+                                  "fill": "$--foreground"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "g108n",
+                          "type": "ref",
+                          "ref": "uHFal",
+                          "width": "fill_container",
+                          "height": "fit_content",
+                          "name": "emailField",
+                          "x": 32,
+                          "y": 278,
+                          "descendants": {
+                            "QRy7x": {
+                              "width": "fill_container",
+                              "height": "fit_content"
+                            },
+                            "BX0XX": {
+                              "width": "fill_container",
+                              "content": "Email Address"
+                            },
+                            "i0Z3E": {
+                              "width": "fill_container",
+                              "height": "fit_content"
+                            },
+                            "SDRKn": {
+                              "content": "sarah.mitchell@example.com",
+                              "fill": "$--foreground"
+                            }
+                          }
+                        },
+                        {
+                          "id": "3MUow",
+                          "type": "ref",
+                          "ref": "CrS3L",
+                          "height": "fit_content",
+                          "width": "fill_container",
+                          "name": "bioField",
+                          "x": 32,
+                          "y": 368,
+                          "descendants": {
+                            "uAcGD": {
+                              "width": "fill_container",
+                              "height": "fit_content"
+                            },
+                            "a78kl": {
+                              "width": "fill_container",
+                              "content": "Bio"
+                            },
+                            "pzw5I": {
+                              "width": "fill_container"
+                            },
+                            "S4qWY": {
+                              "content": "Senior journalist covering politics and international affairs. Over 10 years of experience in investigative reporting.",
+                              "fill": "$--foreground"
+                            }
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "o8vsi",
+                          "name": "Save Row",
+                          "width": "fill_container",
+                          "justifyContent": "end",
+                          "children": [
+                            {
+                              "id": "OL4RY",
+                              "type": "ref",
+                              "ref": "VSnC2",
+                              "height": "fit_content",
+                              "name": "saveBtn",
+                              "x": 1151,
+                              "y": 0,
+                              "descendants": {
+                                "8jVfJ": {
+                                  "enabled": false
+                                },
+                                "8tnXG": {
+                                  "content": "Save Changes"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "12GNh",
+                      "name": "Change Password Card",
+                      "width": "fill_container",
+                      "fill": "$--card",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "layout": "vertical",
+                      "gap": 24,
+                      "padding": 32,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Z7Agk",
+                          "name": "passTitle",
+                          "fill": "$--foreground",
+                          "content": "Change Password",
+                          "fontFamily": "Outfit",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MuKIy",
+                          "name": "passDesc",
+                          "fill": "$--muted-foreground",
+                          "content": "Update your password to keep your account secure.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "srOGV",
+                          "name": "Current Password",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "swzzB",
+                              "name": "curLabel",
+                              "fill": "$--foreground",
+                              "content": "Current Password",
+                              "lineHeight": 1.43,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "H1p95",
+                              "name": "curInput",
+                              "width": "fill_container",
+                              "fill": "$--background",
+                              "cornerRadius": 6,
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--input"
+                              },
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "mOG8N",
+                                  "name": "curPlaceholder",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Enter current password",
+                                  "lineHeight": 1.43,
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DXdCW",
+                          "name": "New Password Row",
+                          "width": "fill_container",
+                          "gap": 20,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "koSqj",
+                              "name": "New Password",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "dwIeB",
+                                  "name": "newLabel",
+                                  "fill": "$--foreground",
+                                  "content": "New Password",
+                                  "lineHeight": 1.43,
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "xnnmM",
+                                  "name": "newInput",
+                                  "width": "fill_container",
+                                  "fill": "$--background",
+                                  "cornerRadius": 6,
+                                  "stroke": {
+                                    "align": "inside",
+                                    "thickness": 1,
+                                    "fill": "$--input"
+                                  },
+                                  "padding": [
+                                    10,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "X94Hn",
+                                      "name": "newPlaceholder",
+                                      "fill": "$--muted-foreground",
+                                      "content": "Enter new password",
+                                      "lineHeight": 1.43,
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ksOTg",
+                              "name": "Confirm Password",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "RmScZ",
+                                  "name": "confirmLabel",
+                                  "fill": "$--foreground",
+                                  "content": "Confirm Password",
+                                  "lineHeight": 1.43,
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Urv4F",
+                                  "name": "confirmInput",
+                                  "width": "fill_container",
+                                  "fill": "$--background",
+                                  "cornerRadius": 6,
+                                  "stroke": {
+                                    "align": "inside",
+                                    "thickness": 1,
+                                    "fill": "$--input"
+                                  },
+                                  "padding": [
+                                    10,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "tZRJX",
+                                      "name": "confirmPlaceholder",
+                                      "fill": "$--muted-foreground",
+                                      "content": "Confirm new password",
+                                      "lineHeight": 1.43,
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "V2dyd",
+                          "name": "Password Save Row",
+                          "width": "fill_container",
+                          "justifyContent": "end",
+                          "children": [
+                            {
+                              "id": "2Lqub",
+                              "type": "ref",
+                              "ref": "VSnC2",
+                              "height": "fit_content",
+                              "name": "passBtn",
+                              "x": 1130,
+                              "y": 0,
+                              "descendants": {
+                                "8jVfJ": {
+                                  "enabled": false
+                                },
+                                "8tnXG": {
+                                  "content": "Update Password"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "3Gpz7",
+                      "name": "Danger Zone Card",
+                      "width": "fill_container",
+                      "fill": "$--card",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--destructive"
+                      },
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 32,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zl1cI",
+                          "name": "dangerTitle",
+                          "fill": "$--destructive",
+                          "content": "Danger Zone",
+                          "fontFamily": "Outfit",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LPELi",
+                          "name": "dangerDesc",
+                          "fill": "$--muted-foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Permanently delete your account and all associated data. This action cannot be undone.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "Hsngt",
+                          "type": "ref",
+                          "ref": "YKnjc",
+                          "height": "fit_content",
+                          "name": "dangerBtn",
+                          "x": 32,
+                          "y": 108
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "AXcoh",
+          "type": "ref",
+          "ref": "l42ZL",
+          "height": "fit_content",
+          "name": "footer",
+          "y": 1361,
+          "descendants": {
+            "E4ryO": {
+              "height": "fit_content",
+              "width": "fill_container"
+            },
+            "2XM1c": {
+              "height": "fit_content"
+            },
+            "FZbbe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "4cyWp": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "iDTTe": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "YFpAI": {
+              "height": "fit_content",
+              "width": "fit_content"
+            },
+            "CQQos": {
+              "width": "fill_container"
+            },
+            "M87Z5": {
+              "height": "fit_content",
+              "width": "fill_container"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Dh9Wc",
+      "x": 9804,
+      "y": 3300,
+      "name": "Mobile User Profile Page",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "C5TWJ",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "mh",
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "mg7bC",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "3qf1X",
+              "name": "mtitle",
+              "fill": "$--foreground",
+              "content": "My Profile",
+              "fontFamily": "Outfit",
+              "fontSize": 22,
+              "fontWeight": "800",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "frame",
+              "id": "pC1em",
+              "name": "Profile Info Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dCtzR",
+                  "name": "mctitle",
+                  "fill": "$--foreground",
+                  "content": "Profile Information",
+                  "fontFamily": "Outfit",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "Vr9GG",
+                  "name": "Avatar Section",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "u3Ejx",
+                      "type": "ref",
+                      "ref": "HWTb9",
+                      "width": 64,
+                      "height": 64,
+                      "name": "mavatar",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "wVlpW": {
+                          "content": "SM",
+                          "fontSize": 20
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T5Zxc",
+                      "name": "Avatar Info",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pY786",
+                          "name": "mavatarLabel",
+                          "fill": "$--foreground",
+                          "content": "Profile Picture",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "id": "Sj8bF",
+                          "type": "ref",
+                          "ref": "C10zH",
+                          "height": "fit_content",
+                          "name": "muploadBtn",
+                          "x": 0,
+                          "y": 22,
+                          "descendants": {
+                            "l8v2I": {
+                              "enabled": false
+                            },
+                            "poRwU": {
+                              "content": "Change Photo"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "Tvr1h",
+                  "type": "ref",
+                  "ref": "uHFal",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "name": "mfirst",
+                  "x": 20,
+                  "y": 144,
+                  "descendants": {
+                    "QRy7x": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "BX0XX": {
+                      "width": "fill_container",
+                      "content": "First Name"
+                    },
+                    "i0Z3E": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "SDRKn": {
+                      "content": "Sarah",
+                      "fill": "$--foreground"
+                    }
+                  }
+                },
+                {
+                  "id": "UiGfA",
+                  "type": "ref",
+                  "ref": "uHFal",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "name": "mlast",
+                  "x": 20,
+                  "y": 230,
+                  "descendants": {
+                    "QRy7x": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "BX0XX": {
+                      "width": "fill_container",
+                      "content": "Last Name"
+                    },
+                    "i0Z3E": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "SDRKn": {
+                      "content": "Mitchell",
+                      "fill": "$--foreground"
+                    }
+                  }
+                },
+                {
+                  "id": "jYqS6",
+                  "type": "ref",
+                  "ref": "uHFal",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "name": "memail",
+                  "x": 20,
+                  "y": 316,
+                  "descendants": {
+                    "QRy7x": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "BX0XX": {
+                      "width": "fill_container",
+                      "content": "Email Address"
+                    },
+                    "i0Z3E": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "SDRKn": {
+                      "content": "sarah.mitchell@example.com",
+                      "fill": "$--foreground"
+                    }
+                  }
+                },
+                {
+                  "id": "SumIx",
+                  "type": "ref",
+                  "ref": "CrS3L",
+                  "height": "fit_content",
+                  "width": "fill_container",
+                  "name": "mbio",
+                  "x": 20,
+                  "y": 402,
+                  "descendants": {
+                    "uAcGD": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "a78kl": {
+                      "width": "fill_container",
+                      "content": "Bio"
+                    },
+                    "pzw5I": {
+                      "width": "fill_container"
+                    },
+                    "S4qWY": {
+                      "content": "Senior journalist covering politics and international affairs.",
+                      "fill": "$--foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container"
+                    }
+                  }
+                },
+                {
+                  "id": "zQMTq",
+                  "type": "ref",
+                  "ref": "VSnC2",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "name": "msaveBtn",
+                  "x": 20,
+                  "y": 528,
+                  "descendants": {
+                    "8jVfJ": {
+                      "x": 93.5,
+                      "enabled": false
+                    },
+                    "8tnXG": {
+                      "x": 106.5,
+                      "content": "Save Changes"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "C81QM",
+              "name": "Change Password Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WHRJK",
+                  "name": "mpassTitle",
+                  "fill": "$--foreground",
+                  "content": "Change Password",
+                  "fontFamily": "Outfit",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "29vLg",
+                  "name": "Current Password",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "klmG4",
+                      "name": "mcurLabel",
+                      "fill": "$--foreground",
+                      "content": "Current Password",
+                      "lineHeight": 1.43,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "7SqUP",
+                      "name": "mcurInput",
+                      "width": "fill_container",
+                      "fill": "$--background",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--input"
+                      },
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GKOph",
+                          "name": "mcurPh",
+                          "fill": "$--muted-foreground",
+                          "content": "Enter current password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vF2gg",
+                  "name": "New Password",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "U3GV2",
+                      "name": "mnewLabel",
+                      "fill": "$--foreground",
+                      "content": "New Password",
+                      "lineHeight": 1.43,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wHeKo",
+                      "name": "mnewInput",
+                      "width": "fill_container",
+                      "fill": "$--background",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--input"
+                      },
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LeXl8",
+                          "name": "mnewPh",
+                          "fill": "$--muted-foreground",
+                          "content": "Enter new password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7o37c",
+                  "name": "Confirm Password",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Yfhbq",
+                      "name": "mconfLabel",
+                      "fill": "$--foreground",
+                      "content": "Confirm Password",
+                      "lineHeight": 1.43,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Vjxq0",
+                      "name": "mconfInput",
+                      "width": "fill_container",
+                      "fill": "$--background",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--input"
+                      },
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "usOKy",
+                          "name": "mconfPh",
+                          "fill": "$--muted-foreground",
+                          "content": "Confirm new password",
+                          "lineHeight": 1.43,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "IKc6f",
+                  "type": "ref",
+                  "ref": "VSnC2",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "name": "mpassBtn",
+                  "x": 20,
+                  "y": 318,
+                  "descendants": {
+                    "8jVfJ": {
+                      "x": 83,
+                      "enabled": false
+                    },
+                    "8tnXG": {
+                      "x": 96,
+                      "content": "Update Password"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "U9Akq",
+              "name": "Danger Zone Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--destructive"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NUjPG",
+                  "name": "mdangerTitle",
+                  "fill": "$--destructive",
+                  "content": "Danger Zone",
+                  "fontFamily": "Outfit",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "QQtdE",
+                  "name": "mdangerDesc",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Permanently delete your account and all associated data. This action cannot be undone.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "GXf3G",
+                  "type": "ref",
+                  "ref": "YKnjc",
+                  "height": "fit_content",
+                  "width": "fill_container",
+                  "name": "mdangerBtn",
+                  "x": 20,
+                  "y": 104,
+                  "descendants": {
+                    "PqjlB": {
+                      "x": 120
+                    },
+                    "NDadS": {
+                      "x": 146
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ug34V",
+          "type": "ref",
+          "ref": "qOkYt",
+          "height": "fit_content",
+          "name": "mfooter",
+          "x": 0,
+          "y": 1310,
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "hLKNz": {
+              "width": "fill_container"
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "7DHeb": {
+              "width": "fill_container"
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content"
             }
           }
         }

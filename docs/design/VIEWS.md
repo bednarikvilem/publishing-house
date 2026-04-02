@@ -12,7 +12,7 @@
 
 **Registered User**
 
-- [ ]  User Profile Page - View/edit own profile (name, picture, bio, password)
+- [x]  User Profile Page - View/edit own profile (name, picture, bio, password)
 
 **Author Panel**
 
