@@ -22,7 +22,7 @@
 
 **Editor Panel**
 
-- [ ]  Editor Dashboard - List of articles assigned for review
+- [x]  Editor Dashboard - List of articles assigned for review
 - [ ]  Article Review Page - Read submitted article, approve / reject / request revisions with feedback
 
 **Newspaper Manager Panel**
