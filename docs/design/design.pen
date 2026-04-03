@@ -28550,12 +28550,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -28647,12 +28655,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -28744,12 +28760,20 @@
                                   "name": "row3btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -28841,12 +28865,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -28938,12 +28970,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -29035,12 +29075,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -29138,12 +29186,20 @@
                                   "name": "row1btn",
                                   "x": 0,
                                   "y": 0,
+                                  "width": "fit_content",
+                                  "height": "fit_content",
                                   "descendants": {
+                                    "l8v2I": {
+                                      "x": 16,
+                                      "y": 8
+                                    },
                                     "HDFDp": {
                                       "iconFontName": "eye"
                                     },
                                     "poRwU": {
-                                      "content": "Review"
+                                      "content": "Review",
+                                      "x": 42,
+                                      "y": 8
                                     }
                                   }
                                 }
@@ -29419,12 +29475,20 @@
                           "name": "row1btn",
                           "x": 0,
                           "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
                           "descendants": {
+                            "l8v2I": {
+                              "x": 16,
+                              "y": 8
+                            },
                             "HDFDp": {
                               "iconFontName": "eye"
                             },
                             "poRwU": {
-                              "content": "Review"
+                              "content": "Review",
+                              "x": 42,
+                              "y": 8
                             }
                           }
                         }
@@ -29520,12 +29584,20 @@
                           "name": "row1btn",
                           "x": 0,
                           "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
                           "descendants": {
+                            "l8v2I": {
+                              "x": 16,
+                              "y": 8
+                            },
                             "HDFDp": {
                               "iconFontName": "eye"
                             },
                             "poRwU": {
-                              "content": "Review"
+                              "content": "Review",
+                              "x": 42,
+                              "y": 8
                             }
                           }
                         }
@@ -29621,12 +29693,20 @@
                           "name": "row1btn",
                           "x": 0,
                           "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
                           "descendants": {
+                            "l8v2I": {
+                              "x": 16,
+                              "y": 8
+                            },
                             "HDFDp": {
                               "iconFontName": "eye"
                             },
                             "poRwU": {
-                              "content": "Review"
+                              "content": "Review",
+                              "x": 42,
+                              "y": 8
                             }
                           }
                         }
@@ -29711,12 +29791,20 @@
                           "name": "row1btn",
                           "x": 0,
                           "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
                           "descendants": {
+                            "l8v2I": {
+                              "x": 16,
+                              "y": 8
+                            },
                             "HDFDp": {
                               "iconFontName": "eye"
                             },
                             "poRwU": {
-                              "content": "Review"
+                              "content": "Review",
+                              "x": 42,
+                              "y": 8
                             }
                           }
                         }
@@ -29801,12 +29889,20 @@
                           "name": "row1btn",
                           "x": 0,
                           "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
                           "descendants": {
+                            "l8v2I": {
+                              "x": 16,
+                              "y": 8
+                            },
                             "HDFDp": {
                               "iconFontName": "eye"
                             },
                             "poRwU": {
-                              "content": "Review"
+                              "content": "Review",
+                              "x": 42,
+                              "y": 8
                             }
                           }
                         }
@@ -30128,6 +30224,1643 @@
           "name": "footer",
           "x": 0,
           "y": 1230,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "yfpnu",
+      "x": 23151,
+      "y": 0,
+      "name": "Article Review Page",
+      "width": 1440,
+      "height": 1500,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "4xKuS",
+          "type": "ref",
+          "ref": "oEaiX",
+          "y": 0,
+          "x": 0,
+          "height": "fit_content",
+          "descendants": {
+            "PQeVK": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "Y96WM": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 48,
+              "y": 18
+            },
+            "n4vGz": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 216,
+              "y": 5.5
+            },
+            "rm7Ld": {
+              "x": 64
+            },
+            "6FKVs": {
+              "x": 138
+            },
+            "mNIs5": {
+              "x": 241
+            },
+            "Iq526": {
+              "x": 309
+            },
+            "0jxkj": {
+              "x": 382
+            },
+            "I9dEb": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 1011,
+              "y": 14
+            },
+            "77fnW": {
+              "height": "fit_content",
+              "y": 1.5
+            },
+            "OE9fC": {
+              "x": 12,
+              "y": 8.5
+            },
+            "PY4GT": {
+              "x": 36,
+              "y": 8
+            },
+            "kP4l9": {
+              "width": "fit_content",
+              "height": "fit_content"
+            },
+            "9ToY3": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 293
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "cBFoj",
+          "name": "Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "id": "keknT",
+              "type": "ref",
+              "ref": "1As2r",
+              "x": 0,
+              "y": 0,
+              "width": 225,
+              "height": 1098,
+              "flipX": false,
+              "flipY": false,
+              "descendants": {
+                "GZRsz": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "ZUyJ6": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 12
+                },
+                "6wD7F/wVlpW": {
+                  "x": 6.5
+                },
+                "1pghT": {
+                  "x": 42,
+                  "y": 7.5
+                },
+                "2ZQaq": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 54
+                },
+                "MGE6s": {
+                  "width": "fit_content",
+                  "height": "fit_content"
+                },
+                "4lJNm": {
+                  "x": 8,
+                  "y": 2
+                },
+                "m2tWE": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 59
+                },
+                "oOHLs": {
+                  "x": 8,
+                  "y": 2
+                },
+                "uFZok": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 113
+                },
+                "vTiom": {
+                  "x": 8,
+                  "y": 2
+                },
+                "ggqd1": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "y": 83
+                },
+                "SpXyM": {
+                  "width": "fill_container",
+                  "height": "fit_content"
+                },
+                "qpdWD": {
+                  "x": 12,
+                  "y": 12
+                },
+                "t2gRw": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 29
+                },
+                "O8EpA": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 6
+                },
+                "H2R2Y": {
+                  "y": 0.5
+                },
+                "BuD59": {
+                  "x": 24
+                },
+                "qMWJY": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 62
+                },
+                "THxnC": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 6
+                },
+                "M6ABW": {
+                  "y": 0.5
+                },
+                "zq1gq": {
+                  "x": 24
+                },
+                "gbwmN": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 95
+                },
+                "t2XFb": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 7
+                },
+                "fBODH": {
+                  "y": 0.5
+                },
+                "BQYwx": {
+                  "x": 24
+                },
+                "6FzOY": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 170
+                },
+                "7Fug7": {
+                  "width": "fill_container",
+                  "y": 138
+                },
+                "ZbmP3": {
+                  "width": "fill_container",
+                  "x": 12
+                },
+                "sKh6a": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "y": 138
+                },
+                "dkFEt": {
+                  "x": 12,
+                  "y": 12
+                },
+                "0kBUF": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 29
+                },
+                "qGB7O": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 7
+                },
+                "zMqv0": {
+                  "y": 0.5
+                },
+                "zJTL4": {
+                  "x": 24
+                },
+                "mAnTM": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 170
+                },
+                "sXVE5": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 64
+                },
+                "LoyqL": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 6
+                },
+                "aKwiO": {
+                  "y": 0.5
+                },
+                "YYEca": {
+                  "x": 24
+                },
+                "xdhNM": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 97
+                },
+                "wKbkB": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 8,
+                  "y": 6
+                },
+                "caN8N": {
+                  "y": 0.5
+                },
+                "RDHOq": {
+                  "x": 24
+                },
+                "P36nW": {
+                  "width": "fill_container",
+                  "y": 276
+                },
+                "sWcoX": {
+                  "width": "fill_container",
+                  "x": 12
+                },
+                "XtZoG": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "y": 276
+                },
+                "2AQJq": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 12
+                },
+                "rt7fZ": {
+                  "y": 4
+                },
+                "BD4m5": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 37
+                },
+                "yXray": {
+                  "x": 8,
+                  "y": 6.5
+                },
+                "rYTwt": {
+                  "x": 32,
+                  "y": 6
+                },
+                "Sf9qJ": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 70
+                },
+                "qyRz1": {
+                  "x": 8,
+                  "y": 6.5
+                },
+                "amzWj": {
+                  "x": 32,
+                  "y": 6
+                },
+                "Q0KaW": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 103
+                },
+                "MaIrd": {
+                  "x": 8,
+                  "y": 6.5
+                },
+                "NaRR7": {
+                  "x": 32,
+                  "y": 6
+                },
+                "at5qV": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "y": 1012
+                },
+                "KyEOb": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 12
+                },
+                "80zjM": {
+                  "x": 8,
+                  "y": 6.5
+                },
+                "R1nuG": {
+                  "x": 32,
+                  "y": 6
+                },
+                "BXyV0": {
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "x": 12,
+                  "y": 45
+                },
+                "HItUs": {
+                  "x": 8,
+                  "y": 6.5
+                },
+                "wuaFR": {
+                  "x": 32,
+                  "y": 6
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "g4je4",
+              "name": "Main Content",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SLJbA",
+                  "name": "Scroll Content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 28,
+                  "padding": [
+                    32,
+                    48
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "V7VqF",
+                      "name": "Page Title Bar",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "4VMX0",
+                          "fill": "$--foreground",
+                          "content": "Article Review",
+                          "fontFamily": "Inter",
+                          "fontSize": 24,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "5mJaz",
+                          "name": "titleBadge",
+                          "fill": "#2563eb18",
+                          "cornerRadius": 16,
+                          "padding": [
+                            4,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HkWQR",
+                              "fill": "#2563eb",
+                              "content": "Submitted",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HZAwD",
+                      "name": "Article Info Card",
+                      "width": "fill_container",
+                      "fill": "$--card",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "fQUGL",
+                          "name": "cardLabel",
+                          "fill": "$--muted-foreground",
+                          "content": "ARTICLE",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "aIoDu",
+                          "fill": "$--foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Senate Unveils Bipartisan Infrastructure Plan",
+                          "lineHeight": 1.3,
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ATEZb",
+                          "fill": "$--muted-foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "A new proposal aims to allocate $500 billion toward modernizing roads, bridges, and broadband infrastructure across the nation. The plan has received bipartisan support and is expected to move through committee review within the coming weeks.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "FQ0hg",
+                          "name": "metaRow",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "udFh7",
+                              "fill": "$--muted-foreground",
+                              "content": "by Sarah Mitchell",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "azWZa",
+                              "fill": "$--muted-foreground",
+                              "content": "·",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "1P38A",
+                              "fill": "$--muted-foreground",
+                              "content": "Submitted on Mar 30, 2026",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "71eGj",
+                      "name": "Feedback Section",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EKpSU",
+                          "fill": "$--foreground",
+                          "content": "Feedback",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xNPks",
+                          "fill": "$--muted-foreground",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Provide your feedback to the author. This will be visible to them after you submit your review.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "at3II",
+                          "type": "ref",
+                          "ref": "BjRan",
+                          "width": "fill_container",
+                          "name": "textarea",
+                          "x": 0,
+                          "y": 55,
+                          "height": "fit_content",
+                          "descendants": {
+                            "uAcGD": {
+                              "width": "fill_container",
+                              "height": "fit_content"
+                            },
+                            "a78kl": {
+                              "width": "fill_container",
+                              "content": "Review Feedback"
+                            },
+                            "pzw5I": {
+                              "width": "fill_container",
+                              "height": 160,
+                              "y": 26
+                            },
+                            "S4qWY": {
+                              "content": "Write your feedback here...",
+                              "x": 12,
+                              "y": 8
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "01617",
+                      "name": "Action Bar",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "justifyContent": "end",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "2WRI3",
+                          "type": "ref",
+                          "ref": "YKnjc",
+                          "name": "rejectBtn",
+                          "x": 707,
+                          "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
+                          "descendants": {
+                            "PqjlB": {
+                              "x": 16,
+                              "y": 8
+                            },
+                            "RDx8O": {
+                              "iconFontName": "circle-x"
+                            },
+                            "NDadS": {
+                              "content": "Reject",
+                              "x": 42,
+                              "y": 8
+                            }
+                          }
+                        },
+                        {
+                          "id": "9w5yc",
+                          "type": "ref",
+                          "ref": "e8v1X",
+                          "name": "revisionBtn",
+                          "x": 819,
+                          "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
+                          "descendants": {
+                            "soROh": {
+                              "x": 16,
+                              "y": 8
+                            },
+                            "SlKX1": {
+                              "iconFontName": "rotate-ccw"
+                            },
+                            "Tr3Fv": {
+                              "content": "Request Revision",
+                              "x": 42,
+                              "y": 8
+                            }
+                          }
+                        },
+                        {
+                          "id": "9egjL",
+                          "type": "ref",
+                          "ref": "VSnC2",
+                          "name": "approveBtn",
+                          "x": 1004,
+                          "y": 0,
+                          "width": "fit_content",
+                          "height": "fit_content",
+                          "descendants": {
+                            "8jVfJ": {
+                              "x": 16,
+                              "y": 8
+                            },
+                            "WNalu": {
+                              "iconFontName": "circle-check"
+                            },
+                            "8tnXG": {
+                              "content": "Approve",
+                              "x": 42,
+                              "y": 8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "omaM5",
+          "type": "ref",
+          "ref": "l42ZL",
+          "y": 1161,
+          "x": 0,
+          "height": "fit_content",
+          "descendants": {
+            "E4ryO": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 64,
+              "y": 48
+            },
+            "2XM1c": {
+              "height": "fit_content"
+            },
+            "2Y682": {
+              "y": 42
+            },
+            "FZbbe": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 914
+            },
+            "4cyWp": {
+              "width": "fit_content",
+              "height": "fit_content"
+            },
+            "e5kAV": {
+              "y": 30
+            },
+            "mKovl": {
+              "y": 59
+            },
+            "zPhE1": {
+              "y": 88
+            },
+            "SjpEK": {
+              "y": 117
+            },
+            "Q0in7": {
+              "y": 146
+            },
+            "iDTTe": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 157
+            },
+            "IFHKl": {
+              "y": 30
+            },
+            "nGfg3": {
+              "y": 59
+            },
+            "VSQTI": {
+              "y": 88
+            },
+            "adEr2": {
+              "y": 117
+            },
+            "YFpAI": {
+              "width": "fit_content",
+              "height": "fit_content",
+              "x": 285
+            },
+            "LxwsE": {
+              "y": 30
+            },
+            "erkj7": {
+              "y": 59
+            },
+            "rakm7": {
+              "y": 88
+            },
+            "4q4sL": {
+              "y": 117
+            },
+            "CQQos": {
+              "width": "fill_container",
+              "x": 64,
+              "y": 243
+            },
+            "M87Z5": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 64,
+              "y": 275
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PC28W",
+      "x": 10763,
+      "y": 3300,
+      "name": "Mobile Article Review Page",
+      "enabled": false,
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "nZ9GF",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "header",
+          "y": 0,
+          "width": "fill_container",
+          "height": 56,
+          "x": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
+        },
+        {
+          "type": "line",
+          "id": "f05zJ",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "align": "center",
+            "thickness": 1,
+            "fill": "$--border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "khFhc",
+          "name": "Scroll Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "pO6ks",
+              "name": "Page Title Bar",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CAIUv",
+                  "fill": "$--foreground",
+                  "content": "Article Review",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "GgBcv",
+                  "name": "titleBadge",
+                  "fill": "#2563eb18",
+                  "cornerRadius": 16,
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "A3kgX",
+                      "fill": "#2563eb",
+                      "content": "Submitted",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "5kRts",
+              "name": "Article Info Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UP0Hk",
+                  "fill": "$--muted-foreground",
+                  "content": "ARTICLE",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "text",
+                  "id": "wBfzm",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Senate Unveils Bipartisan Infrastructure Plan",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "3CJBU",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A new proposal aims to allocate $500 billion toward modernizing roads, bridges, and broadband infrastructure across the nation. The plan has received bipartisan support and is expected to move through committee review within the coming weeks.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "pYwed",
+                  "name": "metaRow",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QunKP",
+                      "fill": "$--muted-foreground",
+                      "content": "by Sarah Mitchell",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l6TJ5",
+                      "fill": "$--muted-foreground",
+                      "content": "·",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OFKWA",
+                      "fill": "$--muted-foreground",
+                      "content": "Mar 30, 2026",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gPA74",
+              "name": "Feedback Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ILpeC",
+                  "fill": "$--foreground",
+                  "content": "Feedback",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "bBwfR",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Provide your feedback to the author. This will be visible to them after you submit your review.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "R9Oq7",
+                  "type": "ref",
+                  "ref": "BjRan",
+                  "width": "fill_container",
+                  "name": "fbTextarea",
+                  "x": 0,
+                  "y": 70,
+                  "height": "fit_content",
+                  "descendants": {
+                    "uAcGD": {
+                      "width": "fill_container",
+                      "height": "fit_content"
+                    },
+                    "a78kl": {
+                      "width": "fill_container",
+                      "content": "Review Feedback"
+                    },
+                    "pzw5I": {
+                      "width": "fill_container",
+                      "height": 140,
+                      "y": 26
+                    },
+                    "S4qWY": {
+                      "content": "Write your feedback here...",
+                      "x": 12,
+                      "y": 8
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D3QIv",
+              "name": "Action Bar",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OPZ9M",
+                  "name": "topButtons",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "id": "ExtpZ",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "name": "approveBtn",
+                      "x": 0,
+                      "y": 0,
+                      "height": "fit_content",
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 45.5,
+                          "y": 8
+                        },
+                        "WNalu": {
+                          "iconFontName": "circle-check"
+                        },
+                        "8tnXG": {
+                          "x": 71.5,
+                          "content": "Approve",
+                          "y": 8
+                        }
+                      }
+                    },
+                    {
+                      "id": "dCU0T",
+                      "type": "ref",
+                      "ref": "e8v1X",
+                      "width": "fill_container",
+                      "name": "revisionBtn",
+                      "x": 184,
+                      "y": 0,
+                      "height": "fit_content",
+                      "descendants": {
+                        "soROh": {
+                          "x": 16.5,
+                          "y": 8
+                        },
+                        "SlKX1": {
+                          "iconFontName": "rotate-ccw"
+                        },
+                        "Tr3Fv": {
+                          "x": 42.5,
+                          "content": "Request Revision",
+                          "y": 8
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "g8m8Y",
+                  "type": "ref",
+                  "ref": "YKnjc",
+                  "width": "fill_container",
+                  "name": "rejectBtn",
+                  "x": 0,
+                  "y": 46,
+                  "height": "fit_content",
+                  "descendants": {
+                    "PqjlB": {
+                      "x": 145,
+                      "y": 8
+                    },
+                    "RDx8O": {
+                      "iconFontName": "circle-x"
+                    },
+                    "NDadS": {
+                      "x": 171,
+                      "content": "Reject",
+                      "y": 8
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4yoRD",
+          "type": "ref",
+          "ref": "qOkYt",
+          "name": "footer",
+          "x": 0,
+          "y": 742,
+          "height": "fit_content",
+          "descendants": {
+            "NfAFs": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 32
+            },
+            "hLKNz": {
+              "width": "fill_container",
+              "y": 28
+            },
+            "JonJM": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 120
+            },
+            "0T35y": {
+              "width": "fill_container",
+              "height": "fit_content"
+            },
+            "jo684": {
+              "y": 26
+            },
+            "pkpwU": {
+              "y": 50
+            },
+            "zWSiy": {
+              "y": 74
+            },
+            "pdQXS": {
+              "y": 98
+            },
+            "NbSD1": {
+              "y": 122
+            },
+            "dYcBk": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 158
+            },
+            "31xem": {
+              "y": 26
+            },
+            "G7e05": {
+              "y": 50
+            },
+            "OTfxT": {
+              "y": 74
+            },
+            "5DLUs": {
+              "y": 98
+            },
+            "6J6Pa": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "y": 292
+            },
+            "OKH6Z": {
+              "y": 26
+            },
+            "TbhKS": {
+              "y": 50
+            },
+            "MR5aT": {
+              "y": 74
+            },
+            "oKoZ4": {
+              "y": 98
+            },
+            "7DHeb": {
+              "width": "fill_container",
+              "x": 20,
+              "y": 550
+            },
+            "Uzvnf": {
+              "width": "fill_container",
+              "height": "fit_content",
+              "x": 20,
+              "y": 574
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qrkMs",
+      "x": 10763,
+      "y": 3300,
+      "name": "Mobile Review Page",
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "Wafvg",
+          "type": "ref",
+          "ref": "tNeqM",
+          "name": "header",
+          "y": 0,
+          "descendants": {
+            "5OpRe": {
+              "x": 16,
+              "y": 16.5
+            },
+            "og111": {
+              "x": 350,
+              "y": 16
+            }
+          }
+        },
+        {
+          "type": "line",
+          "id": "PPNvq",
+          "name": "divider",
+          "width": "fill_container",
+          "height": 0,
+          "stroke": {
+            "align": "center",
+            "thickness": 1,
+            "fill": "$--border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "9oUnb",
+          "name": "Scroll Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "mleWk",
+              "name": "Page Title Bar",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uukyx",
+                  "fill": "$--foreground",
+                  "content": "Article Review",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "EzkN4",
+                  "name": "tBadge",
+                  "fill": "#2563eb18",
+                  "cornerRadius": 16,
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AZhKS",
+                      "fill": "#2563eb",
+                      "content": "Submitted",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zHlJ8",
+              "name": "Article Info Card",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CxxcN",
+                  "fill": "$--muted-foreground",
+                  "content": "ARTICLE",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "text",
+                  "id": "4U4s4",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Senate Unveils Bipartisan Infrastructure Plan",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "fy0ZV",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A new proposal aims to allocate $500 billion toward modernizing roads, bridges, and broadband infrastructure across the nation. The plan has received bipartisan support and is expected to move through committee review within the coming weeks.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "oOGDq",
+                  "name": "mRow",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BJNnk",
+                      "fill": "$--muted-foreground",
+                      "content": "by Sarah Mitchell",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TJUSi",
+                      "fill": "$--muted-foreground",
+                      "content": "·",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ygHo7",
+                      "fill": "$--muted-foreground",
+                      "content": "Mar 30, 2026",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "69BTK",
+              "name": "Feedback Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gUyui",
+                  "fill": "$--foreground",
+                  "content": "Feedback",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "2XJ1G",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Provide your feedback to the author. This will be visible to them after you submit your review.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "VMDex",
+                  "type": "ref",
+                  "ref": "BjRan",
+                  "width": "fill_container",
+                  "name": "ta",
+                  "x": 0,
+                  "y": 70,
+                  "descendants": {
+                    "uAcGD": {
+                      "width": "fill_container"
+                    },
+                    "a78kl": {
+                      "width": "fill_container",
+                      "content": "Review Feedback"
+                    },
+                    "pzw5I": {
+                      "width": "fill_container",
+                      "height": 140
+                    },
+                    "S4qWY": {
+                      "content": "Write your feedback here..."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ajVDj",
+              "name": "Action Bar",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cQCIc",
+                  "name": "topBtns",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "id": "TJkYV",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fill_container",
+                      "name": "appBtn",
+                      "x": 0,
+                      "y": 0,
+                      "descendants": {
+                        "8jVfJ": {
+                          "x": 45.5
+                        },
+                        "WNalu": {
+                          "iconFontName": "circle-check"
+                        },
+                        "8tnXG": {
+                          "x": 71.5,
+                          "content": "Approve"
+                        }
+                      }
+                    },
+                    {
+                      "id": "AjUdp",
+                      "type": "ref",
+                      "ref": "e8v1X",
+                      "width": "fill_container",
+                      "name": "revBtn",
+                      "x": 184,
+                      "y": 0,
+                      "descendants": {
+                        "soROh": {
+                          "x": 16.5
+                        },
+                        "SlKX1": {
+                          "iconFontName": "rotate-ccw"
+                        },
+                        "Tr3Fv": {
+                          "x": 42.5,
+                          "content": "Request Revision"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "mElBC",
+                  "type": "ref",
+                  "ref": "YKnjc",
+                  "width": "fill_container",
+                  "name": "rejBtn",
+                  "x": 0,
+                  "y": 46,
+                  "descendants": {
+                    "PqjlB": {
+                      "x": 145
+                    },
+                    "RDx8O": {
+                      "iconFontName": "circle-x"
+                    },
+                    "NDadS": {
+                      "x": 171,
+                      "content": "Reject"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bPBnn",
+          "type": "ref",
+          "ref": "qOkYt",
+          "name": "footer",
+          "x": 0,
+          "y": 742,
           "height": "fit_content",
           "descendants": {
             "NfAFs": {
