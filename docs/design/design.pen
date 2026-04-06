@@ -5105,20 +5105,25 @@
               "x": 216,
               "y": 5.5
             },
+            "CoSKp": {
+              "fill": "$5:--foreground",
+              "fontStyle": "normal",
+              "fontWeight": "600"
+            },
             "rm7Ld": {
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "width": "fit_content",
@@ -7383,7 +7388,10 @@
               "y": 5.5
             },
             "rm7Ld": {
-              "x": 64
+              "x": 64,
+              "fill": "$5:--foreground",
+              "fontStyle": "normal",
+              "fontWeight": "600"
             },
             "6FKVs": {
               "x": 138
@@ -8838,16 +8846,16 @@
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "width": "fit_content",
@@ -9321,16 +9329,16 @@
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "width": "fit_content",
@@ -9930,7 +9938,10 @@
               "y": 5.5
             },
             "rm7Ld": {
-              "x": 64
+              "x": 64,
+              "fill": "$5:--foreground",
+              "fontStyle": "normal",
+              "fontWeight": "600"
             },
             "6FKVs": {
               "x": 138
@@ -14712,8 +14723,8 @@
     {
       "type": "frame",
       "id": "qOkYt",
-      "x": 434,
-      "y": 4336,
+      "x": 433,
+      "y": 4417,
       "name": "Mobile Footer",
       "reusable": true,
       "width": 390,
@@ -14996,7 +15007,7 @@
       "type": "frame",
       "id": "tNeqM",
       "x": 0,
-      "y": 4336,
+      "y": 4417,
       "name": "Mobile Header",
       "reusable": true,
       "width": "fill_container(390)",
@@ -17481,8 +17492,8 @@
     {
       "type": "frame",
       "id": "6pQPs",
-      "x": 876,
-      "y": 4336,
+      "x": 879,
+      "y": 4417,
       "name": "Mobile Article Card",
       "reusable": true,
       "clip": true,
@@ -17649,72 +17660,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "ZSle4",
+          "id": "n2saR",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -18825,7 +18774,7 @@
       "type": "frame",
       "id": "oEaiX",
       "x": 0,
-      "y": 3684,
+      "y": 3668,
       "name": "Desktop Header",
       "reusable": true,
       "width": "fill_container(1440)",
@@ -18880,7 +18829,7 @@
                       "type": "text",
                       "id": "CoSKp",
                       "name": "n1",
-                      "fill": "$--muted-foreground",
+                      "fill": "$5:--muted-foreground",
                       "content": "Home",
                       "fontFamily": "Inter",
                       "fontSize": 14,
@@ -18890,11 +18839,11 @@
                       "type": "text",
                       "id": "rm7Ld",
                       "name": "n2",
-                      "fill": "$--foreground",
+                      "fill": "$5:--muted-foreground",
                       "content": "Politics",
                       "fontFamily": "Inter",
                       "fontSize": 14,
-                      "fontWeight": "600"
+                      "fontWeight": "500"
                     },
                     {
                       "type": "text",
@@ -19037,7 +18986,7 @@
       "type": "frame",
       "id": "l42ZL",
       "x": 0,
-      "y": 3868,
+      "y": 4013,
       "name": "Desktop Footer",
       "reusable": true,
       "width": "fill_container(1440)",
@@ -20130,72 +20079,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "KlX91",
+          "id": "OeZw6",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -21333,72 +21220,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "hGxgQ",
+          "id": "RtdPi",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -24137,16 +23962,16 @@
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "height": "fit_content",
@@ -24500,16 +24325,16 @@
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "height": "fit_content",
@@ -26035,16 +25860,16 @@
               "x": 64
             },
             "6FKVs": {
-              "x": 138
+              "x": 137
             },
             "mNIs5": {
-              "x": 241
+              "x": 240
             },
             "Iq526": {
-              "x": 309
+              "x": 308
             },
             "0jxkj": {
-              "x": 382
+              "x": 381
             },
             "I9dEb": {
               "height": "fit_content",
@@ -26625,72 +26450,11 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "Ussb6",
+          "id": "g4qkl",
           "type": "ref",
-          "ref": "oEaiX",
+          "ref": "9wc9V",
           "height": "fit_content",
-          "name": "header",
-          "y": 0,
-          "descendants": {
-            "PQeVK": {
-              "height": "fit_content",
-              "width": "fill_container"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "height": "fit_content",
-              "width": "fit_content"
-            },
-            "9ToY3": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 293
-            }
-          }
+          "name": "header"
         },
         {
           "type": "frame",
@@ -28035,72 +27799,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "2QQRe",
+          "id": "gPYnz",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -30322,72 +30024,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "4xKuS",
+          "id": "njJc9",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -31973,72 +31613,10 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "TjdWF",
+          "id": "QDfRu",
           "type": "ref",
-          "ref": "oEaiX",
-          "y": 0,
-          "x": 0,
-          "height": "fit_content",
-          "descendants": {
-            "PQeVK": {
-              "width": "fill_container",
-              "height": "fit_content"
-            },
-            "Y96WM": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "width": "fit_content",
-              "height": "fit_content"
-            },
-            "9ToY3": {
-              "width": "fit_content",
-              "height": "fit_content",
-              "x": 293
-            }
-          }
+          "ref": "y8U5E",
+          "height": "fit_content"
         },
         {
           "type": "frame",
@@ -34033,73 +33611,11 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "ijxPy",
+          "id": "Ulw2U",
           "type": "ref",
-          "ref": "oEaiX",
+          "ref": "y8U5E",
           "height": "fit_content",
-          "x": 0,
-          "y": 0,
-          "name": "header",
-          "descendants": {
-            "PQeVK": {
-              "height": "fit_content",
-              "width": "fill_container"
-            },
-            "Y96WM": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 48,
-              "y": 18
-            },
-            "n4vGz": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 216,
-              "y": 5.5
-            },
-            "rm7Ld": {
-              "x": 64
-            },
-            "6FKVs": {
-              "x": 138
-            },
-            "mNIs5": {
-              "x": 241
-            },
-            "Iq526": {
-              "x": 309
-            },
-            "0jxkj": {
-              "x": 382
-            },
-            "I9dEb": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 1011,
-              "y": 14
-            },
-            "77fnW": {
-              "height": "fit_content",
-              "y": 1.5
-            },
-            "OE9fC": {
-              "x": 12,
-              "y": 8.5
-            },
-            "PY4GT": {
-              "x": 36,
-              "y": 8
-            },
-            "kP4l9": {
-              "height": "fit_content",
-              "width": "fit_content"
-            },
-            "9ToY3": {
-              "height": "fit_content",
-              "width": "fit_content",
-              "x": 293
-            }
-          }
+          "name": "header"
         },
         {
           "type": "frame",
@@ -36830,12 +36346,11 @@
       "layout": "vertical",
       "children": [
         {
-          "id": "Yt1Ui",
+          "id": "Px0P7",
           "type": "ref",
-          "ref": "oEaiX",
+          "ref": "y8U5E",
           "height": "fit_content",
-          "name": "header",
-          "y": 0
+          "name": "header"
         },
         {
           "type": "frame",
@@ -39847,6 +39362,196 @@
           "y": 1252
         }
       ]
+    },
+    {
+      "id": "y8U5E",
+      "type": "ref",
+      "reusable": true,
+      "ref": "oEaiX",
+      "x": 0,
+      "y": 3896,
+      "name": "Desktop Header (Logged In - Stuff)",
+      "height": "fit_content",
+      "descendants": {
+        "PQeVK": {
+          "height": "fit_content"
+        },
+        "Y96WM": {
+          "y": 17
+        },
+        "I9dEb": {
+          "type": "frame",
+          "id": "AldY5",
+          "name": "Right",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pCcVJ",
+              "name": "Search",
+              "width": 200,
+              "cornerRadius": 6,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 8,
+              "padding": [
+                8,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "YEQTl",
+                  "name": "sIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "aQTmO",
+                  "name": "sText",
+                  "fill": "$--muted-foreground",
+                  "content": "Search articles...",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JyAyC",
+              "name": "Dashboard Btn",
+              "fill": "$--primary",
+              "cornerRadius": 6,
+              "gap": 6,
+              "padding": [
+                8,
+                16
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "YlqlE",
+                  "name": "writeIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "layout-dashboard",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--primary-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "wTKNa",
+                  "name": "writeText",
+                  "fill": "$--primary-foreground",
+                  "content": "Dashboard",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZJhne",
+              "name": "Notifications",
+              "cornerRadius": 6,
+              "padding": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "TKOlO",
+                  "name": "notifIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "bell",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2uOdN",
+              "name": "User Menu",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SfNa4",
+                  "name": "Avatar",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$--primary",
+                  "cornerRadius": 999,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "34Xte",
+                      "name": "avatarText",
+                      "fill": "$--primary-foreground",
+                      "content": "JD",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "zpaHb",
+                  "name": "userName",
+                  "fill": "$--foreground",
+                  "content": "John Doe",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "ZPGXn",
+                  "name": "chevron",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "chevron-down",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9wc9V",
+      "type": "ref",
+      "reusable": true,
+      "ref": "y8U5E",
+      "x": 0,
+      "y": 3784,
+      "name": "Desktop Header (Logged in - Reader)",
+      "descendants": {
+        "JyAyC": {
+          "enabled": false
+        }
+      }
     }
   ],
   "themes": {
