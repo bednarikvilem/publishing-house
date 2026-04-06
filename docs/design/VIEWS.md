@@ -29,7 +29,7 @@
 
 - [x]  Manager Dashboard - Overview of newspaper's articles by status
 - [x]  Article Assignment Page - Assign editors to submitted articles
-- [ ]  Article Approval Page - Approve/reject/return editor-approved articles, schedule publication
+- [x]  Article Approval Page - Approve/reject/return editor-approved articles, schedule publication
 - [ ]  Category Management Page - Create/delete categories for their newspaper
 
 **Director Panel**
