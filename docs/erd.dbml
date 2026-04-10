@@ -1,0 +1,131 @@
+// --- ENUMS---
+
+Enum user_role {
+  VISITOR
+  REGISTRED_USER
+  AUTHOR
+  EDITOR
+  NEWSPAPER_MANAGER
+  DIRECTOR
+  SYSTEM_ADMINISTRATOR
+}
+
+Enum article_state {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  APPROVED_BY_EDITOR
+  APPROVED_BY_MANAGER
+  PUBLISHED
+  REJECTED
+}
+
+Enum review_decisions {
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+}
+
+Enum result {
+  SUCCESS
+  FAILURE
+}
+
+// --- TABLES ---
+
+Table users {
+  id uuid [pk]
+  newspaper_id uuid [pk, ref: > newspapers.id]
+  email varchar [not null]
+  username varchar [not null]
+  full_name varchar
+  password_hash text [not null]
+}
+
+Table user_roles {
+  user_id uuid [pk, ref: > users.id]
+  newspaper_id uuid [pk, ref: > users.newspaper_id]
+  role user_role [pk]
+}
+
+Table newspaper_authors {
+  user_id uuid [pk, ref: > users.id]
+  newspapers_id uuid [pk, ref: > newspapers.id]
+  working_from timestamp
+  biography text // for authors
+  profile_picture text // URL - for authors
+}
+
+Table publishing_houses {
+  id uuid [pk]
+  name varchar [not null]
+  director_id uuid [ref: > users.id]
+}
+
+Table newspapers {
+  id uuid [pk]
+  name varchar [not null]
+  publishing_house_id uuid [ref: > publishing_houses.id]
+  manager_id uuid [ref: > users.id]
+}
+
+Table articles {
+  id uuid [pk]
+  title varchar [not null]
+  perex text [not null]
+  content text [not null]
+  keywords text
+  state article_state [default: 'DRAFT'] 
+  author_id uuid [ref: > users.id]
+  newspaper_id uuid [ref: > newspapers.id]
+  category_id varchar [ref: > article_category.category_name]
+  publication_date timestamp
+  created_at timestamp [default: `now()`]
+}
+
+Table article_category {
+  id uuid [pk]
+  category_name varchar [unique, not null]
+}
+
+Table article_images {
+  id uuid [pk]
+  article_id uuid [ref: > articles.id]
+  url text [not null]
+  caption text
+  is_primary boolean
+}
+
+Table comments {
+  id uuid [pk]
+  article_id uuid [ref: > articles.id]
+  user_id uuid [ref: > users.id]
+  content text [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table likes {
+  id uuid [pk]
+  user_id uuid [pk, ref: > users.id]
+  article_id uuid [pk, ref: > articles.id]
+  created_at timestamp [default: `now()`]
+}
+
+Table article_reviews {
+  id uuid [pk]
+  article_id uuid [ref: > articles.id]
+  reviewer_id uuid [ref: > users.id]
+  feedback text
+  decision review_decisions // APPROVED, REJECTED, REVISION_REQUESTED 
+  created_at timestamp [default: `now()`]
+}
+
+Table audit_logs {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  operation_type varchar
+  target_object_id uuid
+  result result // SUCCESS/FAILURE 
+  timestamp timestamp [default: `now()`]
+}
+
