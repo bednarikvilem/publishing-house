@@ -1,3 +1,4 @@
+# System configuration
 
 Default to using Bun instead of Node.js.
 
@@ -104,3 +105,21 @@ bun --hot ./index.ts
 ```
 
 For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.
+
+# Project description
+
+The system is a web-based platfrom for a publication house. The house consists of multiple newspapers. The following is the list of user roles that the system recognizes and their brief description:
+
+- System Administrator - assigns roles, remove users from roles
+- Director - head of the publication house
+- Manager - head of a newspaper
+- Editor - reviews articles submitted by authors
+- Author - writes articles for given publication house
+- Registered User - a user of the newspaper with a valid account, a registered user can view the whole articles
+- Visitor - a user without an account, a visitor can view the homepage but cannot access the full articles
+
+A deeper description of the functional requirements of the system is described in docs/FUNCTIONAL_REQUIREMENTS.md
+
+A list of use cases in described in docs/use_case_specification.pdf
+
+The database scheme is described in docs/erd.dbml
