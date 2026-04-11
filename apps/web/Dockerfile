@@ -8,6 +8,6 @@ RUN bun install
 # Copy source
 COPY . .
 
-EXPOSE 5173
+EXPOSE 3000
 
 CMD ["bun", "--hot", "src/index.ts"]
