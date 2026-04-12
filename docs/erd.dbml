@@ -106,7 +106,6 @@ Table comments {
 }
 
 Table likes {
-  id uuid [pk]
   user_id uuid [pk, ref: > users.id]
   article_id uuid [pk, ref: > articles.id]
   created_at timestamp [default: `now()`]
