@@ -160,8 +160,36 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		return Response.json({ message: "Logged out successfully" });
 	})
 
-	.post("/verify-email", async ({ body }) => {
+	.post("/verify-email", async ({ body, jwt }) => {
+		const { token } = body;
 
+		const payload = await jwt.verify(token);
+
+		if (!payload || payload.type !== "email_verification") {
+			return new Response(
+				JSON.stringify({ error: "Invalid or expired token" }),
+				{ status: 400 }
+			);
+		}
+
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, payload.userId as string));
+
+		if (!user) {
+			return new Response(
+				JSON.stringify({ error: "User not found" }),
+				{ status: 404 }
+			);
+		}
+
+		await db
+			.update(users)
+			.set({ email_verified: true })
+			.where(eq(users.id, user.id));
+
+		return Response.json({ message: "Email verified successfully" });
 	})
 
 	.post("/forgot-password", async ({ body }) => {
