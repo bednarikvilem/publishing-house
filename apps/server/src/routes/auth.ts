@@ -8,6 +8,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 
 	// TODO: validations (will be generated from Drizzle + Zod)
+	// TODO: add token blocklist (Redis) 
 
 	.post("/register", async ({ body, jwt }) => {
 		const { email, username, password, newspaper_id, full_name } = body;
@@ -137,7 +138,26 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	})
 
 	.post("/logout", async ({ headers, jwt }) => {
+		const auth = headers.authorization;
 
+		if (!auth || !auth.startsWith("Bearer ")) {
+			return new Response(
+				JSON.stringify({ error: "Missing token" }),
+				{ status: 401 }
+			);
+		}
+
+		const token = auth.slice(7);
+		const payload = await jwt.verify(token);
+
+		if (!payload) {
+			return new Response(
+				JSON.stringify({ error: "Invalid token" }),
+				{ status: 401 }
+			);
+		}
+
+		return Response.json({ message: "Logged out successfully" });
 	})
 
 	.post("/verify-email", async ({ body }) => {
