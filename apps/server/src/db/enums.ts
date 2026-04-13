@@ -10,7 +10,7 @@ export const articleStateEnum = pgEnum("article_state", [
     "REJECTED"
 ]);
 
-export const userRolesEnum = pgEnum("user_roles", [
+export const userRolesEnum = pgEnum("user_roles_enum", [
     "VISITOR",
     "REGISTRED_USER",
     "AUTHOR",

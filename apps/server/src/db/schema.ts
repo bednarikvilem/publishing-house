@@ -40,8 +40,8 @@ export const usersRelations = relations(users, ({ one }) => ({
 }));
 
 export const userRoles = pgTable("user_roles", {
-    userId: uuid("id").references(() => users.id),
-    newspaperId: uuid("id").references(() => newspapers.id),
+    userId: uuid("user_id").references(() => users.id),
+    newspaperId: uuid("newspaper_id").references(() => newspapers.id),
     role: userRolesEnum("user_role")
 }, (table) => ({
     pk: primaryKey({ columns: [table.userId, table.newspaperId, table.role] })
@@ -72,7 +72,7 @@ export const articles = pgTable("articles", {
     state: articleStateEnum("article_state").default("DRAFT"),
     authorId: uuid("author_id").notNull().references(() => users.id),
     newspaperId: uuid("newspaper_id").notNull().references(() => newspapers.id),
-    categoryId: varchar("category_id", { length: 255 }).references(() => articleCategory.id),
+    categoryId: uuid("category_id").references(() => articleCategory.id),
     publicationDate: timestamp("publication_date"),
     createdAt: timestamp("created_at").defaultNow()
 });

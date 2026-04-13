@@ -18,7 +18,9 @@ services:
 
   server:
     build:
-      context: ./apps/server
+      #context: ./apps/server
+      context: .
+      dockerfile: apps/server/Dockerfile
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}

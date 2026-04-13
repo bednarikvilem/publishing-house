@@ -1,14 +1,17 @@
-FROM oven/bun:1 AS base
+# Použijeme Bun jako základ
+FROM oven/bun:1 AS runner
 WORKDIR /app
 
-# Install dependencies
-COPY package.json bun.lock ./
-RUN bun install
-#RUN bun install  --frozen-lockfile
+# Kopírujeme soubory ze složky out, kterou turbo vytvořilo v rootu
+# POZOR: Docker musí vidět root projektu (vysvětleno níže)
+COPY out/json/ .
+COPY out/json/bun.lock ./bun.lock
 
-# Copy source
-COPY . .
+# Instalace závislostí s tvým novým konzistentním lockfilem
+RUN bun install --frozen-lockfile
 
-EXPOSE 3000
+# Kopírování zdrojových kódů
+COPY out/full/ .
 
-CMD ["bun", "run", "src/server.ts"]
+# Spuštění serveru
+CMD ["bun", "run", "apps/server/src/index.ts"]
