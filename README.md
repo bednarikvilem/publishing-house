@@ -17,8 +17,16 @@ TODO: Add description
 
 Docker is responsible for running the components in their separate containers. The project consists of three components: frontend (web), backend (server), and database.
 If you use WSL, you need have Docker Desktop installed on your Windows machine.
-After installing and opening Docker Desktop and run `docker compose up --build -d` in the project root. You should see the running containers on your Docker Desktop. To access the web type http://localhost:5173/ into your browser.
+After installing and opening Docker Desktop and run `docker compose up -d` in the project root. Use `--build` after you change `package.json` or `bun version`. You should see the running containers on your Docker Desktop. To access the web type http://localhost:5173/ into your browser.
 Do not forget to run `docker compose down` after you are finished with your work.
+
+To start drizzle studio run:
+```bash
+cd apps/server
+bun run dev & bun db:studio
+```
+
+Access the database at https://local.drizzle.studio
 
 ## Prerequisites
 
