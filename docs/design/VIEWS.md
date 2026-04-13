@@ -34,7 +34,7 @@
 
 **Director Panel**
 
-- [ ]  Director Dashboard - Overview of all newspapers, publication statistics
+- [x]  Director Dashboard - Overview of all newspapers, publication statistics
 - [ ]  Final Approval Page - Approve/reject/return manager-approved articles
 - [ ]  Newspaper Management Page - Assign managers, set publication policies
 
