@@ -19,10 +19,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			.where(eq(newspapers.id, newspaper_id));
 
 		if (!newspaper) {
-			return new Response(
-				JSON.stringify({ error: "Newspaper not found" }),
-				{ status: 404 }
-			);
+			return Response.json({ error: "Newspaper not found" }, { status: 404 });
 		}
 
 		const[is_duplicate] = await db
@@ -36,8 +33,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			);
 
 			if (is_duplicate) {
-				return new Response(
-					JSON.stringify({ error: "Email or username is already taken." }),
+				return Response.json(
+					{ error: "Email or username is already taken." },
 					{ status: 409 }
 				);
 			}
@@ -92,20 +89,18 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				)
 			);
 
+		if (!user) {
+			return Response.json({ error: "Invalid email or password" }, { status: 401 });
+		}
+
 		const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
 
-		if (!user || !isPasswordValid) {
-			return new Response(
-				JSON.stringify({ error: "Invalid email or password "}),
-				{ status: 401 }
-			);
+		if (!isPasswordValid) {
+			return Response.json({ error: "Invalid email or password" }, { status: 401 });
 		}
 
 		if (!user.email_verified) {
-			return new Response(
-				JSON.stringify({ error: "Email is not verified" }),
-				{ status: 403 }
-			);
+			return Response.json({ error: "Email is not verified" }, { status: 403 });
 		}
 
 		const roles = await db
@@ -141,20 +136,14 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const auth = headers.authorization;
 
 		if (!auth || !auth.startsWith("Bearer ")) {
-			return new Response(
-				JSON.stringify({ error: "Missing token" }),
-				{ status: 401 }
-			);
+			return Response.json({ error: "Missing token" }, { status: 401 });
 		}
 
 		const token = auth.slice(7);
 		const payload = await jwt.verify(token);
 
 		if (!payload) {
-			return new Response(
-				JSON.stringify({ error: "Invalid token" }),
-				{ status: 401 }
-			);
+			return Response.json({ error: "Invalid token" }, { status: 401 });
 		}
 
 		return Response.json({ message: "Logged out successfully" });
@@ -166,10 +155,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const payload = await jwt.verify(token);
 
 		if (!payload || payload.type !== "email_verification") {
-			return new Response(
-				JSON.stringify({ error: "Invalid or expired token" }),
-				{ status: 400 }
-			);
+			return Response.json({ error: "Invalid or expired token" }, { status: 400 });
 		}
 
 		const [user] = await db
@@ -178,10 +164,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			.where(eq(users.id, payload.userId as string));
 
 		if (!user) {
-			return new Response(
-				JSON.stringify({ error: "User not found" }),
-				{ status: 404 }
-			);
+			return Response.json({ error: "User not found" }, { status: 404 });
 		}
 
 		await db
@@ -193,7 +176,27 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	})
 
 	.post("/forgot-password", async ({ body }) => {
+		const { email, newspaper_id } = body;
 
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(
+				and(
+					eq(users.email, email),
+					eq(users.newspaperId, newspaper_id),
+				)
+			);
+
+		if (user) {
+			const resetToken = await jwt.sign({
+				userId: user.id,
+				type: "password_reset",
+				exp: Math.floor(Date.now() / 1000) + 3600,
+			});
+		}
+
+		return Response.json({ message: "Reset link has been set" });
 	})
 
 	.post("/reset-password", async ({ body }) => {
