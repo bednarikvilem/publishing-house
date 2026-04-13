@@ -46,7 +46,7 @@ Table users {
 Table user_roles {
   user_id uuid [pk, ref: > users.id]
   newspaper_id uuid [pk, ref: > users.newspaper_id]
-  role user_role [pk]
+  role user_role
 }
 
 Table newspaper_authors {
