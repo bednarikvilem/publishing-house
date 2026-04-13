@@ -48,10 +48,10 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				.values({
 					email,
 					username,
-					fullName: full_name,
+					fullname: full_name,
 					passwordHash,
 					newspaperId: newspaper_id,
-					emailVerified: false,
+					email_verified: false,
 				})
 				.returning();
 
@@ -72,14 +72,68 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				id: newUser.id,
 				email: newUser.email,
 				username: newUser.username,
-				full_name: newUser.fullName,
-				email_verified: newUser.emailVerified,
+				full_name: newUser.fullname,
+				email_verified: newUser.email_verified,
 			},
 		}, { status: 201 });
 	})
 
 	.post("/login", async ({ body, jwt }) => {
+		const { email, password, newspaper_id } = body;
 
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(
+				and(
+					eq(users.email, email),
+					eq(users.newspaperId, newspaper_id)
+				)
+			);
+
+		const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
+
+		if (!user || !isPasswordValid) {
+			return new Response(
+				JSON.stringify({ error: "Invalid email or password "}),
+				{ status: 401 }
+			);
+		}
+
+		if (!user.email_verified) {
+			return new Response(
+				JSON.stringify({ error: "Email is not verified" }),
+				{ status: 403 }
+			);
+		}
+
+		const roles = await db
+			.select()
+			.from(userRoles)
+			.where(
+				and(
+					eq(userRoles.userId, user.id),
+					eq(userRoles.newspaperId, newspaper_id)
+				)
+			);
+
+		const token = await jwt.sign({
+			userId: user.id,
+			newspaperId: newspaper_id,
+			exp: Math.floor(Date.now() / 1000) + 7200,
+		});
+
+		return Response.json({
+			token,
+			user: {
+				id: user.id,
+				email: user.email,
+				username: user.username,
+				full_name: user.fullname,
+				email_verified: user.email_verified,
+				roles: roles.map(r => r.role),
+			},
+		});
 	})
 
 	.post("/logout", async ({ headers, jwt }) => {
