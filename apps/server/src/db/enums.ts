@@ -12,7 +12,7 @@ export const articleStateEnum = pgEnum("article_state", [
 
 export const userRolesEnum = pgEnum("user_roles_enum", [
     "VISITOR",
-    "REGISTRED_USER",
+    "REGISTERED_USER",
     "AUTHOR",
     "EDITOR",
     "NEWSPAPER_MANAGER",
