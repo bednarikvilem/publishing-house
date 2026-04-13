@@ -30,40 +30,40 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 					eq(users.newspaperId, newspaper_id),
 					or(eq(users.email, email), eq(users.username, username))
 				)
+		);
+
+		if (is_duplicate) {
+			return Response.json(
+				{ error: "Email or username is already taken." },
+				{ status: 409 }
 			);
+		}
 
-			if (is_duplicate) {
-				return Response.json(
-					{ error: "Email or username is already taken." },
-					{ status: 409 }
-				);
-			}
+		const passwordHash = await Bun.password.hash(password);
 
-			const passwordHash = await Bun.password.hash(password);
-
-			const [newUser] = await db
-				.insert(users)
-				.values({
-					email,
-					username,
-					fullname: full_name,
-					passwordHash,
-					newspaperId: newspaper_id,
-					email_verified: false,
-				})
-				.returning();
-
-			await db.insert(userRoles).values({
-				userId: newUser.id,
+		const [newUser] = await db
+			.insert(users)
+			.values({
+				email,
+				username,
+				fullname: full_name,
+				passwordHash,
 				newspaperId: newspaper_id,
-				role: "REGISTRED_USER",
-			});
+				email_verified: false,
+			})
+			.returning();
 
-			const verificationToken = await jwt.sign({
-				userId: newUser.id,
-				type: "email_verification",
-				exp: Math.floor(Date.now() / 1000) + 86400,
-			});
+		await db.insert(userRoles).values({
+			userId: newUser.id,
+			newspaperId: newspaper_id,
+			role: "REGISTRED_USER",
+		});
+
+		const verificationToken = await jwt.sign({
+			userId: newUser.id,
+			type: "email_verification",
+			exp: Math.floor(Date.now() / 1000) + 86400,
+		});
 
 		return Response.json({
 			user: {
@@ -175,7 +175,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		return Response.json({ message: "Email verified successfully" });
 	})
 
-	.post("/forgot-password", async ({ body }) => {
+	.post("/forgot-password", async ({ body, jwt }) => {
 		const { email, newspaper_id } = body;
 
 		const [user] = await db
@@ -199,10 +199,54 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		return Response.json({ message: "Reset link has been set" });
 	})
 
-	.post("/reset-password", async ({ body }) => {
+	.post("/reset-password", async ({ body, jwt }) => {
+		const { token, password } = body;
 
+		const payload = await jwt.verify(token);
+
+		if (!payload || payload.type !== "password_reset") {
+			return Response.json({ error: "Invalid or expired token" }, { status: 400 });
+		}
+
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, payload.userId as string));
+
+		if (!user) {
+			return Response.json({ error: "User not found"}, { status: 404 });
+		}
+
+		const passwordHash = await Bun.password.hash(password);
+
+		await db
+			.update(users)
+			.set({ passwordHash })
+			.where(eq(users.id, user.id));
+
+		return Response.json({ message: "Password reset successfully" });
 	})
 
-	.post("/resend-verification", async ({ body }) => {
+	.post("/resend-verification", async ({ body, jwt }) => {
+		const { email, newspaper_id } = body;
 
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(
+				and(
+					eq(users.email, email),
+					eq(users.newspaperId, newspaper_id)
+				)
+			);
+
+		if (user && !user.email_verified) {
+			const verificationToken = await jwt.sign({
+				userId: user.id,
+				type: "email_verification",
+				exp: Math.floor(Date.now() / 1000) + 86400,
+			});
+		}
+
+		return Response.json({ message: "Verification link has been sent" });
 	});
