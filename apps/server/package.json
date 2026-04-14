@@ -3,13 +3,22 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch src/server.ts",
-    "build": "bun build src/server.ts --outdir dist"
+    "dev": "bun run --watch --env-file=../../.env src/server.ts",
+    "build": "bun build src/server.ts --outdir dist",
+    "db:studio": "bun --env-file=../../.env x drizzle-kit studio",
+    "db:push": "bun --env-file=../../.env x drizzle-kit push",
+    "db:seed": "bun --env-file=../../.env src/db/seed.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.10"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9"
   }
 }
