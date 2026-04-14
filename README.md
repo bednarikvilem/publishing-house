@@ -29,6 +29,12 @@ Access the database at https://local.drizzle.studio
 
 
 ## Database with data seed
+Always run
+```bash
+bun install
+```
+after each git pull
+
 Teminal 1 run
 ```bash
 docker compose up --build -d
