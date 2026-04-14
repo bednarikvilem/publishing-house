@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { db } from "./db";
 import { newspapers } from "./db/schema";
 import { authRoutes } from "./routes/auth.ts";
+import { cors } from "@elysiajs/cors"
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -12,6 +13,7 @@ if (!DATABASE_URL) {
 }
 
 const app = new Elysia()
+	  .use(cors())
       .use(authRoutes)
       .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))
       .get("/api", async () => {
