@@ -14,4 +14,4 @@ RUN bun install --frozen-lockfile
 COPY out/full/ .
 
 # Spuštění serveru
-CMD ["bun", "run", "apps/server/src/index.ts"]
+CMD ["bun", "run", "apps/server/src/server.ts"]

@@ -1,5 +1,5 @@
-import { pgTable, text, varchar, timestamp, uuid, boolean, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
-import { relations } from 'drizzle-orm';
+import { pgTable, text, varchar, timestamp, uuid, boolean, primaryKey, uniqueIndex, unique } from "drizzle-orm/pg-core";
+import { relations, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 export * from "./enums";
 import { articleStateEnum, userRolesEnum, auditResultEnum, reviewDecisionsEnum } from "./enums";
 
@@ -15,12 +15,18 @@ export const users = pgTable("users", {
     uniqueIndex("email_newspaper_idx").on(table.email, table.newspaperId),
 ]));
 
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
+
 export const publishingHouses = pgTable("publishing_houses", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
     directorId: uuid("director_id")
         .references(() => users.id, { onDelete: "set null" }),
 });
+
+export type PublishingHouse = InferSelectModel<typeof publishingHouses>;
+export type NewPublishingHouse = InferInsertModel<typeof publishingHouses>;
 
 export const newspapers = pgTable("newspapers", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -31,6 +37,9 @@ export const newspapers = pgTable("newspapers", {
     managerId: uuid("manager_id")
         .references(() => users.id, { onDelete: "set null" }),
 });
+
+export type Newspaper = InferSelectModel<typeof newspapers>;
+export type NewNewspaper = InferInsertModel<typeof newspapers>;
 
 export const usersRelations = relations(users, ({ one }) => ({
     newspaper: one(newspapers, {
@@ -43,25 +52,33 @@ export const userRoles = pgTable("user_roles", {
     userId: uuid("user_id").references(() => users.id),
     newspaperId: uuid("newspaper_id").references(() => newspapers.id),
     role: userRolesEnum("user_role")
-}, (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.newspaperId, table.role] })
-}));
+}, (table) => ([
+    primaryKey({ columns: [table.userId, table.newspaperId, table.role] })
+]));
+
+export type UserRole = InferSelectModel<typeof userRoles>;
+export type NewUserRole = InferInsertModel<typeof userRoles>;
 
 export const newspaperAuthors = pgTable("newspaper_authors", {
+    id: uuid("id").primaryKey().defaultRandom(),
+
     userId: uuid("user_id")
         .notNull()
         .references(() => users.id, { onDelete: "cascade" }),
 
-    newspapersId: uuid("newspapers_id")
+    newspaperId: uuid("newspapers_id")
         .notNull()
         .references(() => newspapers.id, { onDelete: "cascade" }),
 
-    workingFrom: timestamp("working_from").defaultNow(),
     biography: text("biography"),
-    profilePicture: text("profile_picture"), // URL - for authors
-}, (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.newspapersId] }),
-}));
+    profilePictureUrl: text("url"),
+
+}, (table) => ([
+    unique().on(table.userId, table.newspaperId),
+]));
+
+export type NewspaperAuthor = InferSelectModel<typeof newspaperAuthors>;
+export type NewNewspaperAuthor = InferInsertModel<typeof newspaperAuthors>;
 
 export const articles = pgTable("articles", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -77,10 +94,17 @@ export const articles = pgTable("articles", {
     createdAt: timestamp("created_at").defaultNow()
 });
 
+export type Article = InferSelectModel<typeof articles>;
+export type NewArticle = InferInsertModel<typeof articles>;
+export type ArticleState = typeof articles.state.enumValues[number];
+
 export const articleCategory = pgTable("article_category", {
     id: uuid("id").primaryKey().defaultRandom(),
     categoryName: varchar("category_name", { length: 255 }).notNull(),
 });
+
+export type ArticleCategory = InferSelectModel<typeof articleCategory>;
+export type NewArticleCategory = InferInsertModel<typeof articleCategory>;
 
 export const articleImages = pgTable("article_images", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -91,6 +115,9 @@ export const articleImages = pgTable("article_images", {
     caption: text("caption"),
     isPrimary: boolean("is_primary").default(false).notNull(),
 });
+
+export type ArticleImage = InferSelectModel<typeof articleImages>;
+export type NewArticleImage = InferInsertModel<typeof articleImages>;
 
 export const comments = pgTable("comments", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -104,6 +131,9 @@ export const comments = pgTable("comments", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export type Comment = InferSelectModel<typeof comments>;
+export type NewComment = InferInsertModel<typeof comments>;
+
 export const likes = pgTable("likes", {
     userId: uuid("user_id")
         .notNull()
@@ -112,9 +142,12 @@ export const likes = pgTable("likes", {
         .notNull()
         .references(() => articles.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.articleId] }),
-}));
+}, (table) => ([
+    primaryKey({ columns: [table.userId, table.articleId] }),
+]));
+
+export type Like = InferSelectModel<typeof likes>;
+export type NewLike = InferInsertModel<typeof likes>;
 
 export const articleReviews = pgTable("article_reviews", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -128,6 +161,10 @@ export const articleReviews = pgTable("article_reviews", {
     decision: reviewDecisionsEnum("decision").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export type ArticleReview = InferSelectModel<typeof articleReviews>;
+export type NewArticleReview = InferInsertModel<typeof articleReviews>;
+export type ReviewDecision = typeof articleReviews.decision.enumValues[number];
 
 export const auditLogs = pgTable("audit_logs", {
     id: uuid("id").primaryKey().defaultRandom(),

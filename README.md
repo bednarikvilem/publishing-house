@@ -25,14 +25,52 @@ To start drizzle studio run:
 cd apps/server
 bun run dev & bun db:studio
 ```
-
 Access the database at https://local.drizzle.studio
+
+
+## Database with data seed
+Teminal 1 run
+```bash
+docker compose up --build -d
+```
+This will initialize completly new database
+
+Terminal 2 run
+```bash
+cd apps/server
+bun db:studio
+```
+This will display your database at https://local.drizzle.studio/
+
+Terminal 3 run
+```bash
+cd apps/server
+bun db:push
+```
+This create new database schema. Then run:
+```bash
+bun db:seed
+``` 
+for creating data seed.
+
+To keep your current data in the database run:
+```bash
+docker compose up
+docker compose down
+```
+
+```bash
+docker compose up --build
+docker compose down -v
+```
+
+Creates and deletes the database.
+
 
 ## Prerequisites
 
 - [Bun](https://bun.com/) 1.3.10+
 
-### Installing Bun
 
 **Linux / WSL:**
 ```bash
