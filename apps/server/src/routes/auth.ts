@@ -56,7 +56,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		await db.insert(userRoles).values({
 			userId: newUser.id,
 			newspaperId: newspaper_id,
-			role: "REGISTRED_USER",
+			role: "REGISTERED_USER",
 		});
 
 		const verificationToken = await jwt.sign({
