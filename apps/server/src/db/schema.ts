@@ -21,7 +21,10 @@ export type NewUser = InferInsertModel<typeof users>;
 export const newspapers = pgTable("newspapers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
-});
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+}, (table) => ([
+    uniqueIndex("newspaper_slug_idx").on(table.slug),
+]));
 
 export type Newspaper = InferSelectModel<typeof newspapers>;
 export type NewNewspaper = InferInsertModel<typeof newspapers>;
