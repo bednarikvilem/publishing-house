@@ -5,7 +5,7 @@ import { articleStateEnum, userRolesEnum, auditResultEnum, reviewDecisionsEnum }
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
-    newspaperId: uuid("newspaper_id"),
+    newspaperId: uuid("newspaper_id").references(() => newspapers.id),
     email: varchar("email", { length: 255 }).notNull(),
     username: varchar("username", { length: 63 }).notNull(),
     fullname: varchar("fullname", { length: 127 }),
@@ -18,24 +18,24 @@ export const users = pgTable("users", {
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
 
-export const publishingHouses = pgTable("publishing_houses", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("name", { length: 255 }).notNull(),
-    directorId: uuid("director_id")
-        .references(() => users.id, { onDelete: "set null" }),
-});
+// export const publishingHouses = pgTable("publishing_houses", {
+//     id: uuid("id").primaryKey().defaultRandom(),
+//     name: varchar("name", { length: 255 }).notNull(),
+//     directorId: uuid("director_id")
+//         .references(() => users.id, { onDelete: "set null" }),
+// });
 
-export type PublishingHouse = InferSelectModel<typeof publishingHouses>;
-export type NewPublishingHouse = InferInsertModel<typeof publishingHouses>;
+// export type PublishingHouse = InferSelectModel<typeof publishingHouses>;
+// export type NewPublishingHouse = InferInsertModel<typeof publishingHouses>;
 
 export const newspapers = pgTable("newspapers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
-    publishingHouseId: uuid("publishing_house_id")
-        .notNull()
-        .references(() => publishingHouses.id, { onDelete: "cascade" }),
-    managerId: uuid("manager_id")
-        .references(() => users.id, { onDelete: "set null" }),
+    // publishingHouseId: uuid("publishing_house_id")
+    //     .notNull()
+    //     .references(() => publishingHouses.id, { onDelete: "cascade" }),
+    // managerId: uuid("manager_id")
+    //     .references(() => users.id, { onDelete: "set null" }),
 });
 
 export type Newspaper = InferSelectModel<typeof newspapers>;
