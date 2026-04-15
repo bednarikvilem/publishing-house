@@ -1,4 +1,4 @@
-import { faker, fakerTA_IN } from "@faker-js/faker"; // Použijeme českou lokalizaci!
+import { faker, fakerTA_IN } from "@faker-js/faker";
 import { db } from "./index";
 import * as schema from "./schema";
 import type { NewUser, NewPublishingHouse, NewNewspaper, NewNewspaperAuthor, NewArticle, NewArticleCategory } from "./schema";
@@ -81,4 +81,4 @@ async function seed() {
     console.log("Fake data ready!");
 }
 
-seed();
+seed().finally(() => process.exit(0));
