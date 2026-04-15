@@ -10,8 +10,6 @@ export async function seedRandomAuthors(count: number) {
         throw new Error("No newspapers found in the database. Seed newspapers first!");
     }
 
-    console.log(`🎲 Generating ${count} random authors...`);
-
     const usersToInsert: NewUser[] = Array.from({ length: count }).map(() => {
         const randomNewspaper = faker.helpers.arrayElement(allNewspapers);
 
