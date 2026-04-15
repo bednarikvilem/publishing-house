@@ -34,52 +34,61 @@ Enum result {
 // --- TABLES ---
 
 Table users {
-  id uuid [pk]
-  newspaper_id uuid [pk, ref: > newspapers.id]
-  email varchar [not null]
-  username varchar [not null]
-  full_name varchar
+  id uuid [pk, default: `gen_random_uuid()`]
+  newspaper_id uuid [ref: > newspapers.id]
+  email varchar(255) [not null]
+  username varchar(63) [not null]
+  fullname varchar(127)
   password_hash text [not null]
-  email_verified boolean
-}
+  email_verified boolean [default: false]
 
-Table user_roles {
-  user_id uuid [pk, ref: > users.id]
-  newspaper_id uuid [pk, ref: > users.newspaper_id]
-  role user_role [pk]
-}
-
-Table newspaper_authors {
-  user_id uuid [pk, ref: > users.id]
-  newspapers_id uuid [pk, ref: > newspapers.id]
-  working_from timestamp
-  biography text // for authors
-  profile_picture text // URL - for authors
-}
-
-Table publishing_houses {
-  id uuid [pk]
-  name varchar [not null]
-  director_id uuid [ref: > users.id]
+  indexes {
+    (email, newspaper_id) [unique, name: "email_newspaper_idx"]
+  }
 }
 
 Table newspapers {
-  id uuid [pk]
-  name varchar [not null]
-  publishing_house_id uuid [ref: > publishing_houses.id]
-  manager_id uuid [ref: > users.id]
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+
+  indexes {
+    slug [unique, name: "newspaper_slug_idx"]
+  }
+}
+
+Table user_roles {
+  user_id uuid [ref: > users.id]
+  newspaper_id uuid [ref: > newspapers.id]
+  role user_role [default: 'VISITOR']
+
+  indexes {
+    (user_id, newspaper_id, role) [pk]
+  }
+}
+
+Table newspaper_authors {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > users.id]
+  newspapers_id uuid [not null, ref: > newspapers.id]
+  biography text
+  profile_picture_url text //
+
+  indexes {
+    (user_id, newspapers_id) [unique]
+  }
 }
 
 Table articles {
-  id uuid [pk]
-  title varchar [not null]
+  id uuid [pk, default: `gen_random_uuid()`]
+  title varchar(255) [not null]
   perex text [not null]
   content text [not null]
   keywords text
-  state article_state [default: 'DRAFT'] 
-  author_id uuid [ref: > users.id]
-  newspaper_id uuid [ref: > newspapers.id]
-  category_id varchar [ref: > article_category.category_name]
+  state article_state [default: 'DRAFT']
+  author_id uuid [not null, ref: > users.id]
+  newspaper_id uuid [not null, ref: > newspapers.id]
+  category_id uuid [ref: > article_categories.id]
   publication_date timestamp
   created_at timestamp [default: `now()`]
 }
@@ -106,26 +115,30 @@ Table comments {
 }
 
 Table likes {
-  user_id uuid [pk, ref: > users.id]
-  article_id uuid [pk, ref: > articles.id]
-  created_at timestamp [default: `now()`]
+  user_id uuid [not null, ref: > users.id]
+  article_id uuid [not null, ref: > articles.id]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (user_id, article_id) [pk]
+  }
 }
 
 Table article_reviews {
-  id uuid [pk]
-  article_id uuid [ref: > articles.id]
-  reviewer_id uuid [ref: > users.id]
+  id uuid [pk, default: `gen_random_uuid()`]
+  article_id uuid [not null, ref: > articles.id]
+  reviewer_id uuid [not null, ref: > users.id]
   feedback text
-  decision review_decisions // APPROVED, REJECTED, REVISION_REQUESTED 
-  created_at timestamp [default: `now()`]
+  decision review_decisions [not null]
+  created_at timestamp [not null, default: `now()`]
 }
 
 Table audit_logs {
-  id uuid [pk]
+  id uuid [pk, default: `gen_random_uuid()`]
   user_id uuid [ref: > users.id]
-  operation_type varchar
+  operation_type varchar(255) [not null]
   target_object_id uuid
-  result result // SUCCESS/FAILURE 
-  timestamp timestamp [default: `now()`]
+  result audit_result [not null]
+  timestamp timestamp [not null, default: `now()`]
 }
 
