@@ -29,13 +29,6 @@ export const newspapers = pgTable("newspapers", {
 export type Newspaper = InferSelectModel<typeof newspapers>;
 export type NewNewspaper = InferInsertModel<typeof newspapers>;
 
-export const usersRelations = relations(users, ({ one }) => ({
-    newspaper: one(newspapers, {
-        fields: [users.newspaperId],
-        references: [newspapers.id],
-    }),
-}));
-
 export const userRoles = pgTable("user_roles", {
     userId: uuid("user_id").references(() => users.id),
     newspaperId: uuid("newspaper_id").references(() => newspapers.id),

@@ -1,15 +1,5 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
-export const articleStateEnum = pgEnum("article_state", [
-    "DRAFT",
-    "SUBMITTED",
-    "IN_REVIEW",
-    "APPROVED_BY_EDITOR",
-    "APPROVED_BY_MANAGER",
-    "PUBLISHED",
-    "REJECTED"
-]);
-
 export const userRolesEnum = pgEnum("user_roles_enum", [
     "VISITOR",
     "REGISTERED_USER",
@@ -18,6 +8,16 @@ export const userRolesEnum = pgEnum("user_roles_enum", [
     "NEWSPAPER_MANAGER",
     "DIRECTOR",
     "SYSTEM_ADMINISTRATOR"
+]);
+
+export const articleStateEnum = pgEnum("article_state", [
+    "DRAFT",
+    "SUBMITTED",
+    "IN_REVIEW",
+    "APPROVED_BY_EDITOR",
+    "APPROVED_BY_MANAGER",
+    "PUBLISHED",
+    "REJECTED"
 ]);
 
 export const reviewDecisionsEnum = pgEnum("review_decisions", [
