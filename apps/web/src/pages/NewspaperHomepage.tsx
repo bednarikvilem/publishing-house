@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { sampleArticles } from "../lib/sampleData";
 import type { Article, ArticlesResponse } from "../types/article";
@@ -79,7 +79,10 @@ export function NewspaperHomepage() {
               </div>
             </div>
             <p className="text-[15px] leading-[1.6] text-muted-foreground">{featured.perex}</p>
-            <button className="flex w-fit items-center gap-2 rounded-lg bg-foreground px-5 py-2.5 text-[14px] font-semibold text-background hover:opacity-90">
+            <Link
+              to={`/${newspaperName}/articles/${featured.id}`}
+              className="flex w-fit items-center gap-2 rounded-lg bg-foreground px-5 py-2.5 text-[14px] font-semibold text-background hover:opacity-90"
+            >
               Read Full Article
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +97,7 @@ export function NewspaperHomepage() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
           </div>
         </section>
       )}
@@ -106,7 +109,9 @@ export function NewspaperHomepage() {
         </h2>
         <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           {rest.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <Link key={article.id} to={`/${newspaperName}/articles/${article.id}`} className="block">
+              <ArticleCard article={article} />
+            </Link>
           ))}
         </div>
       </section>

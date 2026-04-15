@@ -13,3 +13,23 @@ export interface ArticlesResponse {
   data: Article[];
   pagination: { page: number; limit: number; total: number; total_pages: number };
 }
+
+export interface ArticleDetail {
+  id: string;
+  title: string;
+  perex: string;
+  content: string;
+  publication_date: string;
+  category: string;
+  keywords: string[];
+  likes_count: number;
+  liked_by_me: boolean;
+  author: { id: string; full_name: string; profile_picture: string | null };
+  images: { url: string; caption: string; is_primary: boolean }[];
+  comments: {
+    id: string;
+    content: string;
+    created_at: string;
+    author: { id: string; username: string };
+  }[];
+}
