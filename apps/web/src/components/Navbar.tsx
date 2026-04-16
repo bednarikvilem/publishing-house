@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const NAV_LINKS = ["Home", "World", "Politics", "Technology", "Sports", "Culture"];
+const NAV_CATEGORIES = ["World", "Politics", "Technology", "Sports", "Culture"];
 
 interface NavbarProps {
   newspaperName: string;
@@ -22,14 +22,20 @@ export function Navbar({ newspaperName }: NavbarProps) {
           {displayName}
         </Link>
         <nav className="hidden gap-6 md:flex">
-          {NAV_LINKS.map((item) => (
-            <a
-              key={item}
-              href="#"
+          <Link
+            to={`/${newspaperName}`}
+            className="text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Home
+          </Link>
+          {NAV_CATEGORIES.map((cat) => (
+            <Link
+              key={cat}
+              to={`/${newspaperName}/category/${cat}`}
               className="text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {item}
-            </a>
+              {cat}
+            </Link>
           ))}
         </nav>
       </div>

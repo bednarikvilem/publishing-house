@@ -92,8 +92,80 @@ export const sampleArticles: ArticlesResponse = {
         profile_picture: "https://picsum.photos/seed/priya/40/40",
       },
     },
+    {
+      id: "f6a7b8c9-d0e1-2345-fabc-456789012345",
+      title: "Election Commission Announces Reforms to Absentee Ballot Process",
+      perex:
+        "New rules will expand mail-in voting access ahead of the midterm elections, addressing long-standing concerns about accessibility in rural districts.",
+      publication_date: "2026-04-05T07:30:00Z",
+      category: "Politics",
+      keywords: ["elections", "voting", "democracy"],
+      primary_image: {
+        url: "https://picsum.photos/seed/elections/800/500",
+        caption: "Ballot boxes at a polling station",
+      },
+      author: {
+        id: "u6",
+        full_name: "Daniel Foster",
+        profile_picture: "https://picsum.photos/seed/daniel/40/40",
+      },
+    },
+    {
+      id: "a7b8c9d0-e1f2-3456-abcd-567890123456",
+      title: "Supreme Court to Hear Landmark Case on Digital Surveillance Rights",
+      perex:
+        "The case could redefine the boundaries of government surveillance in the digital age, with implications for millions of citizens.",
+      publication_date: "2026-04-04T09:00:00Z",
+      category: "Politics",
+      keywords: ["supreme court", "privacy", "surveillance"],
+      primary_image: {
+        url: "https://picsum.photos/seed/court/800/500",
+        caption: "The Supreme Court building",
+      },
+      author: {
+        id: "u7",
+        full_name: "Rachel Kim",
+        profile_picture: "https://picsum.photos/seed/rachel/40/40",
+      },
+    },
+    {
+      id: "b8c9d0e1-f2a3-4567-bcde-678901234567",
+      title: "Governors Coalition Pushes Back Against Federal Education Mandates",
+      perex:
+        "A bipartisan group of state governors is challenging new federal education requirements they say overstep constitutional boundaries.",
+      publication_date: "2026-04-03T11:00:00Z",
+      category: "Politics",
+      keywords: ["education", "governors", "federal policy"],
+      primary_image: {
+        url: "https://picsum.photos/seed/governors/800/500",
+        caption: "Governors' conference on education policy",
+      },
+      author: {
+        id: "u8",
+        full_name: "Michael Torres",
+        profile_picture: "https://picsum.photos/seed/michael/40/40",
+      },
+    },
+    {
+      id: "c9d0e1f2-a3b4-5678-cdef-789012345678",
+      title: "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
+      perex:
+        "Scientists unveil an image showing galaxies as they appeared just 200 million years after the Big Bang.",
+      publication_date: "2026-04-02T08:00:00Z",
+      category: "Technology",
+      keywords: ["space", "astronomy", "science"],
+      primary_image: {
+        url: "https://picsum.photos/seed/space/800/500",
+        caption: "Deep space image from the new telescope",
+      },
+      author: {
+        id: "u9",
+        full_name: "Lisa Chen",
+        profile_picture: "https://picsum.photos/seed/lisa/40/40",
+      },
+    },
   ],
-  pagination: { page: 1, limit: 20, total: 5, total_pages: 1 },
+  pagination: { page: 1, limit: 20, total: 9, total_pages: 1 },
 };
 
 // Sample data matching GET /api/newspapers/:newspaper_id/articles/:article_id response shape
