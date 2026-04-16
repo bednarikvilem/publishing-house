@@ -172,7 +172,10 @@ export function ArticlePage() {
             {article.title}
           </h1>
           {/* Author meta */}
-          <div className="flex items-center gap-4">
+          <Link
+            to={`/${newspaperName}/authors/${article.author.id}`}
+            className="flex items-center gap-4 hover:opacity-80 transition-opacity w-fit"
+          >
             {article.author.profile_picture ? (
               <img
                 src={article.author.profile_picture}
@@ -190,7 +193,7 @@ export function ArticlePage() {
                 {formatDate(article.publication_date)} · {readTime} min read
               </span>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
 

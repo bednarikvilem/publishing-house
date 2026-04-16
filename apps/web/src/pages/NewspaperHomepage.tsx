@@ -59,7 +59,7 @@ export function NewspaperHomepage() {
             <h1 className="text-[32px] font-extrabold leading-[1.15] tracking-[-0.5px] text-foreground">
               {featured.title}
             </h1>
-            <div className="flex items-center gap-3">
+            <Link to={`/${newspaperName}/authors/${featured.author.id}`} className="flex items-center gap-3">
               {featured.author.profile_picture ? (
                 <img
                   src={featured.author.profile_picture}
@@ -77,7 +77,7 @@ export function NewspaperHomepage() {
                   {formatDate(featured.publication_date)}
                 </span>
               </div>
-            </div>
+            </Link>
             <p className="text-[15px] leading-[1.6] text-muted-foreground">{featured.perex}</p>
             <Link
               to={`/${newspaperName}/articles/${featured.id}`}

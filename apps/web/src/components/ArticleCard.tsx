@@ -1,3 +1,4 @@
+import { Link, useParams } from "react-router-dom";
 import type { Article } from "../types/article";
 import { CategoryBadge } from "./CategoryBadge";
 
@@ -10,6 +11,8 @@ function formatDate(iso: string) {
 }
 
 export function ArticleCard({ article }: { article: Article }) {
+  const { newspaperName } = useParams<{ newspaperName: string }>();
+
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
       <div className="h-[200px] overflow-hidden">
@@ -32,9 +35,13 @@ export function ArticleCard({ article }: { article: Article }) {
           {article.perex}
         </p>
         <div className="mt-auto flex items-center justify-between pt-2">
-          <span className="text-[12px] font-medium text-muted-foreground">
+          <Link
+            to={`/${newspaperName}/authors/${article.author.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
             {article.author.full_name}
-          </span>
+          </Link>
           <span className="text-[12px] text-muted-foreground">
             {formatDate(article.publication_date)}
           </span>

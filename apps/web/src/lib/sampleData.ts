@@ -1,4 +1,4 @@
-import type { ArticlesResponse, ArticleDetail } from "../types/article";
+import type { ArticlesResponse, ArticleDetail, AuthorDetail } from "../types/article";
 
 export const sampleArticles: ArticlesResponse = {
   data: [
@@ -237,3 +237,200 @@ The bill now heads to the House, where it is expected to face a more contentious
     },
   ],
 };
+
+// Sample data matching GET /api/newspapers/:newspaper_id/authors/:author_id response shape
+export const sampleAuthors: Record<string, AuthorDetail> = {
+  u1: {
+    id: "u1",
+    full_name: "Sarah Mitchell",
+    profile_picture: "https://picsum.photos/seed/sarah/200/200",
+    role: "Senior Political Correspondent",
+    bio: "Sarah Mitchell is an award-winning journalist with over 15 years of experience covering politics, policy, and government affairs. She has reported from Capitol Hill, the White House, and international summits across the globe. Her investigative work has earned multiple press association honors.",
+    articles_count: 142,
+    years_active: 15,
+    total_likes: 2400,
+    social_links: {
+      twitter: "https://twitter.com/sarahmitchell",
+      linkedin: "https://linkedin.com/in/sarahmitchell",
+      email: "sarah.mitchell@example.com",
+    },
+    articles: [
+      {
+        id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        title: "Global Climate Summit Reaches Historic Agreement on Carbon Emissions",
+        perex:
+          "World leaders have unanimously agreed on a groundbreaking framework to reduce global carbon emissions by 60% before 2035, marking the most ambitious climate commitment in history.",
+        publication_date: "2026-04-10T08:00:00Z",
+        category: "World",
+        keywords: ["climate", "environment", "politics"],
+        primary_image: {
+          url: "https://picsum.photos/seed/climate/800/500",
+          caption: "World leaders at the climate summit",
+        },
+        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+      },
+      {
+        id: "s1-a2",
+        title: "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
+        perex:
+          "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information.",
+        publication_date: "2026-03-28T09:00:00Z",
+        category: "Politics",
+        keywords: ["privacy", "senate", "legislation"],
+        primary_image: {
+          url: "https://picsum.photos/seed/privacy/800/500",
+          caption: "Senate session on digital privacy",
+        },
+        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+      },
+      {
+        id: "s1-a3",
+        title: "White House Unveils Ambitious Climate Action Plan for Federal Agencies",
+        perex:
+          "The executive order mandates all federal buildings achieve net-zero emissions by 2035, setting a new standard for government sustainability.",
+        publication_date: "2026-03-25T10:00:00Z",
+        category: "Politics",
+        keywords: ["climate", "white house", "policy"],
+        primary_image: {
+          url: "https://picsum.photos/seed/whitehouse/800/500",
+          caption: "White House press briefing",
+        },
+        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+      },
+      {
+        id: "s1-a4",
+        title: "Bipartisan Coalition Forms to Address National Housing Crisis",
+        perex:
+          "Lawmakers from both parties propose a $500 billion housing initiative aimed at increasing affordable housing stock across all 50 states.",
+        publication_date: "2026-03-22T11:00:00Z",
+        category: "Politics",
+        keywords: ["housing", "bipartisan", "policy"],
+        primary_image: {
+          url: "https://picsum.photos/seed/housing/800/500",
+          caption: "Affordable housing development",
+        },
+        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+      },
+    ],
+  },
+  u2: {
+    id: "u2",
+    full_name: "James Rivera",
+    profile_picture: "https://picsum.photos/seed/james/200/200",
+    role: "Washington Bureau Chief",
+    bio: "James Rivera has spent over a decade embedded in Washington's political corridors, breaking stories on infrastructure, fiscal policy, and congressional dynamics. Before joining the bureau, he covered state legislatures across the Midwest and led an investigative team focused on government spending.",
+    articles_count: 98,
+    years_active: 11,
+    total_likes: 1870,
+    social_links: {
+      twitter: "https://twitter.com/jamesrivera",
+      email: "james.rivera@example.com",
+    },
+    articles: [
+      {
+        id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        title: "Senate Passes Landmark Infrastructure Bill After Months of Debate",
+        perex:
+          "The bipartisan bill allocates $2 trillion for roads, bridges, and broadband expansion across rural communities.",
+        publication_date: "2026-04-09T10:00:00Z",
+        category: "Politics",
+        keywords: ["politics", "infrastructure", "senate"],
+        primary_image: {
+          url: "https://picsum.photos/seed/senate/800/500",
+          caption: "Senate vote session",
+        },
+        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+      },
+      {
+        id: "u2-a2",
+        title: "Federal Reserve Signals Pause on Interest Rate Hikes Amid Economic Uncertainty",
+        perex:
+          "Fed chair cites slowing inflation data and mixed employment figures as reasons for a wait-and-see approach through the summer.",
+        publication_date: "2026-04-01T08:30:00Z",
+        category: "Politics",
+        keywords: ["federal reserve", "economy", "interest rates"],
+        primary_image: {
+          url: "https://picsum.photos/seed/fedreserve/800/500",
+          caption: "Federal Reserve building",
+        },
+        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+      },
+      {
+        id: "u2-a3",
+        title: "Congressional Budget Office Revises Deficit Forecast Upward by $300 Billion",
+        perex:
+          "New projections cite higher-than-expected military spending and slower tax revenue growth as the primary drivers of the widened gap.",
+        publication_date: "2026-03-18T09:00:00Z",
+        category: "Politics",
+        keywords: ["budget", "congress", "deficit"],
+        primary_image: {
+          url: "https://picsum.photos/seed/congress/800/500",
+          caption: "Congress building",
+        },
+        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+      },
+    ],
+  },
+  u3: {
+    id: "u3",
+    full_name: "Elena Park",
+    profile_picture: "https://picsum.photos/seed/elena/200/200",
+    role: "Technology & Science Editor",
+    bio: "Elena Park reports at the intersection of artificial intelligence, scientific research, and society. With a background in computer science and science journalism, she has profiled leading researchers, covered major conference announcements, and produced long-form investigations into the ethics of emerging technologies.",
+    articles_count: 76,
+    years_active: 7,
+    total_likes: 3100,
+    social_links: {
+      twitter: "https://twitter.com/elenapark",
+      linkedin: "https://linkedin.com/in/elenapark",
+      email: "elena.park@example.com",
+    },
+    articles: [
+      {
+        id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
+        title: "AI Breakthrough: New Model Achieves Human-Level Reasoning in Scientific Research",
+        perex:
+          "Researchers unveil an artificial intelligence system capable of independently designing and conducting complex experiments.",
+        publication_date: "2026-04-08T09:00:00Z",
+        category: "Technology",
+        keywords: ["AI", "technology", "research"],
+        primary_image: {
+          url: "https://picsum.photos/seed/ailab/800/500",
+          caption: "AI research laboratory",
+        },
+        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+      },
+      {
+        id: "c9d0e1f2-a3b4-5678-cdef-789012345678",
+        title: "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
+        perex:
+          "Scientists unveil an image showing galaxies as they appeared just 200 million years after the Big Bang.",
+        publication_date: "2026-04-02T08:00:00Z",
+        category: "Technology",
+        keywords: ["space", "astronomy", "science"],
+        primary_image: {
+          url: "https://picsum.photos/seed/space/800/500",
+          caption: "Deep space image from the new telescope",
+        },
+        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+      },
+      {
+        id: "u3-a3",
+        title: "Quantum Computing Startup Demonstrates 1,000-Qubit Processor",
+        perex:
+          "The milestone brings error-corrected quantum computing closer to practical deployment, with pharmaceutical and logistics industries watching closely.",
+        publication_date: "2026-03-29T10:00:00Z",
+        category: "Technology",
+        keywords: ["quantum computing", "technology", "startup"],
+        primary_image: {
+          url: "https://picsum.photos/seed/quantum/800/500",
+          caption: "Quantum computer hardware",
+        },
+        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+      },
+    ],
+  },
+};
+
+// Fallback author for unknown IDs
+export const sampleAuthorFallback: AuthorDetail = sampleAuthors["u1"];

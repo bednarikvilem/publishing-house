@@ -14,6 +14,23 @@ export interface ArticlesResponse {
   pagination: { page: number; limit: number; total: number; total_pages: number };
 }
 
+export interface AuthorDetail {
+  id: string;
+  full_name: string;
+  profile_picture: string | null;
+  role: string;
+  bio: string;
+  articles_count: number;
+  years_active: number;
+  total_likes: number;
+  social_links: {
+    twitter?: string;
+    linkedin?: string;
+    email?: string;
+  };
+  articles: Article[];
+}
+
 export interface ArticleDetail {
   id: string;
   title: string;
