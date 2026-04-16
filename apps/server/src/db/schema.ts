@@ -5,12 +5,12 @@ import { articleStateEnum, userRolesEnum, auditResultEnum, reviewDecisionsEnum }
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
-    newspaperId: uuid("newspaper_id"),
+    newspaperId: uuid("newspaper_id").references(() => newspapers.id),
     email: varchar("email", { length: 255 }).notNull(),
     username: varchar("username", { length: 63 }).notNull(),
     fullname: varchar("fullname", { length: 127 }),
     passwordHash: text("password_hash").notNull(),
-    email_verified: boolean("email_verified"),
+    email_verified: boolean("email_verified").default(false),
 }, (table) => ([
     uniqueIndex("email_newspaper_idx").on(table.email, table.newspaperId),
 ]));
@@ -18,40 +18,21 @@ export const users = pgTable("users", {
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
 
-export const publishingHouses = pgTable("publishing_houses", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("name", { length: 255 }).notNull(),
-    directorId: uuid("director_id")
-        .references(() => users.id, { onDelete: "set null" }),
-});
-
-export type PublishingHouse = InferSelectModel<typeof publishingHouses>;
-export type NewPublishingHouse = InferInsertModel<typeof publishingHouses>;
-
 export const newspapers = pgTable("newspapers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
-    publishingHouseId: uuid("publishing_house_id")
-        .notNull()
-        .references(() => publishingHouses.id, { onDelete: "cascade" }),
-    managerId: uuid("manager_id")
-        .references(() => users.id, { onDelete: "set null" }),
-});
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+}, (table) => ([
+    uniqueIndex("newspaper_slug_idx").on(table.slug),
+]));
 
 export type Newspaper = InferSelectModel<typeof newspapers>;
 export type NewNewspaper = InferInsertModel<typeof newspapers>;
 
-export const usersRelations = relations(users, ({ one }) => ({
-    newspaper: one(newspapers, {
-        fields: [users.newspaperId],
-        references: [newspapers.id],
-    }),
-}));
-
 export const userRoles = pgTable("user_roles", {
     userId: uuid("user_id").references(() => users.id),
     newspaperId: uuid("newspaper_id").references(() => newspapers.id),
-    role: userRolesEnum("user_role")
+    role: userRolesEnum("user_role").default("VISITOR")
 }, (table) => ([
     primaryKey({ columns: [table.userId, table.newspaperId, table.role] })
 ]));
