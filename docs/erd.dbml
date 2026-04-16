@@ -96,6 +96,11 @@ Table articles {
 Table article_category {
   id uuid [pk]
   category_name varchar [unique, not null]
+  slug [unique, not null]
+
+  indexes {
+    slug [unique, name: "article_slug_idx"]
+  }
 }
 
 Table article_images {
