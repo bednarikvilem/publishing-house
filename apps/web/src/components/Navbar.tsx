@@ -41,7 +41,7 @@ export function Navbar({ newspaperName }: NavbarProps) {
       </div>
       <div className="flex items-center gap-3">
         <Link
-          to="/login"
+          to={`/${newspaperName}/login`}
           className="rounded-lg px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted"
         >
           Log in
