@@ -47,7 +47,7 @@ export function Navbar({ newspaperName }: NavbarProps) {
           Log in
         </Link>
         <Link
-          to="/register"
+          to={`/${newspaperName}/register`}
           className="rounded-lg bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground hover:opacity-90"
         >
           Sign up
