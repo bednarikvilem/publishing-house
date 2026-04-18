@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { SearchResultsPage } from "./pages/SearchResultsPage";
 import { PasswordResetPage } from "./pages/PasswordResetPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
+import { AuthorDashboardPage } from "./pages/AuthorDashboardPage";
 import "./index.css";
 
 export function App() {
@@ -22,6 +23,7 @@ export function App() {
       <Route path="/:newspaperName/search" element={<SearchResultsPage />} />
       <Route path="/:newspaperName/forgot-password" element={<PasswordResetPage />} />
       <Route path="/:newspaperName/profile" element={<UserProfilePage />} />
+      <Route path="/:newspaperName/author-dashboard" element={<AuthorDashboardPage />} />
     </Routes>
   );
 }
