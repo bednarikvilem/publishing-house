@@ -60,12 +60,13 @@ export const articleRoutes = new Elysia()
                     eq(articles.newspaperId, params.newspaper_id),
                     eq(articles.state, "PUBLISHED")
                 ),
-                with: { category: true, images: true },
+                with: { category: true, images: true, author: true },
             });
 
             const lower = q.toLowerCase();
             let filtered = all.filter((a: any) => {
                 return (
+                    a.author?.fullname?.toLowerCase().includes(lower) ||
                     a.title?.toLowerCase().includes(lower) ||
                     a.perex?.toLowerCase().includes(lower) ||
                     a.content?.toLowerCase().includes(lower) ||
@@ -98,6 +99,7 @@ export const articleRoutes = new Elysia()
                 data: paged.map((a: any) => {
                     const primary = a.images?.find((i: any) => i.isPrimary) ?? a.images?.[0];
                     return {
+                        author: a.author ? { id: a.author.id, full_name: a.author.fullname } : null,
                         id: a.id,
                         title: a.title,
                         perex: a.perex,
