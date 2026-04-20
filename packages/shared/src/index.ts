@@ -4,3 +4,4 @@ export * from "./validators/newspapers";
 export * from "./validators/authors";
 export * from "./validators/likes";
 export * from "./validators/categories";
+export * from "./validators/comments";
