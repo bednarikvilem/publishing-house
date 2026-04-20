@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { jwt } from "@elysiajs/jwt";
+import { JWT_EXPIRATION } from "../utils/jwt";
 import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
 import { users, userRoles, newspapers } from "../db/schema";
@@ -65,7 +66,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const verificationToken = await jwt.sign({
 			userId: newUser.id,
 			type: "email_verification",
-			exp: Math.floor(Date.now() / 1000) + 86400,
+			exp: JWT_EXPIRATION.emailVerification,
 		});
 
 		return Response.json({
@@ -119,7 +120,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const token = await jwt.sign({
 			userId: user.id,
 			newspaperId: newspaper_id,
-			exp: Math.floor(Date.now() / 1000) + 7200,
+			exp: JWT_EXPIRATION.session,
 		});
 
 		return Response.json({
@@ -192,7 +193,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			const resetToken = await jwt.sign({
 				userId: user.id,
 				type: "password_reset",
-				exp: Math.floor(Date.now() / 1000) + 3600,
+				exp: JWT_EXPIRATION.passwordReset,
 			});
 		}
 
@@ -244,7 +245,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			const verificationToken = await jwt.sign({
 				userId: user.id,
 				type: "email_verification",
-				exp: Math.floor(Date.now() / 1000) + 86400,
+				exp: JWT_EXPIRATION.emailVerification,
 			});
 		}
 
