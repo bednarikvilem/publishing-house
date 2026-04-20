@@ -4,10 +4,11 @@ const NAV_CATEGORIES = ["World", "Politics", "Technology", "Sports", "Culture"];
 
 interface NavbarProps {
   newspaperName: string;
+  displayName?: string;
 }
 
-export function Navbar({ newspaperName }: NavbarProps) {
-  const displayName = newspaperName
+export function Navbar({ newspaperName, displayName }: NavbarProps) {
+  displayName ??= newspaperName
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");

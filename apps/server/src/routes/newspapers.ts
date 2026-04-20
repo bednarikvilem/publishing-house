@@ -23,6 +23,21 @@ export const newspaperRoutes = new Elysia()
         });
     })
 
+    // GET /api/newspapers/by-slug/:slug — public
+    .get("/api/newspapers/by-slug/:slug", async ({ params }: any) => {
+        const newspaper = await db.query.newspapers.findFirst({
+            where: eq(newspapers.slug, params.slug),
+        });
+
+        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+
+        return Response.json({
+            id: newspaper.id,
+            name: newspaper.name,
+            slug: newspaper.slug,
+        });
+    })
+
     // GET /api/newspapers/:newspaper_id — public
     .get("/api/newspapers/:newspaper_id", async ({ params }: any) => {
         const newspaper = await db.query.newspapers.findFirst({

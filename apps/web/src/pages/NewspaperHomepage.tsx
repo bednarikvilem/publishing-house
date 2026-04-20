@@ -18,27 +18,35 @@ function formatDate(iso: string) {
 export function NewspaperHomepage() {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const [articles, setArticles] = useState<Article[]>(sampleArticles.data);
-
-  // TODO: replace with a real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
+  const [newspaper, setNewspaper] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/articles`)
+    if (!newspaperName) return;
+    fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Newspaper not found");
+        return res.json() as Promise<{ id: string; name: string; slug: string }>;
+      })
+      .then((data) => setNewspaper(data))
+      .catch(() => {});
+  }, [newspaperName]);
+
+  useEffect(() => {
+    if (!newspaper) return;
+    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/articles`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json() as Promise<ArticlesResponse>;
       })
       .then((data) => setArticles(data.data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
-  }, [newspaperId]);
+      .catch(() => {});
+  }, [newspaper]);
 
   const [featured, ...rest] = articles;
 
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
-      <Navbar newspaperName={newspaperName ?? ""} />
+      <Navbar newspaperName={newspaperName ?? ""} displayName={newspaper?.name} />
 
       {/* Hero Section */}
       {featured && (
