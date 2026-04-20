@@ -5,4 +5,5 @@ export * from "./validators/authors";
 export * from "./validators/likes";
 export * from "./validators/categories";
 export * from "./validators/comments";
-export * from ".validators/users";
+export * from "./validators/users";
+export * from "./validators/articles";
