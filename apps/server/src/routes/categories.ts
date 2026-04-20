@@ -3,6 +3,7 @@ import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { articleCategory, articles, newspapers } from "../db/schema";
 import { eq, inArray } from "drizzle-orm";
+import { categoryListParams, categoryRouteParams, categoryBody } from "@pb138/shared";
 
 // Helper: slugify
 const slugify = (text: string): string =>
@@ -19,7 +20,7 @@ export const categoryRoutes = new Elysia()
     .use(authMiddleware)
 
     // GET /api/newspapers/:newspaper_id/categories — public
-    .get("/api/newspapers/:newspaper_id/categories", async ({ params }: any) => {
+    .get("/api/newspapers/:newspaper_id/categories", async ({ params }) => {
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
@@ -48,10 +49,12 @@ export const categoryRoutes = new Elysia()
         return Response.json({
             data: cats.map((c: any) => ({ id: c.id, name: c.categoryName })),
         });
-    })
+    }, {
+		params: categoryListParams,
+	})
 
     // POST /api/newspapers/:newspaper_id/categories — NEWSPAPER_MANAGER
-    .post("/api/newspapers/:newspaper_id/categories", async ({ params, user, roles, body }: any) => {
+    .post("/api/newspapers/:newspaper_id/categories", async ({ params, user, roles, body }) => {
         if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
         if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
@@ -60,14 +63,6 @@ export const categoryRoutes = new Elysia()
             where: eq(newspapers.id, params.newspaper_id),
         });
         if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
-
-        const { name } = body ?? {};
-        if (!name?.trim()) {
-            return Response.json(
-                { error: "VALIDATION_ERROR", fields: { name: "Name is required" } },
-                { status: 422 }
-            );
-        }
 
         const existing = await db.query.articleCategory.findFirst({
             where: eq(articleCategory.categoryName, name),
@@ -81,12 +76,15 @@ export const categoryRoutes = new Elysia()
             .returning();
 
         return Response.json({ id: created!.id, name: created!.categoryName }, { status: 201 });
-    })
+    }, {
+		params: categoryListParams,
+		body: categoryBody,
+	})
 
     // PUT /api/newspapers/:newspaper_id/categories/:category_id — NEWSPAPER_MANAGER
     .put(
         "/api/newspapers/:newspaper_id/categories/:category_id",
-        async ({ params, user, roles, body }: any) => {
+        async ({ params, user, roles, body }) => {
             if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
             if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
@@ -104,13 +102,6 @@ export const categoryRoutes = new Elysia()
                 );
             }
 
-            const existing = await db.query.articleCategory.findFirst({
-                where: eq(articleCategory.categoryName, name),
-            });
-            if (existing && existing.id !== params.category_id) {
-                return Response.json({ error: "CATEGORY_NAME_TAKEN" }, { status: 409 });
-            }
-
             const [updated] = await db
                 .update(articleCategory)
                 .set({ categoryName: name, slug: slugify(name) })
@@ -118,13 +109,15 @@ export const categoryRoutes = new Elysia()
                 .returning();
 
             return Response.json({ id: updated!.id, name: updated!.categoryName });
-        }
-    )
+        }, {
+			params: categoryRouteParams,
+			body: categoryBody,
+		})
 
     // DELETE /api/newspapers/:newspaper_id/categories/:category_id — NEWSPAPER_MANAGER
     .delete(
         "/api/newspapers/:newspaper_id/categories/:category_id",
-        async ({ params, user, roles }: any) => {
+        async ({ params, user, roles }) => {
             if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
             if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
@@ -141,5 +134,6 @@ export const categoryRoutes = new Elysia()
 
             await db.delete(articleCategory).where(eq(articleCategory.id, params.category_id));
             return new Response(null, { status: 204 });
-        }
-    );
+        }, {
+			params: categoryRouteParams,
+		});
