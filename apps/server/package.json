@@ -18,7 +18,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-	"@pb138/shared" : "workspace:*",
+	"@pb138/shared": "workspace:*",
     "@elysiajs/bearer": "^1.4.3",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/jwt": "^1.4.1",

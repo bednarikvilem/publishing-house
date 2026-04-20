@@ -4,12 +4,19 @@ import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
 import { users, userRoles, newspapers } from "../db/schema";
 import { eq, and, or } from "drizzle-orm";
+import {
+	registerInput,
+	loginInput,
+	verifyEmailInput,
+	forgotPasswordInput,
+	resetPasswordInput,
+	resendVerificationInput,
+} from "@pb138/shared";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 
-	// TODO: validations (will be generated from Drizzle + Zod)
 	// TODO: add token blocklist (Redis) 
 	// TODO: email sending
 
@@ -77,6 +84,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				email_verified: newUser.email_verified,
 			},
 		}, { status: 201 });
+	}, {
+		body: registerInput,
 	})
 
 	.post("/login", async ({ body, jwt }) => {
@@ -133,6 +142,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				roles: roles.map(r => r.role),
 			},
 		});
+	}, {
+		body: loginInput,
 	})
 
 	.post("/logout", async ({ bearer, jwt }) => {
@@ -173,6 +184,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			.where(eq(users.id, user.id));
 
 		return Response.json({ message: "Email verified successfully" });
+	}, {
+		body: verifyEmailInput,
 	})
 
 	.post("/forgot-password", async ({ body, jwt }) => {
@@ -197,6 +210,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		}
 
 		return Response.json({ message: "Reset link has been set" });
+	}, {
+		body: forgotPasswordInput,
 	})
 
 	.post("/reset-password", async ({ body, jwt }) => {
@@ -225,6 +240,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			.where(eq(users.id, user.id));
 
 		return Response.json({ message: "Password reset successfully" });
+	}, {
+		body: resetPasswordInput,
 	})
 
 	.post("/resend-verification", async ({ body, jwt }) => {
@@ -249,4 +266,6 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		}
 
 		return Response.json({ message: "Verification link has been sent" });
+	}, {
+		body: resendVerificationInput,
 	});
