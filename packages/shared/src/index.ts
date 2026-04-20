@@ -7,3 +7,4 @@ export * from "./validators/categories";
 export * from "./validators/comments";
 export * from "./validators/users";
 export * from "./validators/articles";
+export * from "./validators/admin";
