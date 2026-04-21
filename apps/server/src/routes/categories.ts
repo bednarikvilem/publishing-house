@@ -18,6 +18,21 @@ const slugify = (text: string): string =>
 export const categoryRoutes = new Elysia()
     .use(authMiddleware)
 
+    // GET /api/newspapers/:newspaper_id/categories/by-slug/:slug — public
+    .get("/api/newspapers/:newspaper_id/categories/by-slug/:slug", async ({ params }: any) => {
+        const newspaper = await db.query.newspapers.findFirst({
+            where: eq(newspapers.id, params.newspaper_id),
+        });
+        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+
+        const category = await db.query.articleCategory.findFirst({
+            where: eq(articleCategory.slug, params.slug),
+        });
+        if (!category) return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+
+        return Response.json({ id: category.id, name: category.categoryName, slug: category.slug });
+    })
+
     // GET /api/newspapers/:newspaper_id/categories — public
     .get("/api/newspapers/:newspaper_id/categories", async ({ params }: any) => {
         const newspaper = await db.query.newspapers.findFirst({
