@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-import { sampleArticles } from "../lib/sampleData";
 import type { Article, ArticlesResponse } from "../types/article";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -27,39 +27,28 @@ function sortArticles(articles: Article[], order: SortOrder): Article[] {
 }
 
 export function CategoryPage() {
-  const { newspaperName, categoryName } = useParams<{
-    newspaperName: string;
-    categoryName: string;
-  }>();
+  const { newspaper, newspaperName } = useNewspaper();
+  const { categoryName } = useParams<{ categoryName: string }>();
 
   const category = categoryName ?? "";
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
-    // Reset to sample data immediately so switching categories is instant
-    setArticles(
-      sampleArticles.data.filter(
-        (a) => a.category.toLowerCase() === category.toLowerCase()
-      )
-    );
+    if (!newspaper) return;
 
+    setArticles([]);
     fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaperId}/articles?category=${encodeURIComponent(category)}`
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category=${encodeURIComponent(category)}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json() as Promise<ArticlesResponse>;
       })
       .then((data) => setArticles(data.data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
-  }, [newspaperId, category]);
+      .catch(() => {});
+  }, [newspaper, category]);
 
   const sorted = sortArticles(articles, sortOrder);
   const [featured, ...rest] = sorted;
