@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
-
-// TODO: replace with a real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 export function SignUpPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState("");
