@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { sampleArticleDetail, sampleArticles } from "../lib/sampleData";
@@ -81,9 +81,9 @@ function ArticleContent({ content, inlineImage }: {
         if (!imageInserted && inlineImage && i === 2) {
           imageInserted = true;
           return (
-            <>
+            <Fragment key={i}>
               {node}
-              <figure key={`img-${i}`} className="flex flex-col gap-2">
+              <figure className="flex flex-col gap-2">
                 <img
                   src={inlineImage.url}
                   alt={inlineImage.caption}
@@ -93,7 +93,7 @@ function ArticleContent({ content, inlineImage }: {
                   {inlineImage.caption}
                 </figcaption>
               </figure>
-            </>
+            </Fragment>
           );
         }
 
@@ -118,9 +118,7 @@ export function ArticlePage() {
         return res.json() as Promise<ArticleDetail>;
       })
       .then((data) => setArticle(data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
+      .catch(() => {});
   }, [newspaper, articleId]);
 
   const primaryImage = article.images.find((img) => img.is_primary);
