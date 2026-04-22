@@ -151,7 +151,7 @@ export function ArticlePage() {
               Home
             </Link>
             <span className="text-white/40">/</span>
-            <Link to={`/${newspaperName}/category/${article.category}`} className="text-white/67 hover:text-white/90">
+            <Link to={`/${newspaperName}/category/${article.category_slug}`} className="text-white/67 hover:text-white/90">
               {article.category}
             </Link>
             <span className="text-white/40">/</span>
