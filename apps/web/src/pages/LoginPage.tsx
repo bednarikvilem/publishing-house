@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
-
-// TODO: replace with a real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 export function LoginPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -18,6 +16,8 @@ export function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!newspaper) return;
+
     setLoading(true);
 
     try {
@@ -25,7 +25,7 @@ export function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          newspaper_id: NEWSPAPER_ID,
+          newspaper_id: newspaper.id,
           email,
           password,
         }),
@@ -143,7 +143,7 @@ export function LoginPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !newspaper}
               className="h-10 w-full rounded-md bg-foreground text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
             >
               {loading ? "Signing in…" : "Sign In"}

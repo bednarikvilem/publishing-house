@@ -29,13 +29,15 @@ export function SignUpPage() {
       return;
     }
 
+    if (!newspaper) return;
+
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          newspaper_id: NEWSPAPER_ID,
+          newspaper_id: newspaper.id,
           email,
           username,
           full_name: fullName || undefined,
@@ -247,7 +249,7 @@ export function SignUpPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !newspaper}
               className="h-10 w-full rounded-md bg-foreground text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
             >
               {loading ? "Creating account…" : "Create Account"}
