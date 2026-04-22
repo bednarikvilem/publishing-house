@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { sampleArticleDetail, sampleArticles } from "../lib/sampleData";
-import type { ArticleDetail } from "../types/article";
+import type { ArticleDetail } from "../types";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -103,18 +104,13 @@ function ArticleContent({ content, inlineImage }: {
 }
 
 export function ArticlePage() {
-  const { newspaperName, articleId } = useParams<{
-    newspaperName: string;
-    articleId: string;
-  }>();
+  const { articleId } = useParams<{ articleId: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [article, setArticle] = useState<ArticleDetail>(sampleArticleDetail);
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
-    if (!articleId) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}`, {
+    if (!newspaper || !articleId) return;
+    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`, {
       headers: authHeaders(),
     })
       .then((res) => {
@@ -125,7 +121,7 @@ export function ArticlePage() {
       .catch(() => {
         // Backend not available — keep sample data
       });
-  }, [newspaperId, articleId]);
+  }, [newspaper, articleId]);
 
   const primaryImage = article.images.find((img) => img.is_primary);
   const inlineImage = article.images.find((img) => !img.is_primary);
