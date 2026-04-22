@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-
-interface Newspaper {
-  id: string;
-  name: string;
-  slug: string;
-}
+import type { Newspaper } from "../types";
 
 interface UseNewspaperResult {
   newspaperName: string;
