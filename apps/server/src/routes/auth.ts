@@ -26,21 +26,22 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			return Response.json({ error: "Newspaper not found" }, { status: 404 });
 		}
 
-		const[is_duplicate] = await db
+		const [emailDuplicate] = await db
 			.select()
 			.from(users)
-			.where(
-				and(
-					eq(users.newspaperId, newspaper_id),
-					or(eq(users.email, email), eq(users.username, username))
-				)
-		);
+			.where(and(eq(users.newspaperId, newspaper_id), eq(users.email, email)));
 
-		if (is_duplicate) {
-			return Response.json(
-				{ error: "Email or username is already taken." },
-				{ status: 409 }
-			);
+		if (emailDuplicate) {
+			return Response.json({ error: "EMAIL_TAKEN" }, { status: 409 });
+		}
+
+		const [usernameDuplicate] = await db
+			.select()
+			.from(users)
+			.where(and(eq(users.newspaperId, newspaper_id), eq(users.username, username)));
+
+		if (usernameDuplicate) {
+			return Response.json({ error: "USERNAME_TAKEN" }, { status: 409 });
 		}
 
 		const passwordHash = await Bun.password.hash(password);
@@ -70,13 +71,11 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		});
 
 		return Response.json({
-			user: {
-				id: newUser.id,
-				email: newUser.email,
-				username: newUser.username,
-				full_name: newUser.fullname,
-				email_verified: newUser.email_verified,
-			},
+			id: newUser.id,
+			email: newUser.email,
+			username: newUser.username,
+			full_name: newUser.fullname,
+			email_verified: newUser.email_verified,
 		}, { status: 201 });
 	})
 
@@ -94,17 +93,17 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			);
 
 		if (!user) {
-			return Response.json({ error: "Invalid email or password" }, { status: 401 });
+			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
 
 		const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
 
 		if (!isPasswordValid) {
-			return Response.json({ error: "Invalid email or password" }, { status: 401 });
+			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
 
 		if (!user.email_verified) {
-			return Response.json({ error: "Email is not verified" }, { status: 403 });
+			return Response.json({ error: "EMAIL_NOT_VERIFIED" }, { status: 403 });
 		}
 
 		const roles = await db
@@ -156,7 +155,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const payload = await jwt.verify(token);
 
 		if (!payload || payload.type !== "email_verification") {
-			return Response.json({ error: "Invalid or expired token" }, { status: 400 });
+			return Response.json({ error: "INVALID_TOKEN" }, { status: 400 });
 		}
 
 		const [user] = await db
@@ -206,7 +205,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const payload = await jwt.verify(token);
 
 		if (!payload || payload.type !== "password_reset") {
-			return Response.json({ error: "Invalid or expired token" }, { status: 400 });
+			return Response.json({ error: "INVALID_TOKEN" }, { status: 400 });
 		}
 
 		const [user] = await db
