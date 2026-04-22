@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-import type { Article, ArticlesResponse } from "../types/article";
+import type { Article, PaginatedResponse } from "../types";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 export function SearchResultsPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -17,14 +18,11 @@ export function SearchResultsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
     setInputValue(q);
 
-    if (!q.trim()) {
+    if (!q.trim() || !newspaper) {
       setArticles([]);
       setTotal(0);
       return;
@@ -34,11 +32,11 @@ export function SearchResultsPage() {
     setError(false);
 
     fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/search?q=${encodeURIComponent(q)}`
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/search?q=${encodeURIComponent(q)}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<ArticlesResponse>;
+        return res.json() as Promise<PaginatedResponse<Article>>;
       })
       .then((data) => {
         setArticles(data.data);
@@ -46,7 +44,7 @@ export function SearchResultsPage() {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [searchParams, newspaperId]);
+  }, [searchParams, newspaper]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
