@@ -1,14 +1,18 @@
 import { Elysia } from "elysia";
 import { jwt } from "@elysiajs/jwt";
+import { JWT_EXPIRATION } from "../utils/jwt";
+import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
 import { users, userRoles, newspapers } from "../db/schema";
 import { eq, and, or } from "drizzle-orm";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
+	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 
 	// TODO: validations (will be generated from Drizzle + Zod)
 	// TODO: add token blocklist (Redis) 
+	// TODO: email sending
 
 	.post("/register", async ({ body, jwt }) => {
 		const { email, username, password, newspaper_id, full_name } = body;
@@ -62,7 +66,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const verificationToken = await jwt.sign({
 			userId: newUser.id,
 			type: "email_verification",
-			exp: Math.floor(Date.now() / 1000) + 86400,
+			exp: JWT_EXPIRATION.emailVerification,
 		});
 
 		return Response.json({
@@ -116,7 +120,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		const token = await jwt.sign({
 			userId: user.id,
 			newspaperId: newspaper_id,
-			exp: Math.floor(Date.now() / 1000) + 7200,
+			exp: JWT_EXPIRATION.session,
 		});
 
 		return Response.json({
@@ -132,15 +136,12 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 		});
 	})
 
-	.post("/logout", async ({ headers, jwt }) => {
-		const auth = headers.authorization;
-
-		if (!auth || !auth.startsWith("Bearer ")) {
+	.post("/logout", async ({ bearer, jwt }) => {
+		if (!bearer) {
 			return Response.json({ error: "Missing token" }, { status: 401 });
 		}
 
-		const token = auth.slice(7);
-		const payload = await jwt.verify(token);
+		const payload = await jwt.verify(bearer);
 
 		if (!payload) {
 			return Response.json({ error: "Invalid token" }, { status: 401 });
@@ -192,7 +193,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			const resetToken = await jwt.sign({
 				userId: user.id,
 				type: "password_reset",
-				exp: Math.floor(Date.now() / 1000) + 3600,
+				exp: JWT_EXPIRATION.passwordReset,
 			});
 		}
 
@@ -244,7 +245,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			const verificationToken = await jwt.sign({
 				userId: user.id,
 				type: "email_verification",
-				exp: Math.floor(Date.now() / 1000) + 86400,
+				exp: JWT_EXPIRATION.emailVerification,
 			});
 		}
 
