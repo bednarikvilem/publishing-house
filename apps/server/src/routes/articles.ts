@@ -350,6 +350,7 @@ export const articleRoutes = new Elysia()
                 content: article.content,
                 publication_date: article.publicationDate,
                 category: (article as any).category?.categoryName ?? null,
+                category_slug: (article as any).category?.slug ?? null,
                 keywords: article.keywords
                     ? article.keywords.split(",").map((k: string) => k.trim())
                     : [],

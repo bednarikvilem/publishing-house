@@ -1,6 +1,13 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNewspaper } from "../hooks/useNewspaper";
+import { API_BASE_URL } from "../lib/api";
 
-const NAV_CATEGORIES = ["World", "Politics", "Technology", "Sports", "Culture"];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 interface NavbarProps {
   newspaperName: string;
@@ -8,10 +15,24 @@ interface NavbarProps {
 }
 
 export function Navbar({ newspaperName, displayName }: NavbarProps) {
+  const { newspaper } = useNewspaper();
+  const [categories, setCategories] = useState<Category[]>([]);
+
   displayName ??= newspaperName
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
+
+  useEffect(() => {
+    if (!newspaper) return;
+    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/categories`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        return res.json() as Promise<{ data: Category[] }>;
+      })
+      .then((data) => setCategories(data.data))
+      .catch(() => {});
+  }, [newspaper?.id]);
 
   return (
     <header className="flex items-center justify-between border-b border-border bg-background px-12 py-4">
@@ -29,13 +50,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           >
             Home
           </Link>
-          {NAV_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
-              key={cat}
-              to={`/${newspaperName}/category/${cat}`}
+              key={cat.id}
+              to={`/${newspaperName}/category/${cat.slug}`}
               className="text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {cat}
+              {cat.name}
             </Link>
           ))}
         </nav>

@@ -88,6 +88,7 @@ export interface ArticleDetail {
   content: string;
   publication_date: string;
   category: string;
+  category_slug: string;
   keywords: string[];
   likes_count: number;
   liked_by_me: boolean;
