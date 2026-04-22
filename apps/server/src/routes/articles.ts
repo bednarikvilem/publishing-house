@@ -304,9 +304,10 @@ export const articleRoutes = new Elysia()
     .get(
         "/api/newspapers/:newspaper_id/articles/:article_id",
         async ({ params, user }: any) => {
-            if (!user) return unauthorized();
-            if (user.newspaperId !== params.newspaper_id) return forbidden();
-
+            console.log(`Received request for article ${params.article_id} in newspaper ${params.newspaper_id} from user ${user?.id}`);
+            // if (!user) return unauthorized();
+            // if (user.newspaperId !== params.newspaper_id) return forbidden();
+            console.log("Fetching article from database...");
             const article = await db.query.articles.findFirst({
                 where: and(
                     eq(articles.id, params.article_id),
@@ -316,7 +317,6 @@ export const articleRoutes = new Elysia()
                 with: { category: true, images: true },
             });
             if (!article) return notFound("ARTICLE_NOT_FOUND");
-
             const author = await db.query.users.findFirst({ where: eq(users.id, article.authorId) });
             const authorProfile = author
                 ? await db.query.newspaperAuthors.findFirst({
@@ -332,9 +332,10 @@ export const articleRoutes = new Elysia()
                 .from(likes)
                 .where(eq(likes.articleId, article.id));
 
-            const likedByMe = !!(await db.query.likes.findFirst({
-                where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
-            }));
+            ///const likedByMe = !!(await db.query.likes.findFirst({
+            ///    where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
+            ///}));
+            const likedByMe = false;
 
             const articleComments = await db.query.comments.findMany({
                 where: eq(comments.articleId, article.id),
