@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Twitter, Linkedin, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-import { sampleAuthors, sampleAuthorFallback } from "../lib/sampleData";
-import type { AuthorDetail, Article } from "../types/article";
+import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 type SortOrder = "latest" | "oldest";
 
@@ -23,7 +22,8 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-function sortArticles(articles: Article[], order: SortOrder): Article[] {
+function sortArticles(articles: Article[] | undefined, order: SortOrder): Article[] {
+  if (!articles) return [];
   return [...articles].sort((a, b) => {
     const diff =
       new Date(a.publication_date).getTime() -
@@ -33,55 +33,49 @@ function sortArticles(articles: Article[], order: SortOrder): Article[] {
 }
 
 export function AuthorPage() {
-  const { newspaperName, authorId } = useParams<{
-    newspaperName: string;
-    authorId: string;
-  }>();
+  const { authorId } = useParams<{ authorId: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
 
-  const fallback =
-    authorId && sampleAuthors[authorId]
-      ? sampleAuthors[authorId]
-      : sampleAuthorFallback;
-
-  const [author, setAuthor] = useState<AuthorDetail>(fallback);
+  const [author, setAuthor] = useState<AuthorPublicProfile | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
-    const nextFallback =
-      authorId && sampleAuthors[authorId]
-        ? sampleAuthors[authorId]
-        : sampleAuthorFallback;
-    setAuthor(nextFallback);
+    if (!newspaper || !authorId) return;
+    setAuthor(null);
     setSortOrder("latest");
 
-    if (!authorId) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/authors/${authorId}`)
+    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/authors/${authorId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<AuthorDetail>;
+        return res.json() as Promise<AuthorPublicProfile>;
       })
       .then((data) => setAuthor(data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
-  }, [newspaperId, authorId]);
+      .catch(() => {});
+  }, [newspaper, authorId]);
 
-  const sorted = sortArticles(author.articles, sortOrder);
+  const sorted = sortArticles(author?.articles.data, sortOrder);
   const [featured, ...rest] = sorted;
+
+  if (!author) {
+    return (
+      <div className="w-full min-h-screen bg-background text-foreground">
+        <Navbar newspaperName={newspaperName} />
+        <p className="py-16 text-center text-muted-foreground">Loading…</p>
+      </div>
+    );
+  }
+
+  const articleCount = author.articles.pagination.total;
 
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
-      <Navbar newspaperName={newspaperName ?? ""} />
+      <Navbar newspaperName={newspaperName} />
 
       {/* Author Hero */}
       <div className="relative w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
         <div className="absolute inset-0 bg-black/67" />
         <div className="relative flex items-center gap-10 px-16 py-12">
-          {/* Avatar — unchanged from mobile design */}
           {author.profile_picture ? (
             <img
               src={author.profile_picture}
@@ -111,71 +105,18 @@ export function AuthorPage() {
                 <h1 className="text-[32px] font-extrabold leading-none tracking-[-0.5px] text-white">
                   {author.full_name}
                 </h1>
-                <p className="text-[14px] font-medium text-primary-foreground/80">
-                  {author.role}
-                </p>
-                {/* Bio — unchanged from mobile design */}
                 <p className="max-w-[600px] text-[14px] leading-[1.6] text-white/70">
                   {author.bio}
                 </p>
-
-                {/* Social links */}
-                <div className="mt-1 flex items-center gap-3">
-                  {author.social_links.twitter && (
-                    <a
-                      href={author.social_links.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="Twitter"
-                    >
-                      <Twitter size={18} />
-                    </a>
-                  )}
-                  {author.social_links.linkedin && (
-                    <a
-                      href={author.social_links.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin size={18} />
-                    </a>
-                  )}
-                  {author.social_links.email && (
-                    <a
-                      href={`mailto:${author.social_links.email}`}
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="Email"
-                    >
-                      <Mail size={18} />
-                    </a>
-                  )}
-                </div>
               </div>
 
               {/* Stats */}
               <div className="flex shrink-0 items-center gap-8 self-center pr-4">
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="text-[28px] font-extrabold text-white">
-                    {formatCount(author.articles_count)}
+                    {formatCount(articleCount)}
                   </span>
                   <span className="text-[12px] text-white/60">Articles</span>
-                </div>
-                <div className="h-10 w-px bg-white/20" />
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-[28px] font-extrabold text-white">
-                    {author.years_active}
-                  </span>
-                  <span className="text-[12px] text-white/60">Years</span>
-                </div>
-                <div className="h-10 w-px bg-white/20" />
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-[28px] font-extrabold text-white">
-                    {formatCount(author.total_likes)}
-                  </span>
-                  <span className="text-[12px] text-white/60">Likes</span>
                 </div>
               </div>
             </div>
@@ -269,7 +210,7 @@ export function AuthorPage() {
             </button>
           </div>
           <span className="text-[13px] text-muted-foreground">
-            {author.articles_count} article{author.articles_count !== 1 ? "s" : ""} total
+            {articleCount} article{articleCount !== 1 ? "s" : ""} total
           </span>
         </div>
 
