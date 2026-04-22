@@ -106,9 +106,7 @@ export function NewspaperHomepage() {
         </h2>
         <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           {rest.map((article) => (
-            <Link key={article.id} to={`/${newspaperName}/articles/${article.id}`} className="block">
-              <ArticleCard article={article} />
-            </Link>
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       </section>

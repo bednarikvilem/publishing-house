@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import type { Article } from "../types/article";
 import { CategoryBadge } from "./CategoryBadge";
 
@@ -12,9 +12,13 @@ function formatDate(iso: string) {
 
 export function ArticleCard({ article }: { article: Article }) {
   const { newspaperName } = useParams<{ newspaperName: string }>();
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+    <div
+      className="flex flex-col overflow-hidden rounded-xl border border-border bg-card cursor-pointer"
+      onClick={() => navigate(`/${newspaperName}/articles/${article.id}`)}
+    >
       <div className="h-[200px] overflow-hidden">
         {article.primary_image ? (
           <img

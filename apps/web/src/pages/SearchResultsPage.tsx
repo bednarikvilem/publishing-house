@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import type { Article, PaginatedResponse } from "../types";
 import { ArticleCard } from "../components/ArticleCard";
@@ -119,13 +119,7 @@ export function SearchResultsPage() {
         ) : articles.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {articles.map((article) => (
-              <Link
-                key={article.id}
-                to={`/${newspaperName}/articles/${article.id}`}
-                className="block"
-              >
-                <ArticleCard article={article} />
-              </Link>
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : query ? (

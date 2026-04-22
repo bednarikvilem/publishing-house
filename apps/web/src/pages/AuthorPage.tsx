@@ -223,13 +223,7 @@ export function AuthorPage() {
         {rest.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rest.map((article) => (
-              <Link
-                key={article.id}
-                to={`/${newspaperName}/articles/${article.id}`}
-                className="block"
-              >
-                <ArticleCard article={article} />
-              </Link>
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
