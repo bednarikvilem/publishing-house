@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { User } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
@@ -83,7 +84,9 @@ export function AuthorPage() {
               className="h-24 w-24 shrink-0 rounded-full object-cover ring-2 ring-white/20"
             />
           ) : (
-            <div className="h-24 w-24 shrink-0 rounded-full bg-white/20 ring-2 ring-white/20" />
+            <div className="h-24 w-24 shrink-0 rounded-full bg-white/20 ring-2 ring-white/20 flex items-center justify-center">
+              <User size={40} className="text-white/60" />
+            </div>
           )}
 
           {/* Info */}
@@ -159,14 +162,16 @@ export function AuthorPage() {
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
-                  {featured.author.profile_picture ? (
+                  {featured.author?.profile_picture ? (
                     <img
                       src={featured.author.profile_picture}
                       alt={featured.author.full_name}
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-muted" />
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                      <User size={16} className="text-muted-foreground" />
+                    </div>
                   )}
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[13px] font-semibold text-card-foreground">
