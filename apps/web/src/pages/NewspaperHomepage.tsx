@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { sampleArticles } from "../lib/sampleData";
 import type { Article, ArticlesResponse } from "../types/article";
 import { ArticleCard } from "../components/ArticleCard";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -16,20 +17,8 @@ function formatDate(iso: string) {
 }
 
 export function NewspaperHomepage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [articles, setArticles] = useState<Article[]>(sampleArticles.data);
-  const [newspaper, setNewspaper] = useState<{ id: string; name: string } | null>(null);
-
-  useEffect(() => {
-    if (!newspaperName) return;
-    fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Newspaper not found");
-        return res.json() as Promise<{ id: string; name: string; slug: string }>;
-      })
-      .then((data) => setNewspaper(data))
-      .catch(() => {});
-  }, [newspaperName]);
 
   useEffect(() => {
     if (!newspaper) return;

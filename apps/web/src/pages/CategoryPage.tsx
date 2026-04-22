@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-import { sampleArticles } from "../lib/sampleData";
 import type { Article, ArticlesResponse } from "../types/article";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
+import { useCategory } from "../hooks/useCategory";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -27,46 +28,34 @@ function sortArticles(articles: Article[], order: SortOrder): Article[] {
 }
 
 export function CategoryPage() {
-  const { newspaperName, categoryName } = useParams<{
-    newspaperName: string;
-    categoryName: string;
-  }>();
-
-  const category = categoryName ?? "";
+  const { newspaper, newspaperName } = useNewspaper();
+  const { categorySlug, category } = useCategory(newspaper?.id);
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
-    // Reset to sample data immediately so switching categories is instant
-    setArticles(
-      sampleArticles.data.filter(
-        (a) => a.category.toLowerCase() === category.toLowerCase()
-      )
-    );
+    if (!newspaper || !category) return;
 
+    setArticles([]);
+    console.log("newspaper_id:", newspaper.id, "category_id:", category.id);
     fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaperId}/articles?category=${encodeURIComponent(category)}`
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category_id=${category.id}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json() as Promise<ArticlesResponse>;
       })
       .then((data) => setArticles(data.data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
-  }, [newspaperId, category]);
+      .catch(() => {});
+  }, [newspaper, category?.id]);
 
   const sorted = sortArticles(articles, sortOrder);
   const [featured, ...rest] = sorted;
 
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
-      <Navbar newspaperName={newspaperName ?? ""} />
+      <Navbar newspaperName={newspaperName} />
 
       {/* Category Hero */}
       <div className="relative h-[280px] w-full overflow-hidden">
@@ -85,11 +74,11 @@ export function CategoryPage() {
               Home
             </Link>
             {" › "}
-            <span>{category}</span>
+            <span>{category?.name ?? categorySlug}</span>
           </p>
           {/* Category title */}
           <h1 className="text-[48px] font-black leading-none tracking-[-1px] text-white">
-            {category}
+            {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
           <span className="rounded-full border border-white/20 bg-white/[0.13] px-4 py-1.5 text-[13px] font-medium text-white">
@@ -207,7 +196,7 @@ export function CategoryPage() {
         ) : (
           !featured && (
             <p className="text-center text-muted-foreground py-16">
-              No articles found in the <strong>{category}</strong> category.
+              No articles found in the <strong>{category?.name ?? categorySlug}</strong> category.
             </p>
           )
         )}

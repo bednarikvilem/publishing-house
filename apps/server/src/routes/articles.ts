@@ -257,12 +257,14 @@ export const articleRoutes = new Elysia()
                 orderBy: [desc(articles.publicationDate)],
             });
 
-            const filtered = query?.category
-                ? all.filter(
-                      (a: any) =>
-                          a.category?.categoryName?.toLowerCase() === query.category.toLowerCase()
-                  )
-                : all;
+            const filtered = query?.category_id
+                ? all.filter((a: any) => a.categoryId === query.category_id)
+                : query?.category
+                  ? all.filter(
+                        (a: any) =>
+                            a.category?.categoryName?.toLowerCase() === query.category.toLowerCase()
+                    )
+                  : all;
 
             const total = filtered.length;
             const paged = filtered.slice(offset, offset + limit);
