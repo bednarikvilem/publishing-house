@@ -33,6 +33,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   displayName ??= newspaper?.name ?? newspaperName
     .split("-")
@@ -59,12 +60,22 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         return res.json() as Promise<UserInfo>;
       })
       .then((data) => setUser(data))
-      .catch(() => {
-      });
+      .catch(() => {});
   }, []);
 
+  async function handleLogout() {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      headers: authHeaders(),
+    }).catch(() => {});
+    localStorage.removeItem("token");
+    setUser(null);
+    setMenuOpen(false);
+    navigate(`/${newspaperName}/login`);
+  }
+
   return (
-    <header className="flex items-center justify-between border-b border-border bg-background px-12 py-4">
+    <header className="relative z-10 flex items-center justify-between border-b border-border bg-background px-12 py-4">
       <div className="flex items-center gap-10">
         <Link
           to={`/${newspaperName}`}
@@ -93,20 +104,38 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
 
       <div className="flex items-center gap-3">
         {user ? (
-          <button
-            onClick={() => navigate(`/${newspaperName}/profile`)}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted transition-colors"
-          >
-            <div className="h-8 w-8 shrink-0 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-[12px] font-semibold text-primary-foreground">
-                {getInitials(user)}
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted transition-colors"
+            >
+              <div className="h-8 w-8 shrink-0 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-[12px] font-semibold text-primary-foreground">
+                  {getInitials(user)}
+                </span>
+              </div>
+              <span className="text-[14px] font-medium text-foreground">
+                {user.full_name ?? user.username}
               </span>
-            </div>
-            <span className="text-[14px] font-medium text-foreground">
-              {user.full_name ?? user.username}
-            </span>
-            <ChevronDown size={16} className="text-muted-foreground" />
-          </button>
+              <ChevronDown size={16} className="text-muted-foreground" />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-1 w-44 rounded-lg border border-border bg-background shadow-md">
+                <button
+                  onClick={() => { setMenuOpen(false); navigate(`/${newspaperName}/profile`); }}
+                  className="w-full px-4 py-2.5 text-left text-[14px] font-medium text-foreground hover:bg-muted rounded-t-lg"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2.5 text-left text-[14px] font-medium text-destructive hover:bg-muted rounded-b-lg"
+                >
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <>
             <Link
