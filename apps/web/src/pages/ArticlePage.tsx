@@ -1,9 +1,8 @@
 import { useEffect, useState, Fragment } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import { sampleArticleDetail, sampleArticles } from "../lib/sampleData";
+import { sampleArticleDetail } from "../lib/sampleData";
 import type { ArticleDetail } from "../types";
-import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 
@@ -199,18 +198,7 @@ export function ArticlePage() {
         <ArticleContent content={article.content} inlineImage={inlineImage} />
       </section>
 
-      {/* Related Articles */}
-      <section className="flex flex-col gap-8 px-16 py-12">
-        <h2 className="text-[28px] font-extrabold text-foreground">Related Articles</h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {sampleArticles.data
-            .filter((a) => a.id !== article.id)
-            .slice(0, 3)
-            .map((a) => (
-              <ArticleCard key={a.id} article={a} />
-            ))}
-        </div>
-      </section>
+
     </div>
   );
 }
