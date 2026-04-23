@@ -52,9 +52,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Checking auth with token:", token);
     if (!token) return;
-    console.log("Fetching user info with token:", token);
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
       .then((res) => {
         if (!res.ok) throw new Error();
@@ -62,7 +60,6 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       })
       .then((data) => setUser(data))
       .catch(() => {
-        console.log("Something went wrong on backend.")
       });
   }, []);
 

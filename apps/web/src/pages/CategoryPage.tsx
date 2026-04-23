@@ -38,7 +38,6 @@ export function CategoryPage() {
     if (!newspaper || !category) return;
 
     setArticles([]);
-    console.log("newspaper_id:", newspaper.id, "category_id:", category.id);
     fetch(
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category_id=${category.id}`
     )
