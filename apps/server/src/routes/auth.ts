@@ -80,8 +80,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	})
 
 	.post("/login", async ({ body, jwt }) => {
-		const { email, password, newspaper_id } = body;
-
+		const { newspaper_id, email, password } = body;
 		const [user] = await db
 			.select()
 			.from(users)
@@ -91,7 +90,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 					eq(users.newspaperId, newspaper_id)
 				)
 			);
-
+		
 		if (!user) {
 			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
@@ -129,7 +128,6 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				email: user.email,
 				username: user.username,
 				full_name: user.fullname,
-				email_verified: user.email_verified,
 				roles: roles.map(r => r.role),
 			},
 		});
