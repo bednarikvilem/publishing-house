@@ -304,10 +304,8 @@ export const articleRoutes = new Elysia()
     .get(
         "/api/newspapers/:newspaper_id/articles/:article_id",
         async ({ params, user }: any) => {
-            console.log(`Received request for article ${params.article_id} in newspaper ${params.newspaper_id} from user ${user?.id}`);
-            // if (!user) return unauthorized();
-            // if (user.newspaperId !== params.newspaper_id) return forbidden();
-            console.log("Fetching article from database...");
+            if (!user) return unauthorized();
+            if (user.newspaperId !== params.newspaper_id) return forbidden();
             const article = await db.query.articles.findFirst({
                 where: and(
                     eq(articles.id, params.article_id),
