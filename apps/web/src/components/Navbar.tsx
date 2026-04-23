@@ -34,7 +34,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
 
-  displayName ??= newspaperName
+  displayName ??= newspaper?.name ?? newspaperName
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
