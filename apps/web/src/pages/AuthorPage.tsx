@@ -175,7 +175,7 @@ export function AuthorPage() {
                   )}
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[13px] font-semibold text-card-foreground">
-                      {featured.author.full_name}
+                      {featured.author?.full_name}
                     </span>
                     <span className="text-[12px] text-muted-foreground">
                       {formatDate(featured.publication_date)}

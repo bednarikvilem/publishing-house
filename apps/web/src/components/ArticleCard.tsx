@@ -39,13 +39,15 @@ export function ArticleCard({ article }: { article: Article }) {
           {article.perex}
         </p>
         <div className="mt-auto flex items-center justify-between pt-2">
-          <Link
-            to={`/${newspaperName}/authors/${article.author.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {article.author.full_name}
-          </Link>
+          {article.author && (
+            <Link
+              to={`/${newspaperName}/authors/${article.author.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {article.author.full_name}
+            </Link>
+          )}
           <span className="text-[12px] text-muted-foreground">
             {formatDate(article.publication_date)}
           </span>
