@@ -9,6 +9,7 @@ import { SearchResultsPage } from "./pages/SearchResultsPage";
 import { PasswordResetPage } from "./pages/PasswordResetPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { AuthorDashboardPage } from "./pages/AuthorDashboardPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import "./index.css";
 
 export function App() {
@@ -22,6 +23,7 @@ export function App() {
       <Route path="/:newspaperName/login" element={<LoginPage />} />
       <Route path="/:newspaperName/search" element={<SearchResultsPage />} />
       <Route path="/:newspaperName/forgot-password" element={<PasswordResetPage />} />
+      <Route path="/:newspaperName/verify-email" element={<VerifyEmailPage />} />
       <Route path="/:newspaperName/profile" element={<UserProfilePage />} />
       <Route path="/:newspaperName/author-dashboard" element={<AuthorDashboardPage />} />
     </Routes>
