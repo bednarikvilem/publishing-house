@@ -62,7 +62,7 @@ export const categoryRoutes = new Elysia()
                 : [];
 
         return Response.json({
-            data: cats.map((c: any) => ({ id: c.id, name: c.categoryName })),
+            data: cats.map((c: any) => ({ id: c.id, name: c.categoryName, slug: c.slug })),
         });
     }, {
 		params: categoryListParams,

@@ -37,8 +37,8 @@ export function CategoryPage() {
   useEffect(() => {
     if (!newspaper || !category) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setArticles([]);
-    console.log("newspaper_id:", newspaper.id, "category_id:", category.id);
     fetch(
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category_id=${category.id}`
     )
@@ -48,13 +48,13 @@ export function CategoryPage() {
       })
       .then((data) => setArticles(data.data))
       .catch(() => {});
-  }, [newspaper, category?.id]);
+  }, [newspaper, category]);
 
   const sorted = sortArticles(articles, sortOrder);
   const [featured, ...rest] = sorted;
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName} />
 
       {/* Category Hero */}
@@ -69,7 +69,7 @@ export function CategoryPage() {
           <p className="text-[13px] text-white/80">
             <Link
               to={`/${newspaperName}`}
-              className="hover:text-white transition-colors"
+              className="transition-colors hover:text-white"
             >
               Home
             </Link>
@@ -77,7 +77,7 @@ export function CategoryPage() {
             <span>{category?.name ?? categorySlug}</span>
           </p>
           {/* Category title */}
-          <h1 className="text-[48px] font-black leading-none tracking-[-1px] text-white">
+          <h1 className="text-[48px] leading-none font-black tracking-[-1px] text-white">
             {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
@@ -89,14 +89,13 @@ export function CategoryPage() {
 
       {/* Main Content */}
       <div className="flex flex-col gap-12 px-16 py-12">
-
         {/* Featured Article */}
         {featured && (
           <Link
             to={`/${newspaperName}/articles/${featured.id}`}
             className="block"
           >
-            <div className="flex overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+            <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               {/* Image */}
               <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
@@ -106,21 +105,21 @@ export function CategoryPage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-muted" />
+                  <div className="bg-muted h-full w-full" />
                 )}
               </div>
               {/* Content */}
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-[28px] font-extrabold leading-[1.2] tracking-[-0.5px] text-card-foreground">
+                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
                   {featured.title}
                 </h2>
-                <p className="text-[15px] leading-[1.6] text-muted-foreground line-clamp-3">
+                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
@@ -131,13 +130,13 @@ export function CategoryPage() {
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-muted" />
+                    <div className="bg-muted h-8 w-8 rounded-full" />
                   )}
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[13px] font-semibold text-card-foreground">
+                    <span className="text-card-foreground text-[13px] font-semibold">
                       {featured.author.full_name}
                     </span>
-                    <span className="text-[12px] text-muted-foreground">
+                    <span className="text-muted-foreground text-[12px]">
                       {formatDate(featured.publication_date)}
                     </span>
                   </div>
@@ -150,7 +149,7 @@ export function CategoryPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-[14px] font-medium text-muted-foreground">
+            <span className="text-muted-foreground text-[14px] font-medium">
               Sort by:
             </span>
             <button
@@ -158,7 +157,7 @@ export function CategoryPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "latest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Latest
@@ -168,13 +167,13 @@ export function CategoryPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "oldest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Oldest
             </button>
           </div>
-          <span className="text-[13px] text-muted-foreground">
+          <span className="text-muted-foreground text-[13px]">
             Showing {rest.length > 0 ? `1–${rest.length + 1}` : "0"} of{" "}
             {articles.length} article{articles.length !== 1 ? "s" : ""}
           </span>
@@ -184,19 +183,14 @@ export function CategoryPage() {
         {rest.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rest.map((article) => (
-              <Link
-                key={article.id}
-                to={`/${newspaperName}/articles/${article.id}`}
-                className="block"
-              >
-                <ArticleCard article={article} />
-              </Link>
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
           !featured && (
-            <p className="text-center text-muted-foreground py-16">
-              No articles found in the <strong>{category?.name ?? categorySlug}</strong> category.
+            <p className="text-muted-foreground py-16 text-center">
+              No articles found in the{" "}
+              <strong>{category?.name ?? categorySlug}</strong> category.
             </p>
           )
         )}

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Twitter, Linkedin, Mail } from "lucide-react";
+import { User } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
-import { sampleAuthors, sampleAuthorFallback } from "../lib/sampleData";
-import type { AuthorDetail, Article } from "../types/article";
+import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 type SortOrder = "latest" | "oldest";
 
@@ -23,7 +23,11 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-function sortArticles(articles: Article[], order: SortOrder): Article[] {
+function sortArticles(
+  articles: Article[] | undefined,
+  order: SortOrder
+): Article[] {
+  if (!articles) return [];
   return [...articles].sort((a, b) => {
     const diff =
       new Date(a.publication_date).getTime() -
@@ -33,55 +37,50 @@ function sortArticles(articles: Article[], order: SortOrder): Article[] {
 }
 
 export function AuthorPage() {
-  const { newspaperName, authorId } = useParams<{
-    newspaperName: string;
-    authorId: string;
-  }>();
+  const { authorId } = useParams<{ authorId: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
 
-  const fallback =
-    authorId && sampleAuthors[authorId]
-      ? sampleAuthors[authorId]
-      : sampleAuthorFallback;
-
-  const [author, setAuthor] = useState<AuthorDetail>(fallback);
+  const [author, setAuthor] = useState<AuthorPublicProfile | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  // TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-  const newspaperId = "550e8400-e29b-41d4-a716-446655440000";
-
   useEffect(() => {
-    const nextFallback =
-      authorId && sampleAuthors[authorId]
-        ? sampleAuthors[authorId]
-        : sampleAuthorFallback;
-    setAuthor(nextFallback);
+    if (!newspaper || !authorId) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAuthor(null);
     setSortOrder("latest");
 
-    if (!authorId) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/authors/${authorId}`)
+    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/authors/${authorId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<AuthorDetail>;
+        return res.json() as Promise<AuthorPublicProfile>;
       })
       .then((data) => setAuthor(data))
-      .catch(() => {
-        // Backend not available — keep sample data
-      });
-  }, [newspaperId, authorId]);
+      .catch(() => {});
+  }, [newspaper, authorId]);
 
-  const sorted = sortArticles(author.articles, sortOrder);
+  const sorted = sortArticles(author?.articles.data, sortOrder);
   const [featured, ...rest] = sorted;
 
+  if (!author) {
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full">
+        <Navbar newspaperName={newspaperName} />
+        <p className="text-muted-foreground py-16 text-center">Loading…</p>
+      </div>
+    );
+  }
+
+  const articleCount = author.articles.pagination.total;
+
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
-      <Navbar newspaperName={newspaperName ?? ""} />
+    <div className="bg-background text-foreground min-h-screen w-full">
+      <Navbar newspaperName={newspaperName} />
 
       {/* Author Hero */}
       <div className="relative w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
         <div className="absolute inset-0 bg-black/67" />
         <div className="relative flex items-center gap-10 px-16 py-12">
-          {/* Avatar — unchanged from mobile design */}
           {author.profile_picture ? (
             <img
               src={author.profile_picture}
@@ -89,7 +88,9 @@ export function AuthorPage() {
               className="h-24 w-24 shrink-0 rounded-full object-cover ring-2 ring-white/20"
             />
           ) : (
-            <div className="h-24 w-24 shrink-0 rounded-full bg-white/20 ring-2 ring-white/20" />
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-white/20 ring-2 ring-white/20">
+              <User size={40} className="text-white/60" />
+            </div>
           )}
 
           {/* Info */}
@@ -98,7 +99,7 @@ export function AuthorPage() {
             <p className="text-[13px] text-white/80">
               <Link
                 to={`/${newspaperName}`}
-                className="hover:text-white transition-colors"
+                className="transition-colors hover:text-white"
               >
                 Home
               </Link>
@@ -108,74 +109,21 @@ export function AuthorPage() {
 
             <div className="flex items-start justify-between gap-8">
               <div className="flex flex-col gap-2">
-                <h1 className="text-[32px] font-extrabold leading-none tracking-[-0.5px] text-white">
+                <h1 className="text-[32px] leading-none font-extrabold tracking-[-0.5px] text-white">
                   {author.full_name}
                 </h1>
-                <p className="text-[14px] font-medium text-primary-foreground/80">
-                  {author.role}
-                </p>
-                {/* Bio — unchanged from mobile design */}
                 <p className="max-w-[600px] text-[14px] leading-[1.6] text-white/70">
                   {author.bio}
                 </p>
-
-                {/* Social links */}
-                <div className="mt-1 flex items-center gap-3">
-                  {author.social_links.twitter && (
-                    <a
-                      href={author.social_links.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="Twitter"
-                    >
-                      <Twitter size={18} />
-                    </a>
-                  )}
-                  {author.social_links.linkedin && (
-                    <a
-                      href={author.social_links.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin size={18} />
-                    </a>
-                  )}
-                  {author.social_links.email && (
-                    <a
-                      href={`mailto:${author.social_links.email}`}
-                      className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                      aria-label="Email"
-                    >
-                      <Mail size={18} />
-                    </a>
-                  )}
-                </div>
               </div>
 
               {/* Stats */}
               <div className="flex shrink-0 items-center gap-8 self-center pr-4">
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="text-[28px] font-extrabold text-white">
-                    {formatCount(author.articles_count)}
+                    {formatCount(articleCount)}
                   </span>
                   <span className="text-[12px] text-white/60">Articles</span>
-                </div>
-                <div className="h-10 w-px bg-white/20" />
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-[28px] font-extrabold text-white">
-                    {author.years_active}
-                  </span>
-                  <span className="text-[12px] text-white/60">Years</span>
-                </div>
-                <div className="h-10 w-px bg-white/20" />
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-[28px] font-extrabold text-white">
-                    {formatCount(author.total_likes)}
-                  </span>
-                  <span className="text-[12px] text-white/60">Likes</span>
                 </div>
               </div>
             </div>
@@ -185,14 +133,13 @@ export function AuthorPage() {
 
       {/* Main Content */}
       <div className="flex flex-col gap-12 px-16 py-12">
-
         {/* Featured Article */}
         {featured && (
           <Link
             to={`/${newspaperName}/articles/${featured.id}`}
             className="block"
           >
-            <div className="flex overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+            <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
@@ -201,37 +148,39 @@ export function AuthorPage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-muted" />
+                  <div className="bg-muted h-full w-full" />
                 )}
               </div>
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-[28px] font-extrabold leading-[1.2] tracking-[-0.5px] text-card-foreground">
+                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
                   {featured.title}
                 </h2>
-                <p className="text-[15px] leading-[1.6] text-muted-foreground line-clamp-3">
+                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
-                  {featured.author.profile_picture ? (
+                  {featured.author?.profile_picture ? (
                     <img
                       src={featured.author.profile_picture}
                       alt={featured.author.full_name}
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-muted" />
+                    <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
+                      <User size={16} className="text-muted-foreground" />
+                    </div>
                   )}
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[13px] font-semibold text-card-foreground">
-                      {featured.author.full_name}
+                    <span className="text-card-foreground text-[13px] font-semibold">
+                      {featured.author?.full_name}
                     </span>
-                    <span className="text-[12px] text-muted-foreground">
+                    <span className="text-muted-foreground text-[12px]">
                       {formatDate(featured.publication_date)}
                     </span>
                   </div>
@@ -244,7 +193,7 @@ export function AuthorPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-[14px] font-medium text-muted-foreground">
+            <span className="text-muted-foreground text-[14px] font-medium">
               Sort by:
             </span>
             <button
@@ -252,7 +201,7 @@ export function AuthorPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "latest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Latest
@@ -262,14 +211,14 @@ export function AuthorPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "oldest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Oldest
             </button>
           </div>
-          <span className="text-[13px] text-muted-foreground">
-            {author.articles_count} article{author.articles_count !== 1 ? "s" : ""} total
+          <span className="text-muted-foreground text-[13px]">
+            {articleCount} article{articleCount !== 1 ? "s" : ""} total
           </span>
         </div>
 
@@ -277,18 +226,12 @@ export function AuthorPage() {
         {rest.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rest.map((article) => (
-              <Link
-                key={article.id}
-                to={`/${newspaperName}/articles/${article.id}`}
-                className="block"
-              >
-                <ArticleCard article={article} />
-              </Link>
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
           !featured && (
-            <p className="py-16 text-center text-muted-foreground">
+            <p className="text-muted-foreground py-16 text-center">
               No published articles found for this author.
             </p>
           )

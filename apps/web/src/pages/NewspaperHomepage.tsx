@@ -34,12 +34,15 @@ export function NewspaperHomepage() {
   const [featured, ...rest] = articles;
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
-      <Navbar newspaperName={newspaperName ?? ""} displayName={newspaper?.name} />
+    <div className="bg-background text-foreground min-h-screen w-full">
+      <Navbar
+        newspaperName={newspaperName ?? ""}
+        displayName={newspaper?.name}
+      />
 
       {/* Hero Section */}
       {featured && (
-        <section className="flex bg-background px-12">
+        <section className="bg-background flex px-12">
           <div className="h-[500px] flex-1 overflow-hidden">
             {featured.primary_image ? (
               <img
@@ -48,15 +51,18 @@ export function NewspaperHomepage() {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full bg-muted" />
+              <div className="bg-muted h-full w-full" />
             )}
           </div>
           <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">
             <CategoryBadge label="Featured" />
-            <h1 className="text-[32px] font-extrabold leading-[1.15] tracking-[-0.5px] text-foreground">
+            <h1 className="text-foreground text-[32px] leading-[1.15] font-extrabold tracking-[-0.5px]">
               {featured.title}
             </h1>
-            <Link to={`/${newspaperName}/authors/${featured.author.id}`} className="flex items-center gap-3">
+            <Link
+              to={`/${newspaperName}/authors/${featured.author.id}`}
+              className="flex items-center gap-3"
+            >
               {featured.author.profile_picture ? (
                 <img
                   src={featured.author.profile_picture}
@@ -64,21 +70,23 @@ export function NewspaperHomepage() {
                   className="h-9 w-9 rounded-full object-cover"
                 />
               ) : (
-                <div className="h-9 w-9 rounded-full bg-muted" />
+                <div className="bg-muted h-9 w-9 rounded-full" />
               )}
               <div className="flex flex-col gap-0.5">
-                <span className="text-[14px] font-semibold text-foreground">
+                <span className="text-foreground text-[14px] font-semibold">
                   {featured.author.full_name}
                 </span>
-                <span className="text-[13px] text-muted-foreground">
+                <span className="text-muted-foreground text-[13px]">
                   {formatDate(featured.publication_date)}
                 </span>
               </div>
             </Link>
-            <p className="text-[15px] leading-[1.6] text-muted-foreground">{featured.perex}</p>
+            <p className="text-muted-foreground text-[15px] leading-[1.6]">
+              {featured.perex}
+            </p>
             <Link
               to={`/${newspaperName}/articles/${featured.id}`}
-              className="flex w-fit items-center gap-2 rounded-lg bg-foreground px-5 py-2.5 text-[14px] font-semibold text-background hover:opacity-90"
+              className="bg-foreground text-background flex w-fit items-center gap-2 rounded-lg px-5 py-2.5 text-[14px] font-semibold hover:opacity-90"
             >
               Read Full Article
               <svg
@@ -100,15 +108,13 @@ export function NewspaperHomepage() {
       )}
 
       {/* Latest News */}
-      <section className="flex flex-col gap-8 bg-background px-12 py-12">
-        <h2 className="text-[28px] font-extrabold tracking-[-0.5px] text-foreground">
+      <section className="bg-background flex flex-col gap-8 px-12 py-12">
+        <h2 className="text-foreground text-[28px] font-extrabold tracking-[-0.5px]">
           Latest News
         </h2>
         <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           {rest.map((article) => (
-            <Link key={article.id} to={`/${newspaperName}/articles/${article.id}`} className="block">
-              <ArticleCard article={article} />
-            </Link>
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       </section>

@@ -5,21 +5,14 @@ import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
 import { users, userRoles, newspapers } from "../db/schema";
 import { eq, and, or } from "drizzle-orm";
-import {
-	registerInput,
-	loginInput,
-	verifyEmailInput,
-	forgotPasswordInput,
-	resetPasswordInput,
-	resendVerificationInput,
-} from "@pb138/shared";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 
-	// TODO: add token blocklist (Redis) 
-	// TODO: email sending
+	// TODO: validations (will be generated from Drizzle + Zod)
+	// TODO: add token blocklist (Redis)
 
 	.post("/register", async ({ body, jwt }) => {
 		const { email, username, password, newspaper_id, full_name } = body;
@@ -77,6 +70,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 			exp: JWT_EXPIRATION.emailVerification,
 		});
 
+		await sendVerificationEmail(newUser.email, verificationToken, newspaper.slug);
+
 		return Response.json({
 			id: newUser.id,
 			email: newUser.email,
@@ -89,8 +84,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	})
 
 	.post("/login", async ({ body, jwt }) => {
-		const { email, password, newspaper_id } = body;
-
+		const { newspaper_id, email, password } = body;
 		const [user] = await db
 			.select()
 			.from(users)
@@ -100,7 +94,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 					eq(users.newspaperId, newspaper_id)
 				)
 			);
-
+		
 		if (!user) {
 			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
@@ -138,7 +132,6 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				email: user.email,
 				username: user.username,
 				full_name: user.fullname,
-				email_verified: user.email_verified,
 				roles: roles.map(r => r.role),
 			},
 		});
@@ -207,6 +200,15 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				type: "password_reset",
 				exp: JWT_EXPIRATION.passwordReset,
 			});
+
+			const [newspaper] = await db
+				.select()
+				.from(newspapers)
+				.where(eq(newspapers.id, newspaper_id));
+
+			if (newspaper) {
+				await sendPasswordResetEmail(user.email, resetToken, newspaper.slug);
+			}
 		}
 
 		return Response.json({ message: "Reset link has been set" });
@@ -263,6 +265,15 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 				type: "email_verification",
 				exp: JWT_EXPIRATION.emailVerification,
 			});
+
+			const [newspaper] = await db
+				.select()
+				.from(newspapers)
+				.where(eq(newspapers.id, newspaper_id));
+
+			if (newspaper) {
+				await sendVerificationEmail(user.email, verificationToken, newspaper.slug);
+			}
 		}
 
 		return Response.json({ message: "Verification link has been sent" });

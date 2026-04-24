@@ -1,10 +1,15 @@
-import type { ArticlesResponse, ArticleDetail, AuthorDetail } from "../types/article";
+import type {
+  ArticlesResponse,
+  ArticleDetail,
+  AuthorDetail,
+} from "../types/article";
 
 export const sampleArticles: ArticlesResponse = {
   data: [
     {
       id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      title: "Global Climate Summit Reaches Historic Agreement on Carbon Emissions",
+      title:
+        "Global Climate Summit Reaches Historic Agreement on Carbon Emissions",
       perex:
         "World leaders have unanimously agreed on a groundbreaking framework to reduce global carbon emissions by 60% before 2035, marking the most ambitious climate commitment in history.",
       publication_date: "2026-04-10T08:00:00Z",
@@ -22,7 +27,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-      title: "Senate Passes Landmark Infrastructure Bill After Months of Debate",
+      title:
+        "Senate Passes Landmark Infrastructure Bill After Months of Debate",
       perex:
         "The bipartisan bill allocates $2 trillion for roads, bridges, and broadband expansion across rural communities.",
       publication_date: "2026-04-09T10:00:00Z",
@@ -40,7 +46,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
-      title: "AI Breakthrough: New Model Achieves Human-Level Reasoning in Scientific Research",
+      title:
+        "AI Breakthrough: New Model Achieves Human-Level Reasoning in Scientific Research",
       perex:
         "Researchers unveil an artificial intelligence system capable of independently designing and conducting complex experiments.",
       publication_date: "2026-04-08T09:00:00Z",
@@ -58,7 +65,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "d4e5f6a7-b8c9-0123-defa-234567890123",
-      title: "Champions League Final Set: Madrid to Host Historic All-English Showdown",
+      title:
+        "Champions League Final Set: Madrid to Host Historic All-English Showdown",
       perex:
         "Two English clubs will face off in Madrid for the first time since 2019 in what promises to be a thrilling finale.",
       publication_date: "2026-04-07T14:00:00Z",
@@ -76,7 +84,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "e5f6a7b8-c9d0-1234-efab-345678901234",
-      title: "Metropolitan Museum Unveils Largest Collection of Recovered Ancient Artifacts",
+      title:
+        "Metropolitan Museum Unveils Largest Collection of Recovered Ancient Artifacts",
       perex:
         "The museum opens a new wing housing over 2,000 pieces of ancient art repatriated from private collections worldwide.",
       publication_date: "2026-04-06T11:00:00Z",
@@ -112,7 +121,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "a7b8c9d0-e1f2-3456-abcd-567890123456",
-      title: "Supreme Court to Hear Landmark Case on Digital Surveillance Rights",
+      title:
+        "Supreme Court to Hear Landmark Case on Digital Surveillance Rights",
       perex:
         "The case could redefine the boundaries of government surveillance in the digital age, with implications for millions of citizens.",
       publication_date: "2026-04-04T09:00:00Z",
@@ -130,7 +140,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "b8c9d0e1-f2a3-4567-bcde-678901234567",
-      title: "Governors Coalition Pushes Back Against Federal Education Mandates",
+      title:
+        "Governors Coalition Pushes Back Against Federal Education Mandates",
       perex:
         "A bipartisan group of state governors is challenging new federal education requirements they say overstep constitutional boundaries.",
       publication_date: "2026-04-03T11:00:00Z",
@@ -148,7 +159,8 @@ export const sampleArticles: ArticlesResponse = {
     },
     {
       id: "c9d0e1f2-a3b4-5678-cdef-789012345678",
-      title: "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
+      title:
+        "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
       perex:
         "Scientists unveil an image showing galaxies as they appeared just 200 million years after the Big Bang.",
       publication_date: "2026-04-02T08:00:00Z",
@@ -196,7 +208,13 @@ The clean energy component commits $300 billion to accelerate the transition awa
 The bill now heads to the House, where it is expected to face a more contentious debate. Speaker advocates must navigate competing demands from progressive members seeking a larger climate investment and moderates concerned about the price tag.`,
   publication_date: "2026-04-09T10:00:00Z",
   category: "Politics",
-  keywords: ["politics", "infrastructure", "senate", "broadband", "clean energy"],
+  keywords: [
+    "politics",
+    "infrastructure",
+    "senate",
+    "broadband",
+    "clean energy",
+  ],
   likes_count: 284,
   liked_by_me: false,
   author: {
@@ -212,26 +230,30 @@ The bill now heads to the House, where it is expected to face a more contentious
     },
     {
       url: "https://picsum.photos/seed/broadband/800/360",
-      caption: "Senators gathered on the floor to discuss the infrastructure proposal. Photo: Reuters",
+      caption:
+        "Senators gathered on the floor to discuss the infrastructure proposal. Photo: Reuters",
       is_primary: false,
     },
   ],
   comments: [
     {
       id: "c1",
-      content: "This is a huge deal for rural communities. Finally some real investment.",
+      content:
+        "This is a huge deal for rural communities. Finally some real investment.",
       created_at: "2026-04-09T11:30:00Z",
       author: { id: "u10", username: "ruralvoice" },
     },
     {
       id: "c2",
-      content: "Let's see if it actually passes the House. We've been here before.",
+      content:
+        "Let's see if it actually passes the House. We've been here before.",
       created_at: "2026-04-09T12:45:00Z",
       author: { id: "u11", username: "skeptic99" },
     },
     {
       id: "c3",
-      content: "The broadband provisions alone make this worth it. 21 million without internet in 2026 is embarrassing.",
+      content:
+        "The broadband provisions alone make this worth it. 21 million without internet in 2026 is embarrassing.",
       created_at: "2026-04-09T14:00:00Z",
       author: { id: "u12", username: "techpolicy" },
     },
@@ -257,7 +279,8 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
     articles: [
       {
         id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-        title: "Global Climate Summit Reaches Historic Agreement on Carbon Emissions",
+        title:
+          "Global Climate Summit Reaches Historic Agreement on Carbon Emissions",
         perex:
           "World leaders have unanimously agreed on a groundbreaking framework to reduce global carbon emissions by 60% before 2035, marking the most ambitious climate commitment in history.",
         publication_date: "2026-04-10T08:00:00Z",
@@ -267,11 +290,16 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/climate/800/500",
           caption: "World leaders at the climate summit",
         },
-        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+        author: {
+          id: "u1",
+          full_name: "Sarah Mitchell",
+          profile_picture: "https://picsum.photos/seed/sarah/40/40",
+        },
       },
       {
         id: "s1-a2",
-        title: "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
+        title:
+          "Senate Passes Landmark Digital Privacy Bill After Months of Debate",
         perex:
           "The new legislation introduces strict requirements for data handling and gives citizens unprecedented control over their personal information.",
         publication_date: "2026-03-28T09:00:00Z",
@@ -281,11 +309,16 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/privacy/800/500",
           caption: "Senate session on digital privacy",
         },
-        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+        author: {
+          id: "u1",
+          full_name: "Sarah Mitchell",
+          profile_picture: "https://picsum.photos/seed/sarah/40/40",
+        },
       },
       {
         id: "s1-a3",
-        title: "White House Unveils Ambitious Climate Action Plan for Federal Agencies",
+        title:
+          "White House Unveils Ambitious Climate Action Plan for Federal Agencies",
         perex:
           "The executive order mandates all federal buildings achieve net-zero emissions by 2035, setting a new standard for government sustainability.",
         publication_date: "2026-03-25T10:00:00Z",
@@ -295,7 +328,11 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/whitehouse/800/500",
           caption: "White House press briefing",
         },
-        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+        author: {
+          id: "u1",
+          full_name: "Sarah Mitchell",
+          profile_picture: "https://picsum.photos/seed/sarah/40/40",
+        },
       },
       {
         id: "s1-a4",
@@ -309,7 +346,11 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/housing/800/500",
           caption: "Affordable housing development",
         },
-        author: { id: "u1", full_name: "Sarah Mitchell", profile_picture: "https://picsum.photos/seed/sarah/40/40" },
+        author: {
+          id: "u1",
+          full_name: "Sarah Mitchell",
+          profile_picture: "https://picsum.photos/seed/sarah/40/40",
+        },
       },
     ],
   },
@@ -329,7 +370,8 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
     articles: [
       {
         id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-        title: "Senate Passes Landmark Infrastructure Bill After Months of Debate",
+        title:
+          "Senate Passes Landmark Infrastructure Bill After Months of Debate",
         perex:
           "The bipartisan bill allocates $2 trillion for roads, bridges, and broadband expansion across rural communities.",
         publication_date: "2026-04-09T10:00:00Z",
@@ -339,11 +381,16 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/senate/800/500",
           caption: "Senate vote session",
         },
-        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+        author: {
+          id: "u2",
+          full_name: "James Rivera",
+          profile_picture: "https://picsum.photos/seed/james/40/40",
+        },
       },
       {
         id: "u2-a2",
-        title: "Federal Reserve Signals Pause on Interest Rate Hikes Amid Economic Uncertainty",
+        title:
+          "Federal Reserve Signals Pause on Interest Rate Hikes Amid Economic Uncertainty",
         perex:
           "Fed chair cites slowing inflation data and mixed employment figures as reasons for a wait-and-see approach through the summer.",
         publication_date: "2026-04-01T08:30:00Z",
@@ -353,11 +400,16 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/fedreserve/800/500",
           caption: "Federal Reserve building",
         },
-        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+        author: {
+          id: "u2",
+          full_name: "James Rivera",
+          profile_picture: "https://picsum.photos/seed/james/40/40",
+        },
       },
       {
         id: "u2-a3",
-        title: "Congressional Budget Office Revises Deficit Forecast Upward by $300 Billion",
+        title:
+          "Congressional Budget Office Revises Deficit Forecast Upward by $300 Billion",
         perex:
           "New projections cite higher-than-expected military spending and slower tax revenue growth as the primary drivers of the widened gap.",
         publication_date: "2026-03-18T09:00:00Z",
@@ -367,7 +419,11 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/congress/800/500",
           caption: "Congress building",
         },
-        author: { id: "u2", full_name: "James Rivera", profile_picture: "https://picsum.photos/seed/james/40/40" },
+        author: {
+          id: "u2",
+          full_name: "James Rivera",
+          profile_picture: "https://picsum.photos/seed/james/40/40",
+        },
       },
     ],
   },
@@ -388,7 +444,8 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
     articles: [
       {
         id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
-        title: "AI Breakthrough: New Model Achieves Human-Level Reasoning in Scientific Research",
+        title:
+          "AI Breakthrough: New Model Achieves Human-Level Reasoning in Scientific Research",
         perex:
           "Researchers unveil an artificial intelligence system capable of independently designing and conducting complex experiments.",
         publication_date: "2026-04-08T09:00:00Z",
@@ -398,11 +455,16 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/ailab/800/500",
           caption: "AI research laboratory",
         },
-        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+        author: {
+          id: "u3",
+          full_name: "Elena Park",
+          profile_picture: "https://picsum.photos/seed/elena/40/40",
+        },
       },
       {
         id: "c9d0e1f2-a3b4-5678-cdef-789012345678",
-        title: "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
+        title:
+          "New Space Telescope Captures Deepest Image of Universe Ever Recorded",
         perex:
           "Scientists unveil an image showing galaxies as they appeared just 200 million years after the Big Bang.",
         publication_date: "2026-04-02T08:00:00Z",
@@ -412,7 +474,11 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/space/800/500",
           caption: "Deep space image from the new telescope",
         },
-        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+        author: {
+          id: "u3",
+          full_name: "Elena Park",
+          profile_picture: "https://picsum.photos/seed/elena/40/40",
+        },
       },
       {
         id: "u3-a3",
@@ -426,7 +492,11 @@ export const sampleAuthors: Record<string, AuthorDetail> = {
           url: "https://picsum.photos/seed/quantum/800/500",
           caption: "Quantum computer hardware",
         },
-        author: { id: "u3", full_name: "Elena Park", profile_picture: "https://picsum.photos/seed/elena/40/40" },
+        author: {
+          id: "u3",
+          full_name: "Elena Park",
+          profile_picture: "https://picsum.photos/seed/elena/40/40",
+        },
       },
     ],
   },

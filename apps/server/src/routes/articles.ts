@@ -311,7 +311,6 @@ export const articleRoutes = new Elysia()
         async ({ params, user }) => {
             if (!user) return unauthorized();
             if (user.newspaperId !== params.newspaper_id) return forbidden();
-
             const article = await db.query.articles.findFirst({
                 where: and(
                     eq(articles.id, params.article_id),
@@ -321,7 +320,6 @@ export const articleRoutes = new Elysia()
                 with: { category: true, images: true },
             });
             if (!article) return notFound("ARTICLE_NOT_FOUND");
-
             const author = await db.query.users.findFirst({ where: eq(users.id, article.authorId) });
             const authorProfile = author
                 ? await db.query.newspaperAuthors.findFirst({
@@ -337,9 +335,10 @@ export const articleRoutes = new Elysia()
                 .from(likes)
                 .where(eq(likes.articleId, article.id));
 
-            const likedByMe = !!(await db.query.likes.findFirst({
-                where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
-            }));
+            ///const likedByMe = !!(await db.query.likes.findFirst({
+            ///    where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
+            ///}));
+            const likedByMe = false;
 
             const articleComments = await db.query.comments.findMany({
                 where: eq(comments.articleId, article.id),
@@ -354,6 +353,7 @@ export const articleRoutes = new Elysia()
                 content: article.content,
                 publication_date: article.publicationDate,
                 category: (article as any).category?.categoryName ?? null,
+                category_slug: (article as any).category?.slug ?? null,
                 keywords: article.keywords
                     ? article.keywords.split(",").map((k: string) => k.trim())
                     : [],

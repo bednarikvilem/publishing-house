@@ -8,7 +8,7 @@ import { eq, and } from "drizzle-orm";
 export const authMiddleware = new Elysia({ name: "auth"})
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
-	.derive(async ({ bearer, jwt }) => {
+	.derive({ as: "global" }, async ({ bearer, jwt }) => {
 		if (!bearer) {
 			return { user: null, roles: [] as string[] };
 		}
