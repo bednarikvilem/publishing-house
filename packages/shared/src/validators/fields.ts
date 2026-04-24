@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const emailSchema = z.email();
-export const uuidSchema = z.uuid();
+export const emailSchema = z.string().email();
+export const uuidSchema = z.string().uuid();
 
 export const usernameSchema = z
 	.string()

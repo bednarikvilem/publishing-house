@@ -27,7 +27,7 @@ export const adminConfigBody = z.object({
 	email: z.object({
 		smtp_host: z.string().trim().min(1).max(255).optional(),
 		smtp_port: z.coerce.number().int().min(1).max(65535).optional(),
-		sender_address: z.email().optional(),
+		sender_address: z.string().email().optional(),
 	}).optional(),
 	security: z.object({
 		jwt_expiry_hours: z.coerce.number().int().min(1).max(24 * 365).optional(),
