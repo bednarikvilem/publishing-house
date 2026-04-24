@@ -6,6 +6,14 @@ import { db } from "../db";
 import { users, userRoles, newspapers } from "../db/schema";
 import { eq, and, or } from "drizzle-orm";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email";
+import {
+	registerInput,
+	loginInput,
+	verifyEmailInput,
+	forgotPasswordInput,
+	resetPasswordInput,
+	resendVerificationInput,
+} from "@pb138/shared";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.use(bearer())
