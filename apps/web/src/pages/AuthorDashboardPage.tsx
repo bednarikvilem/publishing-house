@@ -31,7 +31,12 @@ interface DashboardArticle {
 
 interface DashboardResponse {
   data: DashboardArticle[];
-  pagination: { page: number; limit: number; total: number; total_pages: number };
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
 }
 
 const STATUS_LABELS: Record<ArticleStatus, string> = {
@@ -79,9 +84,18 @@ const FILTER_STATUSES: { label: string; value: ArticleStatus | null }[] = [
 
 function PencilIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      className="text-muted-foreground">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-muted-foreground"
+    >
       <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
     </svg>
   );
@@ -89,8 +103,17 @@ function PencilIcon() {
 
 function PlusIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 12h14M12 5v14" />
     </svg>
   );
@@ -108,7 +131,8 @@ export function AuthorDashboardPage() {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const activeStatus = (searchParams.get("status") as ArticleStatus | null) ?? null;
+  const activeStatus =
+    (searchParams.get("status") as ArticleStatus | null) ?? null;
   const currentPage = Number(searchParams.get("page") ?? "1");
 
   const [articles, setArticles] = useState<DashboardArticle[]>([]);
@@ -136,7 +160,10 @@ export function AuthorDashboardPage() {
       })
       .then((data) => {
         setArticles(data.data);
-        setPagination({ total: data.pagination.total, total_pages: data.pagination.total_pages });
+        setPagination({
+          total: data.pagination.total,
+          total_pages: data.pagination.total_pages,
+        });
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -155,12 +182,13 @@ export function AuthorDashboardPage() {
   }
 
   const activeNavLabel =
-    FILTER_STATUSES.find((s) => s.value === activeStatus)?.label ?? "All Articles";
+    FILTER_STATUSES.find((s) => s.value === activeStatus)?.label ??
+    "All Articles";
 
   // Status filter section passed as children into the Sidebar
   const statusFilter = (
     <div className="flex flex-col gap-0.5">
-      <p className="px-2 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
         Filter by Status
       </p>
       {FILTER_STATUSES.map((item) => (
@@ -174,23 +202,27 @@ export function AuthorDashboardPage() {
           }`}
         >
           {item.value ? (
-            <span className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`} />
+            <span
+              className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`}
+            />
           ) : (
-            <span className="h-2 w-2 shrink-0 rounded-full border border-muted-foreground" />
+            <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
           )}
           {item.label}
-          {item.value === null && pagination.total > 0 && activeStatus === null && (
-            <span className="ml-auto rounded-full bg-foreground px-2 py-0.5 text-[11px] font-semibold text-background">
-              {pagination.total}
-            </span>
-          )}
+          {item.value === null &&
+            pagination.total > 0 &&
+            activeStatus === null && (
+              <span className="bg-foreground text-background ml-auto rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                {pagination.total}
+              </span>
+            )}
         </button>
       ))}
     </div>
   );
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground flex flex-col">
+    <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-1">
@@ -200,12 +232,12 @@ export function AuthorDashboardPage() {
         <main className="flex flex-1 flex-col gap-7 px-12 py-8">
           {/* Page Title */}
           <div className="flex items-center justify-between">
-            <h1 className="text-[24px] font-bold text-foreground">
+            <h1 className="text-foreground text-[24px] font-bold">
               {activeNavLabel}
             </h1>
             <Link
               to={`/${newspaperName}/articles/new`}
-              className="flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background hover:opacity-90 transition-opacity"
+              className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
             >
               <PlusIcon />
               New Article
@@ -214,13 +246,13 @@ export function AuthorDashboardPage() {
 
           {/* Article List */}
           {error ? (
-            <p className="py-16 text-center text-muted-foreground">
+            <p className="text-muted-foreground py-16 text-center">
               Failed to load articles. Please sign in and try again.
             </p>
           ) : loading ? (
-            <p className="py-16 text-center text-muted-foreground">Loading…</p>
+            <p className="text-muted-foreground py-16 text-center">Loading…</p>
           ) : articles.length === 0 ? (
-            <p className="py-16 text-center text-muted-foreground">
+            <p className="text-muted-foreground py-16 text-center">
               {activeStatus
                 ? `No articles with status "${STATUS_LABELS[activeStatus]}".`
                 : "You haven't written any articles yet."}
@@ -236,16 +268,18 @@ export function AuthorDashboardPage() {
                   return (
                     <div
                       key={article.id}
-                      className={`flex items-center gap-4 border-border bg-card px-5 py-4 ${
-                        isFirst ? "rounded-t-lg border" : "border-r border-b border-l"
+                      className={`border-border bg-card flex items-center gap-4 px-5 py-4 ${
+                        isFirst
+                          ? "rounded-t-lg border"
+                          : "border-r border-b border-l"
                       } ${isLast ? "rounded-b-lg" : ""}`}
                     >
                       {/* Article Info */}
                       <div className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="text-[15px] font-semibold leading-snug text-foreground">
+                        <span className="text-foreground text-[15px] leading-snug font-semibold">
                           {article.title}
                         </span>
-                        <span className="line-clamp-2 text-[13px] leading-[1.4] text-muted-foreground">
+                        <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
                           {article.perex}
                         </span>
                         {article.latest_feedback && (
@@ -254,11 +288,11 @@ export function AuthorDashboardPage() {
                           </span>
                         )}
                         {article.assigned_editor && (
-                          <span className="text-[12px] text-muted-foreground">
+                          <span className="text-muted-foreground text-[12px]">
                             Editor: {article.assigned_editor.full_name}
                           </span>
                         )}
-                        <span className="text-[11px] text-muted-foreground/60">
+                        <span className="text-muted-foreground/60 text-[11px]">
                           Updated {formatDate(article.updated_at)}
                         </span>
                       </div>
@@ -288,22 +322,23 @@ export function AuthorDashboardPage() {
               {/* Pagination */}
               {pagination.total_pages > 1 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-muted-foreground">
-                    Page {currentPage} of {pagination.total_pages} &mdash; {pagination.total} article
+                  <span className="text-muted-foreground text-[13px]">
+                    Page {currentPage} of {pagination.total_pages} &mdash;{" "}
+                    {pagination.total} article
                     {pagination.total !== 1 ? "s" : ""}
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setPage(currentPage - 1)}
                       disabled={currentPage <= 1}
-                      className="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted disabled:opacity-40 transition-colors"
+                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setPage(currentPage + 1)}
                       disabled={currentPage >= pagination.total_pages}
-                      className="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted disabled:opacity-40 transition-colors"
+                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
                     >
                       Next
                     </button>

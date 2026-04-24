@@ -23,7 +23,10 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-function sortArticles(articles: Article[] | undefined, order: SortOrder): Article[] {
+function sortArticles(
+  articles: Article[] | undefined,
+  order: SortOrder
+): Article[] {
   if (!articles) return [];
   return [...articles].sort((a, b) => {
     const diff =
@@ -60,9 +63,9 @@ export function AuthorPage() {
 
   if (!author) {
     return (
-      <div className="w-full min-h-screen bg-background text-foreground">
+      <div className="bg-background text-foreground min-h-screen w-full">
         <Navbar newspaperName={newspaperName} />
-        <p className="py-16 text-center text-muted-foreground">Loading…</p>
+        <p className="text-muted-foreground py-16 text-center">Loading…</p>
       </div>
     );
   }
@@ -70,7 +73,7 @@ export function AuthorPage() {
   const articleCount = author.articles.pagination.total;
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName} />
 
       {/* Author Hero */}
@@ -85,7 +88,7 @@ export function AuthorPage() {
               className="h-24 w-24 shrink-0 rounded-full object-cover ring-2 ring-white/20"
             />
           ) : (
-            <div className="h-24 w-24 shrink-0 rounded-full bg-white/20 ring-2 ring-white/20 flex items-center justify-center">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-white/20 ring-2 ring-white/20">
               <User size={40} className="text-white/60" />
             </div>
           )}
@@ -96,7 +99,7 @@ export function AuthorPage() {
             <p className="text-[13px] text-white/80">
               <Link
                 to={`/${newspaperName}`}
-                className="hover:text-white transition-colors"
+                className="transition-colors hover:text-white"
               >
                 Home
               </Link>
@@ -106,7 +109,7 @@ export function AuthorPage() {
 
             <div className="flex items-start justify-between gap-8">
               <div className="flex flex-col gap-2">
-                <h1 className="text-[32px] font-extrabold leading-none tracking-[-0.5px] text-white">
+                <h1 className="text-[32px] leading-none font-extrabold tracking-[-0.5px] text-white">
                   {author.full_name}
                 </h1>
                 <p className="max-w-[600px] text-[14px] leading-[1.6] text-white/70">
@@ -130,14 +133,13 @@ export function AuthorPage() {
 
       {/* Main Content */}
       <div className="flex flex-col gap-12 px-16 py-12">
-
         {/* Featured Article */}
         {featured && (
           <Link
             to={`/${newspaperName}/articles/${featured.id}`}
             className="block"
           >
-            <div className="flex overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+            <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
@@ -146,20 +148,20 @@ export function AuthorPage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-muted" />
+                  <div className="bg-muted h-full w-full" />
                 )}
               </div>
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-[28px] font-extrabold leading-[1.2] tracking-[-0.5px] text-card-foreground">
+                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
                   {featured.title}
                 </h2>
-                <p className="text-[15px] leading-[1.6] text-muted-foreground line-clamp-3">
+                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
@@ -170,15 +172,15 @@ export function AuthorPage() {
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                    <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
                       <User size={16} className="text-muted-foreground" />
                     </div>
                   )}
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[13px] font-semibold text-card-foreground">
+                    <span className="text-card-foreground text-[13px] font-semibold">
                       {featured.author?.full_name}
                     </span>
-                    <span className="text-[12px] text-muted-foreground">
+                    <span className="text-muted-foreground text-[12px]">
                       {formatDate(featured.publication_date)}
                     </span>
                   </div>
@@ -191,7 +193,7 @@ export function AuthorPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-[14px] font-medium text-muted-foreground">
+            <span className="text-muted-foreground text-[14px] font-medium">
               Sort by:
             </span>
             <button
@@ -199,7 +201,7 @@ export function AuthorPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "latest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Latest
@@ -209,13 +211,13 @@ export function AuthorPage() {
               className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
                 sortOrder === "oldest"
                   ? "bg-foreground text-background"
-                  : "border border-border text-muted-foreground hover:text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground border"
               }`}
             >
               Oldest
             </button>
           </div>
-          <span className="text-[13px] text-muted-foreground">
+          <span className="text-muted-foreground text-[13px]">
             {articleCount} article{articleCount !== 1 ? "s" : ""} total
           </span>
         </div>
@@ -229,7 +231,7 @@ export function AuthorPage() {
           </div>
         ) : (
           !featured && (
-            <p className="py-16 text-center text-muted-foreground">
+            <p className="text-muted-foreground py-16 text-center">
               No published articles found for this author.
             </p>
           )

@@ -69,20 +69,20 @@ export function LoginPage() {
     .join(" ");
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[420px] rounded-xl border border-border bg-card p-10 shadow-sm flex flex-col gap-8">
+        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-8 rounded-xl border p-10 shadow-sm">
           {/* Brand */}
           <div className="flex flex-col items-center gap-3">
             <span
-              className="text-[26px] font-black tracking-[-1px] text-foreground"
+              className="text-foreground text-[26px] font-black tracking-[-1px]"
               style={{ fontFamily: "Outfit, Inter, sans-serif" }}
             >
               {displayName}
             </span>
-            <span className="text-[15px] text-muted-foreground">
+            <span className="text-muted-foreground text-[15px]">
               Sign in to your account
             </span>
           </div>
@@ -93,7 +93,7 @@ export function LoginPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Email Address
               </label>
@@ -104,7 +104,7 @@ export function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
               />
             </div>
 
@@ -113,13 +113,13 @@ export function LoginPage() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="text-[14px] font-medium text-foreground"
+                  className="text-foreground text-[14px] font-medium"
                 >
                   Password
                 </label>
                 <Link
                   to={`/${newspaperName}/forgot-password`}
-                  className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground text-[13px] font-medium transition-colors"
                 >
                   Forgot password?
                 </Link>
@@ -131,46 +131,48 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
               />
             </div>
 
             {/* Error */}
             {error && (
-              <p className="text-center text-[13px] text-destructive">{error}</p>
+              <p className="text-destructive text-center text-[13px]">
+                {error}
+              </p>
             )}
 
             {/* Submit */}
             <button
               type="submit"
               disabled={loading || !newspaper}
-              className="h-10 w-full rounded-md bg-foreground text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
+              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Signing in…" : "Sign In"}
             </button>
 
             {/* Divider */}
             <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-[13px] text-muted-foreground">or</span>
-              <div className="h-px flex-1 bg-border" />
+              <div className="bg-border h-px flex-1" />
+              <span className="text-muted-foreground text-[13px]">or</span>
+              <div className="bg-border h-px flex-1" />
             </div>
 
             {/* Google (placeholder) */}
             <button
               type="button"
-              className="h-10 w-full rounded-md border border-border bg-background text-[14px] font-medium text-foreground hover:bg-muted transition-colors"
+              className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-[14px] font-medium transition-colors"
             >
               Continue with Google
             </button>
           </form>
 
           {/* Sign up link */}
-          <p className="text-center text-[14px] text-muted-foreground">
+          <p className="text-muted-foreground text-center text-[14px]">
             Don't have an account?{" "}
             <Link
               to={`/${newspaperName}/register`}
-              className="font-semibold text-foreground hover:underline underline-offset-4"
+              className="text-foreground font-semibold underline-offset-4 hover:underline"
             >
               Sign up
             </Link>

@@ -15,8 +15,17 @@ interface UserMe {
 
 function UserIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
@@ -25,8 +34,17 @@ function UserIcon() {
 
 function LogOutIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
@@ -36,8 +54,17 @@ function LogOutIcon() {
 
 function FileTextIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="16" y1="13" x2="8" y2="13" />
@@ -49,8 +76,17 @@ function FileTextIcon() {
 
 function PlusIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 12h14M12 5v14" />
     </svg>
   );
@@ -58,8 +94,17 @@ function PlusIcon() {
 
 function InboxIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
       <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
     </svg>
@@ -68,8 +113,17 @@ function InboxIcon() {
 
 function TagIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12 2H2v10l9.29 9.29a1 1 0 0 0 1.41 0l7.29-7.29a1 1 0 0 0 0-1.41L12 2z" />
       <path d="M7 7h.01" />
     </svg>
@@ -78,8 +132,17 @@ function TagIcon() {
 
 function BarChartIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="18" y1="20" x2="18" y2="10" />
       <line x1="12" y1="20" x2="12" y2="4" />
       <line x1="6" y1="20" x2="6" y2="14" />
@@ -89,18 +152,38 @@ function BarChartIcon() {
 
 function NewspaperIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-      <path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" />
+      <path d="M18 14h-8" />
+      <path d="M15 18h-5" />
+      <path d="M10 6h8v4h-8V6Z" />
     </svg>
   );
 }
 
 function UsersIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -111,8 +194,17 @@ function UsersIcon() {
 
 function SettingsIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
@@ -121,11 +213,19 @@ function SettingsIcon() {
 
 // ── Nav item ──────────────────────────────────────────────────────────────────
 
-function NavItem({ icon, label, href }: { icon: React.ReactNode; label: string; href: string }) {
+function NavItem({
+  icon,
+  label,
+  href,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+}) {
   return (
     <Link
       to={href}
-      className="flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+      className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors"
     >
       {icon}
       {label}
@@ -133,10 +233,16 @@ function NavItem({ icon, label, href }: { icon: React.ReactNode; label: string; 
   );
 }
 
-function NavSection({ title, children }: { title: string; children: React.ReactNode }) {
+function NavSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex flex-col gap-0.5">
-      <p className="px-2 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
         {title}
       </p>
       {children}
@@ -159,7 +265,9 @@ export function Sidebar({ children }: SidebarProps) {
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) => (res.ok ? (res.json() as Promise<UserMe>) : Promise.reject()))
+      .then((res) =>
+        res.ok ? (res.json() as Promise<UserMe>) : Promise.reject()
+      )
       .then(setUser)
       .catch(() => {});
   }, []);
@@ -180,27 +288,36 @@ export function Sidebar({ children }: SidebarProps) {
   }
 
   return (
-    <aside className="w-[225px] shrink-0 border-r border-border bg-background flex flex-col">
+    <aside className="border-border bg-background flex w-[225px] shrink-0 flex-col border-r">
       {/* User info */}
-      <div className="flex items-center gap-3 border-b border-border px-4 py-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
+      <div className="border-border flex items-center gap-3 border-b px-4 py-4">
+        <div className="bg-muted flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
           {user?.profile_picture ? (
-            <img src={user.profile_picture} alt={displayName} className="h-full w-full rounded-full object-cover" />
+            <img
+              src={user.profile_picture}
+              alt={displayName}
+              className="h-full w-full rounded-full object-cover"
+            />
           ) : (
-            <span className="text-[13px] font-bold text-muted-foreground select-none">{initials}</span>
+            <span className="text-muted-foreground text-[13px] font-bold select-none">
+              {initials}
+            </span>
           )}
         </div>
         <div className="flex min-w-0 flex-col">
-          <span className="truncate text-[13px] font-semibold text-foreground">{displayName}</span>
+          <span className="text-foreground truncate text-[13px] font-semibold">
+            {displayName}
+          </span>
           {user?.username && (
-            <span className="truncate text-[11px] text-muted-foreground">@{user.username}</span>
+            <span className="text-muted-foreground truncate text-[11px]">
+              @{user.username}
+            </span>
           )}
         </div>
       </div>
 
       {/* Role-based nav sections */}
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
-
         {roles.has("AUTHOR") && (
           <NavSection title="Author">
             <NavItem icon={<FileTextIcon />} label="My Articles" href="" />
@@ -239,18 +356,22 @@ export function Sidebar({ children }: SidebarProps) {
         {/* Page-specific content (e.g. status filters on the Author Dashboard) */}
         {children && (
           <>
-            <div className="my-1 h-px bg-border" />
+            <div className="bg-border my-1 h-px" />
             {children}
           </>
         )}
       </nav>
 
       {/* Bottom actions */}
-      <div className="flex flex-col gap-0.5 border-t border-border px-3 py-3">
-        <NavItem icon={<UserIcon />} label="My Profile" href={`/${np}/profile`} />
+      <div className="border-border flex flex-col gap-0.5 border-t px-3 py-3">
+        <NavItem
+          icon={<UserIcon />}
+          label="My Profile"
+          href={`/${np}/profile`}
+        />
         <button
           onClick={handleLogOut}
-          className="flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors"
         >
           <LogOutIcon />
           Log Out

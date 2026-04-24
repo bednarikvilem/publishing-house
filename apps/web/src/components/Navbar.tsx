@@ -23,7 +23,11 @@ interface NavbarProps {
 function getInitials(user: UserInfo): string {
   if (user.full_name) {
     const parts = user.full_name.trim().split(/\s+/);
-    return parts.map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+    return parts
+      .map((p) => p[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
   }
   return user.username.slice(0, 2).toUpperCase();
 }
@@ -35,10 +39,12 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  displayName ??= newspaper?.name ?? newspaperName
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  displayName ??=
+    newspaper?.name ??
+    newspaperName
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
   useEffect(() => {
     if (!newspaper) return;
@@ -75,18 +81,18 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   }
 
   return (
-    <header className="relative z-10 flex items-center justify-between border-b border-border bg-background px-12 py-4">
+    <header className="border-border bg-background relative z-10 flex items-center justify-between border-b px-12 py-4">
       <div className="flex items-center gap-10">
         <Link
           to={`/${newspaperName}`}
-          className="text-[22px] font-extrabold tracking-tight text-foreground"
+          className="text-foreground text-[22px] font-extrabold tracking-tight"
         >
           {displayName}
         </Link>
         <nav className="hidden gap-6 md:flex">
           <Link
             to={`/${newspaperName}`}
-            className="text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground text-[14px] font-medium transition-colors"
           >
             Home
           </Link>
@@ -94,7 +100,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             <Link
               key={cat.id}
               to={`/${newspaperName}/category/${cat.slug}`}
-              className="text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-[14px] font-medium transition-colors"
             >
               {cat.name}
             </Link>
@@ -107,29 +113,32 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           <div className="relative">
             <button
               onClick={() => setMenuOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted transition-colors"
+              className="hover:bg-muted flex items-center gap-2 rounded-lg px-3 py-2 transition-colors"
             >
-              <div className="h-8 w-8 shrink-0 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-[12px] font-semibold text-primary-foreground">
+              <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                <span className="text-primary-foreground text-[12px] font-semibold">
                   {getInitials(user)}
                 </span>
               </div>
-              <span className="text-[14px] font-medium text-foreground">
+              <span className="text-foreground text-[14px] font-medium">
                 {user.full_name ?? user.username}
               </span>
               <ChevronDown size={16} className="text-muted-foreground" />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-1 w-44 rounded-lg border border-border bg-background shadow-md">
+              <div className="border-border bg-background absolute right-0 mt-1 w-44 rounded-lg border shadow-md">
                 <button
-                  onClick={() => { setMenuOpen(false); navigate(`/${newspaperName}/profile`); }}
-                  className="w-full px-4 py-2.5 text-left text-[14px] font-medium text-foreground hover:bg-muted rounded-t-lg"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate(`/${newspaperName}/profile`);
+                  }}
+                  className="text-foreground hover:bg-muted w-full rounded-t-lg px-4 py-2.5 text-left text-[14px] font-medium"
                 >
                   Profile
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full px-4 py-2.5 text-left text-[14px] font-medium text-destructive hover:bg-muted rounded-b-lg"
+                  className="text-destructive hover:bg-muted w-full rounded-b-lg px-4 py-2.5 text-left text-[14px] font-medium"
                 >
                   Log out
                 </button>
@@ -140,13 +149,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           <>
             <Link
               to={`/${newspaperName}/login`}
-              className="rounded-lg px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted"
+              className="text-foreground hover:bg-muted rounded-lg px-4 py-2 text-[14px] font-medium"
             >
               Log in
             </Link>
             <Link
               to={`/${newspaperName}/register`}
-              className="rounded-lg bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground hover:opacity-90"
+              className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-[14px] font-semibold hover:opacity-90"
             >
               Sign up
             </Link>

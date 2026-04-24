@@ -20,7 +20,10 @@ function estimateReadTime(content: string) {
 }
 
 /** Renders article content: ## heading, > blockquote, plain paragraph */
-function ArticleContent({ content, inlineImage }: {
+function ArticleContent({
+  content,
+  inlineImage,
+}: {
   content: string;
   inlineImage?: { url: string; caption: string };
 }) {
@@ -36,7 +39,7 @@ function ArticleContent({ content, inlineImage }: {
           return (
             <h2
               key={i}
-              className="text-[24px] font-bold tracking-[-0.3px] text-foreground"
+              className="text-foreground text-[24px] font-bold tracking-[-0.3px]"
             >
               {trimmed.slice(3)}
             </h2>
@@ -46,8 +49,12 @@ function ArticleContent({ content, inlineImage }: {
         // Blockquote
         if (trimmed.startsWith("> ")) {
           const lines = trimmed.split("\n");
-          const quoteLines = lines.filter((l) => l.startsWith("> ")).map((l) => l.slice(2));
-          const attribution = lines.find((l) => l.startsWith("— ") || l.startsWith("> —"));
+          const quoteLines = lines
+            .filter((l) => l.startsWith("> "))
+            .map((l) => l.slice(2));
+          const attribution = lines.find(
+            (l) => l.startsWith("— ") || l.startsWith("> —")
+          );
           const quoteText = attribution
             ? quoteLines.filter((l) => !l.startsWith("—")).join(" ")
             : quoteLines.join(" ");
@@ -56,11 +63,15 @@ function ArticleContent({ content, inlineImage }: {
           return (
             <blockquote
               key={i}
-              className="border-l-4 border-border bg-muted px-8 py-6 flex flex-col gap-3"
+              className="border-border bg-muted flex flex-col gap-3 border-l-4 px-8 py-6"
             >
-              <p className="text-[16px] italic leading-[1.7] text-foreground">{quoteText}</p>
+              <p className="text-foreground text-[16px] leading-[1.7] italic">
+                {quoteText}
+              </p>
               {attr && (
-                <span className="text-[14px] font-semibold text-muted-foreground">{attr}</span>
+                <span className="text-muted-foreground text-[14px] font-semibold">
+                  {attr}
+                </span>
               )}
             </blockquote>
           );
@@ -68,10 +79,7 @@ function ArticleContent({ content, inlineImage }: {
 
         // Insert inline image after the second paragraph
         const node = (
-          <p
-            key={i}
-            className="text-[16px] leading-[1.8] text-foreground"
-          >
+          <p key={i} className="text-foreground text-[16px] leading-[1.8]">
             {trimmed}
           </p>
         );
@@ -86,7 +94,7 @@ function ArticleContent({ content, inlineImage }: {
                   alt={inlineImage.caption}
                   className="h-[360px] w-full rounded-lg object-cover"
                 />
-                <figcaption className="text-[13px] italic text-muted-foreground">
+                <figcaption className="text-muted-foreground text-[13px] italic">
                   {inlineImage.caption}
                 </figcaption>
               </figure>
@@ -107,9 +115,12 @@ export function ArticlePage() {
 
   useEffect(() => {
     if (!newspaper || !articleId) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`, {
-      headers: authHeaders(),
-    })
+    fetch(
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`,
+      {
+        headers: authHeaders(),
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json() as Promise<ArticleDetail>;
@@ -123,7 +134,7 @@ export function ArticlePage() {
   const readTime = estimateReadTime(article.content);
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       {/* Hero */}
@@ -136,7 +147,7 @@ export function ArticlePage() {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-muted" />
+          <div className="bg-muted absolute inset-0" />
         )}
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/67" />
@@ -144,28 +155,34 @@ export function ArticlePage() {
         <div className="absolute inset-0 flex flex-col justify-end gap-4 px-16 pb-12">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-[13px]">
-            <Link to={`/${newspaperName}`} className="text-white/67 hover:text-white/90">
+            <Link
+              to={`/${newspaperName}`}
+              className="text-white/67 hover:text-white/90"
+            >
               Home
             </Link>
             <span className="text-white/40">/</span>
-            <Link to={`/${newspaperName}/category/${article.category_slug}`} className="text-white/67 hover:text-white/90">
+            <Link
+              to={`/${newspaperName}/category/${article.category_slug}`}
+              className="text-white/67 hover:text-white/90"
+            >
               {article.category}
             </Link>
             <span className="text-white/40">/</span>
             <span className="font-medium text-white/87">Article</span>
           </nav>
           {/* Category badge */}
-          <span className="w-fit rounded bg-primary px-2.5 py-1 text-[12px] font-semibold tracking-[0.5px] text-primary-foreground">
+          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-[12px] font-semibold tracking-[0.5px]">
             {article.category}
           </span>
           {/* Title */}
-          <h1 className="max-w-[800px] text-[40px] font-extrabold leading-[1.15] tracking-[-0.5px] text-white">
+          <h1 className="max-w-[800px] text-[40px] leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
             {article.title}
           </h1>
           {/* Author meta */}
           <Link
             to={`/${newspaperName}/authors/${article.author.id}`}
-            className="flex items-center gap-4 hover:opacity-80 transition-opacity w-fit"
+            className="flex w-fit items-center gap-4 transition-opacity hover:opacity-80"
           >
             {article.author.profile_picture ? (
               <img
@@ -191,12 +208,12 @@ export function ArticlePage() {
       {/* Article Body */}
       <section className="px-16 py-12">
         {/* Lede */}
-        <p className="mb-6 text-[18px] leading-[1.7] text-foreground">{article.perex}</p>
-        <hr className="mb-6 border-border" />
+        <p className="text-foreground mb-6 text-[18px] leading-[1.7]">
+          {article.perex}
+        </p>
+        <hr className="border-border mb-6" />
         <ArticleContent content={article.content} inlineImage={inlineImage} />
       </section>
-
-
     </div>
   );
 }

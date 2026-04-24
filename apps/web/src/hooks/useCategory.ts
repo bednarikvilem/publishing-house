@@ -13,7 +13,9 @@ interface UseCategoryResult {
   category: Category | null;
 }
 
-export function useCategory(newspaperId: string | undefined): UseCategoryResult {
+export function useCategory(
+  newspaperId: string | undefined
+): UseCategoryResult {
   const { categoryName: categorySlug } = useParams<{ categoryName: string }>();
   const [category, setCategory] = useState<Category | null>(null);
 
@@ -21,7 +23,9 @@ export function useCategory(newspaperId: string | undefined): UseCategoryResult 
     if (!newspaperId || !categorySlug) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCategory(null);
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/categories/by-slug/${categorySlug}`)
+    fetch(
+      `${API_BASE_URL}/api/newspapers/${newspaperId}/categories/by-slug/${categorySlug}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Category not found");
         return res.json() as Promise<Category>;

@@ -35,7 +35,9 @@ export function UserProfilePage() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileFieldErrors, setProfileFieldErrors] = useState<Record<string, string>>({});
+  const [profileFieldErrors, setProfileFieldErrors] = useState<
+    Record<string, string>
+  >({});
 
   // Avatar state
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,17 +78,22 @@ export function UserProfilePage() {
     setProfileSuccess(false);
     setProfileSaving(true);
 
-    const full_name = [firstName, lastName].filter(Boolean).join(" ") || undefined;
+    const full_name =
+      [firstName, lastName].filter(Boolean).join(" ") || undefined;
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/me`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ full_name, username: username || undefined, bio: bio || undefined }),
+        body: JSON.stringify({
+          full_name,
+          username: username || undefined,
+          bio: bio || undefined,
+        }),
       });
 
       if (res.ok) {
-        const data = await res.json() as UserProfile;
+        const data = (await res.json()) as UserProfile;
         const [first, last] = splitFullName(data.full_name);
         setFirstName(first);
         setLastName(last);
@@ -110,7 +117,9 @@ export function UserProfilePage() {
 
       setProfileError("Something went wrong. Please try again.");
     } catch {
-      setProfileError("Could not connect to the server. Please try again later.");
+      setProfileError(
+        "Could not connect to the server. Please try again later."
+      );
     } finally {
       setProfileSaving(false);
     }
@@ -136,7 +145,9 @@ export function UserProfilePage() {
         return res.json() as Promise<{ profile_picture: string }>;
       })
       .then((data) => setAvatarUrl(data.profile_picture))
-      .catch(() => setAvatarError("Failed to upload photo. Use JPEG or PNG under 5 MB."))
+      .catch(() =>
+        setAvatarError("Failed to upload photo. Use JPEG or PNG under 5 MB.")
+      )
       .finally(() => {
         setAvatarUploading(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -184,42 +195,45 @@ export function UserProfilePage() {
 
       setPasswordError("Something went wrong. Please try again.");
     } catch {
-      setPasswordError("Could not connect to the server. Please try again later.");
+      setPasswordError(
+        "Could not connect to the server. Please try again later."
+      );
     } finally {
       setPasswordSaving(false);
     }
   }
 
-  const initials = [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() || "?";
+  const initials =
+    [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() || "?";
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-col gap-7 px-12 py-8">
         {/* Page Title */}
         <h1
-          className="text-[28px] font-extrabold tracking-[-0.5px] text-foreground"
+          className="text-foreground text-[28px] font-extrabold tracking-[-0.5px]"
           style={{ fontFamily: "Outfit, Inter, sans-serif" }}
         >
           My Profile
         </h1>
 
         {loadError ? (
-          <p className="text-center text-muted-foreground py-16">
+          <p className="text-muted-foreground py-16 text-center">
             Failed to load profile. Please sign in and try again.
           </p>
         ) : !profile ? (
-          <p className="text-center text-muted-foreground py-16">Loading…</p>
+          <p className="text-muted-foreground py-16 text-center">Loading…</p>
         ) : (
           <>
             {/* Profile Information Card */}
             <form
               onSubmit={handleProfileSave}
-              className="rounded-xl border border-border bg-card p-8 flex flex-col gap-6"
+              className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
             >
               <h2
-                className="text-[18px] font-bold text-foreground"
+                className="text-foreground text-[18px] font-bold"
                 style={{ fontFamily: "Outfit, Inter, sans-serif" }}
               >
                 Profile Information
@@ -227,26 +241,36 @@ export function UserProfilePage() {
 
               {/* Avatar */}
               <div className="flex items-center gap-5">
-                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-muted flex items-center justify-center">
+                <div className="bg-muted flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full">
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                    <img
+                      src={avatarUrl}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
-                    <span className="text-[24px] font-bold text-muted-foreground select-none">
+                    <span className="text-muted-foreground text-[24px] font-bold select-none">
                       {initials}
                     </span>
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-[14px] font-semibold text-foreground">Profile Picture</span>
-                  <span className="text-[13px] text-muted-foreground">JPG, PNG or GIF. Max 2MB.</span>
+                  <span className="text-foreground text-[14px] font-semibold">
+                    Profile Picture
+                  </span>
+                  <span className="text-muted-foreground text-[13px]">
+                    JPG, PNG or GIF. Max 2MB.
+                  </span>
                   {avatarError && (
-                    <span className="text-[12px] text-destructive">{avatarError}</span>
+                    <span className="text-destructive text-[12px]">
+                      {avatarError}
+                    </span>
                   )}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={avatarUploading}
-                    className="w-fit rounded-md border border-border bg-background px-4 py-2 text-[13px] font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+                    className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
                   >
                     {avatarUploading ? "Uploading…" : "Change Photo"}
                   </button>
@@ -263,7 +287,10 @@ export function UserProfilePage() {
               {/* First / Last Name row */}
               <div className="grid grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="firstName" className="text-[14px] font-medium text-foreground">
+                  <label
+                    htmlFor="firstName"
+                    className="text-foreground text-[14px] font-medium"
+                  >
                     First Name
                   </label>
                   <input
@@ -272,11 +299,14 @@ export function UserProfilePage() {
                     placeholder="Sarah"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                    className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="lastName" className="text-[14px] font-medium text-foreground">
+                  <label
+                    htmlFor="lastName"
+                    className="text-foreground text-[14px] font-medium"
+                  >
                     Last Name
                   </label>
                   <input
@@ -285,14 +315,17 @@ export function UserProfilePage() {
                     placeholder="Mitchell"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                    className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Username */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="username" className="text-[14px] font-medium text-foreground">
+                <label
+                  htmlFor="username"
+                  className="text-foreground text-[14px] font-medium"
+                >
                   Username
                 </label>
                 <input
@@ -301,16 +334,21 @@ export function UserProfilePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   aria-invalid={!!profileFieldErrors.username}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                 />
                 {profileFieldErrors.username && (
-                  <span className="text-[12px] text-destructive">{profileFieldErrors.username}</span>
+                  <span className="text-destructive text-[12px]">
+                    {profileFieldErrors.username}
+                  </span>
                 )}
               </div>
 
               {/* Email (read-only) */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="email" className="text-[14px] font-medium text-foreground">
+                <label
+                  htmlFor="email"
+                  className="text-foreground text-[14px] font-medium"
+                >
                   Email Address
                 </label>
                 <input
@@ -318,13 +356,16 @@ export function UserProfilePage() {
                   type="email"
                   value={profile.email}
                   readOnly
-                  className="h-10 w-full rounded-md border border-input bg-muted px-3 text-[14px] text-muted-foreground cursor-not-allowed"
+                  className="border-input bg-muted text-muted-foreground h-10 w-full cursor-not-allowed rounded-md border px-3 text-[14px]"
                 />
               </div>
 
               {/* Bio */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="bio" className="text-[14px] font-medium text-foreground">
+                <label
+                  htmlFor="bio"
+                  className="text-foreground text-[14px] font-medium"
+                >
                   Bio
                 </label>
                 <textarea
@@ -333,15 +374,17 @@ export function UserProfilePage() {
                   placeholder="Tell readers a little about yourself…"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring resize-none"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {profileError && (
-                <p className="text-[13px] text-destructive">{profileError}</p>
+                <p className="text-destructive text-[13px]">{profileError}</p>
               )}
               {profileSuccess && (
-                <p className="text-[13px] text-green-600">Profile updated successfully.</p>
+                <p className="text-[13px] text-green-600">
+                  Profile updated successfully.
+                </p>
               )}
 
               {/* Save Row */}
@@ -349,7 +392,7 @@ export function UserProfilePage() {
                 <button
                   type="submit"
                   disabled={profileSaving}
-                  className="rounded-md bg-foreground px-5 py-2 text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
+                  className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {profileSaving ? "Saving…" : "Save Changes"}
                 </button>
@@ -359,23 +402,26 @@ export function UserProfilePage() {
             {/* Change Password Card */}
             <form
               onSubmit={handlePasswordSave}
-              className="rounded-xl border border-border bg-card p-8 flex flex-col gap-6"
+              className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
             >
               <div className="flex flex-col gap-1">
                 <h2
-                  className="text-[18px] font-bold text-foreground"
+                  className="text-foreground text-[18px] font-bold"
                   style={{ fontFamily: "Outfit, Inter, sans-serif" }}
                 >
                   Change Password
                 </h2>
-                <p className="text-[14px] text-muted-foreground">
+                <p className="text-muted-foreground text-[14px]">
                   Update your password to keep your account secure.
                 </p>
               </div>
 
               {/* Current Password */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="currentPassword" className="text-[14px] font-medium text-foreground">
+                <label
+                  htmlFor="currentPassword"
+                  className="text-foreground text-[14px] font-medium"
+                >
                   Current Password
                 </label>
                 <input
@@ -384,14 +430,17 @@ export function UserProfilePage() {
                   placeholder="Enter current password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {/* New / Confirm row */}
               <div className="grid grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="newPassword" className="text-[14px] font-medium text-foreground">
+                  <label
+                    htmlFor="newPassword"
+                    className="text-foreground text-[14px] font-medium"
+                  >
                     New Password
                   </label>
                   <input
@@ -400,11 +449,14 @@ export function UserProfilePage() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                    className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="confirmPassword" className="text-[14px] font-medium text-foreground">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-foreground text-[14px] font-medium"
+                  >
                     Confirm Password
                   </label>
                   <input
@@ -413,16 +465,18 @@ export function UserProfilePage() {
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                    className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none"
                   />
                 </div>
               </div>
 
               {passwordError && (
-                <p className="text-[13px] text-destructive">{passwordError}</p>
+                <p className="text-destructive text-[13px]">{passwordError}</p>
               )}
               {passwordSuccess && (
-                <p className="text-[13px] text-green-600">Password updated successfully.</p>
+                <p className="text-[13px] text-green-600">
+                  Password updated successfully.
+                </p>
               )}
 
               {/* Password Save Row */}
@@ -430,7 +484,7 @@ export function UserProfilePage() {
                 <button
                   type="submit"
                   disabled={passwordSaving}
-                  className="rounded-md bg-foreground px-5 py-2 text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
+                  className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {passwordSaving ? "Updating…" : "Update Password"}
                 </button>
@@ -438,19 +492,20 @@ export function UserProfilePage() {
             </form>
 
             {/* Danger Zone Card */}
-            <div className="rounded-xl border border-destructive bg-card p-8 flex flex-col gap-4">
+            <div className="border-destructive bg-card flex flex-col gap-4 rounded-xl border p-8">
               <h2
-                className="text-[18px] font-bold text-destructive"
+                className="text-destructive text-[18px] font-bold"
                 style={{ fontFamily: "Outfit, Inter, sans-serif" }}
               >
                 Danger Zone
               </h2>
-              <p className="text-[14px] leading-relaxed text-muted-foreground">
-                Permanently delete your account and all associated data. This action cannot be undone.
+              <p className="text-muted-foreground text-[14px] leading-relaxed">
+                Permanently delete your account and all associated data. This
+                action cannot be undone.
               </p>
               <button
                 type="button"
-                className="w-fit rounded-md border border-destructive bg-background px-4 py-2 text-[14px] font-semibold text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                className="border-destructive bg-background text-destructive hover:bg-destructive hover:text-destructive-foreground w-fit rounded-md border px-4 py-2 text-[14px] font-semibold transition-colors"
               >
                 Delete Account
               </button>

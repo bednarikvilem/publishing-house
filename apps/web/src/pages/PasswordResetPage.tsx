@@ -53,23 +53,23 @@ export function PasswordResetPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[420px] rounded-xl border border-border bg-card p-10 shadow-sm flex flex-col gap-8">
+        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-8 rounded-xl border p-10 shadow-sm">
           {/* Brand */}
           <div className="flex flex-col items-center gap-3">
             <span
-              className="text-[26px] font-black tracking-[-1px] text-foreground"
+              className="text-foreground text-[26px] font-black tracking-[-1px]"
               style={{ fontFamily: "Outfit, Inter, sans-serif" }}
             >
               {displayName}
             </span>
-            <span className="text-[15px] text-muted-foreground">
+            <span className="text-muted-foreground text-[15px]">
               Reset your password
             </span>
-            <p className="text-center text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground text-center text-[13px] leading-relaxed">
               Enter the email address associated with your account and we'll
               send you a link to reset your password.
             </p>
@@ -78,7 +78,7 @@ export function PasswordResetPage() {
           {submitted ? (
             /* Success state */
             <div className="flex flex-col items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+              <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="22"
@@ -94,9 +94,9 @@ export function PasswordResetPage() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <p className="text-center text-[14px] text-muted-foreground">
-                If that address is registered, a reset link has been sent.
-                Check your inbox.
+              <p className="text-muted-foreground text-center text-[14px]">
+                If that address is registered, a reset link has been sent. Check
+                your inbox.
               </p>
             </div>
           ) : (
@@ -105,7 +105,7 @@ export function PasswordResetPage() {
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor="email"
-                  className="text-[14px] font-medium text-foreground"
+                  className="text-foreground text-[14px] font-medium"
                 >
                   Email Address
                 </label>
@@ -116,12 +116,12 @@ export function PasswordResetPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {error && (
-                <p className="text-center text-[13px] text-destructive">
+                <p className="text-destructive text-center text-[13px]">
                   {error}
                 </p>
               )}
@@ -129,7 +129,7 @@ export function PasswordResetPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="h-10 w-full rounded-md bg-foreground text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
+                className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
               >
                 {loading ? "Sending…" : "Send Reset Link"}
               </button>
@@ -137,11 +137,11 @@ export function PasswordResetPage() {
           )}
 
           {/* Back link */}
-          <p className="text-center text-[14px] text-muted-foreground">
+          <p className="text-muted-foreground text-center text-[14px]">
             Remember your password?{" "}
             <Link
               to={`/${newspaperName}/login`}
-              className="font-semibold text-foreground hover:underline underline-offset-4"
+              className="text-foreground font-semibold underline-offset-4 hover:underline"
             >
               Sign in
             </Link>

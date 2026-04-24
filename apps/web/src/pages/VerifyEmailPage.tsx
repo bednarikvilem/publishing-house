@@ -7,7 +7,9 @@ export function VerifyEmailPage() {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const [searchParams] = useSearchParams();
 
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,29 +41,33 @@ export function VerifyEmailPage() {
         setStatus("error");
       })
       .catch(() => {
-        setErrorMessage("Could not connect to the server. Please try again later.");
+        setErrorMessage(
+          "Could not connect to the server. Please try again later."
+        );
         setStatus("error");
       });
   }, [searchParams]);
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[420px] rounded-xl border border-border bg-card p-10 shadow-sm text-center flex flex-col gap-4">
+        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
           {status === "loading" && (
             <>
-              <h2 className="text-[22px] font-extrabold tracking-tight text-foreground">
+              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Verifying your email…
               </h2>
-              <p className="text-[14px] text-muted-foreground">Please wait a moment.</p>
+              <p className="text-muted-foreground text-[14px]">
+                Please wait a moment.
+              </p>
             </>
           )}
 
           {status === "success" && (
             <>
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+              <div className="bg-muted mx-auto flex h-12 w-12 items-center justify-center rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="22"
@@ -77,15 +83,15 @@ export function VerifyEmailPage() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 className="text-[22px] font-extrabold tracking-tight text-foreground">
+              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Email verified!
               </h2>
-              <p className="text-[14px] text-muted-foreground">
+              <p className="text-muted-foreground text-[14px]">
                 Your account is now active. You can sign in.
               </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="mt-2 text-[14px] font-semibold text-foreground underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
               >
                 Go to Sign in
               </Link>
@@ -94,13 +100,15 @@ export function VerifyEmailPage() {
 
           {status === "error" && (
             <>
-              <h2 className="text-[22px] font-extrabold tracking-tight text-foreground">
+              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Verification failed
               </h2>
-              <p className="text-[14px] text-muted-foreground">{errorMessage}</p>
+              <p className="text-muted-foreground text-[14px]">
+                {errorMessage}
+              </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="mt-2 text-[14px] font-semibold text-foreground underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
               >
                 Back to Sign in
               </Link>

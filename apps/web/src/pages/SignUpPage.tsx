@@ -7,7 +7,6 @@ import { useNewspaper } from "../hooks/useNewspaper";
 export function SignUpPage() {
   const { newspaperName, newspaper } = useNewspaper();
 
-
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -78,20 +77,21 @@ export function SignUpPage() {
 
   if (success) {
     return (
-      <div className="w-full min-h-screen bg-background text-foreground">
+      <div className="bg-background text-foreground min-h-screen w-full">
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-          <div className="w-full max-w-[420px] rounded-xl border border-border bg-card p-10 shadow-sm text-center flex flex-col gap-4">
-            <h2 className="text-[22px] font-extrabold tracking-tight text-foreground">
+          <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
+            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
               Check your email
             </h2>
-            <p className="text-[14px] text-muted-foreground leading-relaxed">
-              We sent a confirmation link to <span className="font-semibold text-foreground">{email}</span>.
+            <p className="text-muted-foreground text-[14px] leading-relaxed">
+              We sent a confirmation link to{" "}
+              <span className="text-foreground font-semibold">{email}</span>.
               Please verify your address to activate your account.
             </p>
             <Link
               to={`/${newspaperName}/login`}
-              className="mt-2 text-[14px] font-semibold text-foreground underline-offset-4 hover:underline"
+              className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
             >
               Back to Sign in
             </Link>
@@ -102,15 +102,15 @@ export function SignUpPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[420px] rounded-xl border border-border bg-card p-10 shadow-sm flex flex-col gap-8">
+        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-8 rounded-xl border p-10 shadow-sm">
           {/* Brand */}
           <div className="flex flex-col items-center gap-3">
             <span
-              className="text-[26px] font-black tracking-[-1px] text-foreground"
+              className="text-foreground text-[26px] font-black tracking-[-1px]"
               style={{ fontFamily: "Outfit, Inter, sans-serif" }}
             >
               {(newspaperName ?? "")
@@ -118,7 +118,7 @@ export function SignUpPage() {
                 .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
                 .join(" ")}
             </span>
-            <span className="text-[15px] text-muted-foreground">
+            <span className="text-muted-foreground text-[15px]">
               Create your account
             </span>
           </div>
@@ -129,7 +129,7 @@ export function SignUpPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="fullName"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Full Name
               </label>
@@ -139,7 +139,7 @@ export function SignUpPage() {
                 placeholder="John Doe"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
               />
             </div>
 
@@ -147,7 +147,7 @@ export function SignUpPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="username"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Username
               </label>
@@ -158,11 +158,13 @@ export function SignUpPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 aria-invalid={!!fieldErrors.username}
               />
               {fieldErrors.username && (
-                <span className="text-[12px] text-destructive">{fieldErrors.username}</span>
+                <span className="text-destructive text-[12px]">
+                  {fieldErrors.username}
+                </span>
               )}
             </div>
 
@@ -170,7 +172,7 @@ export function SignUpPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Email Address
               </label>
@@ -181,11 +183,13 @@ export function SignUpPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 aria-invalid={!!fieldErrors.email}
               />
               {fieldErrors.email && (
-                <span className="text-[12px] text-destructive">{fieldErrors.email}</span>
+                <span className="text-destructive text-[12px]">
+                  {fieldErrors.email}
+                </span>
               )}
             </div>
 
@@ -193,7 +197,7 @@ export function SignUpPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Password
               </label>
@@ -204,11 +208,13 @@ export function SignUpPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 aria-invalid={!!fieldErrors.password}
               />
               {fieldErrors.password && (
-                <span className="text-[12px] text-destructive">{fieldErrors.password}</span>
+                <span className="text-destructive text-[12px]">
+                  {fieldErrors.password}
+                </span>
               )}
             </div>
 
@@ -216,7 +222,7 @@ export function SignUpPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="confirmPassword"
-                className="text-[14px] font-medium text-foreground"
+                className="text-foreground text-[14px] font-medium"
               >
                 Confirm Password
               </label>
@@ -227,56 +233,62 @@ export function SignUpPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring aria-[invalid=true]:border-destructive h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
                 aria-invalid={!!fieldErrors.confirmPassword}
               />
               {fieldErrors.confirmPassword && (
-                <span className="text-[12px] text-destructive">{fieldErrors.confirmPassword}</span>
+                <span className="text-destructive text-[12px]">
+                  {fieldErrors.confirmPassword}
+                </span>
               )}
             </div>
 
             {/* Terms */}
-            <p className="text-center text-[13px] text-muted-foreground">
+            <p className="text-muted-foreground text-center text-[13px]">
               By signing up, you agree to our{" "}
-              <span className="font-semibold text-foreground">Terms &amp; Privacy Policy</span>
+              <span className="text-foreground font-semibold">
+                Terms &amp; Privacy Policy
+              </span>
             </p>
 
             {/* Generic error */}
             {error && (
-              <p className="text-center text-[13px] text-destructive">{error}</p>
+              <p className="text-destructive text-center text-[13px]">
+                {error}
+              </p>
             )}
 
             {/* Submit */}
             <button
               type="submit"
               disabled={loading || !newspaper}
-              className="h-10 w-full rounded-md bg-foreground text-[14px] font-semibold text-background hover:opacity-90 disabled:opacity-60 transition-opacity"
+              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Creating account…" : "Create Account"}
             </button>
 
             {/* Divider */}
             <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-[13px] text-muted-foreground">or</span>
-              <div className="h-px flex-1 bg-border" />
+              <div className="bg-border h-px flex-1" />
+              <span className="text-muted-foreground text-[13px]">or</span>
+              <div className="bg-border h-px flex-1" />
             </div>
 
             {/* Google (placeholder) */}
             <button
               type="button"
-              className="h-10 w-full rounded-md border border-border bg-background text-[14px] font-medium text-foreground hover:bg-muted transition-colors"
+              className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-[14px] font-medium transition-colors"
             >
               Sign up with Google
             </button>
           </form>
 
           {/* Sign in link */}
-          <p className="text-center text-[14px] text-muted-foreground">
+          <p className="text-muted-foreground text-center text-[14px]">
             Already have an account?{" "}
             <Link
               to={`/${newspaperName}/login`}
-              className="font-semibold text-foreground hover:underline underline-offset-4"
+              className="text-foreground font-semibold underline-offset-4 hover:underline"
             >
               Sign in
             </Link>

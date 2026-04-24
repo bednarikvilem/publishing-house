@@ -50,24 +50,26 @@ export function SearchResultsPage() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (inputValue.trim()) {
-      navigate(`/${newspaperName}/search?q=${encodeURIComponent(inputValue.trim())}`);
+      navigate(
+        `/${newspaperName}/search?q=${encodeURIComponent(inputValue.trim())}`
+      );
     }
   }
 
   const query = searchParams.get("q") ?? "";
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen w-full">
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-col gap-6 px-16 py-12">
         {/* Search Section */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-[32px] font-extrabold tracking-[-0.5px] text-foreground">
+          <h1 className="text-foreground text-[32px] font-extrabold tracking-[-0.5px]">
             Search Results
           </h1>
           <form onSubmit={handleSearch}>
-            <div className="flex h-12 w-full items-center gap-2.5 rounded-lg border border-border bg-card px-4">
+            <div className="border-border bg-card flex h-12 w-full items-center gap-2.5 rounded-lg border px-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -78,7 +80,7 @@ export function SearchResultsPage() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="shrink-0 text-muted-foreground"
+                className="text-muted-foreground shrink-0"
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
@@ -88,7 +90,7 @@ export function SearchResultsPage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Search articles..."
-                className="flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted-foreground"
+                className="text-foreground placeholder:text-muted-foreground flex-1 bg-transparent text-[15px] outline-none"
               />
             </div>
           </form>
@@ -97,26 +99,28 @@ export function SearchResultsPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           {query ? (
-            <span className="text-[15px] font-semibold text-foreground">
-              {loading ? "Searching…" : `${total} Result${total !== 1 ? "s" : ""}`}
+            <span className="text-foreground text-[15px] font-semibold">
+              {loading
+                ? "Searching…"
+                : `${total} Result${total !== 1 ? "s" : ""}`}
             </span>
           ) : (
-            <span className="text-[15px] font-semibold text-foreground">
+            <span className="text-foreground text-[15px] font-semibold">
               Enter a search term above
             </span>
           )}
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-border" />
+        <div className="bg-border h-px w-full" />
 
         {/* Results Grid */}
         {error ? (
-          <p className="py-16 text-center text-muted-foreground">
+          <p className="text-muted-foreground py-16 text-center">
             Something went wrong. Please try again.
           </p>
         ) : loading ? (
-          <p className="py-16 text-center text-muted-foreground">Loading…</p>
+          <p className="text-muted-foreground py-16 text-center">Loading…</p>
         ) : articles.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {articles.map((article) => (
@@ -124,7 +128,7 @@ export function SearchResultsPage() {
             ))}
           </div>
         ) : query ? (
-          <p className="py-16 text-center text-muted-foreground">
+          <p className="text-muted-foreground py-16 text-center">
             No results found for <strong>"{query}"</strong>.
           </p>
         ) : null}

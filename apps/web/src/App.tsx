@@ -16,16 +16,34 @@ export function App() {
   return (
     <Routes>
       <Route path="/:newspaperName" element={<NewspaperHomepage />} />
-      <Route path="/:newspaperName/articles/:articleId" element={<ArticlePage />} />
-      <Route path="/:newspaperName/category/:categoryName" element={<CategoryPage />} />
-      <Route path="/:newspaperName/authors/:authorId" element={<AuthorPage />} />
+      <Route
+        path="/:newspaperName/articles/:articleId"
+        element={<ArticlePage />}
+      />
+      <Route
+        path="/:newspaperName/category/:categoryName"
+        element={<CategoryPage />}
+      />
+      <Route
+        path="/:newspaperName/authors/:authorId"
+        element={<AuthorPage />}
+      />
       <Route path="/:newspaperName/register" element={<SignUpPage />} />
       <Route path="/:newspaperName/login" element={<LoginPage />} />
       <Route path="/:newspaperName/search" element={<SearchResultsPage />} />
-      <Route path="/:newspaperName/forgot-password" element={<PasswordResetPage />} />
-      <Route path="/:newspaperName/verify-email" element={<VerifyEmailPage />} />
+      <Route
+        path="/:newspaperName/forgot-password"
+        element={<PasswordResetPage />}
+      />
+      <Route
+        path="/:newspaperName/verify-email"
+        element={<VerifyEmailPage />}
+      />
       <Route path="/:newspaperName/profile" element={<UserProfilePage />} />
-      <Route path="/:newspaperName/author-dashboard" element={<AuthorDashboardPage />} />
+      <Route
+        path="/:newspaperName/author-dashboard"
+        element={<AuthorDashboardPage />}
+      />
     </Routes>
   );
 }

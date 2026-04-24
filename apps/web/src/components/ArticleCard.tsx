@@ -16,7 +16,7 @@ export function ArticleCard({ article }: { article: Article }) {
 
   return (
     <div
-      className="flex flex-col overflow-hidden rounded-xl border border-border bg-card cursor-pointer"
+      className="border-border bg-card flex cursor-pointer flex-col overflow-hidden rounded-xl border"
       onClick={() => navigate(`/${newspaperName}/articles/${article.id}`)}
     >
       <div className="h-[200px] overflow-hidden">
@@ -27,15 +27,15 @@ export function ArticleCard({ article }: { article: Article }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full bg-muted" />
+          <div className="bg-muted h-full w-full" />
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <CategoryBadge label={article.category} />
-        <p className="line-clamp-3 text-[16px] font-bold leading-[1.3] text-card-foreground">
+        <p className="text-card-foreground line-clamp-3 text-[16px] leading-[1.3] font-bold">
           {article.title}
         </p>
-        <p className="line-clamp-3 text-[13px] leading-[1.5] text-muted-foreground">
+        <p className="text-muted-foreground line-clamp-3 text-[13px] leading-[1.5]">
           {article.perex}
         </p>
         <div className="mt-auto flex items-center justify-between pt-2">
@@ -43,12 +43,12 @@ export function ArticleCard({ article }: { article: Article }) {
             <Link
               to={`/${newspaperName}/authors/${article.author.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground text-[12px] font-medium transition-colors"
             >
               {article.author.full_name}
             </Link>
           )}
-          <span className="text-[12px] text-muted-foreground">
+          <span className="text-muted-foreground text-[12px]">
             {formatDate(article.publication_date)}
           </span>
         </div>

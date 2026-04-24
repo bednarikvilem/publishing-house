@@ -1,4 +1,3 @@
-
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
@@ -120,4 +119,3 @@ The components for the frontend pages are defind in src/components. Try to reuse
 ## Others
 
 The folder src/hooks contains helpers to derive the newspaper and category information from the URL. Use them if you need to obtain newspaperId or categoryId.
-
