@@ -19,6 +19,7 @@ export function useCategory(newspaperId: string | undefined): UseCategoryResult 
 
   useEffect(() => {
     if (!newspaperId || !categorySlug) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCategory(null);
     fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/categories/by-slug/${categorySlug}`)
       .then((res) => {

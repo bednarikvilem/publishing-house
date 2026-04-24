@@ -14,6 +14,7 @@ export function VerifyEmailPage() {
     const token = searchParams.get("token");
 
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMessage("No verification token found in the link.");
       setStatus("error");
       return;
@@ -41,7 +42,7 @@ export function VerifyEmailPage() {
         setErrorMessage("Could not connect to the server. Please try again later.");
         setStatus("error");
       });
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="w-full min-h-screen bg-background text-foreground">

@@ -42,6 +42,7 @@ export function AuthorPage() {
 
   useEffect(() => {
     if (!newspaper || !authorId) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAuthor(null);
     setSortOrder("latest");
 

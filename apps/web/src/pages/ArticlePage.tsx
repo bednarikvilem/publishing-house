@@ -25,7 +25,6 @@ function ArticleContent({ content, inlineImage }: {
   inlineImage?: { url: string; caption: string };
 }) {
   const blocks = content.split(/\n\n+/);
-  let imageInserted = false;
 
   return (
     <div className="flex flex-col gap-6">
@@ -77,8 +76,7 @@ function ArticleContent({ content, inlineImage }: {
           </p>
         );
 
-        if (!imageInserted && inlineImage && i === 2) {
-          imageInserted = true;
+        if (inlineImage && i === 2) {
           return (
             <Fragment key={i}>
               {node}

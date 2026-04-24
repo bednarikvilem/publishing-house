@@ -37,6 +37,7 @@ export function CategoryPage() {
   useEffect(() => {
     if (!newspaper || !category) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setArticles([]);
     fetch(
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category_id=${category.id}`
@@ -47,7 +48,7 @@ export function CategoryPage() {
       })
       .then((data) => setArticles(data.data))
       .catch(() => {});
-  }, [newspaper, category?.id]);
+  }, [newspaper, category]);
 
   const sorted = sortArticles(articles, sortOrder);
   const [featured, ...rest] = sorted;

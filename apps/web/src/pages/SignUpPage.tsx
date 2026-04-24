@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 
 export function SignUpPage() {
   const { newspaperName, newspaper } = useNewspaper();
-  const navigate = useNavigate();
+
 
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");

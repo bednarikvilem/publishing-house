@@ -49,7 +49,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       })
       .then((data) => setCategories(data.data))
       .catch(() => {});
-  }, [newspaper?.id]);
+  }, [newspaper]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

@@ -20,6 +20,7 @@ export function SearchResultsPage() {
 
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInputValue(q);
 
     if (!q.trim() || !newspaper) {
