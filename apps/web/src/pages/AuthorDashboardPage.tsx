@@ -4,68 +4,15 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { useNewspaper } from "../hooks/useNewspaper";
-import type { ArticleStatus, PaginatedResponse } from "../types";
-
-/* ── Supplementary types ───────────────────────────────────────────────────── */
-
-interface DashboardArticle {
-  id: string;
-  title: string;
-  perex: string;
-  category: string;
-  status: ArticleStatus;
-  created_at: string;
-  updated_at: string;
-  assigned_editor: { id: string; full_name: string } | null;
-  latest_feedback: string | null;
-}
-
-interface QueueArticle {
-  id: string;
-  title: string;
-  perex: string;
-  category: string;
-  status: ArticleStatus;
-  submitted_at: string;
-  author: { id: string; full_name: string };
-  assigned_editor: { id: string; full_name: string } | null;
-}
-
-interface CategoryEntry {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Statistics {
-  articles: {
-    total_published: number;
-    total_draft: number;
-    total_in_review: number;
-    total_rejected: number;
-    published_by_category: { category: string; count: number }[];
-    published_by_author: {
-      author_id: string;
-      full_name: string;
-      count: number;
-    }[];
-  };
-  engagement: { total_comments: number; total_likes: number };
-}
-
-interface NewspaperEntry {
-  id: string;
-  name: string;
-  created_at: string;
-}
-
-interface UserEntry {
-  id: string;
-  email: string;
-  username: string;
-  full_name: string | null;
-  roles: string[];
-}
+import type { ArticleStatus, Category, PaginatedResponse, ReviewDecision } from "../types";
+import { PencilIcon, PlusIcon, TrashIcon } from "../components/Icons";
+import type {
+  DashboardArticle,
+  NewspaperEntry,
+  QueueArticle,
+  Statistics,
+  UserEntry,
+} from "../types/dashboard";
 
 /* ── Constants ─────────────────────────────────────────────────────────────── */
 
@@ -113,65 +60,6 @@ const MY_ARTICLE_FILTERS: { label: string; value: ArticleStatus | null }[] = [
 ];
 
 const EDITORIAL_ROLES = ["AUTHOR", "EDITOR", "NEWSPAPER_MANAGER", "DIRECTOR"];
-
-/* ── Icons ─────────────────────────────────────────────────────────────────── */
-
-function PlusIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14M12 5v14" />
-    </svg>
-  );
-}
-
-function PencilIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-    </svg>
-  );
-}
-
-function TrashIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="M9 6V4h6v2" />
-    </svg>
-  );
-}
 
 /* ── Utility ───────────────────────────────────────────────────────────────── */
 
@@ -288,20 +176,18 @@ function ArticleListRow({
 
 /* ── DecisionForm — inline review / approve form ───────────────────────────── */
 
-type Decision = "APPROVE" | "REJECT" | "REQUEST_REVISION";
-
 function DecisionForm({
   onSubmit,
   onCancel,
   submitting,
   requireNoteFor = ["REJECT", "REQUEST_REVISION"],
 }: {
-  onSubmit: (decision: Decision, note: string) => void;
+  onSubmit: (decision: ReviewDecision, note: string) => void;
   onCancel: () => void;
   submitting: boolean;
-  requireNoteFor?: Decision[];
+  requireNoteFor?: ReviewDecision[];
 }) {
-  const [decision, setDecision] = useState<Decision>("APPROVE");
+  const [decision, setDecision] = useState<ReviewDecision>("APPROVE");
   const [note, setNote] = useState("");
 
   const noteRequired = requireNoteFor.includes(decision);
@@ -318,7 +204,7 @@ function DecisionForm({
       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
     >
       <div className="flex gap-2">
-        {(["APPROVE", "REJECT", "REQUEST_REVISION"] as Decision[]).map((d) => (
+        {(["APPROVE", "REJECT", "REQUEST_REVISION"] as ReviewDecision[]).map((d) => (
           <button
             key={d}
             type="button"
@@ -586,7 +472,7 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
 
   async function handleReview(
     articleId: string,
-    decision: Decision,
+    decision: ReviewDecision,
     note: string
   ) {
     setSubmitting(true);
@@ -757,7 +643,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
 
   async function handleApprove(
     articleId: string,
-    decision: Decision,
+    decision: ReviewDecision,
     note: string
   ) {
     setSubmitting(true);
@@ -953,7 +839,7 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
 
   async function handleApprove(
     articleId: string,
-    decision: Decision,
+    decision: ReviewDecision,
     note: string
   ) {
     setSubmitting(true);
@@ -1054,7 +940,7 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
 /* ── CategoriesSection (NEWSPAPER_MANAGER) ─────────────────────────────────── */
 
 function CategoriesSection({ newspaperId }: { newspaperId: string }) {
-  const [categories, setCategories] = useState<CategoryEntry[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [newName, setNewName] = useState("");
@@ -1071,7 +957,7 @@ function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         `${API_BASE_URL}/api/newspapers/${newspaperId}/categories`
       );
       if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: CategoryEntry[] };
+      const data = (await res.json()) as { data: Category[] };
       setCategories(data.data);
     } catch {
       setError(true);

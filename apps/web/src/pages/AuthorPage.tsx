@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { User } from "lucide-react";
+import { UserIcon } from "../components/Icons";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import type { AuthorPublicProfile, Article } from "../types";
@@ -89,7 +89,7 @@ export function AuthorPage() {
             />
           ) : (
             <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-white/20 ring-2 ring-white/20">
-              <User size={40} className="text-white/60" />
+              <UserIcon size={40} className="text-white/60" />
             </div>
           )}
 
@@ -173,7 +173,7 @@ export function AuthorPage() {
                     />
                   ) : (
                     <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
-                      <User size={16} className="text-muted-foreground" />
+                      <UserIcon size={16} className="text-muted-foreground" />
                     </div>
                   )}
                   <div className="flex flex-col gap-0.5">

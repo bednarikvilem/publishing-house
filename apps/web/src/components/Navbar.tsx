@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, LayoutDashboard } from "lucide-react";
+import { ChevronDownIcon, LayoutDashboardIcon } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 
@@ -123,7 +123,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             to={`/${newspaperName}/author-dashboard`}
             className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-md px-4 py-2 text-[14px] font-medium hover:opacity-90"
           >
-            <LayoutDashboard size={16} />
+            <LayoutDashboardIcon size={16} />
             Dashboard
           </Link>
         )}
@@ -141,7 +141,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               <span className="text-foreground text-[14px] font-medium">
                 {user.full_name ?? user.username}
               </span>
-              <ChevronDown size={16} className="text-muted-foreground" />
+              <ChevronDownIcon size={16} className="text-muted-foreground" />
             </button>
             {menuOpen && (
               <div className="border-border bg-background absolute right-0 mt-1 w-44 rounded-lg border shadow-md">
