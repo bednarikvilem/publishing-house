@@ -6,11 +6,14 @@ TODO: Add description
 
 - **Runtime:** Bun
 - **Monorepo:** Turborepo
-- **Frontend:** React, TailWindCSS, Shadcn/ui
-- **Backend:** TypeScript
-- **API:** Elysia
-- **Database**: Drizzle, PostgreSQL
-- **Validation:**
+- **Frontend:** React, React Router, TailWindCSS, Shadcn/ui
+- **API:** Elysia, Swagger
+- **Auth:** JWT (@elysiajs/jwt), Bun.password (argon2)
+- **Validation:** Zod
+- **Database:** Drizzle, PostgreSQL
+- **Cache:** Redis
+- **Email:** Nodemailer
+- **Linting / Formatting:** ESLint, Prettier
 - **Language:** TypeScript
 
 ## Docker
