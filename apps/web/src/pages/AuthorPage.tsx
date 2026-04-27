@@ -42,11 +42,13 @@ export function AuthorPage() {
 
   const [author, setAuthor] = useState<AuthorPublicProfile | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!newspaper || !authorId) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAuthor(null);
+    setError(false);
     setSortOrder("latest");
 
     fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/authors/${authorId}`)
@@ -55,11 +57,20 @@ export function AuthorPage() {
         return res.json() as Promise<AuthorPublicProfile>;
       })
       .then((data) => setAuthor(data))
-      .catch(() => {});
+      .catch(() => setError(true));
   }, [newspaper, authorId]);
 
   const sorted = sortArticles(author?.articles.data, sortOrder);
   const [featured, ...rest] = sorted;
+
+  if (error) {
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full">
+        <Navbar newspaperName={newspaperName} />
+        <p className="text-muted-foreground py-16 text-center">Author not found.</p>
+      </div>
+    );
+  }
 
   if (!author) {
     return (
