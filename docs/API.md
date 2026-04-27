@@ -559,11 +559,11 @@ publication date descending. Used to populate the homepage.
 
 **Query parameters:**
 
-| Parameter | Type    | Required | Default | Description                 |
+| Parameter | Type    | Required | Default | Description                |
 |-----------|---------|---------|---------|-----------------------------|
 | page      | integer | no      | 1       | Page number                 |
 | limit     | integer | no      | 20      | Articles per page (max 50)  |
-| category  | string  | no      | —       | Filter by category name     |
+| category  | string  | no      | —       | Filter by category slug     |
 
 **Responses:**
 

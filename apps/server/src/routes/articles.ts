@@ -249,7 +249,6 @@ export const articleRoutes = new Elysia()
                 where: eq(newspapers.id, params.newspaper_id),
             });
             if (!newspaper) return notFound("NEWSPAPER_NOT_FOUND");
-
 			const { page, limit, category } = query;
             const offset = (page - 1) * limit;
 
@@ -265,7 +264,7 @@ export const articleRoutes = new Elysia()
             const filtered = category
                 ? all.filter(
                       (a: any) =>
-                          a.category?.categoryName?.toLowerCase() === category.toLowerCase()
+                          a.category?.slug === category
                   )
                 : all;
 

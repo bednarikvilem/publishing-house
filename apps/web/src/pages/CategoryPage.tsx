@@ -34,19 +34,22 @@ export function CategoryPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
+  console.log(category);
   useEffect(() => {
     if (!newspaper || !category) return;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setArticles([]);
     fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category_id=${category.id}`
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category=${category.slug}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json() as Promise<ArticlesResponse>;
       })
-      .then((data) => setArticles(data.data))
+      .then((data) => {
+        setArticles(data.data);
+      })
       .catch(() => {});
   }, [newspaper, category]);
 
