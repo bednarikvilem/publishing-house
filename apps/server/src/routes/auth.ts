@@ -14,9 +14,9 @@ import {
 	forgotPasswordInput,
 	resetPasswordInput,
 	resendVerificationInput,
-} from "@pb138/shared";
+} from "../schemas/auth";
 
-export const authRoutes = new Elysia({ prefix: "/api/auth" })
+export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Auth"] } })
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 
