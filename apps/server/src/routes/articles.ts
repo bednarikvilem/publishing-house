@@ -176,6 +176,48 @@ export const articleRoutes = new Elysia()
 			query: articlesMineQuery,
 		})
 
+    // ── GET /api/newspapers/:newspaper_id/articles/mine/:article_id ──────
+    .get(
+        "/api/newspapers/:newspaper_id/articles/mine/:article_id",
+        async ({ params, user, roles }) => {
+            if (!user) return unauthorized();
+            if (!roles.includes("AUTHOR")) return forbidden();
+
+            const article = await db.query.articles.findFirst({
+                where: and(
+                    eq(articles.id, params.article_id),
+                    eq(articles.newspaperId, params.newspaper_id),
+                    eq(articles.authorId, user.id)
+                ),
+                with: { category: true },
+            });
+            if (!article) return notFound("ARTICLE_NOT_FOUND");
+
+            const images = await db.query.articleImages.findMany({
+                where: eq(articleImages.articleId, article.id),
+            });
+
+            return Response.json({
+                id: article.id,
+                title: article.title,
+                perex: article.perex,
+                content: article.content,
+                keywords: article.keywords
+                    ? article.keywords.split(",").map((k: string) => k.trim())
+                    : null,
+                category_id: article.categoryId ?? null,
+                status: article.state,
+                images: images.map((i: any) => ({
+                    id: i.id,
+                    url: i.url,
+                    caption: i.caption,
+                    is_primary: i.isPrimary,
+                })),
+            });
+        }, {
+            params: articleRouteParams,
+        })
+
     // ── GET /api/newspapers/:newspaper_id/articles/queue ─────────────────
     .get(
         "/api/newspapers/:newspaper_id/articles/queue",

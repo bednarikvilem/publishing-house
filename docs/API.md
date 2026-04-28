@@ -2165,6 +2165,65 @@ Authorization: Bearer <token>
 
 ---
 
+### GET /api/newspapers/:newspaper_id/articles/mine/:article_id
+
+Return the full content of a single article owned by the currently authenticated author,
+regardless of its status. Used by the article editor page to load a draft for editing.
+
+**Auth required:** Yes — `AUTHOR` (own articles only)
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+| article_id   | UUID of the article   |
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "a1b2c3...",
+    "title": "My Draft Article",
+    "perex": "A short introduction.",
+    "content": "The full article text...",
+    "keywords": ["technology", "bun"],
+    "category_id": "cat123...",
+    "status": "DRAFT",
+    "images": [
+        {
+            "id": "img123...",
+            "url": "https://...",
+            "caption": "Image caption",
+            "is_primary": true
+        }
+    ]
+}
+```
+
+`401 Unauthorized` — no token provided
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — user does not have AUTHOR role in this newspaper
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — article does not exist or belongs to a different author
+```json
+{ "error": "ARTICLE_NOT_FOUND" }
+```
+
+---
+
 ## Editorial Workflow Queue
 
 ### GET /api/newspapers/:newspaper_id/articles/queue
