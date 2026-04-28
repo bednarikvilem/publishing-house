@@ -9,7 +9,7 @@ import {
 	commentModerationParams,
 	commentBody,
 	commentModerationQuery,
-} from "@pb138/shared";
+} from "../db/validators";
 
 export const commentRoutes = new Elysia()
     .use(authMiddleware)

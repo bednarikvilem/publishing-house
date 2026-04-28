@@ -20,7 +20,7 @@ import {
 	articlesQueueQuery,
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
 	scheduleBody,
-} from "@pb138/shared";
+} from "../db/validators";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 

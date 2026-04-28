@@ -11,7 +11,7 @@ import {
     removeRoleParams,
     statisticsParams,
     adminConfigBody,
-} from "@pb138/shared";
+} from "../db/validators";
 
 // In-memory system config (in production this would be persisted to DB or env)
 let systemConfig = {

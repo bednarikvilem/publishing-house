@@ -13,7 +13,7 @@ import {
 	forgotPasswordInput,
 	resetPasswordInput,
 	resendVerificationInput,
-} from "@pb138/shared";
+} from "../db/validators";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.use(bearer())

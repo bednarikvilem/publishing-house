@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { db } from "../db";
 import { newspapers, newspaperAuthors, articles, articleCategory, articleImages, users } from "../db/schema";
 import { eq, and } from "drizzle-orm";
-import { authorRouteParams, authorArticlesQuery } from "@pb138/shared";
+import { authorRouteParams, authorArticlesQuery } from "../db/validators";
 
 export const authorRoutes = new Elysia()
 

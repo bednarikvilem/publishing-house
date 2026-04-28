@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { newspapers, users, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
-import { newspaperIdParam } from "@pb138/shared";
+import { newspaperIdParam } from "../db/validators";
 
 export const newspaperRoutes = new Elysia()
     .use(authMiddleware)

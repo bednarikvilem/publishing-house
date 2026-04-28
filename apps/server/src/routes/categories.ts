@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { articleCategory, articles, newspapers } from "../db/schema";
 import { eq, inArray } from "drizzle-orm";
-import { categoryListParams, categoryRouteParams, categoryBody } from "@pb138/shared";
+import { categoryListParams, categoryRouteParams, categoryBody } from "../db/validators";
 
 // Helper: slugify
 const slugify = (text: string): string =>
