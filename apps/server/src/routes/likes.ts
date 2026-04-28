@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { likes, articles } from "../db/schema";
 import { eq, and, count } from "drizzle-orm";
-import { likeRouteParams } from "../db/validators";
+import { likeRouteParams } from "../schemas/likes";
 
 export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
     .use(authMiddleware)

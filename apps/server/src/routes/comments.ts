@@ -9,7 +9,7 @@ import {
 	commentModerationParams,
 	commentBody,
 	commentModerationQuery,
-} from "../db/validators";
+} from "../schemas/comments";
 
 export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     .use(authMiddleware)

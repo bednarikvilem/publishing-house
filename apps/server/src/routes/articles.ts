@@ -20,7 +20,7 @@ import {
 	articlesQueueQuery,
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
 	scheduleBody,
-} from "../db/validators";
+} from "../schemas/articles";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 

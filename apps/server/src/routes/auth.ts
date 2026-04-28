@@ -13,7 +13,7 @@ import {
 	forgotPasswordInput,
 	resetPasswordInput,
 	resendVerificationInput,
-} from "../db/validators";
+} from "../schemas/auth";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Auth"] } })
 	.use(bearer())
