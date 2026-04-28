@@ -34,7 +34,6 @@ export function CategoryPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  console.log(category);
   useEffect(() => {
     if (!newspaper || !category) return;
 
