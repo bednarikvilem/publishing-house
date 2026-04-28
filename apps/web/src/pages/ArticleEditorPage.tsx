@@ -73,6 +73,35 @@ const editorTheme = {
 
 /* ── Toolbar ───────────────────────────────────────────────────────────────── */
 
+function ToolbarButton({
+  active,
+  onClick,
+  children,
+  title,
+  className = "",
+}: {
+  active?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title: string;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      onClick={onClick}
+      className={`rounded px-2.5 py-1 text-[13px] font-medium transition-colors ${
+        active
+          ? "bg-foreground text-background"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      } ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
 function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const [isBold, setIsBold] = useState(false);
@@ -91,35 +120,6 @@ function ToolbarPlugin() {
       });
     });
   }, [editor]);
-
-  function ToolbarButton({
-    active,
-    onClick,
-    children,
-    title,
-    className = "",
-  }: {
-    active?: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-    title: string;
-    className?: string;
-  }) {
-    return (
-      <button
-        type="button"
-        title={title}
-        onClick={onClick}
-        className={`rounded px-2.5 py-1 text-[13px] font-medium transition-colors ${
-          active
-            ? "bg-foreground text-background"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-        } ${className}`}
-      >
-        {children}
-      </button>
-    );
-  }
 
   return (
     <div className="border-border flex items-center gap-0.5 border-b px-3 py-2">
@@ -141,9 +141,7 @@ function ToolbarPlugin() {
       </ToolbarButton>
       <ToolbarButton
         active={isUnderline}
-        onClick={() =>
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")
-        }
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
         title="Underline (Ctrl+U)"
         className="underline"
       >
@@ -208,7 +206,7 @@ function RichTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="border-border overflow-hidden rounded-lg border bg-card">
+      <div className="border-border bg-card overflow-hidden rounded-lg border">
         <ToolbarPlugin />
         <div className="relative">
           <RichTextPlugin
@@ -216,7 +214,7 @@ function RichTextEditor({
               <ContentEditable
                 aria-placeholder="Write your article content here…"
                 placeholder={
-                  <div className="text-muted-foreground pointer-events-none absolute top-4 left-4 select-none text-[15px]">
+                  <div className="text-muted-foreground pointer-events-none absolute top-4 left-4 text-[15px] select-none">
                     Write your article content here…
                   </div>
                 }
@@ -307,6 +305,7 @@ export function ArticleEditorPage() {
   useEffect(() => {
     if (isNew || !articleId || !newspaperId) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setLoadError(null);
 
@@ -426,9 +425,7 @@ export function ArticleEditorPage() {
       return;
     }
     if (images.length === 0) {
-      setFormError(
-        "Upload at least one image before submitting for review."
-      );
+      setFormError("Upload at least one image before submitting for review.");
       return;
     }
     setFormError(null);
@@ -465,9 +462,7 @@ export function ArticleEditorPage() {
   async function handleDelete() {
     if (isNew) return;
     if (
-      !confirm(
-        "Permanently delete this article? This action cannot be undone."
-      )
+      !confirm("Permanently delete this article? This action cannot be undone.")
     )
       return;
     setDeleting(true);
@@ -595,13 +590,13 @@ export function ArticleEditorPage() {
         {loading ? (
           <p className="text-muted-foreground py-16 text-center">Loading…</p>
         ) : loadError ? (
-          <div className="border-[#dc2626]/20 bg-[#dc262608] rounded-lg border px-5 py-4">
+          <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-5 py-4">
             <p className="text-[14px] text-[#dc2626]">{loadError}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             {/* ── Left: main editor area ─────────────────────────────── */}
-            <div className="flex flex-1 flex-col gap-5 min-w-0">
+            <div className="flex min-w-0 flex-1 flex-col gap-5">
               {/* Title */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-foreground text-[13px] font-semibold">
@@ -740,7 +735,7 @@ export function ArticleEditorPage() {
                             <button
                               type="button"
                               onClick={() => handleImageDelete(img.id!)}
-                              className="text-muted-foreground hover:text-[#dc2626] shrink-0 text-[11px] font-medium transition-colors"
+                              className="text-muted-foreground shrink-0 text-[11px] font-medium transition-colors hover:text-[#dc2626]"
                             >
                               Remove
                             </button>
@@ -803,7 +798,7 @@ export function ArticleEditorPage() {
 
         {/* Form error */}
         {formError && (
-          <div className="border-[#dc2626]/20 bg-[#dc262608] rounded-lg border px-4 py-3">
+          <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-4 py-3">
             <p className="text-[13px] text-[#dc2626]">{formError}</p>
           </div>
         )}

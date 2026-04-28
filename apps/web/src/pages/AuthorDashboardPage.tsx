@@ -4,7 +4,12 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { useNewspaper } from "../hooks/useNewspaper";
-import type { ArticleStatus, Category, PaginatedResponse, ReviewDecision } from "../types";
+import type {
+  ArticleStatus,
+  Category,
+  PaginatedResponse,
+  ReviewDecision,
+} from "../types";
 import { PencilIcon, PlusIcon, TrashIcon } from "../components/Icons";
 import type {
   DashboardArticle,
@@ -204,26 +209,28 @@ function DecisionForm({
       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
     >
       <div className="flex gap-2">
-        {(["APPROVE", "REJECT", "REQUEST_REVISION"] as ReviewDecision[]).map((d) => (
-          <button
-            key={d}
-            type="button"
-            onClick={() => setDecision(d)}
-            className={`rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors ${
-              decision === d
-                ? d === "APPROVE"
-                  ? "bg-[#16a34a] text-white"
-                  : d === "REJECT"
-                    ? "bg-[#dc2626] text-white"
-                    : "bg-[#ea580c] text-white"
-                : "border-border bg-background text-muted-foreground hover:bg-muted border"
-            }`}
-          >
-            {d === "REQUEST_REVISION"
-              ? "Request Revision"
-              : d.charAt(0) + d.slice(1).toLowerCase()}
-          </button>
-        ))}
+        {(["APPROVE", "REJECT", "REQUEST_REVISION"] as ReviewDecision[]).map(
+          (d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setDecision(d)}
+              className={`rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors ${
+                decision === d
+                  ? d === "APPROVE"
+                    ? "bg-[#16a34a] text-white"
+                    : d === "REJECT"
+                      ? "bg-[#dc2626] text-white"
+                      : "bg-[#ea580c] text-white"
+                  : "border-border bg-background text-muted-foreground hover:bg-muted border"
+              }`}
+            >
+              {d === "REQUEST_REVISION"
+                ? "Request Revision"
+                : d.charAt(0) + d.slice(1).toLowerCase()}
+            </button>
+          )
+        )}
       </div>
 
       <textarea
@@ -465,8 +472,8 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
     }
   }, [newspaperId, currentPage]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -611,8 +618,8 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
     }
   }, [newspaperId, currentPage]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -832,8 +839,8 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
     }
   }, [newspaperId, currentPage]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -966,8 +973,8 @@ function CategoriesSection({ newspaperId }: { newspaperId: string }) {
     }
   }, [newspaperId]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -1385,8 +1392,8 @@ function UserManagementSection({ newspaperId }: { newspaperId: string }) {
     }
   }, [newspaperId, currentPage]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 

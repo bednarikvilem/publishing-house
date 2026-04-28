@@ -67,7 +67,9 @@ export function AuthorPage() {
     return (
       <div className="bg-background text-foreground min-h-screen w-full">
         <Navbar newspaperName={newspaperName} />
-        <p className="text-muted-foreground py-16 text-center">Author not found.</p>
+        <p className="text-muted-foreground py-16 text-center">
+          Author not found.
+        </p>
       </div>
     );
   }

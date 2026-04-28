@@ -71,7 +71,10 @@ export function SearchResultsPage() {
           </h1>
           <form onSubmit={handleSearch}>
             <div className="border-border bg-card flex h-12 w-full items-center gap-2.5 rounded-lg border px-4">
-              <SearchIcon size={18} className="text-muted-foreground shrink-0" />
+              <SearchIcon
+                size={18}
+                className="text-muted-foreground shrink-0"
+              />
               <input
                 type="text"
                 value={inputValue}
