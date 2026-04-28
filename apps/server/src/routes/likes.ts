@@ -5,7 +5,7 @@ import { likes, articles } from "../db/schema";
 import { eq, and, count } from "drizzle-orm";
 import { likeRouteParams } from "../db/validators";
 
-export const likeRoutes = new Elysia()
+export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
     .use(authMiddleware)
 
     // POST /api/newspapers/:newspaper_id/articles/:article_id/likes

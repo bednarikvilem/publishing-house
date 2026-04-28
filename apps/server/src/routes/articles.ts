@@ -43,7 +43,7 @@ const unauthorized = () => Response.json({ error: "UNAUTHORIZED" }, { status: 40
 
 // ─── routes ─────────────────────────────────────────────────────────────────
 
-export const articleRoutes = new Elysia()
+export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
     .use(authMiddleware)
 
     // ── GET /api/newspapers/:newspaper_id/articles/search ─────────────────

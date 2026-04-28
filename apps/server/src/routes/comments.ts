@@ -11,7 +11,7 @@ import {
 	commentModerationQuery,
 } from "../db/validators";
 
-export const commentRoutes = new Elysia()
+export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     .use(authMiddleware)
 
     // POST /api/newspapers/:newspaper_id/articles/:article_id/comments — REGISTERED_USER

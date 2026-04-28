@@ -15,7 +15,7 @@ import {
 	resendVerificationInput,
 } from "../db/validators";
 
-export const authRoutes = new Elysia({ prefix: "/api/auth" })
+export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Auth"] } })
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 

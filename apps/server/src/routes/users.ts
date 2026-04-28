@@ -5,7 +5,7 @@ import { users, newspaperAuthors } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { updateMeBody } from "../db/validators";
 
-export const userRoutes = new Elysia({ prefix: "/api/users" })
+export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["Users"] } })
     .use(authMiddleware)
 
     // GET /api/users/me

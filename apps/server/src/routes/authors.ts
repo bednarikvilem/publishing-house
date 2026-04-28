@@ -4,7 +4,7 @@ import { newspapers, newspaperAuthors, articles, articleCategory, articleImages,
 import { eq, and } from "drizzle-orm";
 import { authorRouteParams, authorArticlesQuery } from "../db/validators";
 
-export const authorRoutes = new Elysia()
+export const authorRoutes = new Elysia({ detail: { tags: ["Authors"] } })
 
     // GET /api/newspapers/:newspaper_id/authors/:author_id — public
     .get("/api/newspapers/:newspaper_id/authors/:author_id", async ({ params, query }) => {

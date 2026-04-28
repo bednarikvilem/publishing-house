@@ -23,7 +23,27 @@ if (!DATABASE_URL) {
 
 export const app = new Elysia()
     .use(cors())
-    .use(openapi())
+    .use(
+        openapi({
+            documentation: {
+                info: {
+                    title: "Newspaper API",
+                    version: "1.0.0",
+                },
+                tags: [
+                    { name: "Auth", description: "Registration, login, password reset, email verification" },
+                    { name: "Users", description: "Current-user profile and account operations" },
+                    { name: "Newspapers", description: "Newspaper listing and metadata" },
+                    { name: "Articles", description: "Article CRUD, submission, review, and scheduling" },
+                    { name: "Categories", description: "Article categories per newspaper" },
+                    { name: "Comments", description: "Comments on articles and moderation" },
+                    { name: "Likes", description: "Liking and unliking articles" },
+                    { name: "Authors", description: "Author profiles and their article listings" },
+                    { name: "Admin", description: "System administration: roles, users, configuration" },
+                ],
+            },
+        })
+    )
     .use(authRoutes)
     .use(userRoutes)
     .use(newspaperRoutes)

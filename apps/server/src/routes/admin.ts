@@ -32,7 +32,7 @@ let systemConfig = {
     },
 };
 
-export const adminRoutes = new Elysia()
+export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     .use(authMiddleware)
 
     // ── GET /api/newspapers/:newspaper_id/users — SYSTEM_ADMINISTRATOR ────
