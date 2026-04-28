@@ -2,6 +2,11 @@
   "name": "@pb138/server",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": "./src/server.ts",
+    "./db/validators": "./src/db/validators.ts",
+    "./db/schema": "./src/db/schema.ts"
+  },
   "scripts": {
     "dev": "bun run --watch --env-file=../../.env src/server.ts",
     "build": "bun build src/server.ts --outdir dist",

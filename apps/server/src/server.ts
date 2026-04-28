@@ -21,7 +21,7 @@ if (!DATABASE_URL) {
     process.exit(1);
 }
 
-const app = new Elysia()
+export const app = new Elysia()
     .use(cors())
     .use(openapi())
     .use(authRoutes)
@@ -48,6 +48,8 @@ const app = new Elysia()
         }
     })
     .listen(PORT);
+
+export type App = typeof app;
 
 console.log(`Server running on http://localhost:${app.server?.port}`);
 console.log(`Database: ${DATABASE_URL.replace(/:\/\/.*@/, "://<redacted>@")}`);
