@@ -11,7 +11,7 @@ import { likeRoutes } from "./routes/likes.ts";
 import { adminRoutes } from "./routes/admin.ts";
 import { authorRoutes } from "./routes/authors.ts";
 import { cors } from "@elysiajs/cors";
-import { swagger } from "@elysiajs/swagger";
+import { openapi } from "@elysiajs/openapi";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -23,7 +23,7 @@ if (!DATABASE_URL) {
 
 const app = new Elysia()
     .use(cors())
-    .use(swagger())
+    .use(openapi())
     .use(authRoutes)
     .use(userRoutes)
     .use(newspaperRoutes)
