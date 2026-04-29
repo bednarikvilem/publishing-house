@@ -4,6 +4,7 @@ import {
 	Page,
 	limitOpts,
 	Pagination,
+	RoleEnum,
 	UserMini,
 	UserMiniWithPicture,
 	articleInsertBase,
@@ -44,7 +45,12 @@ export const articlesMineQuery = t.Object({
 	status: t.Optional(t.String({ minLength: 1 })),
 });
 
-export const articlesQueueQuery = articlesMineQuery;
+export const articlesQueueQuery = t.Object({
+	page: Page,
+	limit: limitOpts(50, 20),
+	status: t.Optional(t.String({ minLength: 1 })),
+	view: t.Optional(RoleEnum),
+});
 
 const Keywords = t.Optional(t.Union([t.String(), t.Array(t.String())]));
 
