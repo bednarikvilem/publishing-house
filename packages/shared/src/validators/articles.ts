@@ -26,7 +26,11 @@ export const articlesSearchQuery = z.object({
 	date_to: z.string().datetime().optional(),
 });
 export const articlesMineQuery = z.object({ ...paging, status: z.string().trim().min(1).optional() });
-export const articlesQueueQuery = articlesMineQuery;
+export const articlesQueueQuery = z.object({
+	...paging,
+	status: z.string().trim().min(1).optional(),
+	view: z.enum(["EDITOR", "NEWSPAPER_MANAGER", "DIRECTOR"]).optional(),
+});
 
 // bodies
 const keywordsSchema = z.union([z.string(), z.array(z.string())]).optional();
