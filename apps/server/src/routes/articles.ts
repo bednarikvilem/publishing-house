@@ -753,17 +753,21 @@ export const articleRoutes = new Elysia()
 				eq(userRoles.role, "EDITOR")
 				),
 			});
-
 			if (!editorRole) {
 				return Response.json({ error: "INVALID_ARTICLE_STATE" }, { status: 422 });
 			}
 
-            // FIX: only update the article state – do NOT insert a fake review record here.
-            // The actual review record is created when the editor calls POST /review.
             await db
                 .update(articles)
                 .set({ state: "IN_REVIEW" })
                 .where(eq(articles.id, article.id));
+
+            await db.insert(articleReviews).values({
+                articleId: article.id,
+                reviewerId: editor_id,
+                decision: null,
+                feedback: null,
+            });
 
             const editor = await db.query.users.findFirst({ where: eq(users.id, editor_id) });
 
