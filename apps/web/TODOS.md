@@ -47,14 +47,14 @@
 
 # Newspaper Manager
 [ ] Manage articles belonging to their newspaper
-[ ] Approve editor-reviewed articles
+[x] Approve editor-reviewed articles
 [ ] Schedule articles for publication
-[ ] Assign editors to articles
+[x] Assign editors to articles
 [ ] Manage categories for their newspaper
 
 # Director
 
-[ ] Approve newspapers for publication (final step) 
+[x] Approve newspapers for publication (final step) 
 [ ] Manage multiple newspapers (e.g., view and oversee all newspapers under the publishing house)
 [ ] Review publication statistics (optional: number of published articles, total comments, likes, editor performance)
 [ ] Make high-level editorial decisions (e.g., approving changes in categories, assigning managers, setting publication policies)
