@@ -424,10 +424,10 @@ export function ArticleEditorPage() {
       setFormError("Save the article first before submitting.");
       return;
     }
-    if (images.length === 0) {
-      setFormError("Upload at least one image before submitting for review.");
-      return;
-    }
+    //if (images.length === 0) {
+    //  setFormError("Upload at least one image before submitting for review.");
+    //  return;
+    //}
     setFormError(null);
     setSubmitting(true);
 
@@ -438,6 +438,7 @@ export function ArticleEditorPage() {
       );
 
       if (!res.ok) {
+        console.log("Something went wrong");
         const data = (await res.json().catch(() => ({}))) as {
           error?: string;
         };

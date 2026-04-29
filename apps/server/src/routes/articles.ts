@@ -583,9 +583,10 @@ export const articleRoutes = new Elysia()
             const images = await db.query.articleImages.findMany({
                 where: eq(articleImages.articleId, article.id),
             });
-            if (images.length === 0) {
-                return Response.json({ error: "ARTICLE_MISSING_IMAGE" }, { status: 422 });
-            }
+            
+            //if (images.length === 0) {
+            //    return Response.json({ error: "ARTICLE_MISSING_IMAGE" }, { status: 422 });
+            //}
 
             await db
                 .update(articles)
