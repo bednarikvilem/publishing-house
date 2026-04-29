@@ -493,10 +493,12 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
           body: JSON.stringify({ decision, note: note || undefined }),
         }
       );
+      console.log(res);
       if (!res.ok) throw new Error();
       setActiveId(null);
       load();
     } catch {
+      console.log("Something went wrong");
       alert("Failed to submit review. Please try again.");
     } finally {
       setSubmitting(false);
@@ -658,7 +660,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve`,
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve?view=NEWSPAPER_MANAGER`,
         {
           method: "POST",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
@@ -669,7 +671,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
       setActiveId(null);
       load();
     } catch {
-      alert("Failed to submit decision. Please try again.");
+      alert("Failed to submit review. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -855,7 +857,7 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve`,
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve?view=DIRECTOR`,
         {
           method: "POST",
           headers: { ...authHeaders(), "Content-Type": "application/json" },

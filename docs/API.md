@@ -1238,6 +1238,12 @@ Managers and Directors may also reject the article or return it to draft at this
 Authorization: Bearer <token>
 ```
 
+**Query parameters:**
+
+| Parameter | Type   | Required | Default | Description                                                                                                                        |
+|-----------|--------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------|
+| view      | string | no       | —       | Role perspective to use: `NEWSPAPER_MANAGER` or `DIRECTOR`. Must be a role the caller holds. When omitted, defaults to `DIRECTOR` if the caller holds that role, otherwise `NEWSPAPER_MANAGER`. |
+
 **Request body:**
 ```json
 {

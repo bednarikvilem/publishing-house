@@ -17,7 +17,7 @@ import { eq, and, desc, count } from "drizzle-orm";
 import {
 	newspaperOnlyParams, articleRouteParams, articleImageParams,
 	articlesListQuery, articlesSearchQuery, articlesMineQuery,
-	articlesQueueQuery,
+	articlesQueueQuery, articleApproveQuery,
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
 	scheduleBody,
 } from "../schemas/articles";
@@ -830,12 +830,21 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
     // ── POST .../articles/:article_id/approve ─────────────────────────────
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/approve",
-        async ({ params, user, roles, body }) => {
+        async ({ params, user, roles, body, query }) => {
             if (!user) return unauthorized();
-
             const isManager = roles.includes("NEWSPAPER_MANAGER");
             const isDirector = roles.includes("DIRECTOR");
             if (!isManager && !isDirector) return forbidden();
+
+            const { view } = query;
+            let effectiveRole: string;
+            if (view) {
+                if (!roles.includes(view)) return forbidden();
+                effectiveRole = view;
+            } else {
+                if (isDirector) effectiveRole = "DIRECTOR";
+                else effectiveRole = "NEWSPAPER_MANAGER";
+            }
 
             const article = await db.query.articles.findFirst({
                 where: and(
@@ -850,7 +859,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             let expectedState: string;
             let nextState: string;
 
-            if (isDirector) {
+            if (effectiveRole === "DIRECTOR") {
                 expectedState = "APPROVED_BY_MANAGER";
                 nextState =
                     decision === "APPROVE"
@@ -893,6 +902,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         }, {
 			params: articleRouteParams,
 			body: reviewBody,
+			query: articleApproveQuery,
 		})
 
     // ── POST .../articles/:article_id/schedule ────────────────────────────

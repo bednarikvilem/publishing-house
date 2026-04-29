@@ -81,6 +81,10 @@ export const reviewBody = t.Object({
 	note: t.Optional(t.String({ minLength: 1 })),
 });
 
+export const articleApproveQuery = t.Object({
+	view: t.Optional(t.Union([t.Literal("NEWSPAPER_MANAGER"), t.Literal("DIRECTOR")])),
+});
+
 export const scheduleBody = t.Object({
 	publication_date: t.String({ format: "date-time" }),
 });
