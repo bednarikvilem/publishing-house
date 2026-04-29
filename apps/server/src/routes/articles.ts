@@ -227,21 +227,29 @@ export const articleRoutes = new Elysia()
             const isEditor = roles.includes("EDITOR");
             const isManager = roles.includes("NEWSPAPER_MANAGER");
             const isDirector = roles.includes("DIRECTOR");
-
             if (!isEditor && !isManager && !isDirector) return forbidden();
 
             const newspaper = await db.query.newspapers.findFirst({
                 where: eq(newspapers.id, params.newspaper_id),
             });
             if (!newspaper) return notFound("NEWSPAPER_NOT_FOUND");
-
-			const { page, limit, status } = query;
+			const { page, limit, status, view } = query;
             const offset = (page - 1) * limit;
 
+            let effectiveRole: string;
+            if (view) {
+                if (!roles.includes(view)) return forbidden();
+                effectiveRole = view;
+            } else {
+                if (isDirector) effectiveRole = "DIRECTOR";
+                else if (isManager) effectiveRole = "NEWSPAPER_MANAGER";
+                else effectiveRole = "EDITOR";
+            }
+
             let allowedStates: string[] = [];
-            if (isEditor) allowedStates = ["IN_REVIEW"];
-            else if (isManager) allowedStates = ["SUBMITTED", "APPROVED_BY_EDITOR"];
-            else if (isDirector) allowedStates = ["APPROVED_BY_MANAGER"];
+            if (effectiveRole === "EDITOR") allowedStates = ["IN_REVIEW"];
+            else if (effectiveRole === "NEWSPAPER_MANAGER") allowedStates = ["SUBMITTED", "APPROVED_BY_EDITOR"];
+            else if (effectiveRole === "DIRECTOR") allowedStates = ["APPROVED_BY_MANAGER"];
 
             if (status && allowedStates.includes(status)) {
                 allowedStates = [status];
@@ -254,8 +262,7 @@ export const articleRoutes = new Elysia()
 
             let filtered = all.filter((a: any) => allowedStates.includes(a.state));
 
-            if (isEditor && !isManager && !isDirector) {
-                // Editors only see articles whose most recent review was assigned to them
+            if (effectiveRole === "EDITOR") {
                 const assignedReviews = await db.query.articleReviews.findMany({
                     where: eq(articleReviews.reviewerId, user.id),
                 });

@@ -2229,12 +2229,20 @@ Authorization: Bearer <token>
 ### GET /api/newspapers/:newspaper_id/articles/queue
 
 Return a paginated list of articles that are pending action from the
-authenticated user based on their role. The returned articles and
-permitted statuses are automatically scoped to the caller's role:
+authenticated user based on their role. The `view` parameter selects
+which role perspective to use; the backend validates that the caller
+actually holds that role. This allows users with multiple roles (e.g.
+`NEWSPAPER_MANAGER` who is also an `EDITOR`) to access the correct queue
+for each section.
+
+The permitted statuses per view are:
 
 - `EDITOR`: returns articles in `IN_REVIEW` that are assigned to the calling editor
 - `NEWSPAPER_MANAGER`: returns articles in `SUBMITTED` (awaiting editor assignment) and `APPROVED_BY_EDITOR` (awaiting manager approval)
 - `DIRECTOR`: returns articles in `APPROVED_BY_MANAGER` (awaiting director approval)
+
+If `view` is omitted, the perspective defaults to the caller's highest-priority role
+(`DIRECTOR` > `NEWSPAPER_MANAGER` > `EDITOR`).
 
 This endpoint drives the Review Submitted Articles, Approve Editor-Reviewed
 Articles, and Approve Newspaper Publication use cases.
@@ -2259,6 +2267,7 @@ Authorization: Bearer <token>
 | page      | integer | no       | 1       | Page number                          |
 | limit     | integer | no       | 20      | Articles per page (max 50)           |
 | status    | string  | no       | —       | Further filter within the role's allowed statuses |
+| view      | string  | no       | —       | Role perspective to use: `EDITOR`, `NEWSPAPER_MANAGER`, or `DIRECTOR`. Must be a role the caller holds. |
 
 **Responses:**
 
@@ -2297,7 +2306,7 @@ Authorization: Bearer <token>
 { "error": "UNAUTHORIZED" }
 ```
 
-`403 Forbidden` — user does not have an editorial role in this newspaper
+`403 Forbidden` — user does not have an editorial role in this newspaper, or `view` specifies a role the caller does not hold
 ```json
 { "error": "FORBIDDEN" }
 ```

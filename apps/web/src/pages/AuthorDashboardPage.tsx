@@ -453,6 +453,7 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
       const params = new URLSearchParams({
         page: String(currentPage),
         limit: "20",
+        view: "EDITOR",
       });
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
@@ -599,6 +600,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
       const params = new URLSearchParams({
         page: String(currentPage),
         limit: "20",
+        view: "NEWSPAPER_MANAGER",
       });
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
@@ -820,6 +822,7 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
       const params = new URLSearchParams({
         page: String(currentPage),
         limit: "20",
+        view: "DIRECTOR",
       });
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
