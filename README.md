@@ -39,56 +39,47 @@ When developing new features on frontend and backend, you can start the componen
 
 Before commiting your work, run `bun run lint` in `app/web`. This checks for your style. It may show some errors which you should fix before commiting the changes. You should also run `bun run format`. This automatically checks and fixes the formatting.
 
-## Database with data seed
-Always run
+## Image Storage
+
+This project uses [Cloudinary](https://cloudinary.com) for image storage and delivery via their API.
+
+To get started, create a free Cloudinary account and add the following to your `.env` file:
+
+```
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@<your_cloud_name>
+```
+
+## Database Setup
+
+After each `git pull`, run:
 ```bash
 bun install
 ```
-after each git pull
 
-Teminal 1 run
+### First-time setup
 ```bash
-docker compose up --build -d
-```
-This will initialize completly new database
-
-Terminal 2 run
-```bash
+docker compose up --build -d   # start fresh database
 cd apps/server
-bun db:studio
-```
-This will display your database at https://local.drizzle.studio/
-
-Terminal 3 run
-```bash
-cd apps/server
-bun db:push
-```
-This create new database schema. Then run:
-```bash
-bun db:seed
-``` 
-for creating data seed.
-
-To keep your current data in the database run:
-```bash
-docker compose up
-docker compose down
+bun db:push                    # apply schema
+bun db:seed                    # seed data
 ```
 
+### Daily use
 ```bash
-docker compose up --build
-docker compose down -v
+docker compose up              # start (keeps existing data)
+docker compose down            # stop (keeps existing data)
 ```
 
-Creates and deletes the database.
+> `docker compose up --build` + `docker compose down -v` will **wipe** the database.
 
-To start drizzle studio run:
+### Drizzle Studio
 ```bash
-cd apps/server
-bun run dev & bun db:studio
+cd apps/server && bun run dev & bun db:studio
 ```
-Access the database at https://local.drizzle.studio
+Access at https://local.drizzle.studio
 
 ## Prerequisites
 
