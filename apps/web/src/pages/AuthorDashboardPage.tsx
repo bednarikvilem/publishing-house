@@ -825,6 +825,7 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
         page: String(currentPage),
         limit: "20",
         view: "DIRECTOR",
+        status: "APPROVED_BY_MANAGER",
       });
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
@@ -930,6 +931,137 @@ function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
                     submitting={submitting}
                   />
                 )}
+              </ArticleListRow>
+            ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination.total_pages}
+            total={pagination.total}
+            onPageChange={(p) => {
+              const next = new URLSearchParams(searchParams);
+              next.set("page", String(p));
+              setSearchParams(next);
+            }}
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ── PublicationQueueSection (DIRECTOR) ────────────────────────────────────── */
+
+function PublicationQueueSection({ newspaperId }: { newspaperId: string }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page") ?? "1");
+
+  const [articles, setArticles] = useState<QueueArticle[]>([]);
+  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!newspaperId) return;
+    await null;
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: String(currentPage),
+        limit: "20",
+        view: "DIRECTOR",
+        status: "APPROVED_BY_DIRECTOR",
+      });
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
+        { headers: authHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
+      setArticles(data.data);
+      setPagination({
+        total: data.pagination.total,
+        total_pages: data.pagination.total_pages,
+      });
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [newspaperId, currentPage]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
+
+  async function handlePublish(articleId: string) {
+    if (!confirm("Publish this article immediately? This cannot be undone."))
+      return;
+    setPublishing(articleId);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/publish`,
+        { method: "POST", headers: authHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      load();
+    } catch {
+      alert("Failed to publish article. Please try again.");
+    } finally {
+      setPublishing(null);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-7">
+      <SectionTitle title="Publication Queue" />
+
+      {error ? (
+        <ErrorState />
+      ) : loading ? (
+        <LoadingState />
+      ) : articles.length === 0 ? (
+        <EmptyState message="No articles ready for publication." />
+      ) : (
+        <>
+          <div className="flex flex-col">
+            {articles.map((article, index) => (
+              <ArticleListRow
+                key={article.id}
+                index={index}
+                total={articles.length}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span className="text-foreground text-[15px] leading-snug font-semibold">
+                      {article.title}
+                    </span>
+                    <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
+                      {article.perex}
+                    </span>
+                    <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
+                      <span>Author: {article.author.full_name}</span>
+                      <span>Category: {article.category}</span>
+                      <span>Approved: {formatDate(article.submitted_at)}</span>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <span
+                      className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
+                    >
+                      {STATUS_LABELS[article.status]}
+                    </span>
+                    <button
+                      onClick={() => handlePublish(article.id)}
+                      disabled={publishing === article.id}
+                      className="rounded-md bg-[#16a34a] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                    >
+                      {publishing === article.id ? "Publishing…" : "Publish"}
+                    </button>
+                  </div>
+                </div>
               </ArticleListRow>
             ))}
           </div>
@@ -1648,6 +1780,8 @@ export function AuthorDashboardPage() {
             <StatisticsSection newspaperId={newspaperId} />
           ) : activeSection === "director-queue" ? (
             <DirectorQueueSection newspaperId={newspaperId} />
+          ) : activeSection === "publication-queue" ? (
+            <PublicationQueueSection newspaperId={newspaperId} />
           ) : activeSection === "all-newspapers" ? (
             <AllNewspapersSection />
           ) : activeSection === "user-management" ? (

@@ -3,6 +3,7 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import {
   BarChartIcon,
+  CheckIcon,
   FileTextIcon,
   InboxIcon,
   LogOutIcon,
@@ -202,6 +203,11 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<InboxIcon />}
               label="Approval Queue"
               href={`/${np}/author-dashboard?section=director-queue`}
+            />
+            <NavItem
+              icon={<CheckIcon />}
+              label="Publication Queue"
+              href={`/${np}/author-dashboard?section=publication-queue`}
             />
           </NavSection>
         )}

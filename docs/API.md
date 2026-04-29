@@ -1304,7 +1304,7 @@ Side effects:
 Set the publication date for a fully approved article (`APPROVED_BY_DIRECTOR`).
 The article will be automatically published at the specified date and time.
 
-**Auth required:** Yes — `NEWSPAPER_MANAGER`
+**Auth required:** Yes — `NEWSPAPER_MANAGER` or `DIRECTOR`
 
 **URL parameters:**
 
@@ -1367,6 +1367,62 @@ Field rules:
 
 Side effects:
 - Creates an audit log entry (operation: ARTICLE_SCHEDULED)
+
+---
+
+### POST /api/newspapers/:newspaper_id/articles/:article_id/publish
+
+Immediately publish an article that has been fully approved (`APPROVED_BY_DIRECTOR`).
+Sets the article state to `PUBLISHED` and records the current timestamp as the
+publication date.
+
+**Auth required:** Yes — `DIRECTOR` or `NEWSPAPER_MANAGER`
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+| article_id   | UUID of the article   |
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "a1b2c3...",
+    "status": "PUBLISHED",
+    "publication_date": "2026-05-01T08:00:00Z"
+}
+```
+
+`401 Unauthorized` — no token provided
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — user does not have the required role
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — article does not exist
+```json
+{ "error": "ARTICLE_NOT_FOUND" }
+```
+
+`422 Unprocessable Entity` — article is not in APPROVED_BY_DIRECTOR state
+```json
+{ "error": "INVALID_ARTICLE_STATE" }
+```
+
+Side effects:
+- Creates an audit log entry (operation: ARTICLE_PUBLISHED)
 
 ---
 
@@ -2245,7 +2301,7 @@ The permitted statuses per view are:
 
 - `EDITOR`: returns articles in `IN_REVIEW` that are assigned to the calling editor
 - `NEWSPAPER_MANAGER`: returns articles in `SUBMITTED` (awaiting editor assignment) and `APPROVED_BY_EDITOR` (awaiting manager approval)
-- `DIRECTOR`: returns articles in `APPROVED_BY_MANAGER` (awaiting director approval)
+- `DIRECTOR`: returns articles in `APPROVED_BY_MANAGER` (awaiting director approval) and `APPROVED_BY_DIRECTOR` (awaiting publication). Pass `status=APPROVED_BY_MANAGER` or `status=APPROVED_BY_DIRECTOR` to filter to one stage.
 
 If `view` is omitted, the perspective defaults to the caller's highest-priority role
 (`DIRECTOR` > `NEWSPAPER_MANAGER` > `EDITOR`).

@@ -249,7 +249,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             let allowedStates: string[] = [];
             if (effectiveRole === "EDITOR") allowedStates = ["IN_REVIEW"];
             else if (effectiveRole === "NEWSPAPER_MANAGER") allowedStates = ["SUBMITTED", "APPROVED_BY_EDITOR"];
-            else if (effectiveRole === "DIRECTOR") allowedStates = ["APPROVED_BY_MANAGER"];
+            else if (effectiveRole === "DIRECTOR") allowedStates = ["APPROVED_BY_MANAGER", "APPROVED_BY_DIRECTOR"];
 
             if (status && allowedStates.includes(status)) {
                 allowedStates = [status];
@@ -910,7 +910,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/schedule",
         async ({ params, user, roles, body }) => {
             if (!user) return unauthorized();
-            if (!roles.includes("NEWSPAPER_MANAGER")) return forbidden();
+            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("DIRECTOR")) return forbidden();
 
             const article = await db.query.articles.findFirst({
                 where: and(
@@ -942,4 +942,38 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         }, {
 			params: articleRouteParams,
 			body: scheduleBody,
+		})
+
+    // ── POST .../articles/:article_id/publish ─────────────────────────────
+    .post(
+        "/api/newspapers/:newspaper_id/articles/:article_id/publish",
+        async ({ params, user, roles }) => {
+            if (!user) return unauthorized();
+            if (!roles.includes("DIRECTOR") && !roles.includes("NEWSPAPER_MANAGER")) return forbidden();
+
+            const article = await db.query.articles.findFirst({
+                where: and(
+                    eq(articles.id, params.article_id),
+                    eq(articles.newspaperId, params.newspaper_id)
+                ),
+            });
+            if (!article) return notFound("ARTICLE_NOT_FOUND");
+
+            if (article.state !== "APPROVED_BY_DIRECTOR") {
+                return Response.json({ error: "INVALID_ARTICLE_STATE" }, { status: 422 });
+            }
+
+            const now = new Date();
+            await db
+                .update(articles)
+                .set({ state: "PUBLISHED" as any, publicationDate: now })
+                .where(eq(articles.id, article.id));
+
+            return Response.json({
+                id: article.id,
+                status: "PUBLISHED",
+                publication_date: now.toISOString(),
+            });
+        }, {
+			params: articleRouteParams,
 		});
