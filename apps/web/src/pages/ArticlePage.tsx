@@ -7,6 +7,7 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
+import { ImageNode } from "../lib/lexical/ImageNode";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { sampleArticleDetail } from "../lib/sampleData";
 import type { ArticleDetail } from "../types";
@@ -49,13 +50,7 @@ const viewerTheme = {
   paragraph: "text-foreground text-[16px] leading-[1.8] my-1",
 };
 
-function ArticleContent({
-  content,
-  inlineImage,
-}: {
-  content: string;
-  inlineImage?: { url: string; caption: string };
-}) {
+function ArticleContent({ content }: { content: string }) {
   let editorState: string | undefined;
   try {
     const parsed = JSON.parse(content);
@@ -71,7 +66,7 @@ function ArticleContent({
           initialConfig={{
             namespace: "ArticleViewer",
             theme: viewerTheme,
-            nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode],
+            nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, ImageNode],
             onError: (error: Error) => console.error("Lexical error:", error),
             editorState,
             editable: false,
@@ -87,18 +82,6 @@ function ArticleContent({
         </LexicalComposer>
       ) : (
         <p className="text-foreground text-[16px] leading-[1.8]">{content}</p>
-      )}
-      {inlineImage && (
-        <figure className="flex flex-col gap-2">
-          <img
-            src={inlineImage.url}
-            alt={inlineImage.caption}
-            className="h-[360px] w-full rounded-lg object-cover"
-          />
-          <figcaption className="text-muted-foreground text-[13px] italic">
-            {inlineImage.caption}
-          </figcaption>
-        </figure>
       )}
     </div>
   );
@@ -126,7 +109,6 @@ export function ArticlePage() {
   }, [newspaper, articleId]);
 
   const primaryImage = article.images.find((img) => img.is_primary);
-  const inlineImage = article.images.find((img) => !img.is_primary);
   const readTime = estimateReadTime(article.content);
 
   return (
@@ -208,7 +190,7 @@ export function ArticlePage() {
           {article.perex}
         </p>
         <hr className="border-border mb-6" />
-        <ArticleContent content={article.content} inlineImage={inlineImage} />
+        <ArticleContent content={article.content} />
       </section>
     </div>
   );

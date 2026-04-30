@@ -17,6 +17,8 @@ import {
 import {
   $getSelection,
   $isRangeSelection,
+  $insertNodes,
+  COMMAND_PRIORITY_EDITOR,
   FORMAT_TEXT_COMMAND,
   type EditorState,
 } from "lexical";
@@ -24,6 +26,11 @@ import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import type { Category, ArticleStatus } from "../types";
+import {
+  ImageNode,
+  INSERT_IMAGE_COMMAND,
+  $createImageNode,
+} from "../lib/lexical/ImageNode";
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
 
@@ -71,6 +78,23 @@ const editorTheme = {
   paragraph: "my-1",
 };
 
+/* ── Image plugin ──────────────────────────────────────────────────────────── */
+
+function ImagePlugin() {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    return editor.registerCommand(
+      INSERT_IMAGE_COMMAND,
+      ({ url, alt }) => {
+        $insertNodes([$createImageNode(url, alt)]);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR
+    );
+  }, [editor]);
+  return null;
+}
+
 /* ── Toolbar ───────────────────────────────────────────────────────────────── */
 
 function ToolbarButton({
@@ -102,11 +126,23 @@ function ToolbarButton({
   );
 }
 
-function ToolbarPlugin() {
+function ToolbarPlugin({
+  newspaperId,
+  articleId,
+  hasCoverImage,
+  onUploadError,
+}: {
+  newspaperId?: string;
+  articleId?: string;
+  hasCoverImage?: boolean;
+  onUploadError?: (msg: string) => void;
+}) {
   const [editor] = useLexicalComposerContext();
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return editor.registerUpdateListener(() => {
@@ -120,6 +156,45 @@ function ToolbarPlugin() {
       });
     });
   }, [editor]);
+
+  async function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !newspaperId || !articleId) return;
+    e.target.value = "";
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images`,
+        { method: "POST", headers: authHeaders(), body: formData }
+      );
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        onUploadError?.(data.error ?? "Failed to upload image.");
+        return;
+      }
+      const img = (await res.json()) as { url: string; caption: string | null };
+      editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+        url: img.url,
+        alt: img.caption ?? file.name,
+      });
+    } catch {
+      onUploadError?.("Network error while uploading image.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const articleSaved = Boolean(newspaperId && articleId);
+  const imageButtonEnabled = articleSaved && hasCoverImage && !uploading;
+  const imageButtonTitle = !articleSaved
+    ? "Save the article first to insert inline images"
+    : !hasCoverImage
+      ? "Upload a cover image in the sidebar before inserting inline images"
+      : "Insert inline image at cursor";
 
   return (
     <div className="border-border flex items-center gap-0.5 border-b px-3 py-2">
@@ -164,6 +239,21 @@ function ToolbarPlugin() {
       >
         1. List
       </ToolbarButton>
+      <div className="bg-border mx-1.5 h-4 w-px" />
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/jpeg,image/png"
+        className="hidden"
+        onChange={handleImageFile}
+      />
+      <ToolbarButton
+        onClick={() => imageButtonEnabled && imageInputRef.current?.click()}
+        title={imageButtonTitle}
+        className={!imageButtonEnabled ? "cursor-not-allowed opacity-40" : ""}
+      >
+        {uploading ? "…" : "Inline image"}
+      </ToolbarButton>
     </div>
   );
 }
@@ -173,9 +263,17 @@ function ToolbarPlugin() {
 function RichTextEditor({
   initialContent,
   onContentChange,
+  newspaperId,
+  articleId,
+  hasCoverImage,
+  onUploadError,
 }: {
   initialContent: string;
   onContentChange: (json: string) => void;
+  newspaperId?: string;
+  articleId?: string;
+  hasCoverImage?: boolean;
+  onUploadError?: (msg: string) => void;
 }) {
   const handleChange = useCallback(
     (editorState: EditorState) => {
@@ -197,7 +295,7 @@ function RichTextEditor({
   const initialConfig = {
     namespace: "ArticleEditor",
     theme: editorTheme,
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode],
+    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, ImageNode],
     onError: (error: Error) => {
       console.error("Lexical error:", error);
     },
@@ -207,7 +305,12 @@ function RichTextEditor({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="border-border bg-card overflow-hidden rounded-lg border">
-        <ToolbarPlugin />
+        <ToolbarPlugin
+          newspaperId={newspaperId}
+          articleId={articleId}
+          hasCoverImage={hasCoverImage}
+          onUploadError={onUploadError}
+        />
         <div className="relative">
           <RichTextPlugin
             contentEditable={
@@ -225,6 +328,7 @@ function RichTextEditor({
           />
           <HistoryPlugin />
           <ListPlugin />
+          <ImagePlugin />
           <OnChangePlugin onChange={handleChange} ignoreSelectionChange />
         </div>
       </div>
@@ -637,6 +741,10 @@ export function ArticleEditorPage() {
                   key={editorKey}
                   initialContent={content}
                   onContentChange={canEdit ? setContent : () => {}}
+                  newspaperId={newspaperId || undefined}
+                  articleId={isNew ? undefined : articleId}
+                  hasCoverImage={images.some((img) => img.is_primary)}
+                  onUploadError={setFormError}
                 />
               </div>
             </div>
@@ -705,77 +813,73 @@ export function ArticleEditorPage() {
                 </div>
               </div>
 
-              {/* Images */}
-              <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
-                <h2 className="text-foreground text-[13px] font-semibold">
-                  Images
-                </h2>
+              {/* Cover Image */}
+              {(() => {
+                const coverImage = images.find((img) => img.is_primary);
+                return (
+                  <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
+                    <div>
+                      <h2 className="text-foreground text-[13px] font-semibold">
+                        Cover Image
+                      </h2>
+                      <p className="text-muted-foreground mt-0.5 text-[11px]">
+                        Displayed in article previews and on the homepage.
+                      </p>
+                    </div>
 
-                {images.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {images.map((img, i) => (
-                      <div
-                        key={img.id ?? img.url}
-                        className="border-border group relative overflow-hidden rounded-md border"
-                      >
+                    {coverImage ? (
+                      <div className="border-border relative overflow-hidden rounded-md border">
                         <img
-                          src={img.url}
-                          alt={img.caption ?? `Image ${i + 1}`}
-                          className="h-28 w-full object-cover"
+                          src={coverImage.url}
+                          alt={coverImage.caption ?? "Cover image"}
+                          className="h-36 w-full object-cover"
                         />
-                        <div className="bg-background/80 absolute inset-x-0 bottom-0 flex items-center justify-between px-2 py-1 backdrop-blur-sm">
-                          <span className="text-foreground truncate text-[11px]">
-                            {img.is_primary && (
-                              <span className="mr-1 text-[#16a34a]">
-                                ★ Primary
-                              </span>
-                            )}
-                            {img.caption || `Image ${i + 1}`}
-                          </span>
-                          {img.id && canEdit && (
+                        {coverImage.id && canEdit && (
+                          <div className="bg-background/80 absolute inset-x-0 bottom-0 flex justify-end px-2 py-1 backdrop-blur-sm">
                             <button
                               type="button"
-                              onClick={() => handleImageDelete(img.id!)}
-                              className="text-muted-foreground shrink-0 text-[11px] font-medium transition-colors hover:text-[#dc2626]"
+                              onClick={() => handleImageDelete(coverImage.id!)}
+                              className="text-muted-foreground text-[11px] font-medium transition-colors hover:text-[#dc2626]"
                             >
                               Remove
                             </button>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground text-[12px]">
-                    No images yet.{" "}
-                    {!canEdit
-                      ? ""
-                      : isNew
-                        ? "Save the article first, then upload images."
-                        : "At least one image is required before submitting."}
-                  </p>
-                )}
+                    ) : (
+                      <p className="text-muted-foreground text-[12px]">
+                        {isNew
+                          ? "Save the article first, then upload a cover image."
+                          : "No cover image yet. Required before submitting."}
+                      </p>
+                    )}
 
-                {!isNew && canEdit && (
-                  <>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploadingImage}
-                      className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
-                    >
-                      {uploadingImage ? "Uploading…" : "Upload Image"}
-                    </button>
-                  </>
-                )}
-              </div>
+                    {!isNew && canEdit && (
+                      <>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          className="hidden"
+                          onChange={handleImageUpload}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploadingImage}
+                          className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
+                        >
+                          {uploadingImage
+                            ? "Uploading…"
+                            : coverImage
+                              ? "Replace Cover Image"
+                              : "Upload Cover Image"}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Danger zone */}
               {!isNew && isDraft && (
