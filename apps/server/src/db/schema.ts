@@ -83,8 +83,10 @@ export const articleCategory = pgTable("article_category", {
     id: uuid("id").primaryKey().defaultRandom(),
     categoryName: varchar("category_name", { length: 255 }).notNull(),
     newspaperId: uuid("newspaper_id").notNull().references(() => newspapers.id),
-    slug: varchar("slug", { length: 255 }).notNull().unique(),
-});
+    slug: varchar("slug", { length: 255 }).notNull(),
+}, (table) => ([
+    unique("article_category_slug_newspaper_unique").on(table.slug, table.newspaperId),
+]));
 
 export type ArticleCategory = InferSelectModel<typeof articleCategory>;
 export type NewArticleCategory = InferInsertModel<typeof articleCategory>;

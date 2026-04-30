@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { articleCategory, articles, newspapers } from "../db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { categoryListParams, categoryRouteParams, categoryBody } from "../schemas/categories";
 
 // Helper: slugify
@@ -41,25 +41,9 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         });
         if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
 
-        const newspaperArticles = await db.query.articles.findMany({
-            where: eq(articles.newspaperId, params.newspaper_id),
-            columns: { categoryId: true },
+        const cats = await db.query.articleCategory.findMany({
+            where: eq(articleCategory.newspaperId, params.newspaper_id),
         });
-
-        const categoryIds = [
-            ...new Set(
-                newspaperArticles
-                    .map((a: any) => a.categoryId)
-                    .filter(Boolean)
-            ),
-        ] as string[];
-
-        const cats =
-            categoryIds.length > 0
-                ? await db.query.articleCategory.findMany({
-                      where: inArray(articleCategory.id, categoryIds),
-                  })
-                : [];
 
         return Response.json({
             data: cats.map((c: any) => ({ id: c.id, name: c.categoryName, slug: c.slug })),
@@ -79,15 +63,20 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         });
         if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
 
+        const { name } = body;
+
         const existing = await db.query.articleCategory.findFirst({
-            where: eq(articleCategory.categoryName, name),
+            where: and(
+                eq(articleCategory.categoryName, name),
+                eq(articleCategory.newspaperId, params.newspaper_id)
+            ),
         });
         if (existing) return Response.json({ error: "CATEGORY_NAME_TAKEN" }, { status: 409 });
 
         const slug = slugify(name);
         const [created] = await db
             .insert(articleCategory)
-            .values({ categoryName: name, slug })
+            .values({ categoryName: name, slug, newspaperId: params.newspaper_id })
             .returning();
 
         return Response.json({ id: created!.id, name: created!.categoryName }, { status: 201 });
