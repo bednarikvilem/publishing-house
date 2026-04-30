@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { users, newspaperAuthors } from "../db/schema";
@@ -112,8 +113,14 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
                         { status: 422 }
                     );
                 }
-                // In a real implementation you would upload to S3/CDN here
-                profilePictureUrl = `/uploads/profiles/${user.id}-${Date.now()}.${blob.type === "image/png" ? "png" : "jpg"}`;
+                const arrayBuffer = await blob.arrayBuffer();
+                const base64 = Buffer.from(arrayBuffer).toString("base64");
+                const dataUri = `data:${blob.type};base64,${base64}`;
+                const uploadResult = await cloudinary.uploader.upload(dataUri, {
+                    folder: "profiles",
+                    resource_type: "image",
+                });
+                profilePictureUrl = uploadResult.secure_url;
             }
         } catch {
             return Response.json(

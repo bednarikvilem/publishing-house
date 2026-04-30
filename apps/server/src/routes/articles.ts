@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import {
@@ -21,7 +22,6 @@ import {
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
 	scheduleBody,
 } from "../schemas/articles";
-
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const articleSummary = (a: any) => {
@@ -63,8 +63,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 with: { category: true, images: true, author: true },
             });
 
-			const { q, page, limit } = query;
-			const offset = (page - 1) * limit;
+            const { q, page, limit } = query;
+            const offset = (page - 1) * limit;
             const lower = q.toLowerCase();
             let filtered = all.filter((a: any) => {
                 return (
@@ -113,9 +113,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
             });
         }, {
-			params: newspaperOnlyParams,
-			query: articlesSearchQuery
-		})
+        params: newspaperOnlyParams,
+        query: articlesSearchQuery
+    })
 
     // ── GET /api/newspapers/:newspaper_id/articles/mine ───────────────────
     .get(
@@ -129,7 +129,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             });
             if (!newspaper) return notFound("NEWSPAPER_NOT_FOUND");
 
-			const { page, limit, status } = query;
+            const { page, limit, status } = query;
             const offset = (page - 1) * limit;
 
             const all = await db.query.articles.findMany({
@@ -172,9 +172,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
             });
         }, {
-			params: newspaperOnlyParams,
-			query: articlesMineQuery,
-		})
+        params: newspaperOnlyParams,
+        query: articlesMineQuery,
+    })
 
     // ── GET /api/newspapers/:newspaper_id/articles/mine/:article_id ──────
     .get(
@@ -215,8 +215,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 })),
             });
         }, {
-            params: articleRouteParams,
-        })
+        params: articleRouteParams,
+    })
 
     // ── GET /api/newspapers/:newspaper_id/articles/queue ─────────────────
     .get(
@@ -233,7 +233,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 where: eq(newspapers.id, params.newspaper_id),
             });
             if (!newspaper) return notFound("NEWSPAPER_NOT_FOUND");
-			const { page, limit, status, view } = query;
+            const { page, limit, status, view } = query;
             const offset = (page - 1) * limit;
 
             let effectiveRole: string;
@@ -286,9 +286,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
             });
         }, {
-			params: newspaperOnlyParams,
-			query: articlesQueueQuery,
-		})
+        params: newspaperOnlyParams,
+        query: articlesQueueQuery,
+    })
 
     // ── GET /api/newspapers/:newspaper_id/articles ────────────────────────
     .get(
@@ -298,7 +298,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 where: eq(newspapers.id, params.newspaper_id),
             });
             if (!newspaper) return notFound("NEWSPAPER_NOT_FOUND");
-			const { page, limit, category } = query;
+            const { page, limit, category } = query;
             const offset = (page - 1) * limit;
 
             const all = await db.query.articles.findMany({
@@ -312,9 +312,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
 
             const filtered = category
                 ? all.filter(
-                      (a: any) =>
-                          a.category?.slug === category
-                  )
+                    (a: any) =>
+                        a.category?.slug === category
+                )
                 : all;
 
             const total = filtered.length;
@@ -325,20 +325,20 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                     const author = await db.query.users.findFirst({ where: eq(users.id, a.authorId) });
                     const authorProfile = author
                         ? await db.query.newspaperAuthors.findFirst({
-                              where: and(
-                                  eq(newspaperAuthors.userId, author.id),
-                                  eq(newspaperAuthors.newspaperId, params.newspaper_id)
-                              ),
-                          })
+                            where: and(
+                                eq(newspaperAuthors.userId, author.id),
+                                eq(newspaperAuthors.newspaperId, params.newspaper_id)
+                            ),
+                        })
                         : null;
                     return {
                         ...articleSummary(a),
                         author: author
                             ? {
-                                  id: author.id,
-                                  full_name: author.fullname,
-                                  profile_picture: authorProfile?.profilePictureUrl ?? null,
-                              }
+                                id: author.id,
+                                full_name: author.fullname,
+                                profile_picture: authorProfile?.profilePictureUrl ?? null,
+                            }
                             : null,
                     };
                 })
@@ -349,9 +349,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
             });
         }, {
-			params: newspaperOnlyParams,
-			query: articlesListQuery,
-		})
+        params: newspaperOnlyParams,
+        query: articlesListQuery,
+    })
 
     // ── GET /api/newspapers/:newspaper_id/articles/:article_id ────────────
     .get(
@@ -371,11 +371,11 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             const author = await db.query.users.findFirst({ where: eq(users.id, article.authorId) });
             const authorProfile = author
                 ? await db.query.newspaperAuthors.findFirst({
-                      where: and(
-                          eq(newspaperAuthors.userId, author.id),
-                          eq(newspaperAuthors.newspaperId, params.newspaper_id)
-                      ),
-                  })
+                    where: and(
+                        eq(newspaperAuthors.userId, author.id),
+                        eq(newspaperAuthors.newspaperId, params.newspaper_id)
+                    ),
+                })
                 : null;
 
             const [likesResult] = await db
@@ -409,10 +409,10 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 liked_by_me: likedByMe,
                 author: author
                     ? {
-                          id: author.id,
-                          full_name: author.fullname,
-                          profile_picture: authorProfile?.profilePictureUrl ?? null,
-                      }
+                        id: author.id,
+                        full_name: author.fullname,
+                        profile_picture: authorProfile?.profilePictureUrl ?? null,
+                    }
                     : null,
                 images: (article as any).images?.map((i: any) => ({
                     url: i.url,
@@ -427,8 +427,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 })),
             });
         }, {
-			params: articleRouteParams,
-		})
+        params: articleRouteParams,
+    })
 
     // ── POST /api/newspapers/:newspaper_id/articles ───────────────────────
     .post(
@@ -468,8 +468,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
 
             const cat = category_id
                 ? await db.query.articleCategory.findFirst({
-                      where: eq(articleCategory.id, category_id),
-                  })
+                    where: eq(articleCategory.id, category_id),
+                })
                 : null;
 
             return Response.json(
@@ -488,9 +488,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 { status: 201 }
             );
         }, {
-			params: newspaperOnlyParams,
-			body: createArticleBody,
-		})
+        params: newspaperOnlyParams,
+        body: createArticleBody,
+    })
 
     // ── PUT /api/newspapers/:newspaper_id/articles/:article_id ────────────
     .put(
@@ -542,9 +542,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 updated_at: updated!.createdAt,
             });
         }, {
-			params: articleRouteParams,
-			body: updateArticleBody,
-		})
+        params: articleRouteParams,
+        body: updateArticleBody,
+    })
 
     // ── DELETE /api/newspapers/:newspaper_id/articles/:article_id ─────────
     .delete(
@@ -567,8 +567,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             await db.delete(articles).where(eq(articles.id, params.article_id));
             return new Response(null, { status: 204 });
         }, {
-			params: articleRouteParams,
-		})
+        params: articleRouteParams,
+    })
 
     // ── POST .../articles/:article_id/submit ─────────────────────────────
     .post(
@@ -590,7 +590,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             const images = await db.query.articleImages.findMany({
                 where: eq(articleImages.articleId, article.id),
             });
-            
+
             //if (images.length === 0) {
             //    return Response.json({ error: "ARTICLE_MISSING_IMAGE" }, { status: 422 });
             //}
@@ -602,8 +602,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
 
             return Response.json({ id: article.id, status: "SUBMITTED" });
         }, {
-			params: articleRouteParams,
-		})
+        params: articleRouteParams,
+    })
 
     // ── POST .../articles/:article_id/images ─────────────────────────────
     .post(
@@ -650,7 +650,17 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                             { status: 422 }
                         );
                     }
-                    imageUrl = `/uploads/articles/${article.id}-${Date.now()}.${blob.type === "image/png" ? "png" : "jpg"}`;
+                    const arrayBuffer = await blob.arrayBuffer();
+                    const base64 = Buffer.from(arrayBuffer).toString("base64");
+                    const dataUri = `data:${blob.type};base64,${base64}`;
+                    const uploadResult = await cloudinary.uploader.upload(dataUri, {
+                        folder: "articles",
+                        resource_type: "image",
+                        transformation: [
+                            { width: 1200, height: 800, crop: "fill", gravity: "auto" },
+                        ],
+                    });
+                    imageUrl = uploadResult.secure_url;
                 } else {
                     const bodyJson = await request.json();
                     imageUrl = bodyJson.url;
@@ -678,8 +688,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 { status: 201 }
             );
         }, {
-			params: articleRouteParams,
-		})
+        params: articleRouteParams,
+    })
 
     // ── DELETE .../articles/:article_id/images/:image_id ─────────────────
     .delete(
@@ -721,10 +731,15 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 }
             }
 
+            const publicIdMatch = image.url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
+            if (publicIdMatch?.[1]) {
+                await cloudinary.uploader.destroy(publicIdMatch[1]).catch(() => { });
+            }
+
             return new Response(null, { status: 204 });
         }, {
-			params: articleImageParams,
-		})
+        params: articleImageParams,
+    })
 
     // ── POST .../articles/:article_id/assign-editor ───────────────────────
     .post(
@@ -744,18 +759,18 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 return Response.json({ error: "INVALID_ARTICLE_STATE" }, { status: 422 });
             }
 
-			const { editor_id } = body;
+            const { editor_id } = body;
 
-			const editorRole = await db.query.userRoles.findFirst({
-				where: and(
-				eq(userRoles.userId, editor_id),
-				eq(userRoles.newspaperId, params.newspaper_id),
-				eq(userRoles.role, "EDITOR")
-				),
-			});
-			if (!editorRole) {
-				return Response.json({ error: "INVALID_ARTICLE_STATE" }, { status: 422 });
-			}
+            const editorRole = await db.query.userRoles.findFirst({
+                where: and(
+                    eq(userRoles.userId, editor_id),
+                    eq(userRoles.newspaperId, params.newspaper_id),
+                    eq(userRoles.role, "EDITOR")
+                ),
+            });
+            if (!editorRole) {
+                return Response.json({ error: "INVALID_ARTICLE_STATE" }, { status: 422 });
+            }
 
             await db
                 .update(articles)
@@ -777,9 +792,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 assigned_editor: { id: editor!.id, full_name: editor!.fullname },
             });
         }, {
-			params: articleRouteParams,
-			body: assignEditorBody,
-		})
+        params: articleRouteParams,
+        body: assignEditorBody,
+    })
 
     // ── POST .../articles/:article_id/review ─────────────────────────────
     .post(
@@ -816,16 +831,16 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                     decision === "APPROVE"
                         ? "APPROVED"
                         : decision === "REJECT"
-                          ? "REJECTED"
-                          : "REVISION_REQUESTED",
+                            ? "REJECTED"
+                            : "REVISION_REQUESTED",
                 feedback: note ?? null,
             });
 
             return Response.json({ id: article.id, status: newState, note: note ?? null });
         }, {
-			params: articleRouteParams,
-			body: reviewBody,
-		})
+        params: articleRouteParams,
+        body: reviewBody,
+    })
 
     // ── POST .../articles/:article_id/approve ─────────────────────────────
     .post(
@@ -865,16 +880,16 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                     decision === "APPROVE"
                         ? "APPROVED_BY_DIRECTOR"
                         : decision === "REJECT"
-                          ? "REJECTED"
-                          : "DRAFT";
+                            ? "REJECTED"
+                            : "DRAFT";
             } else {
                 expectedState = "APPROVED_BY_EDITOR";
                 nextState =
                     decision === "APPROVE"
                         ? "APPROVED_BY_MANAGER"
                         : decision === "REJECT"
-                          ? "REJECTED"
-                          : "DRAFT";
+                            ? "REJECTED"
+                            : "DRAFT";
             }
 
             if (article.state !== expectedState) {
@@ -893,8 +908,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                     decision === "APPROVE"
                         ? "APPROVED"
                         : decision === "REJECT"
-                          ? "REJECTED"
-                          : "REVISION_REQUESTED",
+                            ? "REJECTED"
+                            : "REVISION_REQUESTED",
                 feedback: note ?? null,
             });
 
