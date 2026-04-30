@@ -9,7 +9,6 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
 import { ImageNode } from "../lib/lexical/ImageNode";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import { sampleArticleDetail } from "../lib/sampleData";
 import type { ArticleDetail } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
@@ -90,23 +89,62 @@ function ArticleContent({ content }: { content: string }) {
 export function ArticlePage() {
   const { articleId } = useParams<{ articleId: string }>();
   const { newspaperName, newspaper } = useNewspaper();
-  const [article, setArticle] = useState<ArticleDetail>(sampleArticleDetail);
+  const [article, setArticle] = useState<ArticleDetail | null>(null);
+  const [error, setError] = useState<"unauthorized" | "not_found" | "error" | null>(null);
 
   useEffect(() => {
     if (!newspaper || !articleId) return;
+    setError(null);
     fetch(
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`,
-      {
-        headers: authHeaders(),
-      }
+      { headers: authHeaders() }
     )
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
+        if (res.status === 401 || res.status === 403) {
+          setError("unauthorized");
+          return null;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return null;
+        }
+        if (!res.ok) {
+          setError("error");
+          return null;
+        }
         return res.json() as Promise<ArticleDetail>;
       })
-      .then((data) => setArticle(data))
-      .catch(() => {});
+      .then((data) => { if (data) setArticle(data); })
+      .catch(() => setError("error"));
   }, [newspaper, articleId]);
+
+  if (error) {
+    const message =
+      error === "unauthorized"
+        ? "You must be a registered user to read full articles."
+        : error === "not_found"
+          ? "This article could not be found."
+          : "Failed to load the article. Please try again later.";
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full">
+        <Navbar newspaperName={newspaperName ?? ""} />
+        <div className="flex h-64 flex-col items-center justify-center gap-3">
+          <p className="text-muted-foreground text-[15px]">{message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full">
+        <Navbar newspaperName={newspaperName ?? ""} />
+        <div className="text-muted-foreground flex h-64 items-center justify-center text-[15px]">
+          Loading…
+        </div>
+      </div>
+    );
+  }
 
   const primaryImage = article.images.find((img) => img.is_primary);
   const readTime = estimateReadTime(article.content);

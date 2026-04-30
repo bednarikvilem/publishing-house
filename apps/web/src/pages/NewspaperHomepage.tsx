@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRightIcon } from "../components/Icons";
 import { API_BASE_URL } from "../lib/api";
-import { sampleArticles } from "../lib/sampleData";
 import type { Article, ArticlesResponse } from "../types/article";
 import { ArticleCard } from "../components/ArticleCard";
 import { CategoryBadge } from "../components/CategoryBadge";
@@ -19,7 +18,7 @@ function formatDate(iso: string) {
 
 export function NewspaperHomepage() {
   const { newspaperName, newspaper } = useNewspaper();
-  const [articles, setArticles] = useState<Article[]>(sampleArticles.data);
+  const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
     if (!newspaper) return;
