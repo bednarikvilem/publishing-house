@@ -1,5 +1,12 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { ListNode, ListItemNode } from "@lexical/list";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { sampleArticleDetail } from "../lib/sampleData";
 import type { ArticleDetail } from "../types";
@@ -19,7 +26,29 @@ function estimateReadTime(content: string) {
   return Math.max(1, Math.round(words / 200));
 }
 
-/** Renders article content: ## heading, > blockquote, plain paragraph */
+const viewerTheme = {
+  text: {
+    bold: "font-bold",
+    italic: "italic",
+    underline: "underline",
+    strikethrough: "line-through",
+  },
+  list: {
+    ul: "list-disc pl-6 my-2",
+    ol: "list-decimal pl-6 my-2",
+    listitem: "my-0.5",
+    nested: { listitem: "list-none" },
+  },
+  quote:
+    "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
+  heading: {
+    h1: "text-[32px] font-bold tracking-[-0.3px] my-3",
+    h2: "text-[24px] font-bold tracking-[-0.3px] my-3",
+    h3: "text-[20px] font-bold my-2",
+  },
+  paragraph: "text-foreground text-[16px] leading-[1.8] my-1",
+};
+
 function ArticleContent({
   content,
   inlineImage,
@@ -27,83 +56,50 @@ function ArticleContent({
   content: string;
   inlineImage?: { url: string; caption: string };
 }) {
-  const blocks = content.split(/\n\n+/);
+  let editorState: string | undefined;
+  try {
+    const parsed = JSON.parse(content);
+    if (parsed.root) editorState = content;
+  } catch {
+    // plain text fallback
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      {blocks.map((block, i) => {
-        const trimmed = block.trim();
-
-        // Section heading
-        if (trimmed.startsWith("## ")) {
-          return (
-            <h2
-              key={i}
-              className="text-foreground text-[24px] font-bold tracking-[-0.3px]"
-            >
-              {trimmed.slice(3)}
-            </h2>
-          );
-        }
-
-        // Blockquote
-        if (trimmed.startsWith("> ")) {
-          const lines = trimmed.split("\n");
-          const quoteLines = lines
-            .filter((l) => l.startsWith("> "))
-            .map((l) => l.slice(2));
-          const attribution = lines.find(
-            (l) => l.startsWith("— ") || l.startsWith("> —")
-          );
-          const quoteText = attribution
-            ? quoteLines.filter((l) => !l.startsWith("—")).join(" ")
-            : quoteLines.join(" ");
-          const attr = attribution?.replace(/^> /, "");
-
-          return (
-            <blockquote
-              key={i}
-              className="border-border bg-muted flex flex-col gap-3 border-l-4 px-8 py-6"
-            >
-              <p className="text-foreground text-[16px] leading-[1.7] italic">
-                {quoteText}
-              </p>
-              {attr && (
-                <span className="text-muted-foreground text-[14px] font-semibold">
-                  {attr}
-                </span>
-              )}
-            </blockquote>
-          );
-        }
-
-        // Insert inline image after the second paragraph
-        const node = (
-          <p key={i} className="text-foreground text-[16px] leading-[1.8]">
-            {trimmed}
-          </p>
-        );
-
-        if (inlineImage && i === 2) {
-          return (
-            <Fragment key={i}>
-              {node}
-              <figure className="flex flex-col gap-2">
-                <img
-                  src={inlineImage.url}
-                  alt={inlineImage.caption}
-                  className="h-[360px] w-full rounded-lg object-cover"
-                />
-                <figcaption className="text-muted-foreground text-[13px] italic">
-                  {inlineImage.caption}
-                </figcaption>
-              </figure>
-            </Fragment>
-          );
-        }
-
-        return node;
-      })}
+      {editorState ? (
+        <LexicalComposer
+          initialConfig={{
+            namespace: "ArticleViewer",
+            theme: viewerTheme,
+            nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode],
+            onError: (error: Error) => console.error("Lexical error:", error),
+            editorState,
+            editable: false,
+          }}
+        >
+          <RichTextPlugin
+            contentEditable={
+              <ContentEditable className="text-foreground text-[16px] leading-[1.8] outline-none" />
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <ListPlugin />
+        </LexicalComposer>
+      ) : (
+        <p className="text-foreground text-[16px] leading-[1.8]">{content}</p>
+      )}
+      {inlineImage && (
+        <figure className="flex flex-col gap-2">
+          <img
+            src={inlineImage.url}
+            alt={inlineImage.caption}
+            className="h-[360px] w-full rounded-lg object-cover"
+          />
+          <figcaption className="text-muted-foreground text-[13px] italic">
+            {inlineImage.caption}
+          </figcaption>
+        </figure>
+      )}
     </div>
   );
 }
