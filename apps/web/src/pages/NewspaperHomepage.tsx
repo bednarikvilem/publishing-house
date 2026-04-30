@@ -17,7 +17,7 @@ function formatDate(iso: string) {
 }
 
 export function NewspaperHomepage() {
-  const { newspaperName, newspaper } = useNewspaper();
+  const { newspaperName, newspaper, notFound } = useNewspaper();
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
@@ -30,6 +30,23 @@ export function NewspaperHomepage() {
       .then((data) => setArticles(data.data))
       .catch(() => {});
   }, [newspaper]);
+
+  if (notFound) {
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full">
+        <Navbar newspaperName={newspaperName} />
+        <div className="flex h-64 flex-col items-center justify-center gap-2">
+          <p className="text-foreground text-[18px] font-semibold">
+            Newspaper not found
+          </p>
+          <p className="text-muted-foreground text-[14px]">
+            There is no newspaper at{" "}
+            <span className="font-mono">/{newspaperName}</span>.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const [featured, ...rest] = articles;
 

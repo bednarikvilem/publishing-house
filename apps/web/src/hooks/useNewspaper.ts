@@ -6,22 +6,29 @@ import type { Newspaper } from "../types";
 interface UseNewspaperResult {
   newspaperName: string;
   newspaper: Newspaper | null;
+  notFound: boolean;
 }
 
 export function useNewspaper(): UseNewspaperResult {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const [newspaper, setNewspaper] = useState<Newspaper | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     if (!newspaperName) return;
+    setNotFound(false);
     fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Newspaper not found");
+        if (res.status === 404) {
+          setNotFound(true);
+          return null;
+        }
+        if (!res.ok) throw new Error("Failed to fetch newspaper");
         return res.json() as Promise<Newspaper>;
       })
-      .then((data) => setNewspaper(data))
-      .catch(() => {});
+      .then((data) => { if (data) setNewspaper(data); })
+      .catch(() => setNotFound(true));
   }, [newspaperName]);
 
-  return { newspaperName: newspaperName ?? "", newspaper };
+  return { newspaperName: newspaperName ?? "", newspaper, notFound };
 }
