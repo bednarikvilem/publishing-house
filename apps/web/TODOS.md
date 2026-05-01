@@ -26,8 +26,8 @@
 [ ] View their own profile
 [x] Update their own profile
 [ ] Search for articles
-[ ] Comment on articles
-[ ] Like articles
+[x] Comment on articles
+[x] Like articles
 [ ] Reset password
 
 # Author
@@ -56,7 +56,7 @@
 [x] Approve editor-reviewed articles
 [ ] Schedule articles for publication
 [x] Assign editors to articles
-[ ] Manage categories for their newspaper
+[x] Manage categories for their newspaper
 
 # Director
 
@@ -67,8 +67,8 @@
 
 # System Administrator
 
-[ ] Assign roles to registered users (no need to create user accounts; users self-register)
-[ ] Remove users from roles
+[x] Assign roles to registered users (no need to create user accounts; users self-register)
+[x] Remove users from roles
 [ ] Delete any article
 [ ] Manage system configuration
 [ ] Moderate comments

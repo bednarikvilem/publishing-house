@@ -7,9 +7,10 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
+import { Heart, MessageCircle } from "lucide-react";
 import { ImageNode } from "../lib/lexical/ImageNode";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import type { ArticleDetail } from "../types";
+import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 
@@ -91,6 +92,14 @@ export function ArticlePage() {
   const { newspaperName, newspaper } = useNewspaper();
   const [article, setArticle] = useState<ArticleDetail | null>(null);
   const [error, setError] = useState<"unauthorized" | "not_found" | "error" | null>(null);
+  const [likesCount, setLikesCount] = useState(0);
+  const [likedByMe, setLikedByMe] = useState(false);
+  const [isTogglingLike, setIsTogglingLike] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+
+  const isLoggedIn = !!localStorage.getItem("token");
 
   useEffect(() => {
     if (!newspaper || !articleId) return;
@@ -114,9 +123,65 @@ export function ArticlePage() {
         }
         return res.json() as Promise<ArticleDetail>;
       })
-      .then((data) => { if (data) setArticle(data); })
+      .then((data) => {
+        if (data) {
+          setArticle(data);
+          setLikesCount(data.likes_count);
+          setLikedByMe(data.liked_by_me);
+          setComments(data.comments);
+        }
+      })
       .catch(() => setError("error"));
   }, [newspaper, articleId]);
+
+  async function handleToggleLike() {
+    if (!newspaper || !articleId || isTogglingLike) return;
+    setIsTogglingLike(true);
+    const wasLiked = likedByMe;
+    setLikedByMe(!wasLiked);
+    setLikesCount((c) => c + (wasLiked ? -1 : 1));
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/likes`,
+        { method: wasLiked ? "DELETE" : "POST", headers: authHeaders() }
+      );
+      if (res.ok) {
+        const data = await res.json() as { likes_count: number };
+        setLikesCount(data.likes_count);
+      } else {
+        setLikedByMe(wasLiked);
+        setLikesCount((c) => c + (wasLiked ? 1 : -1));
+      }
+    } catch {
+      setLikedByMe(wasLiked);
+      setLikesCount((c) => c + (wasLiked ? 1 : -1));
+    } finally {
+      setIsTogglingLike(false);
+    }
+  }
+
+  async function handleSubmitComment(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newspaper || !articleId || !commentText.trim() || isSubmittingComment) return;
+    setIsSubmittingComment(true);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/comments`,
+        {
+          method: "POST",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ content: commentText.trim() }),
+        }
+      );
+      if (res.ok) {
+        const newComment = await res.json() as Comment;
+        setComments((prev) => [...prev, newComment]);
+        setCommentText("");
+      }
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  }
 
   if (error) {
     const message =
@@ -229,6 +294,87 @@ export function ArticlePage() {
         </p>
         <hr className="border-border mb-6" />
         <ArticleContent content={article.content} />
+      </section>
+
+      {/* Likes & Comments */}
+      <section className="px-16 pb-16">
+        <hr className="border-border mb-8" />
+
+        {/* Like button */}
+        <div className="mb-10 flex items-center gap-3">
+          {isLoggedIn ? (
+            <button
+              onClick={handleToggleLike}
+              disabled={isTogglingLike}
+              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[14px] font-medium transition-colors ${
+                likedByMe
+                  ? "border-red-400 bg-red-50 text-red-600 hover:bg-red-100"
+                  : "border-border text-muted-foreground hover:border-red-300 hover:text-red-500"
+              }`}
+            >
+              <Heart
+                size={16}
+                className={likedByMe ? "fill-red-500 stroke-red-500" : ""}
+              />
+              {likesCount} {likesCount === 1 ? "Like" : "Likes"}
+            </button>
+          ) : (
+            <span className="text-muted-foreground flex items-center gap-2 text-[14px]">
+              <Heart size={16} />
+              {likesCount} {likesCount === 1 ? "Like" : "Likes"}
+            </span>
+          )}
+        </div>
+
+        {/* Comments */}
+        <div className="flex flex-col gap-6">
+          <h2 className="flex items-center gap-2 text-[20px] font-bold">
+            <MessageCircle size={20} />
+            Comments ({comments.length})
+          </h2>
+
+          {/* Comment form */}
+          {isLoggedIn && (
+            <form onSubmit={handleSubmitComment} className="flex flex-col gap-3">
+              <textarea
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment…"
+                maxLength={2000}
+                rows={3}
+                className="border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-lg border px-4 py-3 text-[14px] outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+              />
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={!commentText.trim() || isSubmittingComment}
+                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2 text-[14px] font-medium disabled:opacity-50 hover:opacity-90 transition-opacity"
+                >
+                  {isSubmittingComment ? "Posting…" : "Post comment"}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Comment list */}
+          {comments.length === 0 ? (
+            <p className="text-muted-foreground text-[14px]">No comments yet. Be the first!</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {comments.map((comment) => (
+                <div key={comment.id} className="border-border rounded-lg border p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="text-[13px] font-semibold">@{comment.author.username}</span>
+                    <span className="text-muted-foreground text-[12px]">
+                      {formatDate(comment.created_at)}
+                    </span>
+                  </div>
+                  <p className="text-foreground text-[14px] leading-[1.6]">{comment.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

@@ -383,10 +383,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 .from(likes)
                 .where(eq(likes.articleId, article.id));
 
-            ///const likedByMe = !!(await db.query.likes.findFirst({
-            ///    where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
-            ///}));
-            const likedByMe = false;
+            const likedByMe = !!(await db.query.likes.findFirst({
+                where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
+            }));
 
             const articleComments = await db.query.comments.findMany({
                 where: eq(comments.articleId, article.id),
