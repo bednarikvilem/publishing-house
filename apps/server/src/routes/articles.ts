@@ -586,6 +586,19 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             if (article.authorId !== user.id) return forbidden();
             if (article.state !== "DRAFT") return forbidden();
 
+            const authorProfile = user.newspaperId
+                ? await db.query.newspaperAuthors.findFirst({
+                    where: and(
+                        eq(newspaperAuthors.userId, user.id),
+                        eq(newspaperAuthors.newspaperId, user.newspaperId)
+                    ),
+                })
+                : null;
+
+            if (!authorProfile?.biography || !authorProfile?.profilePictureUrl) {
+                return Response.json({ error: "AUTHOR_PROFILE_INCOMPLETE" }, { status: 422 });
+            }
+
             const images = await db.query.articleImages.findMany({
                 where: eq(articleImages.articleId, article.id),
             });

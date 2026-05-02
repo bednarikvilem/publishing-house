@@ -392,6 +392,7 @@ export function ArticleEditorPage() {
   const [deleting, setDeleting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [authorProfileComplete, setAuthorProfileComplete] = useState(true);
   const [editorKey, setEditorKey] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -404,6 +405,18 @@ export function ArticleEditorPage() {
       .then((data) => setCategories(data.data ?? []))
       .catch(() => {});
   }, [newspaperId]);
+
+  /* ── Check author profile completeness ─────────────────────────────────── */
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { bio?: string | null; profile_picture?: string | null; roles?: string[] } | null) => {
+        if (data?.roles?.includes("AUTHOR")) {
+          setAuthorProfileComplete(!!(data.bio && data.profile_picture));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   /* ── Load existing article ──────────────────────────────────────────────── */
   useEffect(() => {
@@ -528,6 +541,10 @@ export function ArticleEditorPage() {
       setFormError("Save the article first before submitting.");
       return;
     }
+    if (!authorProfileComplete) {
+      setFormError("Complete your author profile (bio and profile picture) before submitting for review.");
+      return;
+    }
     //if (images.length === 0) {
     //  setFormError("Upload at least one image before submitting for review.");
     //  return;
@@ -549,7 +566,9 @@ export function ArticleEditorPage() {
         setFormError(
           data.error === "ARTICLE_MISSING_IMAGE"
             ? "Upload at least one image before submitting."
-            : (data.error ?? "Failed to submit article.")
+            : data.error === "AUTHOR_PROFILE_INCOMPLETE"
+              ? "Complete your author profile (bio and profile picture) before submitting for review."
+              : (data.error ?? "Failed to submit article.")
         );
         return;
       }
