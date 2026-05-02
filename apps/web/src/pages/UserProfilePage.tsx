@@ -88,7 +88,7 @@ export function UserProfilePage() {
         body: JSON.stringify({
           full_name,
           username: username || undefined,
-          bio: bio || undefined,
+          ...(profile.roles.includes("AUTHOR") ? { bio: bio || undefined } : {}),
         }),
       });
 
@@ -258,29 +258,33 @@ export function UserProfilePage() {
                   <span className="text-foreground text-[14px] font-semibold">
                     Profile Picture
                   </span>
-                  <span className="text-muted-foreground text-[13px]">
-                    JPG, PNG or GIF. Max 2MB.
-                  </span>
-                  {avatarError && (
-                    <span className="text-destructive text-[12px]">
-                      {avatarError}
-                    </span>
+                  {profile.roles.includes("AUTHOR") && (
+                    <>
+                      <span className="text-muted-foreground text-[13px]">
+                        JPG, PNG or GIF. Max 2MB.
+                      </span>
+                      {avatarError && (
+                        <span className="text-destructive text-[12px]">
+                          {avatarError}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={avatarUploading}
+                        className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
+                      >
+                        {avatarUploading ? "Uploading…" : "Change Photo"}
+                      </button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif"
+                        className="hidden"
+                        onChange={handleAvatarChange}
+                      />
+                    </>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={avatarUploading}
-                    className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
-                  >
-                    {avatarUploading ? "Uploading…" : "Change Photo"}
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif"
-                    className="hidden"
-                    onChange={handleAvatarChange}
-                  />
                 </div>
               </div>
 
@@ -360,23 +364,25 @@ export function UserProfilePage() {
                 />
               </div>
 
-              {/* Bio */}
-              <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="bio"
-                  className="text-foreground text-[14px] font-medium"
-                >
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  rows={3}
-                  placeholder="Tell readers a little about yourself…"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
-                />
-              </div>
+              {/* Bio — authors only */}
+              {profile.roles.includes("AUTHOR") && (
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    htmlFor="bio"
+                    className="text-foreground text-[14px] font-medium"
+                  >
+                    Bio
+                  </label>
+                  <textarea
+                    id="bio"
+                    rows={3}
+                    placeholder="Tell readers a little about yourself…"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
+                  />
+                </div>
+              )}
 
               {profileError && (
                 <p className="text-destructive text-[13px]">{profileError}</p>

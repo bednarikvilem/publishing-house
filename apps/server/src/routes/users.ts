@@ -35,10 +35,13 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
     })
 
     // PUT /api/users/me
-    .put("/me", async ({ user, body }) => {
+    .put("/me", async ({ user, roles, body }) => {
         if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
 
         const { username, full_name, bio, password } = body;
+
+        if (bio !== undefined && !roles.includes("AUTHOR"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
 
         if (username) {
             const existing = user.newspaperId
@@ -90,8 +93,9 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
 	})
 
     // POST /api/users/me/profile-picture
-    .post("/me/profile-picture", async ({ user, request }) => {
+    .post("/me/profile-picture", async ({ user, roles, request }) => {
         if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("AUTHOR")) return Response.json({ error: "FORBIDDEN" }, { status: 403 });
 
         let profilePictureUrl: string | null = null;
 
