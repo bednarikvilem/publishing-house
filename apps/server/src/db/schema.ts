@@ -40,6 +40,17 @@ export const userRoles = pgTable("user_roles", {
 export type UserRole = InferSelectModel<typeof userRoles>;
 export type NewUserRole = InferInsertModel<typeof userRoles>;
 
+export const globalRoles = pgTable("global_roles", {
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    role: userRolesEnum("role").notNull(),
+}, (table) => ([
+    primaryKey({ columns: [table.userId, table.role] }),
+    unique("global_roles_role_unique").on(table.role),
+]));
+
+export type GlobalRole = InferSelectModel<typeof globalRoles>;
+export type NewGlobalRole = InferInsertModel<typeof globalRoles>;
+
 export const newspaperAuthors = pgTable("newspaper_authors", {
     id: uuid("id").primaryKey().defaultRandom(),
 
@@ -163,6 +174,7 @@ export const auditLogs = pgTable("audit_logs", {
 export const usersRelations = relations(users, ({ one, many }) => ({
     newspaper: one(newspapers, { fields: [users.newspaperId], references: [newspapers.id] }),
     roles: many(userRoles),
+    globalRoles: many(globalRoles),
     articles: many(articles),
     comments: many(comments),
     likes: many(likes),
@@ -179,6 +191,10 @@ export const newspapersRelations = relations(newspapers, ({ many }) => ({
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
     user: one(users, { fields: [userRoles.userId], references: [users.id] }),
     newspaper: one(newspapers, { fields: [userRoles.newspaperId], references: [newspapers.id] }),
+}));
+
+export const globalRolesRelations = relations(globalRoles, ({ one }) => ({
+    user: one(users, { fields: [globalRoles.userId], references: [users.id] }),
 }));
 
 export const newspaperAuthorsRelations = relations(newspaperAuthors, ({ one }) => ({

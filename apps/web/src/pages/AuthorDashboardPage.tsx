@@ -64,7 +64,7 @@ const MY_ARTICLE_FILTERS: { label: string; value: ArticleStatus | null }[] = [
   { label: "Rejected", value: "REJECTED" },
 ];
 
-const EDITORIAL_ROLES = ["AUTHOR", "EDITOR", "NEWSPAPER_MANAGER", "DIRECTOR"];
+const EDITORIAL_ROLES = ["AUTHOR", "EDITOR", "NEWSPAPER_MANAGER", "DIRECTOR", "SYSTEM_ADMINISTRATOR"];
 
 /* ── Utility ───────────────────────────────────────────────────────────────── */
 
@@ -77,6 +77,7 @@ function formatDate(iso: string) {
 }
 
 function deriveDefaultSection(roles: string[]): string {
+  if (roles.includes("SYSTEM_ADMINISTRATOR")) return "user-management";
   if (roles.includes("AUTHOR")) return "my-articles";
   if (roles.includes("EDITOR")) return "review-queue";
   if (roles.includes("NEWSPAPER_MANAGER")) return "editorial-queue";
@@ -1494,12 +1495,11 @@ function UserManagementSection({ newspaperId }: { newspaperId: string }) {
   const [roleInput, setRoleInput] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const ALL_ROLES = [
+  const NEWSPAPER_ROLES = [
     "REGISTERED_USER",
     "AUTHOR",
     "EDITOR",
     "NEWSPAPER_MANAGER",
-    "DIRECTOR",
   ];
 
   const load = useCallback(async () => {
@@ -1640,13 +1640,13 @@ function UserManagementSection({ newspaperId }: { newspaperId: string }) {
                       className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
                     >
                       <option value="">Select a role…</option>
-                      {ALL_ROLES.filter((r) => !user.roles.includes(r)).map(
-                        (r) => (
+                      {NEWSPAPER_ROLES
+                        .filter((r) => !user.roles.includes(r))
+                        .map((r) => (
                           <option key={r} value={r}>
                             {r}
                           </option>
-                        )
-                      )}
+                        ))}
                     </select>
                     <button
                       onClick={() => handleAssignRole(user.id)}

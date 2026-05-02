@@ -1,17 +1,21 @@
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
-import { users, userRoles, newspapers, articles } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { users, userRoles, globalRoles, newspapers, articles } from "../db/schema";
+import { eq, and, isNull } from "drizzle-orm";
 import {
     adminUsersListParams,
     adminUsersListQuery,
     assignRoleParams,
     assignRoleBody,
     removeRoleParams,
+    assignGlobalRoleParams,
+    assignGlobalRoleBody,
+    removeGlobalRoleParams,
     statisticsParams,
     adminConfigBody,
 } from "../schemas/admin";
+import { createGlobalUserInput } from "../schemas/auth";
 
 // In-memory system config (in production this would be persisted to DB or env)
 let systemConfig = {
@@ -64,12 +68,18 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                         eq(userRoles.newspaperId, params.newspaper_id)
                     ),
                 });
+                const globalRolesList = await db.query.globalRoles.findMany({
+                    where: eq(globalRoles.userId, u.id),
+                });
                 return {
                     id: u.id,
                     email: u.email,
                     username: u.username,
                     full_name: u.fullname,
-                    roles: userRolesList.map((r) => r.role),
+                    roles: [
+                        ...userRolesList.map((r) => r.role),
+                        ...globalRolesList.map((r) => r.role),
+                    ],
                     email_verified: u.email_verified,
                 };
             })
@@ -248,6 +258,80 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
         }
     )
 
+    // ── GET /api/global/users ─────────────────────────────────────────────
+    .get("/api/global/users", async ({ user, roles }) => {
+        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+        const globalUsersList = await db
+            .select()
+            .from(users)
+            .where(isNull(users.newspaperId));
+
+        const result = await Promise.all(
+            globalUsersList.map(async (u) => {
+                const globalRolesList = await db.query.globalRoles.findMany({
+                    where: eq(globalRoles.userId, u.id),
+                });
+                return {
+                    id: u.id,
+                    email: u.email,
+                    username: u.username,
+                    full_name: u.fullname,
+                    roles: globalRolesList.map(r => r.role),
+                };
+            })
+        );
+
+        return Response.json({ data: result });
+    })
+
+    // ── POST /api/global/users ────────────────────────────────────────────
+    .post("/api/global/users", async ({ user, roles, body }) => {
+        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+        const { email, username, password, full_name, role } = body;
+
+        const currentHolder = await db.query.globalRoles.findFirst({
+            where: eq(globalRoles.role, role),
+        });
+        if (currentHolder)
+            return Response.json({ error: "ROLE_ALREADY_HELD_GLOBALLY" }, { status: 409 });
+
+        const [emailExists] = await db
+            .select()
+            .from(users)
+            .where(and(isNull(users.newspaperId), eq(users.email, email)));
+        if (emailExists)
+            return Response.json({ error: "EMAIL_TAKEN" }, { status: 409 });
+
+        const passwordHash = await Bun.password.hash(password);
+
+        const [newUser] = await db.insert(users).values({
+            email,
+            username,
+            fullname: full_name,
+            passwordHash,
+            newspaperId: null,
+            email_verified: true,
+        }).returning();
+
+        await db.insert(globalRoles).values({ userId: newUser.id, role });
+
+        return Response.json({
+            id: newUser.id,
+            email: newUser.email,
+            username: newUser.username,
+            full_name: newUser.fullname,
+            role,
+        }, { status: 201 });
+    }, {
+        body: createGlobalUserInput,
+    })
+
     // ── GET /api/admin/config ─────────────────────────────────────────────
     .get("/api/admin/config", async ({ user, roles }) => {
         if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
@@ -256,6 +340,86 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
         return Response.json(systemConfig);
     })
+
+    // ── POST /api/users/:user_id/global-roles ─────────────────────────────
+    .post(
+        "/api/users/:user_id/global-roles",
+        async ({ params, user, roles, body }) => {
+            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+                return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+            const { role } = body;
+
+            const targetUser = await db.query.users.findFirst({
+                where: eq(users.id, params.user_id),
+            });
+            if (!targetUser) return Response.json({ error: "USER_NOT_FOUND" }, { status: 404 });
+
+            const currentHolder = await db.query.globalRoles.findFirst({
+                where: eq(globalRoles.role, role),
+            });
+            if (currentHolder && currentHolder.userId === params.user_id)
+                return Response.json({ error: "ROLE_ALREADY_ASSIGNED" }, { status: 409 });
+            if (currentHolder)
+                return Response.json({ error: "ROLE_ALREADY_HELD_GLOBALLY" }, { status: 409 });
+
+            await db.insert(globalRoles).values({ userId: params.user_id, role });
+
+            const allGlobalRoles = await db.query.globalRoles.findMany({
+                where: eq(globalRoles.userId, params.user_id),
+            });
+
+            return Response.json({
+                user_id: params.user_id,
+                global_roles: allGlobalRoles.map((r) => r.role),
+            });
+        },
+        {
+            params: assignGlobalRoleParams,
+            body: assignGlobalRoleBody,
+        }
+    )
+
+    // ── DELETE /api/users/:user_id/global-roles/:role ─────────────────────
+    .delete(
+        "/api/users/:user_id/global-roles/:role",
+        async ({ params, user, roles }) => {
+            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+                return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+            if (params.user_id === user.id && params.role === "SYSTEM_ADMINISTRATOR")
+                return Response.json({ error: "CANNOT_REMOVE_OWN_ADMIN_ROLE" }, { status: 422 });
+
+            const existing = await db.query.globalRoles.findFirst({
+                where: and(
+                    eq(globalRoles.userId, params.user_id),
+                    eq(globalRoles.role, params.role)
+                ),
+            });
+            if (!existing) return Response.json({ error: "ROLE_NOT_FOUND" }, { status: 404 });
+
+            await db.delete(globalRoles).where(
+                and(
+                    eq(globalRoles.userId, params.user_id),
+                    eq(globalRoles.role, params.role)
+                )
+            );
+
+            const allGlobalRoles = await db.query.globalRoles.findMany({
+                where: eq(globalRoles.userId, params.user_id),
+            });
+
+            return Response.json({
+                user_id: params.user_id,
+                global_roles: allGlobalRoles.map((r) => r.role),
+            });
+        },
+        {
+            params: removeGlobalRoleParams,
+        }
+    )
 
     // ── PUT /api/admin/config ─────────────────────────────────────────────
     .put("/api/admin/config", async ({ user, roles, body }) => {

@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
-import { users, userRoles } from "../db/schema";
+import { users, userRoles, globalRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { isJtiBlocklisted } from "../utils/redis";
 
@@ -33,17 +33,30 @@ export const authMiddleware = new Elysia({ name: "auth"})
 			return { user: null, roles: [] as string[] };
 		}
 
-		const userRolesList = await db
-			.select()
-			.from(userRoles)
-			.where(
-				and(
-					eq(userRoles.userId, user.id),
-					eq(userRoles.newspaperId, payload.newspaperId as string)
+		const userRolesList = payload.newspaperId
+			? await db
+				.select()
+				.from(userRoles)
+				.where(
+					and(
+						eq(userRoles.userId, user.id),
+						eq(userRoles.newspaperId, payload.newspaperId as string)
+					)
 				)
-			);
+			: [];
 
-		return { user, roles: userRolesList.map(r => r.role) };
+		const globalRolesList = await db
+			.select()
+			.from(globalRoles)
+			.where(eq(globalRoles.userId, user.id));
+
+		return {
+			user,
+			roles: [
+				...userRolesList.map(r => r.role),
+				...globalRolesList.map(r => r.role),
+			] as string[],
+		};
 	});
 
 export const requireAuth = new Elysia({ name: "requireAuth" })

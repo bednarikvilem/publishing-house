@@ -1,5 +1,5 @@
 import { t } from "elysia";
-import { Uuid, Email, Page, limitOpts, Pagination, RoleEnum } from "./shared";
+import { Uuid, Email, Page, limitOpts, Pagination, RoleEnum, NewspaperRoleEnum, GlobalRoleEnum } from "./shared";
 
 export const adminUsersListParams = t.Object({ newspaper_id: Uuid });
 
@@ -16,12 +16,23 @@ export const assignRoleParams = t.Object({
 export const removeRoleParams = t.Object({
 	newspaper_id: Uuid,
 	user_id: Uuid,
-	role: RoleEnum,
+	role: NewspaperRoleEnum,
 });
 
 export const statisticsParams = t.Object({ newspaper_id: Uuid });
 
-export const assignRoleBody = t.Object({ role: RoleEnum });
+export const assignRoleBody = t.Object({ role: NewspaperRoleEnum });
+
+export const assignGlobalRoleParams = t.Object({ user_id: Uuid });
+export const assignGlobalRoleBody = t.Object({ role: GlobalRoleEnum });
+export const removeGlobalRoleParams = t.Object({
+	user_id: Uuid,
+	role: GlobalRoleEnum,
+});
+export const globalRolesResponse = t.Object({
+	user_id: Uuid,
+	global_roles: t.Array(GlobalRoleEnum),
+});
 
 export const adminConfigBody = t.Object({
 	email: t.Optional(

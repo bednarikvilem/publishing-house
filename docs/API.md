@@ -322,6 +322,265 @@ Side effects:
 
 ---
 
+### POST /api/auth/global/login
+
+Authenticate a global user (System Administrator or Director). These users are not
+scoped to any newspaper. Returns a JWT token with `newspaperId: null`.
+
+**Auth required:** No
+
+**Request body:**
+```json
+{
+    "email": "admin@platform.local",
+    "password": "securePassword123"
+}
+```
+
+Field rules:
+```
+┌──────────┬──────────┬───────────────────────────────────────────┐
+│  Field   │ Required │                  Notes                    │
+├──────────┼──────────┼───────────────────────────────────────────┤
+│ email    │ yes      │ email of a global user (no newspaper_id)  │
+├──────────┼──────────┼───────────────────────────────────────────┤
+│ password │ yes      │                                           │
+└──────────┴──────────┴───────────────────────────────────────────┘
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+        "id": "b3d2a1f0-...",
+        "email": "admin@platform.local",
+        "username": "sysadmin",
+        "full_name": "System Administrator",
+        "roles": ["SYSTEM_ADMINISTRATOR"]
+    }
+}
+```
+
+`401 Unauthorized` — wrong credentials or user has no global role
+```json
+{ "error": "INVALID_CREDENTIALS" }
+```
+
+`403 Forbidden` — email not yet verified
+```json
+{ "error": "EMAIL_NOT_VERIFIED" }
+```
+
+---
+
+## Global User Management
+
+> These endpoints are accessible only to the System Administrator via the `/admin` portal.
+
+### GET /api/global/users
+
+List all global users (System Administrator and Director).
+
+**Auth required:** Yes — SYSTEM_ADMINISTRATOR
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Responses:**
+
+`200 OK`
+```json
+[
+    {
+        "id": "b3d2a1f0-...",
+        "email": "admin@platform.local",
+        "username": "sysadmin",
+        "full_name": "System Administrator",
+        "roles": ["SYSTEM_ADMINISTRATOR"]
+    }
+]
+```
+
+`401 Unauthorized`
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden`
+```json
+{ "error": "FORBIDDEN" }
+```
+
+---
+
+### POST /api/global/users
+
+Create a new global user and assign them a global role (SYSTEM_ADMINISTRATOR or DIRECTOR).
+Each global role may only be held by one user at a time (singleton constraint).
+
+**Auth required:** Yes — SYSTEM_ADMINISTRATOR
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Request body:**
+```json
+{
+    "email": "director@platform.local",
+    "username": "director",
+    "full_name": "Editorial Director",
+    "password": "securePassword123",
+    "role": "DIRECTOR"
+}
+```
+
+Field rules:
+```
+┌───────────┬──────────┬──────────────────────────────────────────────────────────┐
+│   Field   │ Required │                       Notes                              │
+├───────────┼──────────┼──────────────────────────────────────────────────────────┤
+│ email     │ yes      │ must be unique among global users                        │
+├───────────┼──────────┼──────────────────────────────────────────────────────────┤
+│ username  │ yes      │ display username                                         │
+├───────────┼──────────┼──────────────────────────────────────────────────────────┤
+│ full_name │ no       │ display name                                             │
+├───────────┼──────────┼──────────────────────────────────────────────────────────┤
+│ password  │ yes      │ min 8 characters                                         │
+├───────────┼──────────┼──────────────────────────────────────────────────────────┤
+│ role      │ yes      │ one of: SYSTEM_ADMINISTRATOR, DIRECTOR                   │
+└───────────┴──────────┴──────────────────────────────────────────────────────────┘
+```
+
+**Responses:**
+
+`201 Created`
+```json
+{
+    "id": "b3d2a1f0-...",
+    "email": "director@platform.local",
+    "username": "director",
+    "roles": ["DIRECTOR"]
+}
+```
+
+`401 Unauthorized`
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden`
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`409 Conflict` — role already assigned to another user
+```json
+{ "error": "ROLE_ALREADY_ASSIGNED" }
+```
+
+`409 Conflict` — email already used by another global user
+```json
+{ "error": "EMAIL_TAKEN" }
+```
+
+---
+
+### POST /api/users/:user_id/global-roles
+
+Assign a global role (SYSTEM_ADMINISTRATOR or DIRECTOR) to an existing global user.
+Each role may only be held by one user at a time.
+
+**Auth required:** Yes — SYSTEM_ADMINISTRATOR
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**URL parameters:**
+- `user_id` — UUID of the target user
+
+**Request body:**
+```json
+{ "role": "DIRECTOR" }
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Role assigned" }
+```
+
+`401 Unauthorized`
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden`
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`409 Conflict` — role held by a different user
+```json
+{ "error": "ROLE_ALREADY_ASSIGNED" }
+```
+
+`409 Conflict` — target user already holds this role
+```json
+{ "error": "ROLE_ALREADY_HELD_GLOBALLY" }
+```
+
+---
+
+### DELETE /api/users/:user_id/global-roles/:role
+
+Remove a global role from a user. A System Administrator cannot remove their own
+SYSTEM_ADMINISTRATOR role.
+
+**Auth required:** Yes — SYSTEM_ADMINISTRATOR
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**URL parameters:**
+- `user_id` — UUID of the target user
+- `role` — one of: `SYSTEM_ADMINISTRATOR`, `DIRECTOR`
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Role removed" }
+```
+
+`401 Unauthorized`
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — insufficient permissions or self-removal of SYSTEM_ADMINISTRATOR
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — user does not have this role
+```json
+{ "error": "ROLE_NOT_FOUND" }
+```
+
+---
+
 ## User Profile
 
 ### GET /api/users/me
@@ -2020,10 +2279,13 @@ Authorization: Bearer <token>
 
 ### POST /api/newspapers/:newspaper_id/users/:user_id/roles
 
-Assign a role to a user within a newspaper. A user may hold multiple roles.
+Assign a newspaper-scoped role to a user. A user may hold multiple roles.
 When a content administrator role (`AUTHOR`, `EDITOR`, `NEWSPAPER_MANAGER`) is
 assigned to a user who does not yet have a profile picture and bio, they will
 be required to complete their profile on next login.
+
+> **Note:** `DIRECTOR` and `SYSTEM_ADMINISTRATOR` are global roles and cannot be
+> assigned via this endpoint. Use `POST /api/users/:user_id/global-roles` instead.
 
 **Auth required:** Yes — `SYSTEM_ADMINISTRATOR`
 
@@ -2046,11 +2308,11 @@ Authorization: Bearer <token>
 
 Field rules:
 ```
-┌───────┬──────────┬──────────────────────────────────────────────────────────────────────┐
-│ Field │ Required │                              Notes                                   │
-├───────┼──────────┼──────────────────────────────────────────────────────────────────────┤
-│ role  │ yes      │ one of: REGISTERED_USER, AUTHOR, EDITOR, NEWSPAPER_MANAGER, DIRECTOR │
-└───────┴──────────┴──────────────────────────────────────────────────────────────────────┘
+┌───────┬──────────┬──────────────────────────────────────────────────────────────────────────┐
+│ Field │ Required │                              Notes                                       │
+├───────┼──────────┼──────────────────────────────────────────────────────────────────────────┤
+│ role  │ yes      │ one of: REGISTERED_USER, AUTHOR, EDITOR, NEWSPAPER_MANAGER               │
+└───────┴──────────┴──────────────────────────────────────────────────────────────────────────┘
 ```
 
 **Responses:**
@@ -2098,17 +2360,20 @@ Side effects:
 
 ### DELETE /api/newspapers/:newspaper_id/users/:user_id/roles/:role
 
-Remove a role from a user within a newspaper.
+Remove a newspaper-scoped role from a user.
+
+> **Note:** To remove `DIRECTOR` or `SYSTEM_ADMINISTRATOR`, use
+> `DELETE /api/users/:user_id/global-roles/:role` instead.
 
 **Auth required:** Yes — `SYSTEM_ADMINISTRATOR`
 
 **URL parameters:**
 
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| user_id      | UUID of the user      |
-| role         | Role name to remove   |
+| Parameter    | Description                                                      |
+|--------------|------------------------------------------------------------------|
+| newspaper_id | UUID of the newspaper                                            |
+| user_id      | UUID of the user                                                 |
+| role         | One of: REGISTERED_USER, AUTHOR, EDITOR, NEWSPAPER_MANAGER      |
 
 **Headers:**
 ```

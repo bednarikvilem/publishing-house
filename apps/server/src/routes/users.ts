@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { users, newspaperAuthors } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { updateMeBody } from "../schemas/users";
 
 export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["Users"] } })
@@ -13,12 +13,14 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
     .get("/me", async ({ user, roles }) => {
         if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
 
-        const authorProfile = await db.query.newspaperAuthors.findFirst({
-            where: and(
-                eq(newspaperAuthors.userId, user.id),
-                eq(newspaperAuthors.newspaperId, user.newspaperId!)
-            ),
-        });
+        const authorProfile = user.newspaperId
+            ? await db.query.newspaperAuthors.findFirst({
+                where: and(
+                    eq(newspaperAuthors.userId, user.id),
+                    eq(newspaperAuthors.newspaperId, user.newspaperId)
+                ),
+            })
+            : null;
 
         return Response.json({
             id: user.id,
@@ -39,9 +41,13 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
         const { username, full_name, bio, password } = body;
 
         if (username) {
-            const existing = await db.query.users.findFirst({
-                where: and(eq(users.username, username), eq(users.newspaperId, user.newspaperId!)),
-            });
+            const existing = user.newspaperId
+                ? await db.query.users.findFirst({
+                    where: and(eq(users.username, username), eq(users.newspaperId, user.newspaperId)),
+                })
+                : await db.query.users.findFirst({
+                    where: and(eq(users.username, username), isNull(users.newspaperId)),
+                });
             if (existing && existing.id !== user.id)
                 return Response.json({ error: "USERNAME_TAKEN" }, { status: 409 });
         }
@@ -55,11 +61,11 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
             await db.update(users).set(updateData).where(eq(users.id, user.id));
         }
 
-        if (bio !== undefined) {
+        if (bio !== undefined && user.newspaperId) {
             const authorProfile = await db.query.newspaperAuthors.findFirst({
                 where: and(
                     eq(newspaperAuthors.userId, user.id),
-                    eq(newspaperAuthors.newspaperId, user.newspaperId!)
+                    eq(newspaperAuthors.newspaperId, user.newspaperId)
                 ),
             });
             if (authorProfile) {
@@ -129,10 +135,14 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
             );
         }
 
+        if (!user.newspaperId) {
+            return Response.json({ error: "GLOBAL_USER_NO_PROFILE" }, { status: 422 });
+        }
+
         const existing = await db.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, user.id),
-                eq(newspaperAuthors.newspaperId, user.newspaperId!)
+                eq(newspaperAuthors.newspaperId, user.newspaperId)
             ),
         });
 
@@ -144,7 +154,7 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
         } else {
             await db.insert(newspaperAuthors).values({
                 userId: user.id,
-                newspaperId: user.newspaperId!,
+                newspaperId: user.newspaperId,
                 profilePictureUrl,
             });
         }

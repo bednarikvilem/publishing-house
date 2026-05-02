@@ -3,8 +3,8 @@ import { jwt } from "@elysiajs/jwt";
 import { JWT_EXPIRATION } from "../utils/jwt";
 import { bearer } from "@elysiajs/bearer";
 import { db } from "../db";
-import { users, userRoles, newspapers } from "../db/schema";
-import { eq, and, or } from "drizzle-orm";
+import { users, userRoles, globalRoles, newspapers } from "../db/schema";
+import { eq, and, isNull, or } from "drizzle-orm";
 import { blocklistJti } from "../utils/redis";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email";
 import {
@@ -14,6 +14,7 @@ import {
 	forgotPasswordInput,
 	resetPasswordInput,
 	resendVerificationInput,
+	globalLoginInput,
 } from "../schemas/auth";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Auth"] } })
@@ -38,6 +39,16 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			.where(and(eq(users.newspaperId, newspaper_id), eq(users.email, email)));
 
 		if (emailDuplicate) {
+			return Response.json({ error: "EMAIL_TAKEN" }, { status: 409 });
+		}
+
+		// Guard: block registration if this email belongs to a global user (DIRECTOR/SYSTEM_ADMINISTRATOR)
+		const [globalUserWithEmail] = await db
+			.select()
+			.from(users)
+			.where(and(isNull(users.newspaperId), eq(users.email, email)));
+
+		if (globalUserWithEmail) {
 			return Response.json({ error: "EMAIL_TAKEN" }, { status: 409 });
 		}
 
@@ -256,6 +267,57 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 		return Response.json({ message: "Password reset successfully" });
 	}, {
 		body: resetPasswordInput,
+	})
+
+	.post("/global/login", async ({ body, jwt }) => {
+		const { email, password } = body;
+
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(and(eq(users.email, email), isNull(users.newspaperId)));
+
+		if (!user) {
+			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
+		}
+
+		const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
+		if (!isPasswordValid) {
+			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
+		}
+
+		if (!user.email_verified) {
+			return Response.json({ error: "EMAIL_NOT_VERIFIED" }, { status: 403 });
+		}
+
+		const userGlobalRoles = await db
+			.select()
+			.from(globalRoles)
+			.where(eq(globalRoles.userId, user.id));
+
+		if (userGlobalRoles.length === 0) {
+			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
+		}
+
+		const token = await jwt.sign({
+			userId: user.id,
+			newspaperId: null,
+			jti: crypto.randomUUID(),
+			exp: JWT_EXPIRATION.session,
+		});
+
+		return Response.json({
+			token,
+			user: {
+				id: user.id,
+				email: user.email,
+				username: user.username,
+				full_name: user.fullname,
+				roles: userGlobalRoles.map(r => r.role),
+			},
+		});
+	}, {
+		body: globalLoginInput,
 	})
 
 	.post("/resend-verification", async ({ body, jwt }) => {

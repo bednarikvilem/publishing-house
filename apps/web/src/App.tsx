@@ -11,11 +11,21 @@ import { UserProfilePage } from "./pages/UserProfilePage";
 import { AuthorDashboardPage } from "./pages/AuthorDashboardPage";
 import { ArticleEditorPage } from "./pages/ArticleEditorPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import { AdminLoginPage } from "./pages/AdminLoginPage";
+import { AdminDashboardPage } from "./pages/AdminDashboardPage";
+import { DirectorLoginPage } from "./pages/DirectorLoginPage";
+import { DirectorDashboardPage } from "./pages/DirectorDashboardPage";
 import "./index.css";
 
 export function App() {
   return (
     <Routes>
+      {/* Global portals — must come before /:newspaperName catch-all */}
+      <Route path="/admin" element={<AdminLoginPage />} />
+      <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+      <Route path="/director" element={<DirectorLoginPage />} />
+      <Route path="/director/dashboard" element={<DirectorDashboardPage />} />
+
       <Route path="/:newspaperName" element={<NewspaperHomepage />} />
       <Route
         path="/:newspaperName/articles/new"

@@ -1,3 +1,4 @@
+import { seedSystemAdmin } from "./seeds/seedSystemAdmin";
 import { seedNewspapers } from "./seeds/seedNewspaper"
 import { seedUsers } from "./seeds/seedUsers"
 import { seedNewArticleCategory } from "./seeds/seedArticleCategories"
@@ -9,6 +10,7 @@ import { seedArticleReviews } from "./seeds/seedArticleReviews";
 
 
 async function seed() {
+    await seedSystemAdmin();
     await seedNewspapers();
     await seedNewArticleCategory();
     await seedUsers();

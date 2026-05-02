@@ -22,6 +22,18 @@ export const RoleEnum = t.Union([
 	t.Literal("SYSTEM_ADMINISTRATOR"),
 ]);
 
+export const NewspaperRoleEnum = t.Union([
+	t.Literal("REGISTERED_USER"),
+	t.Literal("AUTHOR"),
+	t.Literal("EDITOR"),
+	t.Literal("NEWSPAPER_MANAGER"),
+]);
+
+export const GlobalRoleEnum = t.Union([
+	t.Literal("DIRECTOR"),
+	t.Literal("SYSTEM_ADMINISTRATOR"),
+]);
+
 export const articleInsertBase = createInsertSchema(articles, {
 	title: t.String({ minLength: 1, maxLength: 255 }),
 	perex: t.String({ minLength: 1, maxLength: 1000 }),
