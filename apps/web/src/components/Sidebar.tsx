@@ -7,11 +7,13 @@ import {
   FileTextIcon,
   InboxIcon,
   LogOutIcon,
+  MenuIcon,
   NewspaperIcon,
   PlusIcon,
   TagIcon,
   UserIcon,
   UsersIcon,
+  XIcon,
 } from "./Icons";
 
 interface UserMe {
@@ -29,10 +31,12 @@ function NavItem({
   icon,
   label,
   href,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   href: string;
+  onClick?: () => void;
 }) {
   const location = useLocation();
   const currentPath = location.pathname + location.search;
@@ -45,6 +49,7 @@ function NavItem({
   return (
     <Link
       to={href}
+      onClick={onClick}
       className={`flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
         isActive
           ? "bg-muted text-foreground"
@@ -74,30 +79,21 @@ function NavSection({
   );
 }
 
-// ── Sidebar ───────────────────────────────────────────────────────────────────
+// ── Shared sidebar content ────────────────────────────────────────────────────
 
-interface SidebarProps {
-  /** Page-specific nav content rendered between the role sections and the bottom actions. */
+function SidebarContent({
+  user,
+  roles,
+  np,
+  children,
+  onNavClick,
+}: {
+  user: UserMe | null;
+  roles: Set<string>;
+  np: string;
   children?: React.ReactNode;
-}
-
-export function Sidebar({ children }: SidebarProps) {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
-  const np = newspaperName ?? "";
-
-  const [user, setUser] = useState<UserMe | null>(null);
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) =>
-        res.ok ? (res.json() as Promise<UserMe>) : Promise.reject()
-      )
-      .then(setUser)
-      .catch(() => {});
-  }, []);
-
-  const roles = new Set(user?.roles ?? []);
-
+  onNavClick?: () => void;
+}) {
   const displayName = user?.full_name ?? user?.username ?? "…";
   const initials = displayName
     .split(" ")
@@ -112,7 +108,7 @@ export function Sidebar({ children }: SidebarProps) {
   }
 
   return (
-    <aside className="border-border bg-background flex w-[225px] shrink-0 flex-col border-r">
+    <>
       {/* User info */}
       <div className="border-border flex items-center gap-3 border-b px-4 py-4">
         <div className="bg-muted flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
@@ -148,11 +144,13 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<FileTextIcon />}
               label="My Articles"
               href={`/${np}/author-dashboard?section=my-articles`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<PlusIcon />}
               label="New Article"
               href={`/${np}/articles/new`}
+              onClick={onNavClick}
             />
           </NavSection>
         )}
@@ -163,6 +161,7 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<InboxIcon />}
               label="Review Queue"
               href={`/${np}/author-dashboard?section=review-queue`}
+              onClick={onNavClick}
             />
           </NavSection>
         )}
@@ -173,16 +172,19 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<InboxIcon />}
               label="Editorial Queue"
               href={`/${np}/author-dashboard?section=editorial-queue`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<TagIcon />}
               label="Categories"
               href={`/${np}/author-dashboard?section=categories`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<BarChartIcon />}
               label="Statistics"
               href={`/${np}/author-dashboard?section=statistics`}
+              onClick={onNavClick}
             />
           </NavSection>
         )}
@@ -193,21 +195,25 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<NewspaperIcon />}
               label="All Newspapers"
               href={`/${np}/author-dashboard?section=all-newspapers`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<BarChartIcon />}
               label="Statistics"
               href={`/${np}/author-dashboard?section=statistics`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<InboxIcon />}
               label="Approval Queue"
               href={`/${np}/author-dashboard?section=director-queue`}
+              onClick={onNavClick}
             />
             <NavItem
               icon={<CheckIcon />}
               label="Publication Queue"
               href={`/${np}/author-dashboard?section=publication-queue`}
+              onClick={onNavClick}
             />
           </NavSection>
         )}
@@ -218,11 +224,11 @@ export function Sidebar({ children }: SidebarProps) {
               icon={<UsersIcon />}
               label="User Management"
               href={`/${np}/author-dashboard?section=user-management`}
+              onClick={onNavClick}
             />
           </NavSection>
         )}
 
-        {/* Page-specific content (e.g. status filters on the Author Dashboard) */}
         {children && (
           <>
             <div className="bg-border my-1 h-px" />
@@ -237,6 +243,7 @@ export function Sidebar({ children }: SidebarProps) {
           icon={<UserIcon />}
           label="My Profile"
           href={`/${np}/profile`}
+          onClick={onNavClick}
         />
         <button
           onClick={handleLogOut}
@@ -246,6 +253,87 @@ export function Sidebar({ children }: SidebarProps) {
           Log Out
         </button>
       </div>
-    </aside>
+    </>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+
+interface SidebarProps {
+  children?: React.ReactNode;
+}
+
+export function Sidebar({ children }: SidebarProps) {
+  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const np = newspaperName ?? "";
+  const [user, setUser] = useState<UserMe | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
+      .then((res) =>
+        res.ok ? (res.json() as Promise<UserMe>) : Promise.reject()
+      )
+      .then(setUser)
+      .catch(() => {});
+  }, []);
+
+  const roles = new Set(user?.roles ?? []);
+
+  return (
+    <>
+      {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
+      <aside className="border-border bg-background hidden w-[225px] shrink-0 flex-col border-r md:flex">
+        <SidebarContent user={user} roles={roles} np={np}>
+          {children}
+        </SidebarContent>
+      </aside>
+
+      {/* ── Mobile trigger bar ──────────────────────────────────────────── */}
+      <div className="border-border bg-background flex items-center border-b px-4 py-3 md:hidden">
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors"
+        >
+          <MenuIcon size={18} />
+          Menu
+        </button>
+      </div>
+
+      {/* ── Mobile drawer overlay ────────────────────────────────────────── */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setDrawerOpen(false)}
+          />
+          {/* Drawer */}
+          <aside className="border-border bg-background absolute inset-y-0 left-0 flex w-72 flex-col border-r shadow-xl">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-foreground text-[14px] font-semibold">
+                Dashboard Menu
+              </span>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors"
+              >
+                <XIcon size={18} />
+              </button>
+            </div>
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <SidebarContent
+                user={user}
+                roles={roles}
+                np={np}
+                onNavClick={() => setDrawerOpen(false)}
+              >
+                {children}
+              </SidebarContent>
+            </div>
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

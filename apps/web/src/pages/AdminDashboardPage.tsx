@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import { PlusIcon, TrashIcon, SunIcon, MoonIcon } from "../components/Icons";
+import { PlusIcon, TrashIcon, SunIcon, MoonIcon, MenuIcon, XIcon } from "../components/Icons";
 import { useTheme } from "../hooks/useTheme";
 
 type GlobalUser = {
@@ -338,6 +338,12 @@ export function AdminDashboardPage() {
   const [newspapers, setNewspapers] = useState<NewspaperEntry[]>([]);
   const [activeSection, setActiveSection] = useState<"global-users" | { newspaper: NewspaperEntry }>("global-users");
   const [authChecked, setAuthChecked] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  function selectSection(section: "global-users" | { newspaper: NewspaperEntry }) {
+    setActiveSection(section);
+    setDrawerOpen(false);
+  }
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
@@ -370,10 +376,40 @@ export function AdminDashboardPage() {
     return <div className="bg-background text-foreground flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading…</p></div>;
   }
 
+  // Sidebar nav content shared between desktop and mobile drawer
+  const sidebarNav = (
+    <>
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">Global</p>
+      <button
+        onClick={() => selectSection("global-users")}
+        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeSection === "global-users" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+      >
+        Global Users
+      </button>
+
+      <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">Newspapers</p>
+      {newspapers.map((np) => (
+        <button
+          key={np.id}
+          onClick={() => selectSection({ newspaper: np })}
+          className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${typeof activeSection === "object" && activeSection.newspaper.id === np.id ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+        >
+          {np.name}
+        </button>
+      ))}
+
+      <div className="mt-auto pt-4">
+        <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-[13px] font-medium transition-colors">
+          Log Out
+        </button>
+      </div>
+    </>
+  );
+
   return (
-    <div className="bg-background text-foreground flex min-h-screen w-full">
-      {/* Sidebar */}
-      <aside className="border-border bg-card flex w-64 shrink-0 flex-col gap-1 border-r px-3 py-6">
+    <div className="bg-background text-foreground flex min-h-screen w-full flex-col md:flex-row">
+      {/* Desktop sidebar */}
+      <aside className="border-border bg-card hidden w-64 shrink-0 flex-col gap-1 border-r px-3 py-6 md:flex">
         <div className="flex items-center justify-between px-2 pb-4">
           <span className="text-foreground text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
             Admin Portal
@@ -382,42 +418,45 @@ export function AdminDashboardPage() {
             {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
           </button>
         </div>
-
-        <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
-          Global
-        </p>
-        <button
-          onClick={() => setActiveSection("global-users")}
-          className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeSection === "global-users" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-        >
-          Global Users
-        </button>
-
-        <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
-          Newspapers
-        </p>
-        {newspapers.map((np) => (
-          <button
-            key={np.id}
-            onClick={() => setActiveSection({ newspaper: np })}
-            className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${typeof activeSection === "object" && activeSection.newspaper.id === np.id ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-          >
-            {np.name}
-          </button>
-        ))}
-
-        <div className="mt-auto pt-4">
-          <button
-            onClick={handleLogout}
-            className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-[13px] font-medium transition-colors"
-          >
-            Log Out
-          </button>
-        </div>
+        {sidebarNav}
       </aside>
 
+      {/* Mobile trigger bar */}
+      <div className="border-border bg-background flex items-center justify-between border-b px-4 py-3 md:hidden">
+        <span className="text-foreground text-[15px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
+          Admin Portal
+        </span>
+        <div className="flex items-center gap-2">
+          <button onClick={toggle} aria-label="Toggle dark mode" className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors">
+            {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
+          </button>
+          <button onClick={() => setDrawerOpen(true)} aria-label="Open menu" className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors">
+            <MenuIcon size={18} />
+            Menu
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
+          <aside className="border-border bg-card absolute inset-y-0 left-0 flex w-72 flex-col gap-1 border-r px-3 py-6 shadow-xl">
+            <div className="flex items-center justify-between px-2 pb-4">
+              <span className="text-foreground text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
+                Admin Portal
+              </span>
+              <button onClick={() => setDrawerOpen(false)} className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors">
+                <XIcon size={18} />
+              </button>
+            </div>
+            {sidebarNav}
+          </aside>
+        </div>
+      )}
+
       {/* Main */}
-      <main className="flex flex-1 flex-col gap-7 px-12 py-8">
+      <main className="flex flex-1 flex-col gap-7 px-4 py-6 md:px-12 md:py-8">
         {activeSection === "global-users" ? (
           <GlobalUsersSection />
         ) : (

@@ -1761,10 +1761,10 @@ export function AuthorDashboardPage() {
     <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
       <Navbar newspaperName={np} />
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col md:flex-row">
         <Sidebar>{sidebarChildren}</Sidebar>
 
-        <main className="flex flex-1 flex-col gap-7 px-12 py-8">
+        <main className="flex flex-1 flex-col gap-7 px-4 py-6 md:px-12 md:py-8">
           {!rolesLoaded ? (
             <LoadingState />
           ) : !hasAccess ? (
