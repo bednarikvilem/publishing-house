@@ -1,8 +1,8 @@
 # Email communication
 
-- Registration confirmation
-- Article approval/rejection notifications
-- Password reset
+- [x] Registration confirmation
+- [ ] Article approval/rejection notifications
+- [ ] Password reset
 
 # Visitor
 
@@ -13,7 +13,7 @@
 - [x] View the articles previews (perex)
 - [x] View articles by category
 - [x] View author profiles
-- [ ] Search for articles
+- [x] Search for articles
 
 # Registered User
 
@@ -25,7 +25,7 @@
 - [x] View author profiles
 - [ ] View their own profile
 - [x] Update their own profile
-- [ ] Search for articles
+- [x] Search for articles
 - [x] Comment on articles
 - [x] Like articles
 - [ ] Reset password
@@ -72,18 +72,18 @@
 
 # Search functionality
 
-- [ ] keywords
-- [ ] title
-- [ ] article content
-- [ ] author name
-- [ ] category
+- [x] keywords
+- [x] title
+- [x] article content
+- [x] author name
+- [x] category
 - [ ] publication date
 
 # Responsive Design
 
-- [ ] Desktop browsers
-- [ ] Tablet devices
-- [ ] Mobile devices
+- [x] Desktop browsers
+- [x] Tablet devices
+- [X] Mobile devices
 
 # Error Handling
 
