@@ -12,6 +12,8 @@ import { adminRoutes } from "./routes/admin.ts";
 import { authorRoutes } from "./routes/authors.ts";
 import { cors } from "@elysiajs/cors";
 import { openapi } from "@elysiajs/openapi";
+import { logger } from "./utils/logger";
+import { audit } from "./utils/audit";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -63,13 +65,33 @@ export const app = new Elysia()
                 data: result.map(n => ({ id: n.id, name: n.name, slug: n.slug })),
             };
         } catch (error) {
-            console.error("Database query failed:", error);
+            logger.error("Database query failed", {
+                error: error instanceof Error ? error.message : String(error),
+            });
+
             return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
         }
+    })
+    .onError(({ error, request, set }) => {
+        set.status = set.status || 500;
+
+        logger.error("Unhandled server error", {
+            method: request.method,
+            url: request.url,
+            status: set.status,
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+        });
+
+        return {
+            error: "Internal Server Error",
+        };
     })
     .listen(PORT);
 
 export type App = typeof app;
 
-console.log(`Server running on http://localhost:${app.server?.port}`);
-console.log(`Database: ${DATABASE_URL.replace(/:\/\/.*@/, "://<redacted>@")}`);
+logger.info("Server started", {
+  port: app.server?.port,
+  database: DATABASE_URL.replace(/:\/\/.*@/, "://<redacted>@"),
+});

@@ -15,6 +15,8 @@ import {
 	resetPasswordInput,
 	resendVerificationInput,
 } from "../schemas/auth";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Auth"] } })
 	.use(bearer())
@@ -78,6 +80,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 
 		await sendVerificationEmail(newUser.email, verificationToken, newspaper.slug);
 
+		await audit({ userId: newUser.id, operationType: "USER_REGISTER", targetObjectId: newUser.id, result: "SUCCESS" });
+		logger.info("User registered", { userId: newUser.id, email: newUser.email, newspaperId: newspaper_id });
+
 		return Response.json({
 			id: newUser.id,
 			email: newUser.email,
@@ -102,16 +107,25 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			);
 		
 		if (!user) {
+			await audit({ userId: null, operationType: "USER_LOGIN", result: "FAILURE" });
+    		logger.warn("Failed login attempt", { email, newspaperId: newspaper_id, reason: "USER_NOT_FOUND" });
+
 			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
 
 		const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
 
 		if (!isPasswordValid) {
+			await audit({ userId: user?.id ?? null, operationType: "USER_LOGIN", result: "FAILURE" });
+			logger.warn("Failed login attempt", { email, newspaperId: newspaper_id, reason: "INVALID_CREDENTIALS" });
+
 			return Response.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
 		}
 
 		if (!user.email_verified) {
+			await audit({ userId: user?.id ?? null, operationType: "USER_LOGIN", result: "FAILURE" });
+			logger.warn("Failed login attempt", { email, newspaperId: newspaper_id, reason: "INVALID_CREDENTIALS" });
+
 			return Response.json({ error: "EMAIL_NOT_VERIFIED" }, { status: 403 });
 		}
 
@@ -131,6 +145,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			jti: crypto.randomUUID(),
 			exp: JWT_EXPIRATION.session,
 		});
+
+		await audit({ userId: user.id, operationType: "USER_LOGIN", targetObjectId: user.id, result: "SUCCESS" });
+		logger.info("User logged in", { userId: user.id, newspaperId: newspaper_id });
 
 		return Response.json({
 			token,
@@ -162,6 +179,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			await blocklistJti(payload.jti as string, ttl);
 		}
 
+		await audit({ userId: String(payload.userId), operationType: "USER_LOGOUT", result: "SUCCESS" });
+		logger.info("User logged out", { userId: payload.userId });
+
 		return Response.json({ message: "Logged out successfully" });
 	})
 
@@ -171,6 +191,8 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 		const payload = await jwt.verify(token);
 
 		if (!payload || payload.type !== "email_verification") {
+			logger.warn("Email verification failed - invalid token");
+
 			return Response.json({ error: "INVALID_TOKEN" }, { status: 400 });
 		}
 
@@ -187,6 +209,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			.update(users)
 			.set({ email_verified: true })
 			.where(eq(users.id, user.id));
+
+		logger.info("Email address verified", { userId: user.id });
+		await audit({ userId: user.id, operationType: "EMAIL_VERIFIED", targetObjectId: user.id, result: "SUCCESS" });
 
 		return Response.json({ message: "Email verified successfully" });
 	}, {
@@ -221,6 +246,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			if (newspaper) {
 				await sendPasswordResetEmail(user.email, resetToken, newspaper.slug);
 			}
+
+			logger.info("Password reset requested", { userId: user.id });
+			await audit({ userId: user.id, operationType: "PASSWORD_RESET_REQUESTED", result: "SUCCESS" });
 		}
 
 		return Response.json({ message: "Reset link has been set" });
@@ -234,6 +262,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 		const payload = await jwt.verify(token);
 
 		if (!payload || payload.type !== "password_reset") {
+			logger.warn("Password reset failed - invalid token");
 			return Response.json({ error: "INVALID_TOKEN" }, { status: 400 });
 		}
 
@@ -252,6 +281,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			.update(users)
 			.set({ passwordHash })
 			.where(eq(users.id, user.id));
+
+		await audit({ userId: user.id, operationType: "PASSWORD_RESET", targetObjectId: user.id, result: "SUCCESS" });
+		logger.info("Password reset completed", { userId: user.id });
 
 		return Response.json({ message: "Password reset successfully" });
 	}, {
@@ -286,6 +318,9 @@ export const authRoutes = new Elysia({ prefix: "/api/auth", detail: { tags: ["Au
 			if (newspaper) {
 				await sendVerificationEmail(user.email, verificationToken, newspaper.slug);
 			}
+
+			logger.info("Verification email resent", { userId: user.id });
+    		await audit({ userId: user.id, operationType: "VERIFICATION_RESENT", result: "SUCCESS" });
 		}
 
 		return Response.json({ message: "Verification link has been sent" });
