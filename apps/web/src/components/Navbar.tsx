@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronDownIcon, LayoutDashboardIcon, SunIcon, MoonIcon } from "./Icons";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronDownIcon, LayoutDashboardIcon, SunIcon, MoonIcon, SearchIcon } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
 import { API_BASE_URL, authHeaders } from "../lib/api";
@@ -38,9 +38,21 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const { newspaper } = useNewspaper();
   const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
+  const [searchParams] = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) navigate(`/${newspaperName}/search?q=${encodeURIComponent(q)}`);
+  }
 
   displayName ??=
     newspaper?.name ??
@@ -84,8 +96,8 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   }
 
   return (
-    <header className="border-border bg-background relative z-10 flex items-center justify-between border-b px-12 py-4">
-      <div className="flex items-center gap-10">
+    <header className="border-border bg-background relative z-10 flex items-center gap-4 border-b px-12 py-4">
+      <div className="flex shrink-0 items-center gap-10">
         <Link
           to={`/${newspaperName}`}
           className="text-foreground text-[22px] font-extrabold tracking-tight"
@@ -111,7 +123,20 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         </nav>
       </div>
 
-      <div className="flex items-center gap-3">
+      <form onSubmit={handleSearch} className="hidden flex-1 md:flex">
+        <div className="border-border bg-muted/50 focus-within:bg-background focus-within:border-ring flex h-9 w-full max-w-sm items-center gap-2 rounded-lg border px-3 transition-colors">
+          <SearchIcon size={15} className="text-muted-foreground shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search articles…"
+            className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[13px] outline-none"
+          />
+        </div>
+      </form>
+
+      <div className="ml-auto flex items-center gap-3">
         <button
           onClick={toggle}
           aria-label="Toggle dark mode"
