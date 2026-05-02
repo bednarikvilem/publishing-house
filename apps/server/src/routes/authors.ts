@@ -3,6 +3,7 @@ import { db } from "../db";
 import { newspapers, newspaperAuthors, articles, articleCategory, articleImages, users } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { authorRouteParams, authorArticlesQuery } from "../schemas/authors";
+import { logger } from "../utils/logger";
 
 export const authorRoutes = new Elysia({ detail: { tags: ["Authors"] } })
 
@@ -11,7 +12,14 @@ export const authorRoutes = new Elysia({ detail: { tags: ["Authors"] } })
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Author fetch failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+                authorId: params.author_id,
+            });
+
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
         const authorProfile = await db.query.newspaperAuthors.findFirst({
             where: and(
@@ -19,10 +27,23 @@ export const authorRoutes = new Elysia({ detail: { tags: ["Authors"] } })
                 eq(newspaperAuthors.newspaperId, params.newspaper_id)
             ),
         });
-        if (!authorProfile) return Response.json({ error: "AUTHOR_NOT_FOUND" }, { status: 404 });
+        if (!authorProfile) {
+            logger.warn("Author fetch failed: author not linked to newspaper", {
+                newspaperId: params.newspaper_id,
+                authorId: params.author_id,
+            });
+
+            return Response.json({ error: "AUTHOR_NOT_FOUND" }, { status: 404 });
+        }
 
         const user = await db.query.users.findFirst({ where: eq(users.id, params.author_id) });
-        if (!user) return Response.json({ error: "AUTHOR_NOT_FOUND" }, { status: 404 });
+        if (!user) {
+            logger.warn("Author fetch failed: user not found", {
+                authorId: params.author_id,
+            });
+
+            return Response.json({ error: "AUTHOR_NOT_FOUND" }, { status: 404 });
+        }
 
 		const { page, limit } = query;
 		const offset = (page - 1) * limit;
@@ -38,6 +59,14 @@ export const authorRoutes = new Elysia({ detail: { tags: ["Authors"] } })
 
         const total = allArticles.length;
         const paged = allArticles.slice(offset, offset + limit);
+
+        logger.info("Author profile fetched", {
+            newspaperId: params.newspaper_id,
+            authorId: params.author_id,
+            page,
+            limit,
+            resultCount: paged.length,
+        });
 
         return Response.json({
             id: user.id,
