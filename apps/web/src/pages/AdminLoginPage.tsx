@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
+import { useTheme } from "../hooks/useTheme";
+import { SunIcon, MoonIcon } from "../components/Icons";
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +49,13 @@ export function AdminLoginPage() {
 
   return (
     <div className="bg-background text-foreground min-h-screen w-full flex items-center justify-center px-4 py-12">
+      <button
+        onClick={toggle}
+        aria-label="Toggle dark mode"
+        className="text-muted-foreground hover:text-foreground hover:bg-muted fixed top-4 right-4 rounded-md p-2 transition-colors"
+      >
+        {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
+      </button>
       <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-8 rounded-xl border p-10 shadow-sm">
         <div className="flex flex-col items-center gap-3">
           <span

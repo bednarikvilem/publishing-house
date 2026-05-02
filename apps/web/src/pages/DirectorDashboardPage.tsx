@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
+import { SunIcon, MoonIcon } from "../components/Icons";
+import { useTheme } from "../hooks/useTheme";
 import type { PaginatedResponse, ReviewDecision } from "../types";
 import type { QueueArticle, Statistics } from "../types/dashboard";
 
@@ -252,6 +254,7 @@ type ActiveView = "overview" | { newspaper: NewspaperEntry; tab: "approval" | "p
 
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [newspapers, setNewspapers] = useState<NewspaperEntry[]>([]);
   const [activeView, setActiveView] = useState<ActiveView>("overview");
   const [authChecked, setAuthChecked] = useState(false);
@@ -294,9 +297,14 @@ export function DirectorDashboardPage() {
     <div className="bg-background text-foreground flex min-h-screen w-full">
       {/* Sidebar */}
       <aside className="border-border bg-card flex w-64 shrink-0 flex-col gap-1 border-r px-3 py-6">
-        <span className="text-foreground px-2 pb-4 text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
-          Director Portal
-        </span>
+        <div className="flex items-center justify-between px-2 pb-4">
+          <span className="text-foreground text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
+            Director Portal
+          </span>
+          <button onClick={toggle} aria-label="Toggle dark mode" className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors">
+            {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
+          </button>
+        </div>
 
         <button
           onClick={() => setActiveView("overview")}

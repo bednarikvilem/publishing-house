@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDownIcon, LayoutDashboardIcon } from "./Icons";
+import { ChevronDownIcon, LayoutDashboardIcon, SunIcon, MoonIcon } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { useTheme } from "../hooks/useTheme";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 
 interface Category {
@@ -36,6 +37,7 @@ function getInitials(user: UserInfo): string {
 export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const { newspaper } = useNewspaper();
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,6 +112,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          onClick={toggle}
+          aria-label="Toggle dark mode"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors"
+        >
+          {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
+        </button>
         {user?.roles.some((r) =>
           [
             "AUTHOR",

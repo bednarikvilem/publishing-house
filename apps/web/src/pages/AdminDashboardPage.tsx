@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import { PlusIcon, TrashIcon } from "../components/Icons";
+import { PlusIcon, TrashIcon, SunIcon, MoonIcon } from "../components/Icons";
+import { useTheme } from "../hooks/useTheme";
 
 type GlobalUser = {
   id: string;
@@ -333,6 +334,7 @@ function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry }) {
 
 export function AdminDashboardPage() {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [newspapers, setNewspapers] = useState<NewspaperEntry[]>([]);
   const [activeSection, setActiveSection] = useState<"global-users" | { newspaper: NewspaperEntry }>("global-users");
   const [authChecked, setAuthChecked] = useState(false);
@@ -372,9 +374,14 @@ export function AdminDashboardPage() {
     <div className="bg-background text-foreground flex min-h-screen w-full">
       {/* Sidebar */}
       <aside className="border-border bg-card flex w-64 shrink-0 flex-col gap-1 border-r px-3 py-6">
-        <span className="text-foreground px-2 pb-4 text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
-          Admin Portal
-        </span>
+        <div className="flex items-center justify-between px-2 pb-4">
+          <span className="text-foreground text-[16px] font-black tracking-[-0.5px]" style={{ fontFamily: "Outfit, Inter, sans-serif" }}>
+            Admin Portal
+          </span>
+          <button onClick={toggle} aria-label="Toggle dark mode" className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors">
+            {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
+          </button>
+        </div>
 
         <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
           Global
