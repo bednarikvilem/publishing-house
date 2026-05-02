@@ -5,19 +5,28 @@ import { db } from "../db";
 import { users, newspaperAuthors } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { updateMeBody } from "../schemas/users";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 
 export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["Users"] } })
     .use(authMiddleware)
 
     // GET /api/users/me
     .get("/me", async ({ user, roles }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!user) {
+            logger.warn("Fetch current user failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
 
         const authorProfile = await db.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, user.id),
                 eq(newspaperAuthors.newspaperId, user.newspaperId!)
             ),
+        });
+
+        logger.debug("Fetched current user profile", {
+            userId: user.id,
         });
 
         return Response.json({
@@ -42,8 +51,14 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
             const existing = await db.query.users.findFirst({
                 where: and(eq(users.username, username), eq(users.newspaperId, user.newspaperId!)),
             });
-            if (existing && existing.id !== user.id)
+            if (existing && existing.id !== user.id) {
+                logger.warn("Profile update failed: username taken", {
+                    userId: user.id,
+                    username,
+                });
+
                 return Response.json({ error: "USERNAME_TAKEN" }, { status: 409 });
+            }
         }
 
         const updateData: Partial<typeof users.$inferInsert> = {};
@@ -72,6 +87,9 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
 
         const updated = await db.query.users.findFirst({ where: eq(users.id, user.id) });
 
+        await audit({ userId: user.id, operationType: "USER_PROFILE_UPDATED", targetObjectId: user.id, result: "SUCCESS" });
+        logger.info("User profile updated", { userId: user.id, fields: Object.keys(updateData) });
+
         return Response.json({
             id: updated!.id,
             email: updated!.email,
@@ -95,6 +113,10 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
                 const formData = await request.formData();
                 const file = formData.get("profile_picture");
                 if (!file || typeof file === "string") {
+                    logger.warn("Profile picture upload failed: missing file", {
+                        userId: user.id,
+                    });
+
                     return Response.json(
                         { error: "VALIDATION_ERROR", fields: { profile_picture: "Must be a JPEG or PNG image under 5 MB" } },
                         { status: 422 }
@@ -148,6 +170,9 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
                 profilePictureUrl,
             });
         }
+
+        await audit({ userId: user.id, operationType: "PROFILE_PICTURE_UPDATED", targetObjectId: user.id, result: "SUCCESS" });
+        logger.info("Profile picture updated", { userId: user.id });
 
         return Response.json({ profile_picture: profilePictureUrl });
     });

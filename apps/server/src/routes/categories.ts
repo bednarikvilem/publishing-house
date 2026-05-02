@@ -4,6 +4,8 @@ import { db } from "../db";
 import { articleCategory, articles, newspapers } from "../db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { categoryListParams, categoryRouteParams, categoryBody } from "../schemas/categories";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 
 // Helper: slugify
 const slugify = (text: string): string =>
@@ -24,12 +26,26 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Category fetch failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+            });
+
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
+
 
         const category = await db.query.articleCategory.findFirst({
             where: eq(articleCategory.slug, params.slug),
         });
-        if (!category) return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+        if (!category) {
+            logger.warn("Category fetch failed: not found", {
+                slug: params.slug,
+                newspaperId: params.newspaper_id,
+            });
+
+            return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+        }
 
         return Response.json({ id: category.id, name: category.categoryName, slug: category.slug });
     })
@@ -39,7 +55,13 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Categories fetch failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+            });
+
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
         const newspaperArticles = await db.query.articles.findMany({
             where: eq(articles.newspaperId, params.newspaper_id),
@@ -70,25 +92,49 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
 
     // POST /api/newspapers/:newspaper_id/categories — NEWSPAPER_MANAGER
     .post("/api/newspapers/:newspaper_id/categories", async ({ params, user, roles, body }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-        if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
+        if (!user) {
+            logger.warn("Category create failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
+
+        if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
+            logger.warn("Category create failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
 
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Category create failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+            });
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
+        const { name } = body;
         const existing = await db.query.articleCategory.findFirst({
             where: eq(articleCategory.categoryName, name),
         });
-        if (existing) return Response.json({ error: "CATEGORY_NAME_TAKEN" }, { status: 409 });
+        if (existing) {
+            logger.warn("Category create failed: name taken", {
+                name,
+                newspaperId: params.newspaper_id,
+            });
+            return Response.json({ error: "CATEGORY_NAME_TAKEN" }, { status: 409 });
+        }
 
         const slug = slugify(name);
         const [created] = await db
             .insert(articleCategory)
             .values({ categoryName: name, slug })
             .returning();
+
+        await audit({ userId: user.id, operationType: "CATEGORY_CREATED", targetObjectId: created!.id, result: "SUCCESS" });
+        logger.info("Category created", { categoryId: created!.id, name, newspaperId: params.newspaper_id });
 
         return Response.json({ id: created!.id, name: created!.categoryName }, { status: 201 });
     }, {
@@ -100,17 +146,35 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
     .put(
         "/api/newspapers/:newspaper_id/categories/:category_id",
         async ({ params, user, roles, body }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
+            if (!user) {
+                logger.warn("Category update failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
+
+            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
+                logger.warn("Category update failed: forbidden", {
+                    userId: user.id,
+                    roles,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const category = await db.query.articleCategory.findFirst({
                 where: eq(articleCategory.id, params.category_id),
             });
-            if (!category) return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+            if (!category) {
+                logger.warn("Category update failed: not found", {
+                    categoryId: params.category_id,
+                });
+                return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+            }
 
             const { name } = body ?? {};
             if (!name?.trim()) {
+                logger.warn("Category update failed: invalid name", {
+                    userId: user.id,
+                    categoryId: params.category_id,
+                });
                 return Response.json(
                     { error: "VALIDATION_ERROR", fields: { name: "Name cannot be empty" } },
                     { status: 422 }
@@ -122,6 +186,9 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
                 .set({ categoryName: name, slug: slugify(name) })
                 .where(eq(articleCategory.id, params.category_id))
                 .returning();
+            
+            await audit({ userId: user.id, operationType: "CATEGORY_UPDATED", targetObjectId: params.category_id, result: "SUCCESS" });
+            logger.info("Category updated", { categoryId: params.category_id, newName: name });
 
             return Response.json({ id: updated!.id, name: updated!.categoryName });
         }, {
@@ -133,21 +200,44 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
     .delete(
         "/api/newspapers/:newspaper_id/categories/:category_id",
         async ({ params, user, roles }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR"))
+            if (!user) {
+                logger.warn("Category delete failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
+
+            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
+                logger.warn("Category delete failed: forbidden", {
+                    userId: user.id,
+                    roles,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const category = await db.query.articleCategory.findFirst({
                 where: eq(articleCategory.id, params.category_id),
             });
-            if (!category) return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+            if (!category) {
+                logger.warn("Category delete failed: not found", {
+                    categoryId: params.category_id,
+                });
+                return Response.json({ error: "CATEGORY_NOT_FOUND" }, { status: 404 });
+            }
 
             const usedBy = await db.query.articles.findFirst({
                 where: eq(articles.categoryId, params.category_id),
             });
-            if (usedBy) return Response.json({ error: "CATEGORY_IN_USE" }, { status: 409 });
+            if (usedBy) {
+                logger.warn("Category delete failed: in use", {
+                    categoryId: params.category_id,
+                });
+                return Response.json({ error: "CATEGORY_IN_USE" }, { status: 409 });
+            }
 
             await db.delete(articleCategory).where(eq(articleCategory.id, params.category_id));
+
+            await audit({ userId: user.id, operationType: "CATEGORY_DELETED", targetObjectId: params.category_id, result: "SUCCESS" });
+            logger.info("Category deleted", { categoryId: params.category_id, deletedBy: user.id });
+
             return new Response(null, { status: 204 });
         }, {
 			params: categoryRouteParams,
