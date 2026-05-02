@@ -116,6 +116,17 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             });
             if (existing) return Response.json({ error: "ROLE_ALREADY_ASSIGNED" }, { status: 409 });
 
+            if (role === "NEWSPAPER_MANAGER") {
+                const currentManager = await db.query.userRoles.findFirst({
+                    where: and(
+                        eq(userRoles.newspaperId, params.newspaper_id),
+                        eq(userRoles.role, "NEWSPAPER_MANAGER")
+                    ),
+                });
+                if (currentManager)
+                    return Response.json({ error: "MANAGER_ALREADY_EXISTS" }, { status: 409 });
+            }
+
             await db.insert(userRoles).values({
                 userId: params.user_id,
                 newspaperId: params.newspaper_id,

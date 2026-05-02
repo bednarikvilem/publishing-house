@@ -238,7 +238,10 @@ function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry }) {
         }
       );
       if (res.status === 409) {
-        alert("User already has this role.");
+        const data = await res.json() as { error: string };
+        alert(data.error === "MANAGER_ALREADY_EXISTS"
+          ? "This newspaper already has a manager. Remove the existing one first."
+          : "User already has this role.");
         return;
       }
       if (!res.ok) throw new Error();

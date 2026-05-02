@@ -2345,6 +2345,11 @@ Field rules:
 { "error": "ROLE_ALREADY_ASSIGNED" }
 ```
 
+`409 Conflict` — a NEWSPAPER_MANAGER already exists for this newspaper (singleton role)
+```json
+{ "error": "MANAGER_ALREADY_EXISTS" }
+```
+
 `422 Unprocessable Entity` — unrecognized role value
 ```json
 {
