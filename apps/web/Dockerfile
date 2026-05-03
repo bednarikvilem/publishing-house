@@ -12,6 +12,6 @@ COPY apps/web/ ./apps/web/
 
 WORKDIR /app/apps/web
 
-EXPOSE 3000
+EXPOSE 5173
 
 CMD ["bun", "--hot", "src/index.ts"]
