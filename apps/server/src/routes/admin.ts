@@ -16,6 +16,8 @@ import {
     adminConfigBody,
 } from "../schemas/admin";
 import { createGlobalUserInput } from "../schemas/auth";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 
 // In-memory system config (in production this would be persisted to DB or env)
 let systemConfig = {
@@ -41,14 +43,27 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
     // ── GET /api/newspapers/:newspaper_id/users — SYSTEM_ADMINISTRATOR ────
     .get("/api/newspapers/:newspaper_id/users", async ({ params, user, roles, query }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-        if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+        if (!user) {
+            logger.warn("Admin action failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
+        if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+            logger.warn("Admin action failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
 
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Admin action failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+            });
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
         const { page, limit } = query;
         const offset = (page - 1) * limit;
@@ -85,6 +100,14 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             })
         );
 
+        logger.info("Admin fetched users", {
+            userId: user.id,
+            newspaperId: params.newspaper_id,
+            page,
+            limit,
+            resultCount: result.length,
+        });
+
         return Response.json({
             data: result,
             pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
@@ -98,14 +121,36 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     .post(
         "/api/newspapers/:newspaper_id/users/:user_id/roles",
         async ({ params, user, roles, body }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+            if (!user) {
+                logger.warn("Admin action failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
+            if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+                logger.warn("Admin action failed: forbidden", {
+                    userId: user.id,
+                    roles,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const { role } = body;
 
             const targetUser = await db.query.users.findFirst({ where: eq(users.id, params.user_id) });
-            if (!targetUser) return Response.json({ error: "USER_NOT_FOUND" }, { status: 404 });
+            if (!targetUser) {
+                logger.warn("Role assignment failed: user not found", {
+                    targetUserId: params.user_id,
+                });
+                return Response.json({ error: "USER_NOT_FOUND" }, { status: 404 });
+            }
+            if (targetUser.newspaperId !== params.newspaper_id) {
+                logger.warn("Role assignment failed: cross-newspaper access", {
+                    targetUserId: params.user_id,
+                    targetNewspaperId: targetUser.newspaperId,
+                    requestedNewspaperId: params.newspaper_id,
+                });
+
+                return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const existing = await db.query.userRoles.findFirst({
                 where: and(
@@ -114,7 +159,14 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                     eq(userRoles.role, role)
                 ),
             });
-            if (existing) return Response.json({ error: "ROLE_ALREADY_ASSIGNED" }, { status: 409 });
+            if (existing) {
+                logger.warn("Role assignment failed: already assigned", {
+                    targetUserId: params.user_id,
+                    role,
+                    newspaperId: params.newspaper_id,
+                });
+                return Response.json({ error: "ROLE_ALREADY_ASSIGNED" }, { status: 409 });
+            }
 
             if (role === "NEWSPAPER_MANAGER") {
                 const currentManager = await db.query.userRoles.findFirst({
@@ -140,6 +192,9 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                 ),
             });
 
+            await audit({ userId: user.id, operationType: "ROLE_ASSIGNED", targetObjectId: params.user_id, result: "SUCCESS" });
+            logger.info("Role assigned", { assignedBy: user.id, targetUserId: params.user_id, role, newspaperId: params.newspaper_id });
+
             return Response.json({
                 user_id: params.user_id,
                 roles: allRoles.map((r) => r.role),
@@ -155,12 +210,24 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     .delete(
         "/api/newspapers/:newspaper_id/users/:user_id/roles/:role",
         async ({ params, user, roles }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+            if (!user) {
+                logger.warn("Admin action failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
+            if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+                logger.warn("Admin action failed: forbidden", {
+                    userId: user.id,
+                    roles,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
-            if (params.role === "REGISTERED_USER")
+            if (params.role === "REGISTERED_USER") {
+                logger.warn("Role removal failed: base role protected", {
+                    targetUserId: params.user_id,
+                });
                 return Response.json({ error: "CANNOT_REMOVE_BASE_ROLE" }, { status: 422 });
+            }
 
             const existing = await db.query.userRoles.findFirst({
                 where: and(
@@ -169,7 +236,13 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                     eq(userRoles.role, params.role)
                 ),
             });
-            if (!existing) return Response.json({ error: "ROLE_NOT_FOUND" }, { status: 404 });
+            if (!existing) {
+                logger.warn("Role removal failed: role not found", {
+                    targetUserId: params.user_id,
+                    role: params.role,
+                });
+                return Response.json({ error: "ROLE_NOT_FOUND" }, { status: 404 });
+            }
 
             await db.delete(userRoles).where(
                 and(
@@ -186,6 +259,9 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                 ),
             });
 
+            await audit({ userId: user.id, operationType: "ROLE_REMOVED", targetObjectId: params.user_id, result: "SUCCESS" });
+            logger.info("Role removed", { removedBy: user.id, targetUserId: params.user_id, role: params.role });
+
             return Response.json({
                 user_id: params.user_id,
                 roles: allRoles.map((r) => r.role),
@@ -200,14 +276,27 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     .get(
         "/api/newspapers/:newspaper_id/statistics",
         async ({ params, user, roles }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("DIRECTOR"))
+            if (!user) {
+                logger.warn("Admin action failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
+            if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+                logger.warn("Admin action failed: forbidden", {
+                    userId: user.id,
+                    roles,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const newspaper = await db.query.newspapers.findFirst({
                 where: eq(newspapers.id, params.newspaper_id),
             });
-            if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+            if (!newspaper) {
+                logger.warn("Admin action failed: newspaper not found", {
+                    newspaperId: params.newspaper_id,
+                });
+                return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+            }
 
             const allArticles = await db.query.articles.findMany({
                 where: eq(articles.newspaperId, params.newspaper_id),
@@ -241,6 +330,11 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             const publishedIds = new Set(published.map((a) => a.id));
             const totalComments = allComments.filter((c) => publishedIds.has(c.articleId)).length;
             const totalLikes = allLikes.filter((l) => publishedIds.has(l.articleId)).length;
+
+            logger.info("Statistics fetched", {
+                userId: user.id,
+                newspaperId: params.newspaper_id,
+            });
 
             return Response.json({
                 newspaper_id: params.newspaper_id,
@@ -345,9 +439,21 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
     // ── GET /api/admin/config ─────────────────────────────────────────────
     .get("/api/admin/config", async ({ user, roles }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-        if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+        if (!user) {
+            logger.warn("Admin action failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
+        if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+            logger.warn("Admin action failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
+
+        logger.info("System config fetched", {
+            userId: user.id,
+        });
 
         return Response.json(systemConfig);
     })
@@ -434,9 +540,17 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
     // ── PUT /api/admin/config ─────────────────────────────────────────────
     .put("/api/admin/config", async ({ user, roles, body }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-        if (!roles.includes("SYSTEM_ADMINISTRATOR"))
+        if (!user) {
+            logger.warn("Admin action failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
+        if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
+            logger.warn("Admin action failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
 
         if (body.email) {
             systemConfig.email = { ...systemConfig.email, ...body.email };
@@ -447,6 +561,9 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
         if (body.uploads) {
             systemConfig.uploads = { ...systemConfig.uploads, ...body.uploads };
         }
+
+        await audit({ userId: user.id, operationType: "SYSTEM_CONFIG_UPDATED", result: "SUCCESS" });
+        logger.info("System config updated", { updatedBy: user.id, sections: Object.keys(body) });
 
         return Response.json(systemConfig);
     }, {
