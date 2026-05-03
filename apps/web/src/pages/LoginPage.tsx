@@ -34,6 +34,7 @@ export function LoginPage() {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem("token", data.token);
+        localStorage.setItem("newspaper_id", newspaper.id);
         navigate(`/${newspaperName}`);
         return;
       }

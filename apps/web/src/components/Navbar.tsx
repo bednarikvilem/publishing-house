@@ -80,15 +80,19 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    const loggedInNewspaperId = localStorage.getItem("newspaper_id");
+    if (!token || !newspaper || loggedInNewspaperId !== newspaper.id) {
+      setUser(null);
+      return;
+    }
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json() as Promise<UserInfo>;
       })
       .then((data) => setUser(data))
-      .catch(() => {});
-  }, []);
+      .catch(() => setUser(null));
+  }, [newspaper]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -105,6 +109,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       headers: authHeaders(),
     }).catch(() => {});
     localStorage.removeItem("token");
+    localStorage.removeItem("newspaper_id");
     setUser(null);
     setUserMenuOpen(false);
     setMobileMenuOpen(false);
