@@ -15,7 +15,7 @@ export async function seedSystemAdmin() {
     const passwordHash = await Bun.password.hash("admin1234");
 
     const [user] = await db.insert(schema.users).values({
-        email: "admin@platform.local",
+        email: "admin@admin.cz",
         username: "sysadmin",
         fullname: "System Administrator",
         passwordHash,
