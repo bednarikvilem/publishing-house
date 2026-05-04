@@ -3,16 +3,13 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import {
   BarChartIcon,
-  CheckIcon,
   FileTextIcon,
   InboxIcon,
   LogOutIcon,
   MenuIcon,
-  NewspaperIcon,
   PlusIcon,
   TagIcon,
   UserIcon,
-  UsersIcon,
   XIcon,
 } from "./Icons";
 
@@ -184,46 +181,6 @@ function SidebarContent({
               icon={<BarChartIcon />}
               label="Statistics"
               href={`/${np}/author-dashboard?section=statistics`}
-              onClick={onNavClick}
-            />
-          </NavSection>
-        )}
-
-        {roles.has("DIRECTOR") && (
-          <NavSection title="Director">
-            <NavItem
-              icon={<NewspaperIcon />}
-              label="All Newspapers"
-              href={`/${np}/author-dashboard?section=all-newspapers`}
-              onClick={onNavClick}
-            />
-            <NavItem
-              icon={<BarChartIcon />}
-              label="Statistics"
-              href={`/${np}/author-dashboard?section=statistics`}
-              onClick={onNavClick}
-            />
-            <NavItem
-              icon={<InboxIcon />}
-              label="Approval Queue"
-              href={`/${np}/author-dashboard?section=director-queue`}
-              onClick={onNavClick}
-            />
-            <NavItem
-              icon={<CheckIcon />}
-              label="Publication Queue"
-              href={`/${np}/author-dashboard?section=publication-queue`}
-              onClick={onNavClick}
-            />
-          </NavSection>
-        )}
-
-        {roles.has("SYSTEM_ADMINISTRATOR") && (
-          <NavSection title="Administration">
-            <NavItem
-              icon={<UsersIcon />}
-              label="User Management"
-              href={`/${np}/author-dashboard?section=user-management`}
               onClick={onNavClick}
             />
           </NavSection>
