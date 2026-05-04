@@ -15,6 +15,7 @@
     "db:seed": "bun --env-file=../../.env src/db/seed.ts"
   },
   "devDependencies": {
+    "@sinclair/typebox": "^0.34.49",
     "@types/bun": "latest",
     "@types/nodemailer": "^8.0.0",
     "dotenv": "^17.4.2",
