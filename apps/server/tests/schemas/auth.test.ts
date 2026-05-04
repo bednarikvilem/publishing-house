@@ -32,11 +32,11 @@ describe("registerInput", () => {
 
 	test("rejects invalid email", () => {
 		expect(Value.Check(registerInput, { ...valid, email: "not-an-email" })).toBe(false);
-	}
+	});
 
 	test("rejects empty username", () => {
 		expect(Value.Check(registerInput, { ...valid, username: "" })).toBe(false);
-	}););
+	});
 
 	test("rejects password shorter than 8 characters", () => {
 		expect(Value.Check(registerInput, { ...valid, password: "shorttt" })).toBe(false);
