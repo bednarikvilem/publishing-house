@@ -12,13 +12,23 @@ export async function seedNewArticleCategory() {
         }
     );
 
-    const articleCategoriesToInsert: NewArticleCategory[] = CATEGORIES.map((name) => ({
+    const shuffled = faker.helpers.shuffle([...CATEGORIES]);
+
+    // Guarantee every newspaper gets at least one category
+    const guaranteed: NewArticleCategory[] = existingNewspapers.map((np, i) => ({
+        categoryName: shuffled[i % shuffled.length],
+        slug: slugify(shuffled[i % shuffled.length]),
+        newspaperId: np.id,
+    }));
+
+    // Distribute remaining categories randomly
+    const remaining: NewArticleCategory[] = shuffled.slice(existingNewspapers.length).map((name) => ({
         categoryName: name,
         slug: slugify(name),
         newspaperId: faker.helpers.arrayElement(existingNewspapers).id,
     }));
 
-    await db.insert(schema.articleCategory).values(articleCategoriesToInsert);
+    await db.insert(schema.articleCategory).values([...guaranteed, ...remaining]);
 
     console.log("Categories added successfully!");
 }
