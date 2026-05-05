@@ -12,6 +12,7 @@ COPY apps/web/ ./apps/web/
 
 WORKDIR /app/apps/web
 
+ENV NODE_ENV=production
 EXPOSE 5173
 
-CMD ["bun", "--hot", "src/index.ts"]
+CMD ["bun", "src/index.ts"]
