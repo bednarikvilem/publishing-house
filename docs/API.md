@@ -2558,6 +2558,55 @@ Authorization: Bearer <token>
 
 ## Editorial Workflow Queue
 
+### GET /api/newspapers/:newspaper_id/editors
+
+Return all users with the `EDITOR` role in a newspaper. Used by the manager
+to populate the editor selection when assigning an editor to a submitted article.
+
+**Auth required:** Yes — `NEWSPAPER_MANAGER`
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "data": [
+        {
+            "id": "u7u8u9...",
+            "full_name": "Eva Editorová"
+        }
+    ]
+}
+```
+
+`401 Unauthorized` — no token provided
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — user does not have NEWSPAPER_MANAGER role in this newspaper
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — newspaper does not exist
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+---
+
 ### GET /api/newspapers/:newspaper_id/articles/queue
 
 Return a paginated list of articles that are pending action from the
