@@ -5,6 +5,8 @@ stages:
 unit-test-job:
     stage: test
     image: oven/bun:1
+    tags:
+      - shared-fi
     script:
       - bun install
       - bun test
@@ -12,6 +14,8 @@ unit-test-job:
 deploy-job:
     stage: deploy
     image: oven/bun:1
+    tags:
+      - shared-fi
     only:
       - feature/production
     before_script:
