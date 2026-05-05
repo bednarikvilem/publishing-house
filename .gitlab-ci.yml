@@ -2,14 +2,14 @@ stages:
     - test
     - deploy
 
-  unit-test-job:
+unit-test-job:
     stage: test
     image: oven/bun:1
     script:
       - bun install
       - bun test
 
-  deploy-job:
+deploy-job:
     stage: deploy
     image: oven/bun:1
     only:
