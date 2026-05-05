@@ -79,4 +79,34 @@ export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
         });
     }, {
 		params: newspaperIdParam,
-	});
+	})
+
+    // GET /api/newspapers/:newspaper_id/editors — NEWSPAPER_MANAGER
+    .get("/api/newspapers/:newspaper_id/editors", async ({ params, user, roles }) => {
+        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("NEWSPAPER_MANAGER"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+        const newspaper = await db.query.newspapers.findFirst({
+            where: eq(newspapers.id, params.newspaper_id),
+        });
+        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+
+        const editorRoles = await db.query.userRoles.findMany({
+            where: and(
+                eq(userRoles.newspaperId, params.newspaper_id),
+                eq(userRoles.role, "EDITOR")
+            ),
+        });
+
+        const editors = await Promise.all(
+            editorRoles.map(async (r) => {
+                const u = await db.query.users.findFirst({ where: eq(users.id, r.userId) });
+                return u ? { id: u.id, full_name: u.fullname ?? u.username } : null;
+            })
+        );
+
+        return Response.json({ data: editors.filter(Boolean) });
+    }, {
+        params: newspaperIdParam,
+    });

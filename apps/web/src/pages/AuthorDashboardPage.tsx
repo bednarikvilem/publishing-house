@@ -579,6 +579,8 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
 
 /* ── EditorialQueueSection (NEWSPAPER_MANAGER) ─────────────────────────────── */
 
+type Editor = { id: string; full_name: string };
+
 function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") ?? "1");
@@ -589,6 +591,8 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const [error, setError] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assignEditorId, setAssignEditorId] = useState("");
+  const [editors, setEditors] = useState<Editor[]>([]);
+  const [editorsLoading, setEditorsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
@@ -624,6 +628,26 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
     load();
   }, [load]);
 
+  async function openAssignEditor(articleId: string) {
+    setActiveId(activeId === articleId ? null : articleId);
+    if (activeId === articleId) return;
+    setAssignEditorId("");
+    setEditorsLoading(true);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/editors`,
+        { headers: authHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      const data = (await res.json()) as { data: Editor[] };
+      setEditors(data.data);
+    } catch {
+      setEditors([]);
+    } finally {
+      setEditorsLoading(false);
+    }
+  }
+
   async function handleAssignEditor(articleId: string) {
     if (!assignEditorId.trim()) return;
     setSubmitting(true);
@@ -641,9 +665,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
       setAssignEditorId("");
       load();
     } catch {
-      alert(
-        "Failed to assign editor. Please check the editor ID and try again."
-      );
+      alert("Failed to assign editor. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -724,9 +746,11 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                       </span>
                       <button
                         onClick={() =>
-                          setActiveId(
-                            activeId === article.id ? null : article.id
-                          )
+                          isSubmitted
+                            ? openAssignEditor(article.id)
+                            : setActiveId(
+                                activeId === article.id ? null : article.id
+                              )
                         }
                         className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
                       >
@@ -744,15 +768,30 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
                     >
                       <label className="text-foreground text-[13px] font-medium">
-                        Editor ID
-                        <input
-                          type="text"
-                          value={assignEditorId}
-                          onChange={(e) => setAssignEditorId(e.target.value)}
-                          placeholder="UUID of the editor…"
-                          required
-                          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
-                        />
+                        Assign Editor
+                        {editorsLoading ? (
+                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                            Loading editors…
+                          </p>
+                        ) : editors.length === 0 ? (
+                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                            No editors available in this newspaper.
+                          </p>
+                        ) : (
+                          <select
+                            value={assignEditorId}
+                            onChange={(e) => setAssignEditorId(e.target.value)}
+                            required
+                            className="border-border bg-background text-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+                          >
+                            <option value="">Select an editor…</option>
+                            {editors.map((editor) => (
+                              <option key={editor.id} value={editor.id}>
+                                {editor.full_name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </label>
                       <div className="flex justify-end gap-2">
                         <button
@@ -764,7 +803,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                         </button>
                         <button
                           type="submit"
-                          disabled={submitting || !assignEditorId.trim()}
+                          disabled={submitting || !assignEditorId.trim() || editors.length === 0}
                           className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                         >
                           {submitting ? "Assigning…" : "Assign"}
