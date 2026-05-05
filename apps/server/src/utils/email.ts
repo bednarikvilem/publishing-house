@@ -1,16 +1,6 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// Mailtrap sandbox: sandbox.smtp.mailtrap.io, port 2525, secure: false
-const transporter = nodemailer.createTransport({
-	host: process.env.SMTP_HOST,
-	port: Number(process.env.SMTP_PORT ?? 2525),
-	secure: false,
-	auth: {
-		user: process.env.SMTP_USER!,
-		pass: process.env.SMTP_PASS!,
-	},
-});
-
+const resend = new Resend(process.env.SMTP_PASS);
 const FROM = process.env.SMTP_FROM ?? "noreply@example.com";
 
 export async function sendVerificationEmail(
@@ -21,7 +11,7 @@ export async function sendVerificationEmail(
 	const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
 	const link = `${frontendUrl}/${newspaperSlug}/verify-email?token=${token}`;
 
-	await transporter.sendMail({
+	await resend.emails.send({
 		from: FROM,
 		to,
 		subject: "Verify your email address",
@@ -43,7 +33,7 @@ export async function sendPasswordResetEmail(
 	const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
 	const link = `${frontendUrl}/${newspaperSlug}/reset-password?token=${token}`;
 
-	await transporter.sendMail({
+	await resend.emails.send({
 		from: FROM,
 		to,
 		subject: "Reset your password",
