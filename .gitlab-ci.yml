@@ -1,0 +1,23 @@
+stages:
+    - test
+    - deploy
+
+  unit-test-job:
+    stage: test
+    image: oven/bun:1
+    script:
+      - bun install
+      - bun test
+
+  deploy-job:
+    stage: deploy
+    image: oven/bun:1
+    only:
+      - feature/production
+    before_script:
+      - curl -fsSL https://raw.githubusercontent.com/railwayapp/cli/master/install.sh | sh
+    script:
+      - railway up --service server --detach
+      - railway up --service web --detach
+    environment:
+      name: production
