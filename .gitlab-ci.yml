@@ -19,6 +19,7 @@ deploy-job:
     only:
       - feature/production
     before_script:
+      - apt-get update -qq && apt-get install -y -qq curl
       - curl -fsSL https://raw.githubusercontent.com/railwayapp/cli/master/install.sh | sh
     script:
       - railway up --service server --detach
