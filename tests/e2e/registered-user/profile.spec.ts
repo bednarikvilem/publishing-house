@@ -18,6 +18,7 @@ test.describe("User profile", () => {
     await login(page, newspaper, email, password);
     await page.goto(`/${newspaper}/profile`);
 
+    const originalFirstName = await page.getByLabel("First Name").inputValue();
     const newFirstName = `E2E${Date.now()}`;
     await page.getByLabel("First Name").fill(newFirstName);
     await page.getByRole("button", { name: "Save Changes" }).click();
@@ -25,5 +26,10 @@ test.describe("User profile", () => {
 
     await page.reload();
     await expect(page.getByLabel("First Name")).toHaveValue(newFirstName);
+
+    // Restore original name
+    await page.getByLabel("First Name").fill(originalFirstName);
+    await page.getByRole("button", { name: "Save Changes" }).click();
+    await expect(page.getByText("Profile updated successfully")).toBeVisible();
   });
 });

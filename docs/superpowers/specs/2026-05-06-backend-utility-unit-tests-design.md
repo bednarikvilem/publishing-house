@@ -16,7 +16,7 @@ Pure unit tests only (no real DB, no real SMTP, no Redis). Each test isolates on
 ## File Structure
 
 ```
-apps/server/test/
+apps/server/tests/
 └── utils/
     ├── logger.test.ts
     ├── audit.test.ts

@@ -1,7 +1,7 @@
 
 import { Elysia } from "elysia";
-import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
+import { uploadImage, deleteImage } from "../utils/storage";
 import { db } from "../db";
 import {
     articles,
@@ -678,17 +678,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                             { status: 422 }
                         );
                     }
-                    const arrayBuffer = await blob.arrayBuffer();
-                    const base64 = Buffer.from(arrayBuffer).toString("base64");
-                    const dataUri = `data:${blob.type};base64,${base64}`;
-                    const uploadResult = await cloudinary.uploader.upload(dataUri, {
-                        folder: "articles",
-                        resource_type: "image",
-                        transformation: [
-                            { width: 1200, height: 800, crop: "fill", gravity: "auto" },
-                        ],
-                    });
-                    imageUrl = uploadResult.secure_url;
+                    const buffer = Buffer.from(await blob.arrayBuffer());
+                    imageUrl = await uploadImage(buffer, blob.type, "articles");
                 } else {
                     const bodyJson = await request.json();
                     imageUrl = bodyJson.url;
@@ -762,10 +753,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 }
             }
 
-            const publicIdMatch = image.url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-            if (publicIdMatch?.[1]) {
-                await cloudinary.uploader.destroy(publicIdMatch[1]).catch(() => { });
-            }
+            await deleteImage(image.url).catch(() => { });
 
             await audit({ userId: user.id, operationType: "ARTICLE_IMAGE_DELETED", targetObjectId: params.image_id, result: "SUCCESS" });
             logger.info("Article image deleted", { imageId: params.image_id, articleId: params.article_id, deletedBy: user.id });
