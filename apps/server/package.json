@@ -12,7 +12,8 @@
     "build": "bun build src/server.ts --outdir dist",
     "db:studio": "bun --env-file=../../.env x drizzle-kit studio",
     "db:push": "bun --env-file=../../.env x drizzle-kit push",
-    "db:seed": "bun --env-file=../../.env src/db/seed.ts"
+    "db:seed": "bun --env-file=../../.env src/db/seed.ts",
+    "test": "bun test"
   },
   "devDependencies": {
     "@sinclair/typebox": "^0.34.49",
