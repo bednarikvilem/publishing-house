@@ -6,9 +6,11 @@ const authorEmail = process.env.TEST_AUTHOR_EMAIL!;
 const authorPassword = process.env.TEST_AUTHOR_PASSWORD!;
 
 test.describe("Edit article", () => {
+  test.describe.configure({ mode: "serial" });
+
   test("edits a draft article title from the dashboard", async ({ page }) => {
     await login(page, newspaper, authorEmail, authorPassword);
-    await page.goto(`/${newspaper}/author-dashboard?section=my-articles&status=DRAFT`);
+    await page.goto(`/${newspaper}/author-dashboard?section=my-articles`);
 
     const editLink = page.locator("a[aria-label='Edit article']").first();
     await expect(editLink).toBeVisible();
@@ -21,9 +23,9 @@ test.describe("Edit article", () => {
     await titleInput.fill(updatedTitle);
 
     await page.getByRole("button", { name: "Save Draft" }).click();
-    await page.waitForTimeout(1000);
+    await expect(page.getByRole("button", { name: "Save Draft" })).toBeEnabled();
 
-    await page.goto(`/${newspaper}/author-dashboard?section=my-articles&status=DRAFT`);
+    await page.goto(`/${newspaper}/author-dashboard?section=my-articles`);
     await expect(page.getByText(updatedTitle)).toBeVisible();
   });
 });

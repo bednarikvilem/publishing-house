@@ -14,6 +14,10 @@ test.describe("Create article", () => {
     await page.locator("input[placeholder='Article title…']").fill(title);
     await page.locator("textarea[placeholder*='Short introduction']").fill("E2E test perex content");
 
+    const contentEditor = page.locator("[contenteditable='true']");
+    await contentEditor.click();
+    await page.keyboard.type("E2E test article content");
+
     const categorySelect = page.locator("select").first();
     await categorySelect.selectOption({ index: 1 });
 

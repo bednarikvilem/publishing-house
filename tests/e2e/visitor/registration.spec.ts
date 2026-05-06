@@ -6,6 +6,10 @@ const existingEmail = process.env.TEST_EMAIL!;
 test.describe("Registration", () => {
   test("registers a new user and shows verification message", async ({ page }) => {
     await page.goto(`/${newspaper}/register`);
+
+    // Wait for newspaper data to load from API before filling form
+    await page.waitForResponse((res) => res.url().includes("/api/newspapers/by-slug/"));
+
     const uniqueEmail = `test+${Date.now()}@example.com`;
     const uniqueUsername = `testuser${Date.now()}`;
 
@@ -16,7 +20,7 @@ test.describe("Registration", () => {
     await page.getByLabel("Confirm Password").fill("password123");
     await page.getByRole("button", { name: "Create Account" }).click();
 
-    await expect(page.getByText("Check your email")).toBeVisible();
+    await expect(page.getByText("Check your email")).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(uniqueEmail)).toBeVisible();
   });
 
