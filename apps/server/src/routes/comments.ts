@@ -10,6 +10,8 @@ import {
 	commentBody,
 	commentModerationQuery,
 } from "../schemas/comments";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 
 export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     .use(authMiddleware)
@@ -18,7 +20,12 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/comments",
         async ({ params, user, roles, body }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            if (!user) {
+                logger.warn("Comment post failed: unauthorized", {
+                    articleId: params.article_id,
+                });
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
 
             const article = await db.query.articles.findFirst({
                 where: and(
@@ -27,10 +34,23 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
                     eq(articles.state, "PUBLISHED")
                 ),
             });
-            if (!article) return Response.json({ error: "ARTICLE_NOT_FOUND" }, { status: 404 });
+            if (!article) {
+                logger.warn("Comment post failed: article not found", {
+                    userId: user?.id,
+                    articleId: params.article_id,
+                    newspaperId: params.newspaper_id,
+                });
+                return Response.json({ error: "ARTICLE_NOT_FOUND" }, { status: 404 });
+            }
 
-            if (user.newspaperId !== params.newspaper_id)
+            if (user.newspaperId !== params.newspaper_id) {
+                logger.warn("Comment post failed: forbidden (cross-newspaper)", {
+                    userId: user.id,
+                    userNewspaperId: user.newspaperId,
+                    targetNewspaperId: params.newspaper_id,
+                });
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             const { content } = body;
 
@@ -38,6 +58,9 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
                 .insert(comments)
                 .values({ articleId: params.article_id, userId: user.id, content })
                 .returning();
+
+            await audit({ userId: user.id, operationType: "COMMENT_POSTED", targetObjectId: comment!.id, result: "SUCCESS" });
+            logger.info("Comment posted", { commentId: comment!.id, articleId: params.article_id, userId: user.id });
 
             return Response.json(
                 {
@@ -57,12 +80,28 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     .delete(
         "/api/newspapers/:newspaper_id/articles/:article_id/comments/:comment_id",
         async ({ params, user, roles }) => {
-            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            if (!user) {
+                logger.warn("Comment delete failed: unauthorized", {});
+                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            }
 
             const comment = await db.query.comments.findFirst({
                 where: eq(comments.id, params.comment_id),
             });
-            if (!comment) return Response.json({ error: "COMMENT_NOT_FOUND" }, { status: 404 });
+            if (!comment) {
+                logger.warn("Comment delete failed: not found", {
+                    commentId: params.comment_id,
+                });
+                return Response.json({ error: "COMMENT_NOT_FOUND" }, { status: 404 });
+            }
+
+            if (comment.articleId !== params.article_id) {
+                logger.warn("Comment delete failed: article mismatch", {
+                    commentId: params.comment_id,
+                    articleId: params.article_id,
+                });
+                return Response.json({ error: "COMMENT_NOT_FOUND" }, { status: 404 });
+            }
 
             const canDelete =
                 comment.userId === user.id ||
@@ -70,9 +109,20 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
                 roles.includes("NEWSPAPER_MANAGER") ||
                 roles.includes("SYSTEM_ADMINISTRATOR");
 
-            if (!canDelete) return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            if (!canDelete) {
+                logger.warn("Comment delete failed: forbidden", {
+                    userId: user.id,
+                    commentOwnerId: comment.userId,
+                    roles,
+                });
+                return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+            }
 
             await db.delete(comments).where(eq(comments.id, params.comment_id));
+
+            await audit({ userId: user.id, operationType: "COMMENT_DELETED", targetObjectId: params.comment_id, result: "SUCCESS" });
+            logger.info("Comment deleted", { commentId: params.comment_id, deletedBy: user.id });
+
             return new Response(null, { status: 204 });
         }, {
 			params: commentDeleteParams,
@@ -80,18 +130,32 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
 
     // GET /api/newspapers/:newspaper_id/comments — moderation (EDITOR, MANAGER, SYSTEM_ADMIN)
     .get("/api/newspapers/:newspaper_id/comments", async ({ params, user, roles, query }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!user) {
+            logger.warn("Comment moderation fetch failed: unauthorized", {});
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
 
         const hasAccess =
             roles.includes("EDITOR") ||
             roles.includes("NEWSPAPER_MANAGER") ||
             roles.includes("SYSTEM_ADMINISTRATOR");
-        if (!hasAccess) return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        if (!hasAccess) {
+            logger.warn("Comment moderation fetch failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
 
         const newspaper = await db.query.newspapers.findFirst({
             where: eq(newspapers.id, params.newspaper_id),
         });
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Comment moderation fetch failed: newspaper not found", {
+                newspaperId: params.newspaper_id,
+            });
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
 		const { page, limit, article_id } = query;
 		const offset = (page - 1) * limit;
@@ -104,6 +168,7 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
             },
         });
 
+        // TODO, DB should be called instead of loading all
         // Filter by newspaper (via article.newspaperId) and optionally by article_id
         const filtered = allComments.filter((c: any) => {
             const isInNewspaper = c.article?.newspaperId === params.newspaper_id;

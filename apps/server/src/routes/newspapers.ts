@@ -4,17 +4,36 @@ import { db } from "../db";
 import { newspapers, users, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { newspaperIdParam } from "../schemas/newspapers";
+import { logger } from "../utils/logger";
 
 export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
     .use(authMiddleware)
 
     // GET /api/newspapers — DIRECTOR only
     .get("/api/newspapers", async ({ user, roles }) => {
-        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-        if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR"))
+        if (!user) {
+            logger.warn("Fetch newspapers failed: unauthorized", {});
+
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        }
+
+        if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
+            logger.warn("Fetch newspapers failed: forbidden", {
+                userId: user.id,
+                roles,
+            });
+
             return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+        }
 
         const result = await db.select().from(newspapers);
+
+        logger.info("Newspapers list fetched", {
+            userId: user.id,
+            roles,
+            count: result.length,
+        });
+
         return Response.json({
             data: result.map(n => ({
                 id: n.id,
@@ -30,7 +49,13 @@ export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
             where: eq(newspapers.slug, params.slug),
         });
 
-        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        if (!newspaper) {
+            logger.warn("Newspaper fetch failed: not found", {
+                slug: params.slug, // or id?
+            });
+
+            return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+        }
 
         return Response.json({
             id: newspaper.id,
@@ -54,4 +79,34 @@ export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
         });
     }, {
 		params: newspaperIdParam,
-	});
+	})
+
+    // GET /api/newspapers/:newspaper_id/editors — NEWSPAPER_MANAGER
+    .get("/api/newspapers/:newspaper_id/editors", async ({ params, user, roles }) => {
+        if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("NEWSPAPER_MANAGER"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+        const newspaper = await db.query.newspapers.findFirst({
+            where: eq(newspapers.id, params.newspaper_id),
+        });
+        if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+
+        const editorRoles = await db.query.userRoles.findMany({
+            where: and(
+                eq(userRoles.newspaperId, params.newspaper_id),
+                eq(userRoles.role, "EDITOR")
+            ),
+        });
+
+        const editors = await Promise.all(
+            editorRoles.map(async (r) => {
+                const u = await db.query.users.findFirst({ where: eq(users.id, r.userId) });
+                return u ? { id: u.id, full_name: u.fullname ?? u.username } : null;
+            })
+        );
+
+        return Response.json({ data: editors.filter(Boolean) });
+    }, {
+        params: newspaperIdParam,
+    });

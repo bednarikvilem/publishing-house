@@ -1,3 +1,4 @@
+
 import { Elysia } from "elysia";
 import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
@@ -22,6 +23,8 @@ import {
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
 	scheduleBody,
 } from "../schemas/articles";
+import { logger } from "../utils/logger";
+import { audit } from "../utils/audit";
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const articleSummary = (a: any) => {
@@ -471,6 +474,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 })
                 : null;
 
+            await audit({ userId: user.id, operationType: "ARTICLE_CREATED", targetObjectId: article!.id, result: "SUCCESS" });
+            logger.info("Article created", { articleId: article!.id, authorId: user.id, newspaperId: params.newspaper_id });
+
             return Response.json(
                 {
                     id: article!.id,
@@ -528,6 +534,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 with: { category: true },
             });
 
+            await audit({ userId: user.id, operationType: "ARTICLE_UPDATED", targetObjectId: params.article_id, result: "SUCCESS" });
+            logger.info("Article updated", { articleId: params.article_id, authorId: user.id });
+
             return Response.json({
                 id: updated!.id,
                 title: updated!.title,
@@ -564,6 +573,10 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             if (!isOwner && !isAdmin) return forbidden();
 
             await db.delete(articles).where(eq(articles.id, params.article_id));
+
+            await audit({ userId: user.id, operationType: "ARTICLE_DELETED", targetObjectId: params.article_id, result: "SUCCESS" });
+            logger.info("Article deleted", { articleId: params.article_id, deletedBy: user.id });
+
             return new Response(null, { status: 204 });
         }, {
         params: articleRouteParams,
@@ -611,6 +624,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 .update(articles)
                 .set({ state: "SUBMITTED" })
                 .where(eq(articles.id, article.id));
+
+            await audit({ userId: user.id, operationType: "ARTICLE_SUBMITTED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Article submitted for review", { articleId: article.id, authorId: user.id });
 
             return Response.json({ id: article.id, status: "SUBMITTED" });
         }, {
@@ -695,6 +711,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 .values({ articleId: article.id, url: imageUrl, caption, isPrimary })
                 .returning();
 
+            await audit({ userId: user.id, operationType: "ARTICLE_IMAGE_UPLOADED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Article image uploaded", { imageId: image!.id, articleId: article.id, uploadedBy: user.id });
+
             return Response.json(
                 { id: image!.id, url: image!.url, caption: image!.caption, is_primary: image!.isPrimary },
                 { status: 201 }
@@ -748,6 +767,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 await cloudinary.uploader.destroy(publicIdMatch[1]).catch(() => { });
             }
 
+            await audit({ userId: user.id, operationType: "ARTICLE_IMAGE_DELETED", targetObjectId: params.image_id, result: "SUCCESS" });
+            logger.info("Article image deleted", { imageId: params.image_id, articleId: params.article_id, deletedBy: user.id });
+
             return new Response(null, { status: 204 });
         }, {
         params: articleImageParams,
@@ -798,6 +820,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
 
             const editor = await db.query.users.findFirst({ where: eq(users.id, editor_id) });
 
+            await audit({ userId: user.id, operationType: "ARTICLE_EDITOR_ASSIGNED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Editor assigned to article", { articleId: article.id, editorId: editor_id, managerId: user.id });
+
             return Response.json({
                 id: article.id,
                 status: "IN_REVIEW",
@@ -847,6 +872,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                             : "REVISION_REQUESTED",
                 feedback: note ?? null,
             });
+
+            await audit({ userId: user.id, operationType: "ARTICLE_REVIEWED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Article reviewed", { articleId: article.id, reviewerId: user.id, decision, newState });
 
             return Response.json({ id: article.id, status: newState, note: note ?? null });
         }, {
@@ -925,6 +953,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 feedback: note ?? null,
             });
 
+            await audit({ userId: user.id, operationType: decision === "APPROVE" ? "ARTICLE_APPROVED" : "ARTICLE_REJECTED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Article approval decision", { articleId: article.id, decidedBy: user.id, decision, nextState });
+
             return Response.json({ id: article.id, status: nextState });
         }, {
 			params: articleRouteParams,
@@ -960,6 +991,9 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
                 .update(articles)
                 .set({ publicationDate: pubDate })
                 .where(eq(articles.id, article.id));
+
+            await audit({ userId: user.id, operationType: "ARTICLE_SCHEDULED", targetObjectId: article.id, result: "SUCCESS" });
+            logger.info("Article scheduled", { articleId: article.id, scheduledBy: user.id, publicationDate: pubDate });
 
             return Response.json({
                 id: article.id,

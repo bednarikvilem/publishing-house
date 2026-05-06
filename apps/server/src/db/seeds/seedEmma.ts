@@ -25,7 +25,7 @@ export async function seedEmma() {
     }).returning({ id: schema.users.id });
 
     const roles: schema.NewUserRole[] = (
-        ["REGISTERED_USER", "AUTHOR", "EDITOR", "NEWSPAPER_MANAGER"] as const
+        ["REGISTERED_USER", "AUTHOR", "EDITOR"] as const
     ).map((role) => ({
         userId: user.id,
         newspaperId: newspaper.id,

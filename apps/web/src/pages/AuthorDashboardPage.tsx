@@ -13,10 +13,8 @@ import type {
 import { PencilIcon, PlusIcon, TrashIcon } from "../components/Icons";
 import type {
   DashboardArticle,
-  NewspaperEntry,
   QueueArticle,
   Statistics,
-  UserEntry,
 } from "../types/dashboard";
 
 /* ── Constants ─────────────────────────────────────────────────────────────── */
@@ -64,7 +62,7 @@ const MY_ARTICLE_FILTERS: { label: string; value: ArticleStatus | null }[] = [
   { label: "Rejected", value: "REJECTED" },
 ];
 
-const EDITORIAL_ROLES = ["AUTHOR", "EDITOR", "NEWSPAPER_MANAGER", "DIRECTOR", "SYSTEM_ADMINISTRATOR"];
+const EDITORIAL_ROLES = ["AUTHOR", "EDITOR", "NEWSPAPER_MANAGER"];
 
 /* ── Utility ───────────────────────────────────────────────────────────────── */
 
@@ -77,11 +75,9 @@ function formatDate(iso: string) {
 }
 
 function deriveDefaultSection(roles: string[]): string {
-  if (roles.includes("SYSTEM_ADMINISTRATOR")) return "user-management";
   if (roles.includes("AUTHOR")) return "my-articles";
   if (roles.includes("EDITOR")) return "review-queue";
   if (roles.includes("NEWSPAPER_MANAGER")) return "editorial-queue";
-  if (roles.includes("DIRECTOR")) return "director-queue";
   return "my-articles";
 }
 
@@ -583,6 +579,8 @@ function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
 
 /* ── EditorialQueueSection (NEWSPAPER_MANAGER) ─────────────────────────────── */
 
+type Editor = { id: string; full_name: string };
+
 function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") ?? "1");
@@ -593,6 +591,8 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const [error, setError] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assignEditorId, setAssignEditorId] = useState("");
+  const [editors, setEditors] = useState<Editor[]>([]);
+  const [editorsLoading, setEditorsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
@@ -628,6 +628,26 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
     load();
   }, [load]);
 
+  async function openAssignEditor(articleId: string) {
+    setActiveId(activeId === articleId ? null : articleId);
+    if (activeId === articleId) return;
+    setAssignEditorId("");
+    setEditorsLoading(true);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/editors`,
+        { headers: authHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      const data = (await res.json()) as { data: Editor[] };
+      setEditors(data.data);
+    } catch {
+      setEditors([]);
+    } finally {
+      setEditorsLoading(false);
+    }
+  }
+
   async function handleAssignEditor(articleId: string) {
     if (!assignEditorId.trim()) return;
     setSubmitting(true);
@@ -645,9 +665,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
       setAssignEditorId("");
       load();
     } catch {
-      alert(
-        "Failed to assign editor. Please check the editor ID and try again."
-      );
+      alert("Failed to assign editor. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -728,9 +746,11 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                       </span>
                       <button
                         onClick={() =>
-                          setActiveId(
-                            activeId === article.id ? null : article.id
-                          )
+                          isSubmitted
+                            ? openAssignEditor(article.id)
+                            : setActiveId(
+                                activeId === article.id ? null : article.id
+                              )
                         }
                         className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
                       >
@@ -748,15 +768,30 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
                     >
                       <label className="text-foreground text-[13px] font-medium">
-                        Editor ID
-                        <input
-                          type="text"
-                          value={assignEditorId}
-                          onChange={(e) => setAssignEditorId(e.target.value)}
-                          placeholder="UUID of the editor…"
-                          required
-                          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
-                        />
+                        Assign Editor
+                        {editorsLoading ? (
+                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                            Loading editors…
+                          </p>
+                        ) : editors.length === 0 ? (
+                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                            No editors available in this newspaper.
+                          </p>
+                        ) : (
+                          <select
+                            value={assignEditorId}
+                            onChange={(e) => setAssignEditorId(e.target.value)}
+                            required
+                            className="border-border bg-background text-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+                          >
+                            <option value="">Select an editor…</option>
+                            {editors.map((editor) => (
+                              <option key={editor.id} value={editor.id}>
+                                {editor.full_name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </label>
                       <div className="flex justify-end gap-2">
                         <button
@@ -768,7 +803,7 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                         </button>
                         <button
                           type="submit"
-                          disabled={submitting || !assignEditorId.trim()}
+                          disabled={submitting || !assignEditorId.trim() || editors.length === 0}
                           className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                         >
                           {submitting ? "Assigning…" : "Assign"}
@@ -787,284 +822,6 @@ function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
                 </ArticleListRow>
               );
             })}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
-            onPageChange={(p) => {
-              const next = new URLSearchParams(searchParams);
-              next.set("page", String(p));
-              setSearchParams(next);
-            }}
-          />
-        </>
-      )}
-    </div>
-  );
-}
-
-/* ── DirectorQueueSection (DIRECTOR) ───────────────────────────────────────── */
-
-function DirectorQueueSection({ newspaperId }: { newspaperId: string }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get("page") ?? "1");
-
-  const [articles, setArticles] = useState<QueueArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    await null;
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: "20",
-        view: "DIRECTOR",
-        status: "APPROVED_BY_MANAGER",
-      });
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-      setPagination({
-        total: data.pagination.total,
-        total_pages: data.pagination.total_pages,
-      });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId, currentPage]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
-
-  async function handleApprove(
-    articleId: string,
-    decision: ReviewDecision,
-    note: string
-  ) {
-    setSubmitting(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve?view=DIRECTOR`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ decision, note: note || undefined }),
-        }
-      );
-      if (!res.ok) throw new Error();
-      setActiveId(null);
-      load();
-    } catch {
-      alert("Failed to submit decision. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-7">
-      <SectionTitle title="Approval Queue" />
-
-      {error ? (
-        <ErrorState />
-      ) : loading ? (
-        <LoadingState />
-      ) : articles.length === 0 ? (
-        <EmptyState message="No articles awaiting your approval." />
-      ) : (
-        <>
-          <div className="flex flex-col">
-            {articles.map((article, index) => (
-              <ArticleListRow
-                key={article.id}
-                index={index}
-                total={articles.length}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-foreground text-[15px] leading-snug font-semibold">
-                      {article.title}
-                    </span>
-                    <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
-                      {article.perex}
-                    </span>
-                    <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
-                      <span>Author: {article.author.full_name}</span>
-                      <span>Category: {article.category}</span>
-                      <span>Submitted: {formatDate(article.submitted_at)}</span>
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
-                    >
-                      {STATUS_LABELS[article.status]}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setActiveId(activeId === article.id ? null : article.id)
-                      }
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
-                    >
-                      Decide
-                    </button>
-                  </div>
-                </div>
-                {activeId === article.id && (
-                  <DecisionForm
-                    onSubmit={(d, n) => handleApprove(article.id, d, n)}
-                    onCancel={() => setActiveId(null)}
-                    submitting={submitting}
-                  />
-                )}
-              </ArticleListRow>
-            ))}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
-            onPageChange={(p) => {
-              const next = new URLSearchParams(searchParams);
-              next.set("page", String(p));
-              setSearchParams(next);
-            }}
-          />
-        </>
-      )}
-    </div>
-  );
-}
-
-/* ── PublicationQueueSection (DIRECTOR) ────────────────────────────────────── */
-
-function PublicationQueueSection({ newspaperId }: { newspaperId: string }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get("page") ?? "1");
-
-  const [articles, setArticles] = useState<QueueArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [publishing, setPublishing] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    await null;
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: "20",
-        view: "DIRECTOR",
-        status: "APPROVED_BY_DIRECTOR",
-      });
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-      setPagination({
-        total: data.pagination.total,
-        total_pages: data.pagination.total_pages,
-      });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId, currentPage]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
-
-  async function handlePublish(articleId: string) {
-    if (!confirm("Publish this article immediately? This cannot be undone."))
-      return;
-    setPublishing(articleId);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/publish`,
-        { method: "POST", headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      alert("Failed to publish article. Please try again.");
-    } finally {
-      setPublishing(null);
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-7">
-      <SectionTitle title="Publication Queue" />
-
-      {error ? (
-        <ErrorState />
-      ) : loading ? (
-        <LoadingState />
-      ) : articles.length === 0 ? (
-        <EmptyState message="No articles ready for publication." />
-      ) : (
-        <>
-          <div className="flex flex-col">
-            {articles.map((article, index) => (
-              <ArticleListRow
-                key={article.id}
-                index={index}
-                total={articles.length}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-foreground text-[15px] leading-snug font-semibold">
-                      {article.title}
-                    </span>
-                    <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
-                      {article.perex}
-                    </span>
-                    <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
-                      <span>Author: {article.author.full_name}</span>
-                      <span>Category: {article.category}</span>
-                      <span>Approved: {formatDate(article.submitted_at)}</span>
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
-                    >
-                      {STATUS_LABELS[article.status]}
-                    </span>
-                    <button
-                      onClick={() => handlePublish(article.id)}
-                      disabled={publishing === article.id}
-                      className="rounded-md bg-[#16a34a] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                    >
-                      {publishing === article.id ? "Publishing…" : "Publish"}
-                    </button>
-                  </div>
-                </div>
-              </ArticleListRow>
-            ))}
           </div>
           <Pagination
             currentPage={currentPage}
@@ -1431,263 +1188,6 @@ function StatisticsSection({ newspaperId }: { newspaperId: string }) {
   );
 }
 
-/* ── AllNewspapersSection (DIRECTOR) ───────────────────────────────────────── */
-
-function AllNewspapersSection() {
-  const [newspapers, setNewspapers] = useState<NewspaperEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/newspapers`, { headers: authHeaders() })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<{ data: NewspaperEntry[] }>;
-      })
-      .then((data) => setNewspapers(data.data))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return (
-    <div className="flex flex-col gap-7">
-      <SectionTitle title="All Newspapers" />
-
-      {error ? (
-        <ErrorState />
-      ) : loading ? (
-        <LoadingState />
-      ) : newspapers.length === 0 ? (
-        <EmptyState message="No newspapers found." />
-      ) : (
-        <div className="flex flex-col">
-          {newspapers.map((np, index) => (
-            <ArticleListRow key={np.id} index={index} total={newspapers.length}>
-              <div className="flex items-center gap-4">
-                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="text-foreground text-[15px] font-semibold">
-                    {np.name}
-                  </span>
-                  <span className="text-muted-foreground text-[12px]">
-                    Created {formatDate(np.created_at)}
-                  </span>
-                </div>
-              </div>
-            </ArticleListRow>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── UserManagementSection (SYSTEM_ADMINISTRATOR) ──────────────────────────── */
-
-function UserManagementSection({ newspaperId }: { newspaperId: string }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get("page") ?? "1");
-
-  const [users, setUsers] = useState<UserEntry[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [activeUserId, setActiveUserId] = useState<string | null>(null);
-  const [roleInput, setRoleInput] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const NEWSPAPER_ROLES = [
-    "REGISTERED_USER",
-    "AUTHOR",
-    "EDITOR",
-    "NEWSPAPER_MANAGER",
-  ];
-
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    await null;
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: "50",
-      });
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users?${params}`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<UserEntry>;
-      setUsers(data.data);
-      setPagination({
-        total: data.pagination.total,
-        total_pages: data.pagination.total_pages,
-      });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId, currentPage]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
-
-  async function handleAssignRole(userId: string) {
-    if (!roleInput) return;
-    setSaving(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users/${userId}/roles`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ role: roleInput }),
-        }
-      );
-      if (res.status === 409) {
-        const data = (await res.json()) as { error: string };
-        alert(data.error === "MANAGER_ALREADY_EXISTS"
-          ? "This newspaper already has a manager. Remove the existing one first."
-          : "User already has this role.");
-        return;
-      }
-      if (!res.ok) throw new Error();
-      setActiveUserId(null);
-      setRoleInput("");
-      load();
-    } catch {
-      alert("Failed to assign role.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function handleRemoveRole(userId: string, role: string) {
-    if (role === "REGISTERED_USER") {
-      alert("Cannot remove the base REGISTERED_USER role.");
-      return;
-    }
-    if (!confirm(`Remove role ${role} from this user?`)) return;
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users/${userId}/roles/${role}`,
-        { method: "DELETE", headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      alert("Failed to remove role.");
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-7">
-      <SectionTitle title="User Management" />
-
-      {error ? (
-        <ErrorState />
-      ) : loading ? (
-        <LoadingState />
-      ) : users.length === 0 ? (
-        <EmptyState message="No users found." />
-      ) : (
-        <>
-          <div className="flex flex-col">
-            {users.map((user, index) => (
-              <ArticleListRow key={user.id} index={index} total={users.length}>
-                <div className="flex items-start gap-4">
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-foreground text-[14px] font-semibold">
-                      {user.full_name ?? user.username}
-                    </span>
-                    <span className="text-muted-foreground text-[12px]">
-                      @{user.username} · {user.email}
-                    </span>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {user.roles.map((role) => (
-                        <span
-                          key={role}
-                          className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium"
-                        >
-                          {role}
-                          {role !== "REGISTERED_USER" && (
-                            <button
-                              onClick={() => handleRemoveRole(user.id, role)}
-                              className="ml-0.5 transition-colors hover:text-[#dc2626]"
-                              aria-label={`Remove ${role}`}
-                            >
-                              ×
-                            </button>
-                          )}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() =>
-                      setActiveUserId(activeUserId === user.id ? null : user.id)
-                    }
-                    className="border-border text-foreground hover:bg-muted shrink-0 rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
-                  >
-                    Assign Role
-                  </button>
-                </div>
-
-                {activeUserId === user.id && (
-                  <div className="border-border bg-muted/30 mt-3 flex items-center gap-3 rounded-lg border p-4">
-                    <select
-                      value={roleInput}
-                      onChange={(e) => setRoleInput(e.target.value)}
-                      className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
-                    >
-                      <option value="">Select a role…</option>
-                      {NEWSPAPER_ROLES
-                        .filter((r) => !user.roles.includes(r))
-                        .map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                    </select>
-                    <button
-                      onClick={() => handleAssignRole(user.id)}
-                      disabled={saving || !roleInput}
-                      className="bg-foreground text-background rounded-md px-3 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Assign"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setActiveUserId(null);
-                        setRoleInput("");
-                      }}
-                      className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-2 text-[13px] font-medium"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </ArticleListRow>
-            ))}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
-            onPageChange={(p) => {
-              const next = new URLSearchParams(searchParams);
-              next.set("page", String(p));
-              setSearchParams(next);
-            }}
-          />
-        </>
-      )}
-    </div>
-  );
-}
-
 /* ── Main Component ─────────────────────────────────────────────────────────── */
 
 export function AuthorDashboardPage() {
@@ -1781,14 +1281,6 @@ export function AuthorDashboardPage() {
             <CategoriesSection newspaperId={newspaperId} />
           ) : activeSection === "statistics" ? (
             <StatisticsSection newspaperId={newspaperId} />
-          ) : activeSection === "director-queue" ? (
-            <DirectorQueueSection newspaperId={newspaperId} />
-          ) : activeSection === "publication-queue" ? (
-            <PublicationQueueSection newspaperId={newspaperId} />
-          ) : activeSection === "all-newspapers" ? (
-            <AllNewspapersSection />
-          ) : activeSection === "user-management" ? (
-            <UserManagementSection newspaperId={newspaperId} />
           ) : (
             <EmptyState message="This section is not available." />
           )}

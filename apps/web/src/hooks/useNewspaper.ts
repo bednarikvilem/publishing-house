@@ -26,7 +26,12 @@ export function useNewspaper(): UseNewspaperResult {
         if (!res.ok) throw new Error("Failed to fetch newspaper");
         return res.json() as Promise<Newspaper>;
       })
-      .then((data) => { if (data) setNewspaper(data); })
+      .then((data) => {
+        if (data) {
+          setNewspaper(data);
+          document.title = data.name;
+        }
+      })
       .catch(() => setNotFound(true));
   }, [newspaperName]);
 
