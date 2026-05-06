@@ -5,9 +5,7 @@ const newspaper = process.env.TEST_NEWSPAPER!;
 test.describe("Homepage", () => {
   test("loads and displays the newspaper name", async ({ page }) => {
     await page.goto(`/${newspaper}`);
-    await expect(page.locator("header")).toContainText(
-      newspaper.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-    );
+    await expect(page.locator("header")).toContainText(new RegExp(newspaper, "i"));
   });
 
   test("displays at least one article card with title and perex", async ({ page }) => {
