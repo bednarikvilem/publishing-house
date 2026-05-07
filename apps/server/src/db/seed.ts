@@ -7,6 +7,7 @@ import { seedArticles } from "./seeds/seedArticles";
 import { seedRandomAuthors } from "./seeds/seedRandomAuthors";
 import { seedEmma } from "./seeds/seedEmma";
 import { seedArticleReviews } from "./seeds/seedArticleReviews";
+import { seedE2eUsers } from "./seeds/seedE2eUsers";
 
 
 async function seed() {
@@ -19,6 +20,7 @@ async function seed() {
     await seedArticles();
     await seedEmma();
     await seedArticleReviews();
+    await seedE2eUsers();
 
 }
 
