@@ -14,6 +14,7 @@ import { cors } from "@elysiajs/cors";
 import { openapi } from "@elysiajs/openapi";
 import { logger } from "./utils/logger";
 import { audit } from "./utils/audit";
+import { viewRoutes } from "./routes/views_route.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -55,6 +56,7 @@ export const app = new Elysia()
     .use(likeRoutes)
     .use(adminRoutes)
     .use(authorRoutes)
+    .use(viewRoutes)
     .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))
     .get("/api", async () => {
         try {

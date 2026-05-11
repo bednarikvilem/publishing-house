@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { users, userRoles, globalRoles, newspapers, articles } from "../db/schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, count, sql } from "drizzle-orm";
 import {
     adminUsersListParams,
     adminUsersListQuery,
@@ -18,6 +18,7 @@ import {
 import { createGlobalUserInput } from "../schemas/auth";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
+import { articleViews } from "../db/schema";
 
 // In-memory system config (in production this would be persisted to DB or env)
 let systemConfig = {
@@ -275,87 +276,160 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     // ── GET /api/newspapers/:newspaper_id/statistics ───────────────────────
     .get(
         "/api/newspapers/:newspaper_id/statistics",
-        async ({ params, user, roles }) => {
-            if (!user) {
-                logger.warn("Admin action failed: unauthorized", {});
-                return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
-            }
-            if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
-                logger.warn("Admin action failed: forbidden", {
-                    userId: user.id,
-                    roles,
-                });
+        async ({ params, user, roles, query }) => {
+            if (!user) return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+            if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("DIRECTOR"))
                 return Response.json({ error: "FORBIDDEN" }, { status: 403 });
-            }
-
+ 
             const newspaper = await db.query.newspapers.findFirst({
                 where: eq(newspapers.id, params.newspaper_id),
             });
-            if (!newspaper) {
-                logger.warn("Admin action failed: newspaper not found", {
-                    newspaperId: params.newspaper_id,
-                });
-                return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
-            }
-
+            if (!newspaper) return Response.json({ error: "NEWSPAPER_NOT_FOUND" }, { status: 404 });
+ 
+            // ── Date window ──────────────────────────────────────────────
+            const dateFrom = (query as any)?.date_from
+                ? new Date((query as any).date_from)
+                : undefined;
+            const dateTo = (query as any)?.date_to
+                ? new Date((query as any).date_to)
+                : undefined;
+ 
+            // ── Articles ─────────────────────────────────────────────────
             const allArticles = await db.query.articles.findMany({
                 where: eq(articles.newspaperId, params.newspaper_id),
                 with: { category: true },
             });
-
-            const published = allArticles.filter((a) => a.state === "PUBLISHED");
-            const drafts = allArticles.filter((a) => a.state === "DRAFT");
-            const inReview = allArticles.filter((a) =>
-                ["SUBMITTED", "IN_REVIEW", "APPROVED_BY_EDITOR", "APPROVED_BY_MANAGER"].includes(a.state)
+ 
+            const published   = allArticles.filter(a => a.state === "PUBLISHED");
+            const drafts      = allArticles.filter(a => a.state === "DRAFT");
+            const inReview    = allArticles.filter(a =>
+                ["SUBMITTED", "IN_REVIEW", "APPROVED_BY_EDITOR", "APPROVED_BY_MANAGER"].includes(a.state!)
             );
-            const rejected = allArticles.filter((a) => a.state === "REJECTED");
-
-            // Count by category
+            const rejected    = allArticles.filter(a => a.state === "REJECTED");
+ 
+            // ── Subscribers (users with REGISTERED_USER role) ────────────
+            const allRoles = await db.query.userRoles.findMany({
+                where: and(
+                    eq(userRoles.newspaperId, params.newspaper_id),
+                    eq(userRoles.role, "REGISTERED_USER")
+                ),
+            });
+            const totalSubscribers = allRoles.length;
+ 
+            // ── Published by category ────────────────────────────────────
             const categoryCount: Record<string, number> = {};
             for (const a of published) {
                 const cat = (a as any).category?.categoryName ?? "Uncategorized";
                 categoryCount[cat] = (categoryCount[cat] ?? 0) + 1;
             }
-
-            // Count by author
-            const authorCount: Record<string, number> = {};
+ 
+            // ── Published by author ──────────────────────────────────────
+            const authorCount: Record<string, { full_name: string | null; count: number }> = {};
             for (const a of published) {
-                authorCount[a.authorId] = (authorCount[a.authorId] ?? 0) + 1;
+                if (!authorCount[a.authorId]) {
+                    authorCount[a.authorId] = { full_name: null, count: 0 };
+                }
+                authorCount[a.authorId]!.count += 1;
             }
-
-            // Total comments & likes for this newspaper
+            // Resolve author names
+            const authorIds = Object.keys(authorCount);
+            if (authorIds.length > 0) {
+                const authorUsers = await db.query.users.findMany({
+                    where: (u, { inArray }) => inArray(u.id, authorIds),
+                    columns: { id: true, fullname: true },
+                });
+                for (const u of authorUsers) {
+                    if (authorCount[u.id]) {
+                        authorCount[u.id]!.full_name = u.fullname ?? null;
+                    }
+                }
+            }
+ 
+            // ── Views & read completions ─────────────────────────────────
+            const publishedIds = new Set(published.map(a => a.id));
+ 
+            const allViews = await db.query.articleViews.findMany();
+            const relevantViews = allViews.filter(v => publishedIds.has(v.articleId));
+ 
+            const totalViews          = relevantViews.length;
+            const totalReadsCompleted = relevantViews.filter(v => v.readCompleted).length;
+            const readThroughRate     = totalViews > 0
+                ? Math.round((totalReadsCompleted / totalViews) * 100)
+                : 0;
+ 
+            // Top 5 articles by views
+            const viewsByArticle: Record<string, { title: string; views: number; completions: number }> = {};
+            for (const v of relevantViews) {
+                if (!viewsByArticle[v.articleId]) {
+                    const art = published.find(a => a.id === v.articleId);
+                    viewsByArticle[v.articleId] = {
+                        title: art?.title ?? "Unknown",
+                        views: 0,
+                        completions: 0,
+                    };
+                }
+                viewsByArticle[v.articleId]!.views += 1;
+                if (v.readCompleted) viewsByArticle[v.articleId]!.completions += 1;
+            }
+            const topArticles = Object.entries(viewsByArticle)
+                .map(([article_id, data]) => ({ article_id, ...data }))
+                .sort((a, b) => b.views - a.views)
+                .slice(0, 5);
+ 
+            // ── Comments & likes ─────────────────────────────────────────
             const allComments = await db.query.comments.findMany();
-            const allLikes = await db.query.likes.findMany();
-
-            const publishedIds = new Set(published.map((a) => a.id));
-            const totalComments = allComments.filter((c) => publishedIds.has(c.articleId)).length;
-            const totalLikes = allLikes.filter((l) => publishedIds.has(l.articleId)).length;
-
-            logger.info("Statistics fetched", {
-                userId: user.id,
-                newspaperId: params.newspaper_id,
-            });
-
+            const allLikes    = await db.query.likes.findMany();
+ 
+            const totalComments = allComments.filter(c => publishedIds.has(c.articleId)).length;
+            const totalLikes    = allLikes.filter(l => publishedIds.has(l.articleId)).length;
+ 
+            // ── Publication timeline (last 30 days) ──────────────────────
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+ 
+            const recentPublished = published.filter(a =>
+                a.publicationDate && new Date(a.publicationDate) >= thirtyDaysAgo
+            );
+            const timelineMap: Record<string, number> = {};
+            for (const a of recentPublished) {
+                const day = new Date(a.publicationDate!).toISOString().split("T")[0]!;
+                timelineMap[day] = (timelineMap[day] ?? 0) + 1;
+            }
+            const publication_timeline = Object.entries(timelineMap)
+                .map(([date, published_count]) => ({ date, published_count }))
+                .sort((a, b) => a.date.localeCompare(b.date));
+ 
             return Response.json({
                 newspaper_id: params.newspaper_id,
+                subscribers: {
+                    total: totalSubscribers,
+                },
                 articles: {
-                    total_published: published.length,
-                    total_draft: drafts.length,
-                    total_in_review: inReview.length,
-                    total_rejected: rejected.length,
+                    total_published:       published.length,
+                    total_draft:           drafts.length,
+                    total_in_review:       inReview.length,
+                    total_rejected:        rejected.length,
                     published_by_category: Object.entries(categoryCount).map(([category, c]) => ({
                         category,
                         count: c,
                     })),
-                    published_by_author: Object.entries(authorCount).map(([author_id, c]) => ({
+                    published_by_author: Object.entries(authorCount).map(([author_id, data]) => ({
                         author_id,
-                        count: c,
+                        full_name: data.full_name,
+                        count: data.count,
                     })),
+                },
+                views: {
+                    total_views:           totalViews,
+                    total_reads_completed: totalReadsCompleted,
+                    read_through_rate:     readThroughRate,
+                    top_articles:          topArticles,
                 },
                 engagement: {
                     total_comments: totalComments,
-                    total_likes: totalLikes,
+                    total_likes:    totalLikes,
                 },
+                publication_timeline,
             });
         },
         {
