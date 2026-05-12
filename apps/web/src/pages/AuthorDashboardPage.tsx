@@ -1085,34 +1085,45 @@ export function AuthorDashboardPage() {
   const statusInSearch =
     (searchParams.get("status") as ArticleStatus | null) ?? null;
 
-  const sidebarChildren =
-    activeSection === "my-articles" ? (
-      <div className="flex flex-col gap-0.5">
-        <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
-          Filter by Status
-        </p>
-        {MY_ARTICLE_FILTERS.map((item) => (
-          <button
-            key={String(item.value)}
-            onClick={() => setStatusFilter(item.value)}
-            className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
-              statusInSearch === item.value
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            {item.value ? (
-              <span
-                className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`}
-              />
-            ) : (
-              <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
-            )}
-            {item.label}
-          </button>
-        ))}
-      </div>
-    ) : null;
+  function navigate(section: string) {
+    const next = new URLSearchParams(searchParams);
+    next.set("section", section);
+    setSearchParams(next);
+  }
+
+  const sidebarChildren = (
+    <>
+
+      {activeSection === "my-articles" && (
+        <div className="flex flex-col gap-0.5">
+          <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+            Filter by Status
+          </p>
+
+          {MY_ARTICLE_FILTERS.map((item) => (
+            <button
+              key={String(item.value)}
+              onClick={() => setStatusFilter(item.value)}
+              className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+                statusInSearch === item.value
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {item.value ? (
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`}
+                />
+              ) : (
+                <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
+              )}
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
 
   const hasAccess = userRoles.some((r) => EDITORIAL_ROLES.includes(r));
 
@@ -1139,10 +1150,14 @@ export function AuthorDashboardPage() {
           ) : activeSection === "categories" ? (
             <CategoriesSection newspaperId={newspaperId} />
           ) : activeSection === "statistics" ? (
-            <StatisticsSection
-              newspaperId={newspaperId}
-              isDirector={userRoles.includes("DIRECTOR")}
-            />
+            !newspaperId ? (
+              <LoadingState />
+            ) : (
+              <StatisticsSection
+                newspaperId={newspaperId}
+                isDirector={userRoles.includes("DIRECTOR")}
+              />
+            )
           ) : (
             <EmptyState message="This section is not available." />
           )}

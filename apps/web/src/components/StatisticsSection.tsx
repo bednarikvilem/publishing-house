@@ -443,6 +443,8 @@ export function StatisticsSection({
     const [error,       setError]       = useState<string | null>(null);
 
     useEffect(() => {
+        if (view === "newspaper" && !newspaperId) return;
+
         let cancelled = false;
         setLoading(true);
         setError(null);
