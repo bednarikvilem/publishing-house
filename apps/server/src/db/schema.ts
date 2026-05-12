@@ -162,6 +162,19 @@ export type ArticleReview = InferSelectModel<typeof articleReviews>;
 export type NewArticleReview = InferInsertModel<typeof articleReviews>;
 export type ReviewDecision = typeof articleReviews.decision.enumValues[number];
 
+export const articleViews = pgTable("article_views", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    articleId: uuid("article_id")
+        .notNull()
+        .references(() => articles.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    readCompleted: boolean("read_completed").default(false).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ArticleView = InferSelectModel<typeof articleViews>;
+export type NewArticleView = InferInsertModel<typeof articleViews>;
+
 export const auditLogs = pgTable("audit_logs", {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
@@ -210,6 +223,7 @@ export const articlesRelations = relations(articles, ({ one, many }) => ({
     comments: many(comments),
     likes: many(likes),
     reviews: many(articleReviews),
+    views: many(articleViews),
 }));
 
 export const articleCategoryRelations = relations(articleCategory, ({ many }) => ({

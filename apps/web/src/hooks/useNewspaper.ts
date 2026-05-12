@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { API_BASE_URL, authHeaders } from "../lib/api";
 import type { Newspaper } from "../types";
 
 interface UseNewspaperResult {
@@ -17,7 +17,9 @@ export function useNewspaper(): UseNewspaperResult {
   useEffect(() => {
     if (!newspaperName) return;
     setNotFound(false);
-    fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`)
+    fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`, {
+      headers: authHeaders(),
+    })
       .then((res) => {
         if (res.status === 404) {
           setNotFound(true);

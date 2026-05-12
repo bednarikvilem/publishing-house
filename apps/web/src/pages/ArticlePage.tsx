@@ -13,6 +13,7 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { useArticleViewTracker } from "../hooks/useArticleViewTracker";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -100,6 +101,12 @@ export function ArticlePage() {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const isLoggedIn = !!localStorage.getItem("token");
+
+  const { sentinelRef } = useArticleViewTracker({
+    newspaperId: article?.newspaperId,
+    articleId: article?.id,
+    enabled: article?.state === "PUBLISHED",
+  });
 
   useEffect(() => {
     if (!newspaper || !articleId) return;
@@ -292,8 +299,13 @@ export function ArticlePage() {
         <p className="text-foreground mb-6 text-[18px] leading-[1.7]">
           {article.perex}
         </p>
+
         <hr className="border-border mb-6" />
+
         <ArticleContent content={article.content} />
+
+        {/* Article read tracking sentinel */}
+        <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
       </section>
 
       {/* Likes & Comments */}

@@ -16,6 +16,7 @@ import type {
   QueueArticle,
   Statistics,
 } from "../types/dashboard";
+import { StatisticsSection } from "../components/StatisticsSection";
 
 /* ── Constants ─────────────────────────────────────────────────────────────── */
 
@@ -1046,148 +1047,6 @@ function CategoriesSection({ newspaperId }: { newspaperId: string }) {
   );
 }
 
-/* ── StatisticsSection (NEWSPAPER_MANAGER | DIRECTOR) ──────────────────────── */
-
-function StatisticsSection({ newspaperId }: { newspaperId: string }) {
-  const [stats, setStats] = useState<Statistics | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (!newspaperId) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}/statistics`, {
-      headers: authHeaders(),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<Statistics>;
-      })
-      .then(setStats)
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [newspaperId]);
-
-  return (
-    <div className="flex flex-col gap-7">
-      <SectionTitle title="Statistics" />
-
-      {error ? (
-        <ErrorState />
-      ) : loading ? (
-        <LoadingState />
-      ) : stats ? (
-        <>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {[
-              {
-                label: "Published",
-                value: stats.articles.total_published,
-                color: "text-[#16a34a]",
-              },
-              {
-                label: "In Review",
-                value: stats.articles.total_in_review,
-                color: "text-[#ea580c]",
-              },
-              {
-                label: "Drafts",
-                value: stats.articles.total_draft,
-                color: "text-muted-foreground",
-              },
-              {
-                label: "Rejected",
-                value: stats.articles.total_rejected,
-                color: "text-[#dc2626]",
-              },
-            ].map(({ label, value, color }) => (
-              <div
-                key={label}
-                className="border-border bg-card flex flex-col gap-1 rounded-lg border px-5 py-4"
-              >
-                <span className="text-muted-foreground text-[12px] font-medium tracking-wide uppercase">
-                  {label}
-                </span>
-                <span className={`text-[32px] font-bold ${color}`}>
-                  {value}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border-border bg-card flex flex-col gap-1 rounded-lg border px-5 py-4">
-              <span className="text-muted-foreground text-[12px] font-medium tracking-wide uppercase">
-                Total Comments
-              </span>
-              <span className="text-foreground text-[32px] font-bold">
-                {stats.engagement.total_comments}
-              </span>
-            </div>
-            <div className="border-border bg-card flex flex-col gap-1 rounded-lg border px-5 py-4">
-              <span className="text-muted-foreground text-[12px] font-medium tracking-wide uppercase">
-                Total Likes
-              </span>
-              <span className="text-foreground text-[32px] font-bold">
-                {stats.engagement.total_likes}
-              </span>
-            </div>
-          </div>
-
-          {stats.articles.published_by_category.length > 0 && (
-            <div className="border-border bg-card flex flex-col gap-4 rounded-lg border px-5 py-4">
-              <h2 className="text-foreground text-[15px] font-semibold">
-                Published by Category
-              </h2>
-              <div className="flex flex-col gap-2">
-                {stats.articles.published_by_category.map(
-                  ({ category, count }) => (
-                    <div
-                      key={category}
-                      className="flex items-center justify-between"
-                    >
-                      <span className="text-muted-foreground text-[13px]">
-                        {category}
-                      </span>
-                      <span className="text-foreground text-[13px] font-semibold">
-                        {count}
-                      </span>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-
-          {stats.articles.published_by_author.length > 0 && (
-            <div className="border-border bg-card flex flex-col gap-4 rounded-lg border px-5 py-4">
-              <h2 className="text-foreground text-[15px] font-semibold">
-                Published by Author
-              </h2>
-              <div className="flex flex-col gap-2">
-                {stats.articles.published_by_author.map(
-                  ({ author_id, full_name, count }) => (
-                    <div
-                      key={author_id}
-                      className="flex items-center justify-between"
-                    >
-                      <span className="text-muted-foreground text-[13px]">
-                        {full_name}
-                      </span>
-                      <span className="text-foreground text-[13px] font-semibold">
-                        {count}
-                      </span>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-        </>
-      ) : null}
-    </div>
-  );
-}
-
 /* ── Main Component ─────────────────────────────────────────────────────────── */
 
 export function AuthorDashboardPage() {
@@ -1226,34 +1085,45 @@ export function AuthorDashboardPage() {
   const statusInSearch =
     (searchParams.get("status") as ArticleStatus | null) ?? null;
 
-  const sidebarChildren =
-    activeSection === "my-articles" ? (
-      <div className="flex flex-col gap-0.5">
-        <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
-          Filter by Status
-        </p>
-        {MY_ARTICLE_FILTERS.map((item) => (
-          <button
-            key={String(item.value)}
-            onClick={() => setStatusFilter(item.value)}
-            className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
-              statusInSearch === item.value
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            {item.value ? (
-              <span
-                className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`}
-              />
-            ) : (
-              <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
-            )}
-            {item.label}
-          </button>
-        ))}
-      </div>
-    ) : null;
+  function navigate(section: string) {
+    const next = new URLSearchParams(searchParams);
+    next.set("section", section);
+    setSearchParams(next);
+  }
+
+  const sidebarChildren = (
+    <>
+
+      {activeSection === "my-articles" && (
+        <div className="flex flex-col gap-0.5">
+          <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+            Filter by Status
+          </p>
+
+          {MY_ARTICLE_FILTERS.map((item) => (
+            <button
+              key={String(item.value)}
+              onClick={() => setStatusFilter(item.value)}
+              className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+                statusInSearch === item.value
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {item.value ? (
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`}
+                />
+              ) : (
+                <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
+              )}
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
 
   const hasAccess = userRoles.some((r) => EDITORIAL_ROLES.includes(r));
 
@@ -1280,7 +1150,14 @@ export function AuthorDashboardPage() {
           ) : activeSection === "categories" ? (
             <CategoriesSection newspaperId={newspaperId} />
           ) : activeSection === "statistics" ? (
-            <StatisticsSection newspaperId={newspaperId} />
+            !newspaperId ? (
+              <LoadingState />
+            ) : (
+              <StatisticsSection
+                newspaperId={newspaperId}
+                isDirector={userRoles.includes("DIRECTOR")}
+              />
+            )
           ) : (
             <EmptyState message="This section is not available." />
           )}

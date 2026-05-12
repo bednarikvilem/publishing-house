@@ -186,6 +186,17 @@ function SidebarContent({
           </NavSection>
         )}
 
+        {roles.has("DIRECTOR") && (
+          <NavSection title="Director">
+            <NavItem
+              icon={<BarChartIcon />}
+              label="Statistics"
+              href={`/${np}/author-dashboard?section=statistics`}
+              onClick={onNavClick}
+            />
+          </NavSection>
+        )}
+
         {children && (
           <>
             <div className="bg-border my-1 h-px" />

@@ -4,7 +4,9 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import { SunIcon, MoonIcon, MenuIcon, XIcon } from "../components/Icons";
 import { useTheme } from "../hooks/useTheme";
 import type { PaginatedResponse, ReviewDecision } from "../types";
-import type { QueueArticle, Statistics } from "../types/dashboard";
+import type { QueueArticle } from "../types/dashboard";
+import { StatisticsSection } from "../components/StatisticsSection";
+
 
 type NewspaperEntry = { id: string; name: string; slug: string };
 
@@ -426,7 +428,7 @@ export function DirectorDashboardPage() {
         ) : selectedNewspaper && selectedTab === "publication" ? (
           <PublicationQueue newspaperId={selectedNewspaper.id} />
         ) : selectedNewspaper && selectedTab === "statistics" ? (
-          <StatisticsPanel newspaperId={selectedNewspaper.id} />
+          <StatisticsSection newspaperId={selectedNewspaper.id} isDirector={false} />
         ) : null}
       </main>
     </div>
