@@ -1,6 +1,3 @@
-// apps/server/src/routes/views.ts
-// Mount this in server.ts: .use(viewRoutes)
-
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
