@@ -8,7 +8,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { SearchResultsPage } from "./pages/SearchResultsPage";
 import { PasswordResetPage } from "./pages/PasswordResetPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
-import { AuthorDashboardPage } from "./pages/AuthorDashboardPage";
+import { DashboardPage } from "./pages/DashboardPage";
 import { ArticleEditorPage } from "./pages/ArticleEditorPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { AdminLoginPage } from "./pages/AdminLoginPage";
@@ -61,7 +61,7 @@ export function App() {
       <Route path="/:newspaperName/profile" element={<UserProfilePage />} />
       <Route
         path="/:newspaperName/author-dashboard"
-        element={<AuthorDashboardPage />}
+        element={<DashboardPage />}
       />
     </Routes>
   );

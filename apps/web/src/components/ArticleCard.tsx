@@ -1,14 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import type { Article } from "../types/article";
 import { CategoryBadge } from "./CategoryBadge";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { formatDate } from "../lib/utils";
 
 export function ArticleCard({ article }: { article: Article }) {
   const { newspaperName } = useParams<{ newspaperName: string }>();

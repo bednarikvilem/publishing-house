@@ -7,14 +7,7 @@ import { ArticleCard } from "../components/ArticleCard";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { formatDate } from "../lib/utils";
 
 export function NewspaperHomepage() {
   const { newspaperName, newspaper, notFound } = useNewspaper();
