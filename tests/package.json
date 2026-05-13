@@ -1,0 +1,11 @@
+{
+  "name": "tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bunx playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

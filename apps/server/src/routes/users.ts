@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
-import { v2 as cloudinary } from "cloudinary";
 import { authMiddleware } from "../middleware/auth";
+import { uploadImage } from "../utils/storage";
 import { db } from "../db";
 import { users, newspaperAuthors } from "../db/schema";
 import { eq, and, isNull } from "drizzle-orm";
@@ -145,14 +145,8 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
                         { status: 422 }
                     );
                 }
-                const arrayBuffer = await blob.arrayBuffer();
-                const base64 = Buffer.from(arrayBuffer).toString("base64");
-                const dataUri = `data:${blob.type};base64,${base64}`;
-                const uploadResult = await cloudinary.uploader.upload(dataUri, {
-                    folder: "profiles",
-                    resource_type: "image",
-                });
-                profilePictureUrl = uploadResult.secure_url;
+                const buffer = Buffer.from(await blob.arrayBuffer());
+                profilePictureUrl = await uploadImage(buffer, blob.type, "profiles");
             }
         } catch {
             return Response.json(

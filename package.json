@@ -14,10 +14,11 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "test": "turbo test",
+    "test:e2e": "bun run --cwd tests test"
   },
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": ["apps/*", "packages/*", "tests"],
   "dependencies": {
     "nodemailer": "^8.0.5"
   },
