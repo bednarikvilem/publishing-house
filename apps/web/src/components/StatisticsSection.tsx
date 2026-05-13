@@ -441,6 +441,7 @@ export function StatisticsSection({
     const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
     const [loading,     setLoading]     = useState(false);
     const [error,       setError]       = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         if (view === "newspaper" && !newspaperId) return;
@@ -467,26 +468,54 @@ export function StatisticsSection({
             .finally(() => { if (!cancelled) setLoading(false); });
 
         return () => { cancelled = true; };
-    }, [view, newspaperId]);
+    }, [view, newspaperId, refreshKey]);
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-foreground text-2xl font-bold">Statistics</h1>
-                {isDirector && (
-                    <div className="flex gap-1 border-border border rounded-lg p-1">
-                        {(["global", "newspaper"] as const).map(v => (
-                            <button key={v} onClick={() => setView(v)}
-                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                                    view === v
-                                        ? "bg-foreground text-background"
-                                        : "text-muted-foreground hover:text-foreground"
-                                }`}>
-                                {v === "global" ? "All Newspapers" : "This Newspaper"}
-                            </button>
-                        ))}
-                    </div>
-                )}
+
+                <div className="flex items-center gap-2">
+                    {isDirector && !!newspaperId && (
+                        <div className="flex gap-1 border-border border rounded-lg p-1">
+                            {(["global", "newspaper"] as const).map(v => (
+                                <button
+                                    key={v}
+                                    onClick={() => setView(v)}
+                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                        view === v
+                                            ? "bg-foreground text-background"
+                                            : "text-muted-foreground hover:text-foreground"
+                                    }`}
+                                >
+                                    {v === "global" ? "All Newspapers" : "This Newspaper"}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {}
+                    <button
+                        onClick={() => setRefreshKey(k => k + 1)}
+                        className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        title="Refresh statistics"
+                        disabled={loading}
+                    >
+                        <svg
+                            className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {loading && (

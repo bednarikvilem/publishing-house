@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 
 interface UseArticleViewTrackerOptions {
@@ -14,7 +14,11 @@ export function useArticleViewTracker({
 }: UseArticleViewTrackerOptions) {
     const viewRecorded = useRef(false);
     const readRecorded = useRef(false);
-    const sentinelRef  = useRef<HTMLDivElement | null>(null);
+
+    const [sentinelEl, setSentinelEl] = useState<HTMLDivElement | null>(null);
+    const sentinelRef = useCallback((node: HTMLDivElement | null) => {
+        setSentinelEl(node);
+    }, []);
 
     const postView = async (readCompleted: boolean) => {
         await fetch(
@@ -32,7 +36,7 @@ export function useArticleViewTracker({
         if (!enabled || !newspaperId || !articleId) return;
         viewRecorded.current = false;
         readRecorded.current = false;
- 
+
         const timer = setTimeout(async () => {
             if (viewRecorded.current) return;
             viewRecorded.current = true;
@@ -42,17 +46,14 @@ export function useArticleViewTracker({
                 // non-critical — silently ignore
             }
         }, 2000);
- 
+
         return () => clearTimeout(timer);
     }, [enabled, newspaperId, articleId]);
 
-    // ── 2. Record read-completion when sentinel is visible ───────────────
+    // ── 2. Record read-completion when sentinel becomes visible ──────────
     useEffect(() => {
-        if (!enabled || !newspaperId || !articleId) return;
- 
-        const sentinel = sentinelRef.current;
-        if (!sentinel) return;
- 
+        if (!enabled || !newspaperId || !articleId || !sentinelEl) return;
+
         const observer = new IntersectionObserver(
             async ([entry]) => {
                 if (!entry?.isIntersecting || readRecorded.current) return;
@@ -66,10 +67,10 @@ export function useArticleViewTracker({
             },
             { threshold: 1.0 }
         );
- 
-        observer.observe(sentinel);
+
+        observer.observe(sentinelEl);
         return () => observer.disconnect();
-    }, [enabled, newspaperId, articleId]);
+    }, [enabled, newspaperId, articleId, sentinelEl]);
 
     return { sentinelRef };
 }
