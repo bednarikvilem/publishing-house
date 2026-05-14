@@ -12,3 +12,10 @@ export function formatDate(iso: string, monthFormat: "short" | "long" = "short")
     day: "numeric",
   });
 }
+
+export function slugToDisplayName(slug: string): string {
+  return slug
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { UserIcon } from "../components/Icons";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
+import { formatDate } from "../lib/utils";
 import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
@@ -9,14 +10,6 @@ import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 
 type SortOrder = "latest" | "oldest";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
