@@ -62,14 +62,15 @@ export function ProfileInfoCard({ profile, onSaved }: {
       });
 
       if (res.ok) {
-        const data = (await res.json()) as UserProfile;
-        const [first, last] = splitFullName(data.full_name);
+        const data = (await res.json()) as Partial<UserProfile>;
+        const merged: UserProfile = { ...profile, ...data };
+        const [first, last] = splitFullName(merged.full_name);
         setFirstName(first);
         setLastName(last);
-        setUsername(data.username);
-        setBio(data.bio ?? "");
+        setUsername(merged.username);
+        setBio(merged.bio ?? "");
         setSuccess(true);
-        onSaved(data);
+        onSaved(merged);
         return;
       }
 
