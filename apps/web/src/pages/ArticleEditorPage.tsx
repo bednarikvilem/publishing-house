@@ -5,6 +5,7 @@ import { RichTextEditor } from "../components/RichTextEditor";
 import { LoadingState } from "../components/LoadingState";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
+import { FormField } from "../components/FormField";
 import { STATUS_LABELS, STATUS_STYLES } from "../lib/articleStatus";
 import type { Category, ArticleStatus } from "../types";
 
@@ -108,22 +109,18 @@ function EditorSidebar({
           </select>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-[12px] font-medium">
-            Keywords
-          </label>
-          <input
-            type="text"
-            value={keywords}
-            onChange={(e) => setKeywords(e.target.value)}
-            placeholder="comma, separated, keywords"
-            disabled={!canEdit}
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2 disabled:opacity-60"
-          />
-          <p className="text-muted-foreground/70 text-[11px]">
-            Separate keywords with commas
-          </p>
-        </div>
+        <FormField
+          id="keywords"
+          label="Keywords"
+          type="text"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          placeholder="comma, separated, keywords"
+          disabled={!canEdit}
+        />
+        <p className="text-muted-foreground/70 text-[11px] -mt-3">
+          Separate keywords with commas
+        </p>
       </div>
 
       {/* Cover Image */}
