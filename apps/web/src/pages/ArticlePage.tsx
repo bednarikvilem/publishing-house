@@ -14,14 +14,7 @@ import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useArticleViewTracker } from "../hooks/useArticleViewTracker";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+import { formatDate } from "../lib/utils";
 
 function estimateReadTime(content: string) {
   const words = content.trim().split(/\s+/).length;
@@ -286,7 +279,7 @@ export function ArticlePage() {
                 By {article.author.full_name}
               </span>
               <span className="text-[13px] text-white/67">
-                {formatDate(article.publication_date)} · {readTime} min read
+                {formatDate(article.publication_date, "long")} · {readTime} min read
               </span>
             </div>
           </Link>
@@ -378,7 +371,7 @@ export function ArticlePage() {
                   <div className="mb-2 flex items-center gap-2">
                     <span className="text-[13px] font-semibold">@{comment.author.username}</span>
                     <span className="text-muted-foreground text-[12px]">
-                      {formatDate(comment.created_at)}
+                      {formatDate(comment.created_at, "long")}
                     </span>
                   </div>
                   <p className="text-foreground text-[14px] leading-[1.6]">{comment.content}</p>

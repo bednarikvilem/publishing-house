@@ -12,6 +12,7 @@ import {
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
 import { API_BASE_URL, authHeaders } from "../lib/api";
+import { slugToDisplayName } from "../lib/utils";
 
 interface Category {
   id: string;
@@ -60,12 +61,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     setMobileMenuOpen(false);
   }, [searchParams]);
 
-  displayName ??=
-    newspaper?.name ??
-    newspaperName
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+  displayName ??= newspaper?.name ?? slugToDisplayName(newspaperName);
 
   useEffect(() => {
     if (!newspaper) return;

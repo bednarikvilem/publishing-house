@@ -1,36 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ListNode, ListItemNode } from "@lexical/list";
-import {
-  INSERT_UNORDERED_LIST_COMMAND,
-  INSERT_ORDERED_LIST_COMMAND,
-} from "@lexical/list";
-import {
-  $getSelection,
-  $isRangeSelection,
-  $insertNodes,
-  COMMAND_PRIORITY_EDITOR,
-  FORMAT_TEXT_COMMAND,
-  type EditorState,
-} from "lexical";
 import { Navbar } from "../components/Navbar";
+import { RichTextEditor } from "../components/RichTextEditor";
+import { LoadingState } from "../components/LoadingState";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
+import { FormField } from "../components/FormField";
+import { STATUS_LABELS, STATUS_STYLES } from "../lib/articleStatus";
 import type { Category, ArticleStatus } from "../types";
-import {
-  ImageNode,
-  INSERT_IMAGE_COMMAND,
-  $createImageNode,
-} from "../lib/lexical/ImageNode";
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
 
@@ -52,313 +29,174 @@ interface LoadedArticle {
   images: ArticleImage[];
 }
 
-/* ── Lexical theme ─────────────────────────────────────────────────────────── */
+/* ── Editor Metadata Sidebar ────────────────────────────────────────────────── */
 
-const editorTheme = {
-  text: {
-    bold: "font-bold",
-    italic: "italic",
-    underline: "underline",
-    strikethrough: "line-through",
-  },
-  list: {
-    ul: "list-disc pl-6 my-2",
-    ol: "list-decimal pl-6 my-2",
-    listitem: "my-0.5",
-    nested: {
-      listitem: "list-none",
-    },
-  },
-  quote: "border-l-4 border-border pl-4 text-muted-foreground italic my-3",
-  heading: {
-    h1: "text-2xl font-bold my-3",
-    h2: "text-xl font-bold my-3",
-    h3: "text-lg font-bold my-2",
-  },
-  paragraph: "my-1",
-};
-
-/* ── Image plugin ──────────────────────────────────────────────────────────── */
-
-function ImagePlugin() {
-  const [editor] = useLexicalComposerContext();
-  useEffect(() => {
-    return editor.registerCommand(
-      INSERT_IMAGE_COMMAND,
-      ({ url, alt }) => {
-        $insertNodes([$createImageNode(url, alt)]);
-        return true;
-      },
-      COMMAND_PRIORITY_EDITOR
-    );
-  }, [editor]);
-  return null;
-}
-
-/* ── Toolbar ───────────────────────────────────────────────────────────────── */
-
-function ToolbarButton({
-  active,
-  onClick,
-  children,
-  title,
-  className = "",
+function EditorSidebar({
+  isNew,
+  canEdit,
+  articleStatus,
+  categories,
+  categoryId,
+  setCategoryId,
+  keywords,
+  setKeywords,
+  images,
+  uploadingImage,
+  fileInputRef,
+  onImageUpload,
+  onImageDelete,
+  deleting,
+  onDelete,
 }: {
-  active?: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  title: string;
-  className?: string;
+  isNew: boolean;
+  canEdit: boolean;
+  articleStatus: ArticleStatus;
+  categories: Category[];
+  categoryId: string;
+  setCategoryId: (id: string) => void;
+  keywords: string;
+  setKeywords: (k: string) => void;
+  images: ArticleImage[];
+  uploadingImage: boolean;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageDelete: (id: string) => void;
+  deleting: boolean;
+  onDelete: () => void;
 }) {
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={onClick}
-      className={`rounded px-2.5 py-1 text-[13px] font-medium transition-colors ${
-        active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      } ${className}`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function ToolbarPlugin({
-  newspaperId,
-  articleId,
-  hasCoverImage,
-  onUploadError,
-}: {
-  newspaperId?: string;
-  articleId?: string;
-  hasCoverImage?: boolean;
-  onUploadError?: (msg: string) => void;
-}) {
-  const [editor] = useLexicalComposerContext();
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const imageInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    return editor.registerUpdateListener(() => {
-      editor.read(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          setIsBold(selection.hasFormat("bold"));
-          setIsItalic(selection.hasFormat("italic"));
-          setIsUnderline(selection.hasFormat("underline"));
-        }
-      });
-    });
-  }, [editor]);
-
-  async function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !newspaperId || !articleId) return;
-    e.target.value = "";
-
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images`,
-        { method: "POST", headers: authHeaders(), body: formData }
-      );
-      if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        onUploadError?.(data.error ?? "Failed to upload image.");
-        return;
-      }
-      const img = (await res.json()) as { url: string; caption: string | null };
-      editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-        url: img.url,
-        alt: img.caption ?? file.name,
-      });
-    } catch {
-      onUploadError?.("Network error while uploading image.");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  const articleSaved = Boolean(newspaperId && articleId);
-  const imageButtonEnabled = articleSaved && hasCoverImage && !uploading;
-  const imageButtonTitle = !articleSaved
-    ? "Save the article first to insert inline images"
-    : !hasCoverImage
-      ? "Upload a cover image in the sidebar before inserting inline images"
-      : "Insert inline image at cursor";
+  const isDraft = articleStatus === "DRAFT";
+  const coverImage = images.find((img) => img.is_primary);
 
   return (
-    <div className="border-border flex items-center gap-0.5 border-b px-3 py-2">
-      <ToolbarButton
-        active={isBold}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
-        title="Bold (Ctrl+B)"
-        className="font-bold"
-      >
-        B
-      </ToolbarButton>
-      <ToolbarButton
-        active={isItalic}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
-        title="Italic (Ctrl+I)"
-        className="italic"
-      >
-        I
-      </ToolbarButton>
-      <ToolbarButton
-        active={isUnderline}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
-        title="Underline (Ctrl+U)"
-        className="underline"
-      >
-        U
-      </ToolbarButton>
-      <div className="bg-border mx-1.5 h-4 w-px" />
-      <ToolbarButton
-        onClick={() =>
-          editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
-        }
-        title="Bullet list"
-      >
-        • List
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() =>
-          editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
-        }
-        title="Numbered list"
-      >
-        1. List
-      </ToolbarButton>
-      <div className="bg-border mx-1.5 h-4 w-px" />
-      <input
-        ref={imageInputRef}
-        type="file"
-        accept="image/jpeg,image/png"
-        className="hidden"
-        onChange={handleImageFile}
-      />
-      <ToolbarButton
-        onClick={() => imageButtonEnabled && imageInputRef.current?.click()}
-        title={imageButtonTitle}
-        className={!imageButtonEnabled ? "cursor-not-allowed opacity-40" : ""}
-      >
-        {uploading ? "…" : "Inline image"}
-      </ToolbarButton>
+    <div className="flex w-full flex-col gap-5 lg:w-72 lg:shrink-0">
+      {/* Status */}
+      {!isNew && (
+        <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
+          <h2 className="text-foreground text-[13px] font-semibold">Status</h2>
+          <span
+            className={`self-start rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[articleStatus]}`}
+          >
+            {STATUS_LABELS[articleStatus]}
+          </span>
+          {!isDraft && (
+            <p className="text-muted-foreground text-[12px]">
+              This article cannot be edited in its current state.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Category & Keywords */}
+      <div className="border-border bg-card flex flex-col gap-4 rounded-lg border px-4 py-4">
+        <h2 className="text-foreground text-[13px] font-semibold">Details</h2>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-muted-foreground text-[12px] font-medium">
+            Category <span className="text-[#dc2626]">*</span>
+          </label>
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            disabled={!canEdit}
+            className="border-border bg-background text-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2 disabled:opacity-60"
+          >
+            <option value="">Select category…</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <FormField
+          id="keywords"
+          label="Keywords"
+          type="text"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          placeholder="comma, separated, keywords"
+          disabled={!canEdit}
+        />
+        <p className="text-muted-foreground/70 text-[11px] -mt-3">
+          Separate keywords with commas
+        </p>
+      </div>
+
+      {/* Cover Image */}
+      <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
+        <div>
+          <h2 className="text-foreground text-[13px] font-semibold">Cover Image</h2>
+          <p className="text-muted-foreground mt-0.5 text-[11px]">
+            Displayed in article previews and on the homepage.
+          </p>
+        </div>
+
+        {coverImage ? (
+          <div className="border-border relative overflow-hidden rounded-md border">
+            <img
+              src={coverImage.url}
+              alt={coverImage.caption ?? "Cover image"}
+              className="h-36 w-full object-cover"
+            />
+            {coverImage.id && canEdit && (
+              <div className="bg-background/80 absolute inset-x-0 bottom-0 flex justify-end px-2 py-1 backdrop-blur-sm">
+                <button
+                  type="button"
+                  onClick={() => onImageDelete(coverImage.id!)}
+                  className="text-muted-foreground text-[11px] font-medium transition-colors hover:text-[#dc2626]"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-[12px]">
+            {isNew
+              ? "Save the article first, then upload a cover image."
+              : "No cover image yet. Required before submitting."}
+          </p>
+        )}
+
+        {!isNew && canEdit && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png"
+              className="hidden"
+              onChange={onImageUpload}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingImage}
+              className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
+            >
+              {uploadingImage ? "Uploading…" : coverImage ? "Replace Cover Image" : "Upload Cover Image"}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Danger zone */}
+      {!isNew && isDraft && (
+        <div className="border-border bg-card rounded-lg border px-4 py-4">
+          <h2 className="text-foreground mb-3 text-[13px] font-semibold">Danger Zone</h2>
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={deleting}
+            className="w-full rounded-md border border-[#dc2626]/30 px-3 py-2 text-[12px] font-medium text-[#dc2626] transition-colors hover:bg-[#dc262608] disabled:opacity-50"
+          >
+            {deleting ? "Deleting…" : "Delete Article"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-/* ── RichTextEditor ─────────────────────────────────────────────────────────── */
-
-function RichTextEditor({
-  initialContent,
-  onContentChange,
-  newspaperId,
-  articleId,
-  hasCoverImage,
-  onUploadError,
-}: {
-  initialContent: string;
-  onContentChange: (json: string) => void;
-  newspaperId?: string;
-  articleId?: string;
-  hasCoverImage?: boolean;
-  onUploadError?: (msg: string) => void;
-}) {
-  const handleChange = useCallback(
-    (editorState: EditorState) => {
-      onContentChange(JSON.stringify(editorState.toJSON()));
-    },
-    [onContentChange]
-  );
-
-  let initialEditorState: string | undefined;
-  try {
-    const parsed = JSON.parse(initialContent);
-    if (parsed.root) {
-      initialEditorState = initialContent;
-    }
-  } catch {
-    // Not Lexical JSON — editor starts empty; plain text is not pre-loaded
-  }
-
-  const initialConfig = {
-    namespace: "ArticleEditor",
-    theme: editorTheme,
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, ImageNode],
-    onError: (error: Error) => {
-      console.error("Lexical error:", error);
-    },
-    editorState: initialEditorState,
-  };
-
-  return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="border-border bg-card overflow-hidden rounded-lg border">
-        <ToolbarPlugin
-          newspaperId={newspaperId}
-          articleId={articleId}
-          hasCoverImage={hasCoverImage}
-          onUploadError={onUploadError}
-        />
-        <div className="relative">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable
-                aria-placeholder="Write your article content here…"
-                placeholder={
-                  <div className="text-muted-foreground pointer-events-none absolute top-4 left-4 text-[15px] select-none">
-                    Write your article content here…
-                  </div>
-                }
-                className="text-foreground min-h-[420px] px-4 py-4 text-[15px] leading-relaxed outline-none"
-              />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <HistoryPlugin />
-          <ListPlugin />
-          <ImagePlugin />
-          <OnChangePlugin onChange={handleChange} ignoreSelectionChange />
-        </div>
-      </div>
-    </LexicalComposer>
-  );
-}
-
-/* ── Helpers ────────────────────────────────────────────────────────────────── */
-
-const STATUS_LABELS: Record<ArticleStatus, string> = {
-  DRAFT: "Draft",
-  SUBMITTED: "Submitted",
-  IN_REVIEW: "In Review",
-  APPROVED_BY_EDITOR: "Editor Approved",
-  APPROVED_BY_MANAGER: "Manager Approved",
-  APPROVED_BY_DIRECTOR: "Director Approved",
-  PUBLISHED: "Published",
-  REJECTED: "Rejected",
-};
-
-const STATUS_STYLES: Record<ArticleStatus, string> = {
-  DRAFT: "bg-muted border border-border text-muted-foreground",
-  SUBMITTED: "bg-[#2563eb18] text-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c18] text-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b218] text-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a18] text-[#16a34a]",
-  REJECTED: "bg-[#dc262618] text-[#dc2626]",
-};
 
 /* ── Main Page ──────────────────────────────────────────────────────────────── */
 
@@ -421,11 +259,9 @@ export function ArticleEditorPage() {
   /* ── Load existing article ──────────────────────────────────────────────── */
   useEffect(() => {
     if (isNew || !articleId || !newspaperId) return;
-
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setLoadError(null);
-
     fetch(
       `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/mine/${articleId}`,
       { headers: authHeaders() }
@@ -439,48 +275,33 @@ export function ArticleEditorPage() {
         setPerex(data.perex ?? "");
         setContent(data.content ?? "");
         setCategoryId(data.category_id ?? "");
-        setKeywords(
-          Array.isArray(data.keywords) ? data.keywords.join(", ") : ""
-        );
+        setKeywords(Array.isArray(data.keywords) ? data.keywords.join(", ") : "");
         setArticleStatus(data.status ?? "DRAFT");
         setImages(data.images ?? []);
         setEditorKey((k) => k + 1);
       })
       .catch((err: Error) => {
         const code = err.message;
-        if (code === "404") {
-          setLoadError("Article not found.");
-        } else if (code === "403") {
-          setLoadError("You don't have permission to edit this article.");
-        } else {
-          setLoadError("Failed to load article. Please try again.");
-        }
+        setLoadError(
+          code === "404"
+            ? "Article not found."
+            : code === "403"
+              ? "You don't have permission to edit this article."
+              : "Failed to load article. Please try again."
+        );
       })
       .finally(() => setLoading(false));
   }, [isNew, articleId, newspaperId]);
 
   /* ── Save as draft ──────────────────────────────────────────────────────── */
   async function handleSave() {
-    if (!title.trim()) {
-      setFormError("Title is required.");
-      return;
-    }
-    if (!perex.trim()) {
-      setFormError("Perex is required.");
-      return;
-    }
-    if (!categoryId) {
-      setFormError("Category is required.");
-      return;
-    }
+    if (!title.trim()) { setFormError("Title is required."); return; }
+    if (!perex.trim()) { setFormError("Perex is required."); return; }
+    if (!categoryId)   { setFormError("Category is required."); return; }
     setFormError(null);
     setSaving(true);
 
-    const keywordsArray = keywords
-      .split(",")
-      .map((k) => k.trim())
-      .filter(Boolean);
-
+    const keywordsArray = keywords.split(",").map((k) => k.trim()).filter(Boolean);
     const body = {
       title: title.trim(),
       perex: perex.trim(),
@@ -490,44 +311,23 @@ export function ArticleEditorPage() {
     };
 
     try {
-      let res: Response;
-      if (isNew) {
-        res = await fetch(
-          `${API_BASE_URL}/api/newspapers/${newspaperId}/articles`,
-          {
-            method: "POST",
-            headers: { ...authHeaders(), "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          }
-        );
-      } else {
-        res = await fetch(
-          `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}`,
-          {
-            method: "PUT",
-            headers: { ...authHeaders(), "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          }
-        );
-      }
-
-      if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-          fields?: Record<string, string>;
-        };
-        if (data.fields) {
-          setFormError(Object.values(data.fields).join(" "));
-        } else {
-          setFormError(data.error ?? "Failed to save article.");
+      const res = await fetch(
+        isNew
+          ? `${API_BASE_URL}/api/newspapers/${newspaperId}/articles`
+          : `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}`,
+        {
+          method: isNew ? "POST" : "PUT",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify(body),
         }
+      );
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string; fields?: Record<string, string> };
+        setFormError(data.fields ? Object.values(data.fields).join(" ") : (data.error ?? "Failed to save article."));
         return;
       }
-
       const saved = (await res.json()) as { id: string };
-      if (isNew) {
-        navigate(`/${np}/articles/${saved.id}/edit`, { replace: true });
-      }
+      if (isNew) navigate(`/${np}/articles/${saved.id}/edit`, { replace: true });
     } catch {
       setFormError("Network error. Please try again.");
     } finally {
@@ -537,32 +337,20 @@ export function ArticleEditorPage() {
 
   /* ── Submit for review ──────────────────────────────────────────────────── */
   async function handleSubmit() {
-    if (isNew) {
-      setFormError("Save the article first before submitting.");
-      return;
-    }
+    if (isNew) { setFormError("Save the article first before submitting."); return; }
     if (!authorProfileComplete) {
       setFormError("Complete your author profile (bio and profile picture) before submitting for review.");
       return;
     }
-    //if (images.length === 0) {
-    //  setFormError("Upload at least one image before submitting for review.");
-    //  return;
-    //}
     setFormError(null);
     setSubmitting(true);
-
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/submit`,
         { method: "POST", headers: authHeaders() }
       );
-
       if (!res.ok) {
-        console.log("Something went wrong");
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-        };
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         setFormError(
           data.error === "ARTICLE_MISSING_IMAGE"
             ? "Upload at least one image before submitting."
@@ -572,7 +360,6 @@ export function ArticleEditorPage() {
         );
         return;
       }
-
       setArticleStatus("SUBMITTED");
       navigate(`/${np}/author-dashboard?section=my-articles`);
     } catch {
@@ -585,10 +372,7 @@ export function ArticleEditorPage() {
   /* ── Delete article ─────────────────────────────────────────────────────── */
   async function handleDelete() {
     if (isNew) return;
-    if (
-      !confirm("Permanently delete this article? This action cannot be undone.")
-    )
-      return;
+    if (!confirm("Permanently delete this article? This action cannot be undone.")) return;
     setDeleting(true);
     try {
       const res = await fetch(
@@ -604,41 +388,25 @@ export function ArticleEditorPage() {
     }
   }
 
-  /* ── Upload image ───────────────────────────────────────────────────────── */
+  /* ── Cover image upload / delete ────────────────────────────────────────── */
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !articleId || isNew) return;
-
     setUploadingImage(true);
     setFormError(null);
-
     const formData = new FormData();
     formData.append("image", file);
-
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images`,
-        {
-          method: "POST",
-          headers: authHeaders(),
-          body: formData,
-        }
+        { method: "POST", headers: authHeaders(), body: formData }
       );
-
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-        };
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         setFormError(data.error ?? "Failed to upload image.");
         return;
       }
-
-      const img = (await res.json()) as {
-        id: string;
-        url: string;
-        caption: string | null;
-        is_primary: boolean;
-      };
+      const img = (await res.json()) as { id: string; url: string; caption: string | null; is_primary: boolean };
       setImages((prev) => [...prev, img]);
     } catch {
       setFormError("Network error. Please try again.");
@@ -648,7 +416,6 @@ export function ArticleEditorPage() {
     }
   }
 
-  /* ── Delete image ───────────────────────────────────────────────────────── */
   async function handleImageDelete(imageId: string) {
     if (!articleId || isNew) return;
     try {
@@ -656,10 +423,7 @@ export function ArticleEditorPage() {
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images/${imageId}`,
         { method: "DELETE", headers: authHeaders() }
       );
-      if (res.status === 422) {
-        setFormError("Cannot remove the only image from the article.");
-        return;
-      }
+      if (res.status === 422) { setFormError("Cannot remove the only image from the article."); return; }
       if (!res.ok) throw new Error();
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     } catch {
@@ -685,7 +449,6 @@ export function ArticleEditorPage() {
           >
             ← Back to Dashboard
           </Link>
-
           <div className="flex items-center gap-2">
             {canEdit && (
               <button
@@ -710,18 +473,17 @@ export function ArticleEditorPage() {
           </div>
         </div>
 
-        {/* Loading / error states */}
+        {/* Loading / load error */}
         {loading ? (
-          <p className="text-muted-foreground py-16 text-center">Loading…</p>
+          <LoadingState />
         ) : loadError ? (
           <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-5 py-4">
             <p className="text-[14px] text-[#dc2626]">{loadError}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-            {/* ── Left: main editor area ─────────────────────────────── */}
+            {/* Left: main editor area */}
             <div className="flex min-w-0 flex-1 flex-col gap-5">
-              {/* Title */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-foreground text-[13px] font-semibold">
                   Title <span className="text-[#dc2626]">*</span>
@@ -736,7 +498,6 @@ export function ArticleEditorPage() {
                 />
               </div>
 
-              {/* Perex */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-foreground text-[13px] font-semibold">
                   Perex <span className="text-[#dc2626]">*</span>
@@ -751,7 +512,6 @@ export function ArticleEditorPage() {
                 />
               </div>
 
-              {/* Content */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-foreground text-[13px] font-semibold">
                   Content <span className="text-[#dc2626]">*</span>
@@ -768,155 +528,24 @@ export function ArticleEditorPage() {
               </div>
             </div>
 
-            {/* ── Right: metadata + images sidebar ──────────────────── */}
-            <div className="flex w-full flex-col gap-5 lg:w-72 lg:shrink-0">
-              {/* Status */}
-              {!isNew && (
-                <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
-                  <h2 className="text-foreground text-[13px] font-semibold">
-                    Status
-                  </h2>
-                  <span
-                    className={`self-start rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[articleStatus]}`}
-                  >
-                    {STATUS_LABELS[articleStatus]}
-                  </span>
-                  {!isDraft && (
-                    <p className="text-muted-foreground text-[12px]">
-                      This article cannot be edited in its current state.
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Category & Keywords */}
-              <div className="border-border bg-card flex flex-col gap-4 rounded-lg border px-4 py-4">
-                <h2 className="text-foreground text-[13px] font-semibold">
-                  Details
-                </h2>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-muted-foreground text-[12px] font-medium">
-                    Category <span className="text-[#dc2626]">*</span>
-                  </label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    disabled={!canEdit}
-                    className="border-border bg-background text-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2 disabled:opacity-60"
-                  >
-                    <option value="">Select category…</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-muted-foreground text-[12px] font-medium">
-                    Keywords
-                  </label>
-                  <input
-                    type="text"
-                    value={keywords}
-                    onChange={(e) => setKeywords(e.target.value)}
-                    placeholder="comma, separated, keywords"
-                    disabled={!canEdit}
-                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2 disabled:opacity-60"
-                  />
-                  <p className="text-muted-foreground/70 text-[11px]">
-                    Separate keywords with commas
-                  </p>
-                </div>
-              </div>
-
-              {/* Cover Image */}
-              {(() => {
-                const coverImage = images.find((img) => img.is_primary);
-                return (
-                  <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
-                    <div>
-                      <h2 className="text-foreground text-[13px] font-semibold">
-                        Cover Image
-                      </h2>
-                      <p className="text-muted-foreground mt-0.5 text-[11px]">
-                        Displayed in article previews and on the homepage.
-                      </p>
-                    </div>
-
-                    {coverImage ? (
-                      <div className="border-border relative overflow-hidden rounded-md border">
-                        <img
-                          src={coverImage.url}
-                          alt={coverImage.caption ?? "Cover image"}
-                          className="h-36 w-full object-cover"
-                        />
-                        {coverImage.id && canEdit && (
-                          <div className="bg-background/80 absolute inset-x-0 bottom-0 flex justify-end px-2 py-1 backdrop-blur-sm">
-                            <button
-                              type="button"
-                              onClick={() => handleImageDelete(coverImage.id!)}
-                              className="text-muted-foreground text-[11px] font-medium transition-colors hover:text-[#dc2626]"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-muted-foreground text-[12px]">
-                        {isNew
-                          ? "Save the article first, then upload a cover image."
-                          : "No cover image yet. Required before submitting."}
-                      </p>
-                    )}
-
-                    {!isNew && canEdit && (
-                      <>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/jpeg,image/png"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={uploadingImage}
-                          className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
-                        >
-                          {uploadingImage
-                            ? "Uploading…"
-                            : coverImage
-                              ? "Replace Cover Image"
-                              : "Upload Cover Image"}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Danger zone */}
-              {!isNew && isDraft && (
-                <div className="border-border bg-card rounded-lg border px-4 py-4">
-                  <h2 className="text-foreground mb-3 text-[13px] font-semibold">
-                    Danger Zone
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="w-full rounded-md border border-[#dc2626]/30 px-3 py-2 text-[12px] font-medium text-[#dc2626] transition-colors hover:bg-[#dc262608] disabled:opacity-50"
-                  >
-                    {deleting ? "Deleting…" : "Delete Article"}
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Right: metadata sidebar */}
+            <EditorSidebar
+              isNew={isNew}
+              canEdit={canEdit}
+              articleStatus={articleStatus}
+              categories={categories}
+              categoryId={categoryId}
+              setCategoryId={setCategoryId}
+              keywords={keywords}
+              setKeywords={setKeywords}
+              images={images}
+              uploadingImage={uploadingImage}
+              fileInputRef={fileInputRef}
+              onImageUpload={handleImageUpload}
+              onImageDelete={handleImageDelete}
+              deleting={deleting}
+              onDelete={handleDelete}
+            />
           </div>
         )}
 
