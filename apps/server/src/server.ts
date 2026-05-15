@@ -79,7 +79,7 @@ export const app = new Elysia()
     .onError(({ error, request, set }) => {
         if (error instanceof HttpError) {
             set.status = error.status;
-            return { error: error.code };
+            return { error: error.code, ...(error.details ?? {}) };
         }
 
         set.status = set.status || 500;

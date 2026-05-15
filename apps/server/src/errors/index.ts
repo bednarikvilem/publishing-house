@@ -1,7 +1,10 @@
+export type ErrorDetails = Record<string, unknown>;
+
 export class HttpError extends Error {
     constructor(
         public readonly code: string,
         public readonly status: number,
+        public readonly details?: ErrorDetails,
     ) {
         super(code);
         this.name = "HttpError";
@@ -9,37 +12,37 @@ export class HttpError extends Error {
 }
 
 export class BadRequestError extends HttpError {
-    constructor(code: string) {
-        super(code, 400);
+    constructor(code: string, details?: ErrorDetails) {
+        super(code, 400, details);
     }
 }
 
 export class UnauthorizedError extends HttpError {
-    constructor(code = "UNAUTHORIZED") {
-        super(code, 401);
+    constructor(code = "UNAUTHORIZED", details?: ErrorDetails) {
+        super(code, 401, details);
     }
 }
 
 export class ForbiddenError extends HttpError {
-    constructor(code = "FORBIDDEN") {
-        super(code, 403);
+    constructor(code = "FORBIDDEN", details?: ErrorDetails) {
+        super(code, 403, details);
     }
 }
 
 export class NotFoundError extends HttpError {
-    constructor(code: string) {
-        super(code, 404);
+    constructor(code: string, details?: ErrorDetails) {
+        super(code, 404, details);
     }
 }
 
 export class ConflictError extends HttpError {
-    constructor(code: string) {
-        super(code, 409);
+    constructor(code: string, details?: ErrorDetails) {
+        super(code, 409, details);
     }
 }
 
 export class UnprocessableError extends HttpError {
-    constructor(code: string) {
-        super(code, 422);
+    constructor(code: string, details?: ErrorDetails) {
+        super(code, 422, details);
     }
 }
