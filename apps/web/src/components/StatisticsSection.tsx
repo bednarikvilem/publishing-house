@@ -159,9 +159,9 @@ function Timeline({ data, valueKey, label, color = "bg-primary" }: {
                     const val = d[valueKey] as number;
                     const pct = Math.round((val / max) * 100);
                     return (
-                        <div key={i} className="flex-1 flex items-end group cursor-default"
+                        <div key={i} className="flex-1 h-full flex items-end group cursor-default"
                             title={`${d.date}: ${val}`}>
-                            <div className={`w-full ${color} group-hover:opacity-70 rounded-sm transition-opacity`}
+                            <div className={`w-full ${color} ...`}
                                 style={{ height: `${Math.max(pct, val > 0 ? 4 : 0)}%` }} />
                         </div>
                     );
@@ -270,7 +270,7 @@ function NewspaperStatsDashboard({ stats }: { stats: NewspaperStats }) {
                 <KpiCard color="green"  label="Published"       value={stats.articles.total_published.toLocaleString()}
                     sub={`${stats.articles.total_in_review} in review`}                                                                 icon={<I.Doc />}   />
                 <KpiCard color="teal"   label="Avg. to Publish"
-                    value={stats.articles.avg_days_to_publish != null ? `${stats.articles.avg_days_to_publish}d` : "—"}
+                    value={stats.articles.avg_days_to_publish != null ? `${stats.articles.avg_days_to_publish}d` : "-"}
                     sub="submission → live"                                                                                              icon={<I.Clock />} />
             </div>
 
@@ -291,10 +291,10 @@ function NewspaperStatsDashboard({ stats }: { stats: NewspaperStats }) {
 
             {/* Timelines */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card title="Views — Last 30 Days" icon={<I.Eye />}>
+                <Card title="Views - Last 30 Days" icon={<I.Eye />}>
                     <Timeline data={stats.views.views_timeline as any} valueKey="view_count" label="Views" color="bg-blue-400" />
                 </Card>
-                <Card title="Publications — Last 30 Days" icon={<I.Doc />}>
+                <Card title="Publications - Last 30 Days" icon={<I.Doc />}>
                     <Timeline data={stats.publication_timeline as any} valueKey="published_count" label="Publications" color="bg-green-400" />
                 </Card>
             </div>

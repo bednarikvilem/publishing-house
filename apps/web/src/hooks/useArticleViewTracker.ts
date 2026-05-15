@@ -20,8 +20,8 @@ export function useArticleViewTracker({
         setSentinelEl(node);
     }, []);
 
-    const postView = async (readCompleted: boolean) => {
-        await fetch(
+    const postView = async (readCompleted: boolean): Promise<void> => {
+        const response = await fetch(
             `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/views`,
             {
                 method:  "POST",
@@ -29,21 +29,25 @@ export function useArticleViewTracker({
                 body:    JSON.stringify({ read_completed: readCompleted }),
             }
         );
+        if (!response.ok) {
+            throw new Error(`View tracking failed: ${response.status}`);
+        }
     };
 
     // ── 1. Record initial view after 2 s on page ────────────────────────
     useEffect(() => {
+        console.log("[ViewTracker] effect run", { enabled, newspaperId, articleId });
         if (!enabled || !newspaperId || !articleId) return;
         viewRecorded.current = false;
         readRecorded.current = false;
 
         const timer = setTimeout(async () => {
             if (viewRecorded.current) return;
-            viewRecorded.current = true;
             try {
                 await postView(false);
-            } catch {
-                // non-critical — silently ignore
+                viewRecorded.current = true;
+            } catch (err) {
+                console.error("[ViewTracker]", err);
             }
         }, 2000);
 
@@ -57,15 +61,27 @@ export function useArticleViewTracker({
         const observer = new IntersectionObserver(
             async ([entry]) => {
                 if (!entry?.isIntersecting || readRecorded.current) return;
-                readRecorded.current = true;
-                observer.disconnect();
+
+                if (!viewRecorded.current) {
+                    await new Promise<void>(resolve => {
+                        const interval = setInterval(() => {
+                            if (viewRecorded.current) { clearInterval(interval); resolve(); }
+                        }, 100);
+                    });
+                }
+
                 try {
                     await postView(true);
-                } catch {
-                    // non-critical — silently ignore
+                    readRecorded.current = true;
+                    observer.disconnect();
+                } catch (err) {
+                    console.error("[ViewTracker] read-completion failed:", err);
                 }
             },
-            { threshold: 1.0 }
+            { 
+                root: null,
+                threshold: 0.1,
+            }
         );
 
         observer.observe(sentinelEl);

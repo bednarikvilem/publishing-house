@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
 import { articleViews, articles } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, update } from "drizzle-orm";
 import { t } from "elysia";
 
 const viewParams = t.Object({
@@ -36,6 +36,26 @@ export const viewRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             }
 
             const readCompleted = body?.read_completed ?? false;
+
+            if (readCompleted) {
+                const existing = user?.id
+                    ? await db.query.articleViews.findFirst({
+                        where: and(
+                            eq(articleViews.articleId, params.article_id),
+                            eq(articleViews.userId, user.id),
+                            eq(articleViews.readCompleted, false)
+                        ),
+                    })
+                    : null;
+
+                if (existing) {
+                    await db
+                        .update(articleViews)
+                        .set({ readCompleted: true })
+                        .where(eq(articleViews.id, existing.id));
+                    return Response.json({ recorded: true }, { status: 200 });
+                }
+            }
 
             await db.insert(articleViews).values({
                 articleId: params.article_id,

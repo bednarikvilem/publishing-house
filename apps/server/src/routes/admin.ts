@@ -412,13 +412,20 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
             const viewsTimelineMap: Record<string, number> = {};
 
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const day = d.toISOString().split("T")[0]!;
+                viewsTimelineMap[day] = 0;
+            }
+
             for (const v of relevantViews) {
-                const createdAt = new Date(v.createdAt ?? Date.now());
-                if (createdAt < thirtyDaysAgo) {
-                    continue;
+                const day = new Date(v.createdAt ?? Date.now())
+                    .toISOString()
+                    .split("T")[0]!;
+                if (day in viewsTimelineMap) {
+                    viewsTimelineMap[day]!++;
                 }
-                const day = createdAt.toISOString().split("T")[0]!;
-                viewsTimelineMap[day] = (viewsTimelineMap[day] ?? 0) + 1;
             }
 
             const views_timeline = Object.entries(viewsTimelineMap)

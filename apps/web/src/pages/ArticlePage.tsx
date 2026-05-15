@@ -103,9 +103,9 @@ export function ArticlePage() {
   const isLoggedIn = !!localStorage.getItem("token");
 
   const { sentinelRef } = useArticleViewTracker({
-    newspaperId: article?.newspaperId,
-    articleId: article?.id,
-    enabled: article?.state === "PUBLISHED",
+    newspaperId: newspaper?.id,
+    articleId: articleId,
+    enabled: article !== null,
   });
 
   useEffect(() => {
