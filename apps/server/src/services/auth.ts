@@ -25,8 +25,8 @@ import type {
 import type { Static } from "elysia";
 
 type Jwt = {
-    sign: (payload: Record<string, unknown>) => Promise<string>;
-    verify: (token: string) => Promise<Record<string, unknown> | false>;
+    sign: (payload: any) => Promise<string>;
+    verify: (token?: string) => Promise<any>;
 };
 
 export async function register(body: Static<typeof registerInput>, jwt: Jwt) {
@@ -70,7 +70,7 @@ export async function register(body: Static<typeof registerInput>, jwt: Jwt) {
 
     const passwordHash = await Bun.password.hash(password);
 
-    const [newUser] = await db
+    const [createdUser] = await db
         .insert(users)
         .values({
             email,
@@ -81,6 +81,7 @@ export async function register(body: Static<typeof registerInput>, jwt: Jwt) {
             email_verified: false,
         })
         .returning();
+    const newUser = createdUser!;
 
     await db.insert(userRoles).values({
         userId: newUser.id,
