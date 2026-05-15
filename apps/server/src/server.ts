@@ -15,6 +15,7 @@ import { openapi } from "@elysiajs/openapi";
 import { logger } from "./utils/logger";
 import { audit } from "./utils/audit";
 import { viewRoutes } from "./routes/views_route.ts";
+import { HttpError } from "./errors";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -74,7 +75,13 @@ export const app = new Elysia()
             return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
         }
     })
+    .error({ HttpError })
     .onError(({ error, request, set }) => {
+        if (error instanceof HttpError) {
+            set.status = error.status;
+            return { error: error.code };
+        }
+
         set.status = set.status || 500;
 
         logger.error("Unhandled server error", {
