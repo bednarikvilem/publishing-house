@@ -54,9 +54,9 @@ export const app = new Elysia()
     .use(categoryRoutes)
     .use(commentRoutes)
     .use(likeRoutes)
+    .use(viewRoutes)
     .use(adminRoutes)
     .use(authorRoutes)
-    .use(viewRoutes)
     .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))
     .get("/api", async () => {
         try {

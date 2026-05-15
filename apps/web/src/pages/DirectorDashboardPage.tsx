@@ -10,7 +10,8 @@ import { ApprovalQueue } from "./director/ApprovalQueue";
 import { PublicationQueue } from "./director/PublicationQueue";
 
 type NewspaperEntry = { id: string; name: string; slug: string };
-type ActiveView = "overview" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" };
+
+type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" };
 
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
@@ -60,6 +61,13 @@ export function DirectorDashboardPage() {
         className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "overview" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         All Newspapers
+      </button>
+
+      <button
+        onClick={() => setActiveView("global-statistics")}
+        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "global-statistics" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+      >
+        Global Statistics
       </button>
 
       {newspapers.length > 0 && (
@@ -132,6 +140,8 @@ export function DirectorDashboardPage() {
             </div>
           )}
         </div>
+      ) : activeView === "global-statistics" ? (
+        <StatisticsSection newspaperId="" isDirector={true} />
       ) : selectedNewspaper && selectedTab === "approval" ? (
         <ApprovalQueue newspaperId={selectedNewspaper.id} />
       ) : selectedNewspaper && selectedTab === "publication" ? (

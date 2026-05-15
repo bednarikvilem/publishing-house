@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
 import { db } from "../db";
-import { users, userRoles, globalRoles, newspapers, articles } from "../db/schema";
-import { eq, and, isNull, count, sql } from "drizzle-orm";
+import { users, userRoles, globalRoles, newspapers, articles, articleViews, likes, comments } from "../db/schema";
+import { eq, and, isNull, count, sql, inArray } from "drizzle-orm";
 import {
     adminUsersListParams,
     adminUsersListQuery,
@@ -18,7 +18,6 @@ import {
 import { createGlobalUserInput } from "../schemas/auth";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
-import { articleViews } from "../db/schema";
 
 // In-memory system config (in production this would be persisted to DB or env)
 let systemConfig = {
@@ -310,6 +309,7 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             const rejected = allArticles.filter(a => a.state === "REJECTED");
 
             const publishedIds = new Set(published.map(a => a.id));
+            const publishedIdList = [...publishedIds];
 
             // ─────────────────────────────────────────────
             // SUBSCRIBERS
@@ -326,8 +326,9 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             // ─────────────────────────────────────────────
             // VIEWS
             // ─────────────────────────────────────────────
-            const allViews = await db.query.articleViews.findMany();
-            const relevantViews = allViews.filter(v => publishedIds.has(v.articleId));
+            const relevantViews = publishedIdList.length > 0
+                ? await db.query.articleViews.findMany({ where: inArray(articleViews.articleId, publishedIdList) })
+                : [];
 
             const totalViews = relevantViews.length;
             const totalReadsCompleted = relevantViews.filter(v => v.readCompleted).length;
@@ -346,28 +347,27 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
                 comments: number;
             }> = {};
 
+            for (const art of published) {
+                articleViewMap[art.id] = { title: art.title ?? "Unknown", views: 0, completions: 0, likes: 0, comments: 0 };
+            }
             for (const v of relevantViews) {
-                if (!articleViewMap[v.articleId]) {
-                    const art = published.find(a => a.id === v.articleId);
-                    articleViewMap[v.articleId] = {
-                    title: art?.title ?? "Unknown",
-                    views: 0,
-                    completions: 0,
-                    likes: 0,
-                    comments: 0,
-                    };
-                }
-                articleViewMap[v.articleId]!.views += 1;
-                if (v.readCompleted) {
-                    articleViewMap[v.articleId]!.completions += 1;
+                if (articleViewMap[v.articleId]) {
+                    articleViewMap[v.articleId]!.views += 1;
+                    if (v.readCompleted) {
+                        articleViewMap[v.articleId]!.completions += 1;
+                    }
                 }
             }
 
             // ─────────────────────────────────────────────
             // LIKES + COMMENTS
             // ─────────────────────────────────────────────
-            const allLikes = await db.query.likes.findMany();
-            const allComments = await db.query.comments.findMany();
+            const allLikes = publishedIdList.length > 0
+                ? await db.query.likes.findMany({ where: inArray(likes.articleId, publishedIdList) })
+                : [];
+            const allComments = publishedIdList.length > 0
+                ? await db.query.comments.findMany({ where: inArray(comments.articleId, publishedIdList) })
+                : [];
 
             for (const l of allLikes) {
                 if (articleViewMap[l.articleId]) {
@@ -412,12 +412,20 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
 
             const viewsTimelineMap: Record<string, number> = {};
 
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const day = d.toISOString().split("T")[0]!;
+                viewsTimelineMap[day] = 0;
+            }
+
             for (const v of relevantViews) {
                 const day = new Date(v.createdAt ?? Date.now())
                     .toISOString()
                     .split("T")[0]!;
-
-                viewsTimelineMap[day] = (viewsTimelineMap[day] ?? 0) + 1;
+                if (day in viewsTimelineMap) {
+                    viewsTimelineMap[day]!++;
+                }
             }
 
             const views_timeline = Object.entries(viewsTimelineMap)
@@ -517,6 +525,102 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
             });
         }
     )
+
+
+    // ── GET /api/statistics/global ────────────────────────────────────────
+    .get("/api/statistics/global", async ({ user, roles }) => {
+        if (!user)
+            return Response.json({ error: "UNAUTHORIZED" }, { status: 401 });
+        if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR"))
+            return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+
+        const allNewspapers = await db.query.newspapers.findMany();
+
+        const perNewspaper = await Promise.all(
+            allNewspapers.map(async (np) => {
+                const publishedArticles = await db.query.articles.findMany({
+                    where: and(
+                        eq(articles.newspaperId, np.id),
+                        eq(articles.state, "PUBLISHED")
+                    ),
+                });
+                const publishedIdList = publishedArticles.map(a => a.id);
+
+                const [subscriberCount] = await db
+                    .select({ count: count() })
+                    .from(userRoles)
+                    .where(and(
+                        eq(userRoles.newspaperId, np.id),
+                        eq(userRoles.role, "REGISTERED_USER")
+                    ));
+
+                if (publishedIdList.length === 0) {
+                    return {
+                        newspaper_id:      np.id,
+                        newspaper_name:    np.name,
+                        subscribers:       Number(subscriberCount?.count ?? 0),
+                        total_published:   0,
+                        total_views:       0,
+                        total_likes:       0,
+                        total_comments:    0,
+                        read_through_rate: 0,
+                    };
+                }
+
+                const [viewCount] = await db
+                    .select({ count: count() })
+                    .from(articleViews)
+                    .where(inArray(articleViews.articleId, publishedIdList));
+
+                const [completedCount] = await db
+                    .select({ count: count() })
+                    .from(articleViews)
+                    .where(and(
+                        inArray(articleViews.articleId, publishedIdList),
+                        eq(articleViews.readCompleted, true)
+                    ));
+
+                const [likeCount] = await db
+                    .select({ count: count() })
+                    .from(likes)
+                    .where(inArray(likes.articleId, publishedIdList));
+
+                const [commentCount] = await db
+                    .select({ count: count() })
+                    .from(comments)
+                    .where(inArray(comments.articleId, publishedIdList));
+
+                const totalViews = Number(viewCount?.count ?? 0);
+                const totalCompleted = Number(completedCount?.count ?? 0);
+
+                return {
+                    newspaper_id:      np.id,
+                    newspaper_name:    np.name,
+                    subscribers:       Number(subscriberCount?.count ?? 0),
+                    total_published:   publishedArticles.length,
+                    total_views:       totalViews,
+                    total_likes:       Number(likeCount?.count ?? 0),
+                    total_comments:    Number(commentCount?.count ?? 0),
+                    read_through_rate: totalViews > 0
+                        ? Math.round((totalCompleted / totalViews) * 100)
+                        : 0,
+                };
+            })
+        );
+
+        const totals = perNewspaper.reduce(
+            (acc, np) => ({
+                subscribers:     acc.subscribers     + np.subscribers,
+                total_views:     acc.total_views     + np.total_views,
+                total_likes:     acc.total_likes     + np.total_likes,
+                total_comments:  acc.total_comments  + np.total_comments,
+                total_published: acc.total_published + np.total_published,
+            }),
+            { subscribers: 0, total_views: 0, total_likes: 0, total_comments: 0, total_published: 0 }
+        );
+
+        return Response.json({ totals, per_newspaper: perNewspaper });
+    })
 
     // ── GET /api/global/users ─────────────────────────────────────────────
     .get("/api/global/users", async ({ user, roles }) => {
