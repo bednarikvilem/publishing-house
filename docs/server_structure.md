@@ -24,7 +24,9 @@ apps/server/src/
 │   └── admin.ts            ← admin endpoints
 ├── middleware/
 │   └── auth.ts             ← JWT verification + role attachment as an Elysia plugin
-├── routes/                 ← one Elysia sub-app per resource, mirrors schemas/
+├── errors/
+│   └── index.ts            ← HttpError base + status-specific subclasses
+├── routes/                 ← one thin Elysia sub-app per resource, mirrors schemas/
 │   ├── auth.ts
 │   ├── articles.ts
 │   ├── authors.ts
@@ -33,7 +35,20 @@ apps/server/src/
 │   ├── likes.ts
 │   ├── newspapers.ts
 │   ├── users.ts
-│   └── admin.ts
+│   ├── admin.ts
+│   └── views_route.ts
+├── services/               ← business logic + DB access per resource, mirrors routes/
+│   ├── context.ts          ← shared AuthUser / Roles types
+│   ├── auth.ts
+│   ├── articles.ts
+│   ├── authors.ts
+│   ├── categories.ts
+│   ├── comments.ts
+│   ├── likes.ts
+│   ├── newspapers.ts
+│   ├── users.ts
+│   ├── admin.ts
+│   └── views.ts
 └── utils/
     ├── jwt.ts              ← JWT expiration constants
     └── email.ts            ← email sending helpers
@@ -47,21 +62,29 @@ apps/server/src/
 
 **`middleware/auth.ts`** — Elysia plugin that verifies the JWT bearer token and attaches `user` and `roles` to each request. Route files do `.use(authMiddleware)` to opt in.
 
-**`routes/<resource>.ts`** — exports an Elysia sub-app per resource. Each route declares its TypeBox schemas in route options (`{ params, query, body, response }`); Elysia validates requests at runtime, and the same schemas drive OpenAPI docs and the Eden client's types.
+**`routes/<resource>.ts`** — exports a *thin* Elysia sub-app per resource. Each route declares its TypeBox schemas in route options (`{ params, query, body, response }`); Elysia validates requests at runtime, and the same schemas drive OpenAPI docs and the Eden client's types. The handler does no logic itself — it pulls the validated inputs plus `user`/`roles` off the Elysia context and calls the matching service function.
 
 ```ts
 // routes/articles.ts (excerpt)
 export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
   .use(authMiddleware)
-  .post("/api/newspapers/:newspaper_id/articles", async ({ params, body }) => {
-    // ...
+  .post("/api/newspapers/:newspaper_id/articles", async ({ params, user, roles, body, set }) => {
+    const result = await articleService.createArticle(params.newspaper_id, user, roles, body);
+    set.status = 201;
+    return result;
   }, {
     params: newspaperOnlyParams,
     body: createArticleBody,
   });
 ```
 
-**`server.ts`** — assembles the app: registers `cors()` and `openapi()` plugins, mounts every route file, and starts listening. Also exports `app` and `type App` so the frontend's Eden client can infer types.
+**`services/<resource>.ts`** — the business logic + DB access for one resource. Functions take plain arguments (ids, validated bodies, `user`/`roles`) and return plain data. They never import from `elysia` and never touch the Elysia context (`set`, `params`, `request`*, `Response`). On a failure they `throw` an `HttpError` subclass instead of building an HTTP response. `services/context.ts` holds the shared `AuthUser`/`Roles` types passed in from `middleware/auth.ts`.
+
+> *Two upload handlers (`users.updateProfilePicture`, `articles.uploadArticleImage`) receive the raw `Request` solely to parse the multipart/JSON body — a deliberate, documented exception because body parsing is transport I/O and the original code tightly couples parse + validate + upload error shaping. They still read no routing/status from it.
+
+**`errors/index.ts`** — `HttpError(code, status, details?)` plus one subclass per status family (`BadRequestError` 400, `UnauthorizedError` 401, `ForbiddenError` 403, `NotFoundError` 404, `ConflictError` 409, `UnprocessableError` 422). The `code` is the wire error key (e.g. `NEWSPAPER_NOT_FOUND`); optional `details` carries extra body fields (e.g. `{ fields: {...} }`). Services throw these; the global `.onError` in `server.ts` maps them to `{ error: code, ...details }` with the right status.
+
+**`server.ts`** — assembles the app: registers `cors()` and `openapi()` plugins, registers `HttpError` via `.error()` and maps it in `.onError`, mounts every route file, and starts listening. Also exports `app` and `type App` so the frontend's Eden client can infer types.
 
 ## Cross-cutting concerns
 
@@ -71,7 +94,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
 
 ## Rationale
 
-- **One file per resource** in both `routes/` and `schemas/` mirrors the API sections in `docs/API.md` — easy to find where to add or change an endpoint.
+- **One file per resource** in `routes/`, `services/`, and `schemas/` mirrors the API sections in `docs/API.md` — easy to find where to add or change an endpoint.
+- **Routes vs. services** — routes own HTTP (URL, method, validation, status code); services own *what the operation means* (rules + DB). The boundary is a plain function call with clean arguments, so a service can be unit-tested or reused without booting Elysia. Errors cross the boundary as thrown `HttpError`s, mapped to responses in one place.
 - **`schemas/` separate from `db/`** because validators describe the API surface, not the database. `db/` stays narrowly about persistence.
 - **`schemas/shared.ts`** centralizes `Pagination`, `Uuid`, role enums, and drizzle-typebox bases so individual resource files stay short.
 - **TypeBox in route options** (rather than `zod.parse()` inside handlers) is what makes Elysia's runtime validation, OpenAPI generation, and Eden inference all work without extra adapters.
