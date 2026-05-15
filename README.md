@@ -1,138 +1,195 @@
-# PB138 Project
+# PB138 Project — Newspaper Platform
 
-TODO: Add description
+A web-based platform for a publication house managing multiple newspapers, with roles ranging from Visitor to Director.
 
 ## Tech Stack
 
 - **Runtime:** Bun
 - **Monorepo:** Turborepo
-- **Frontend:** React, React Router, TailWindCSS, Shadcn/ui
-- **API:** Elysia, Swagger
-- **Auth:** JWT (@elysiajs/jwt), Bun.password (argon2)
-- **Validation:** Zod
-- **Database:** Drizzle, PostgreSQL
-- **Cache:** Redis
-- **Email:** Nodemailer
+- **Frontend:** React 19, React Router, TailwindCSS, shadcn/ui, Lexical (rich text editor)
+- **API:** Elysia, OpenAPI (`@elysiajs/openapi`)
+- **Auth:** JWT (`@elysiajs/jwt`), `Bun.password` (argon2)
+- **Database:** Drizzle ORM, PostgreSQL 17
+- **Cache:** Redis (via `Bun.redis`)
+- **Image Storage:** MinIO (S3-compatible, self-hosted)
+- **Email:** Nodemailer (Mailtrap sandbox for development)
 - **Linting / Formatting:** ESLint, Prettier
 - **Language:** TypeScript
 
-## Docker
-
-Docker is responsible for running the components in their separate containers. The project consists of three components: frontend (web), backend (server), and database.
-If you use WSL, you need have Docker Desktop installed on your Windows machine.
-After installing and opening Docker Desktop and run `docker compose up -d` in the project root. Use `--build` after you change `package.json` or `bun version`. You should see the running containers on your Docker Desktop. To access the web type http://localhost:5173/ into your browser.
-Do not forget to run `docker compose down` after you are finished with your work.
-
-## Development
-
-You do not need to use docker for development. The only component it is needed for is the database. To start the database in docker run:
-
-```bash
-docker compose up db --build -d
-```
-
-This starts the database. To fill it with the seed data, follow the instruction provided in section *Database with data seed*. You can skip the step that starts docker (because you have already done it just for the database and the other components are not needed now).
-
-When developing new features on frontend and backend, you can start the components separately using `bun run dev` in their folder (`apps/web` and `apps/server`). The changes you make with automatically apply (you may need to refresh the page in your browser).
-
-## Eslint and prettier for formatting
-
-Before commiting your work, run `bun run lint` in `app/web`. This checks for your style. It may show some errors which you should fix before commiting the changes. You should also run `bun run format`. This automatically checks and fixes the formatting.
-
-## Image Storage
-
-This project uses [Cloudinary](https://cloudinary.com) for image storage and delivery via their API.
-
-To get started, create a free Cloudinary account and add the following to your `.env` file:
-
-```
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@<your_cloud_name>
-```
-
-## Database Setup
-
-After each `git pull`, run:
-```bash
-bun install
-```
-
-### First-time setup
-```bash
-docker compose up --build -d   # start fresh database
-cd apps/server
-bun db:push                    # apply schema
-bun db:seed                    # seed data
-```
-
-### Daily use
-```bash
-docker compose up              # start (keeps existing data)
-docker compose down            # stop (keeps existing data)
-```
-
-> `docker compose up --build` + `docker compose down -v` will **wipe** the database.
-
-### Drizzle Studio
-```bash
-cd apps/server && bun run dev & bun db:studio
-```
-Access at https://local.drizzle.studio
-
-## Prerequisites
-
-- [Bun](https://bun.com/) 1.3.10+
-
-
-**Linux / WSL:**
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-After installation, **restart** your terminal and verify:
-```bash
-bun --version
-```
-
-If you get `command not found`, you need to add Bun to your PATH manually:
-
-1. Open your shell config file `~/.bashrc`
-2. Add these lines anywhere in the config:
-```bash
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-```
-
-3. Reload the config:
-```bash
-source ~/.bashrc
-```
-
-## Getting Started
-```bash
-# Install dependencies
-bun install
-
-# Start all apps in dev mode
-bun dev
-```
-
 ## Project Structure
+
 ```
-├── docs/              # Project documentation and diagrams
 ├── apps/
-│   ├── server/        # Backend API
+│   ├── server/        # Elysia backend API
 │   └── web/           # React frontend
 ├── packages/
-│   └── shared/        # Shared types & Zod schemas
+│   └── shared/        # Shared types
+├── docs/              # Documentation, diagrams, API contract
+├── docker-compose.yml
 ├── turbo.json
 └── package.json
 ```
 
-## Commands
+---
 
-- `bun dev` — start all apps in dev mode
-- `bun build` — build all apps
-- `bun test` — run tests
+## Running with Docker (full stack)
+
+Docker runs all components in isolated containers. This is the simplest way to get everything running.
+
+**Prerequisites:** Docker Desktop installed and running (on Windows/WSL: install Docker Desktop on Windows).
+
+### First-time setup
+
+```bash
+# 1. Copy environment file and fill in values
+cp .env.example .env
+
+# 2. Install dependencies (needed for the bun workspace)
+bun install
+
+# 3. Start all containers
+docker compose up --build -d
+
+# 4. Apply the database schema
+cd apps/server && bun db:push
+
+# 5. Seed the database with initial data
+bun db:seed
+```
+
+### Daily use
+
+```bash
+docker compose up -d          # start (keeps existing data)
+docker compose down           # stop (keeps existing data)
+```
+
+> **Warning:** `docker compose up --build -d` followed by `docker compose down -v` will **wipe** the database volume.
+
+Use `--build` again only when `package.json` or the Bun version changes.
+
+### Accessing the app
+
+| Service        | URL                          |
+|----------------|------------------------------|
+| Frontend       | http://localhost:5173        |
+| Backend API    | http://localhost:3000        |
+| MinIO console  | http://localhost:9001        |
+
+---
+
+## Running in dev mode (recommended for development)
+
+In dev mode you run the server and frontend directly on your machine with hot reload. Only the infrastructure services (database, Redis, MinIO) run in Docker.
+
+### Prerequisites
+
+Install Bun 1.3.10+:
+
+```bash
+# Linux / WSL
+curl -fsSL https://bun.sh/install | bash
+```
+
+Restart your terminal and verify:
+
+```bash
+bun --version
+```
+
+If you get `command not found`, add Bun to your PATH in `~/.bashrc`:
+
+```bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+source ~/.bashrc
+```
+
+### Setup
+
+```bash
+# 1. Copy environment file and fill in values
+cp .env.example .env
+
+# 2. Install dependencies
+bun install
+
+# 3. Start only the infrastructure containers
+docker compose up db redis minio minio-init -d
+
+# 4. Apply the database schema (first time only, or after schema changes)
+cd apps/server && bun db:push
+
+# 5. Seed the database (first time only)
+bun db:seed
+```
+
+### Starting the dev servers
+
+Open two terminals:
+
+```bash
+# Terminal 1 — backend (http://localhost:3000)
+cd apps/server && bun run dev
+
+# Terminal 2 — frontend (http://localhost:5173)
+cd apps/web && bun run dev
+```
+
+Changes are applied automatically; refresh the browser for frontend changes.
+
+### After each `git pull`
+
+```bash
+bun install          # pick up new dependencies
+cd apps/server && bun db:push   # apply any schema changes
+```
+
+---
+
+## Docker components
+
+| Service      | Image                  | Port(s)       | Purpose                                                              |
+|--------------|------------------------|---------------|----------------------------------------------------------------------|
+| `db`         | `postgres:17`          | 5432          | Primary PostgreSQL database. Data is persisted in a named volume.    |
+| `server`     | (local Dockerfile)     | 3000          | Elysia backend API. Serves REST endpoints consumed by the frontend.  |
+| `web`        | (local Dockerfile)     | 5173          | React frontend. Served as a static Bun bundle.                       |
+| `redis`      | `redis:8-alpine`       | 6379          | In-memory cache and session store used by the backend.               |
+| `minio`      | `minio/minio:latest`   | 9000, 9001    | S3-compatible object storage for article images. Console on 9001.   |
+| `minio-init` | `minio/mc`             | —             | One-time init container: creates the image bucket and sets it public.|
+
+---
+
+## Linting and formatting
+
+Before committing, run these in `apps/web`:
+
+```bash
+bun run lint      # check for style issues (fix before committing)
+bun run format    # auto-fix formatting
+```
+
+---
+
+## Database tooling
+
+```bash
+cd apps/server
+
+bun db:push       # sync Drizzle schema to the database (no migration files)
+bun db:seed       # populate with initial/seed data
+bun db:studio     # open Drizzle Studio at https://local.drizzle.studio
+```
+
+---
+
+## Email (development)
+
+The project uses [Mailtrap](https://mailtrap.io) as a sandbox SMTP server so outgoing emails are captured and never delivered. Sign up for a free account, go to **Inboxes → SMTP Settings**, and copy the credentials into your `.env`:
+
+```
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=your-mailtrap-username
+SMTP_PASS=your-mailtrap-password
+```
