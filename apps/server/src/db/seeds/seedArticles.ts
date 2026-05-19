@@ -17,7 +17,7 @@ export async function seedArticles() {
     const articlesToInsert: NewArticle[] = [];
 
     for (const author of authors) {
-        const articlesCount = faker.number.int({ min: 3, max: 7 });
+        const articlesCount = faker.number.int({ min: 25, max: 35 });
 
         const categories = await db.query.articleCategory.findMany({
             where: (articleCategory, { eq }) =>
@@ -25,12 +25,14 @@ export async function seedArticles() {
         });
 
         for (let i = 0; i < articlesCount; i++) {
+            const isPublished = faker.number.float() < 2 / 3;
+
             articlesToInsert.push({
                 title: faker.lorem.sentence({ min: 4, max: 10 }).replace(/\.$/, ""),
                 perex: faker.lorem.paragraph(1),
                 content: faker.lorem.paragraphs({ min: 3, max: 8 }, "\n\n"),
                 keywords: faker.lorem.words(5).split(" ").join(", "),
-                state: faker.helpers.arrayElement(["PUBLISHED", "DRAFT", "DRAFT"]),
+                state: isPublished ? "PUBLISHED" : "DRAFT",
 
                 authorId: author.userId,
                 newspaperId: author.newspaperId,
@@ -39,26 +41,7 @@ export async function seedArticles() {
                     ? faker.helpers.arrayElement(categories).id
                     : null,
 
-                publicationDate: faker.date.past(),
-            });
-        }
-
-        for (let i = 0; i < articlesCount; i++) {
-            articlesToInsert.push({
-                title: faker.lorem.sentence({ min: 4, max: 10 }).replace(/\.$/, ""),
-                perex: faker.lorem.paragraph(1),
-                content: faker.lorem.paragraphs({ min: 3, max: 8 }, "\n\n"),
-                keywords: faker.lorem.words(5).split(" ").join(", "),
-                state: "PUBLISHED",
-
-                authorId: author.userId,
-                newspaperId: author.newspaperId,
-
-                categoryId: categories.length > 0
-                    ? faker.helpers.arrayElement(categories).id
-                    : null,
-
-                publicationDate: faker.date.past(),
+                publicationDate: isPublished ? faker.date.past() : null,
             });
         }
     }

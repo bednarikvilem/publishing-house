@@ -18,7 +18,7 @@ async function seed() {
     await seedNewArticleCategory();
     await seedUsers();
     await seedAsignRoles();
-    await seedRandomAuthors(10);
+    await seedRandomAuthors(15);
     await seedArticles();
     await seedEmma();
     await seedArticleReviews();
