@@ -50,8 +50,9 @@ export async function seedComments() {
         }
     }
 
-    if (commentsToInsert.length > 0) {
-        await db.insert(schema.comments).values(commentsToInsert);
+    const CHUNK_SIZE = 5000;
+    for (let i = 0; i < commentsToInsert.length; i += CHUNK_SIZE) {
+        await db.insert(schema.comments).values(commentsToInsert.slice(i, i + CHUNK_SIZE));
     }
 
     console.log(`Comments seeded successfully! (${commentsToInsert.length} total)`);

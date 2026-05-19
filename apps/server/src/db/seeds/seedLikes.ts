@@ -50,8 +50,11 @@ export async function seedLikes() {
         }
     }
 
-    if (likesToInsert.length > 0) {
-        await db.insert(schema.likes).values(likesToInsert).onConflictDoNothing();
+    const CHUNK_SIZE = 5000;
+    for (let i = 0; i < likesToInsert.length; i += CHUNK_SIZE) {
+        await db.insert(schema.likes)
+            .values(likesToInsert.slice(i, i + CHUNK_SIZE))
+            .onConflictDoNothing();
     }
 
     console.log(`Likes seeded successfully! (${likesToInsert.length} total)`);
