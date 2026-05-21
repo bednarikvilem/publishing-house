@@ -15,7 +15,7 @@ export async function seedAsignRoles() {
         .map((user) => ({
             userId: user.id,
             newspaperId: user.newspaperId!,
-            role: "VISITOR",
+            role: "REGISTERED_USER",
         }));
 
     await db.insert(schema.userRoles).values(rolesToInsert);

@@ -7,6 +7,8 @@ import { seedArticles } from "./seeds/seedArticles";
 import { seedRandomAuthors } from "./seeds/seedRandomAuthors";
 import { seedEmma } from "./seeds/seedEmma";
 import { seedArticleReviews } from "./seeds/seedArticleReviews";
+import { seedLikes } from "./seeds/seedLikes";
+import { seedComments } from "./seeds/seedComments";
 import { seedE2eUsers } from "./seeds/seedE2eUsers";
 
 
@@ -16,10 +18,12 @@ async function seed() {
     await seedNewArticleCategory();
     await seedUsers();
     await seedAsignRoles();
-    await seedRandomAuthors(10);
+    await seedRandomAuthors(15);
     await seedArticles();
     await seedEmma();
     await seedArticleReviews();
+    await seedLikes();
+    await seedComments();
     await seedE2eUsers();
 
 }
