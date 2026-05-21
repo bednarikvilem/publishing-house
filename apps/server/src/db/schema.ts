@@ -22,6 +22,7 @@ export const newspapers = pgTable("newspapers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).notNull().unique(),
+    primaryColor: varchar("primary_color", { length: 50 }),
 }, (table) => ([
     uniqueIndex("newspaper_slug_idx").on(table.slug),
 ]));

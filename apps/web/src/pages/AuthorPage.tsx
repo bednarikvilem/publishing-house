@@ -58,7 +58,7 @@ export function AuthorPage() {
 
   if (error) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <p className="text-muted-foreground py-16 text-center">
           Author not found.
@@ -69,7 +69,7 @@ export function AuthorPage() {
 
   if (!author) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <p className="text-muted-foreground py-16 text-center">Loading…</p>
       </div>
@@ -79,7 +79,7 @@ export function AuthorPage() {
   const articleCount = author.articles.pagination.total;
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName} />
 
       {/* Author Hero */}

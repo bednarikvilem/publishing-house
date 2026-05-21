@@ -8,10 +8,11 @@ import { ListRow } from "../components/ListRow";
 import { PortalLayout } from "../components/PortalLayout";
 import { ApprovalQueue } from "./director/ApprovalQueue";
 import { PublicationQueue } from "./director/PublicationQueue";
+import { BrandingSection } from "./director/BrandingSection";
 
-type NewspaperEntry = { id: string; name: string; slug: string };
+type NewspaperEntry = { id: string; name: string; slug: string; primary_color: string | null };
 
-type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" };
+type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" | "branding" };
 
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
@@ -87,13 +88,13 @@ export function DirectorDashboardPage() {
                 </button>
                 {isActive && (
                   <div className="border-border ml-3 mt-0.5 flex flex-col gap-0.5 border-l pl-2">
-                    {(["approval", "publication", "statistics"] as const).map((tab) => (
+                    {(["approval", "publication", "statistics", "branding"] as const).map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveView({ newspaper: np, tab })}
                         className={`rounded-md px-2 py-1.5 text-left text-[12px] font-medium transition-colors capitalize ${selectedTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                       >
-                        {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : "Statistics"}
+                        {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : tab === "statistics" ? "Statistics" : "Branding"}
                       </button>
                     ))}
                   </div>
@@ -148,6 +149,8 @@ export function DirectorDashboardPage() {
         <PublicationQueue newspaperId={selectedNewspaper.id} />
       ) : selectedNewspaper && selectedTab === "statistics" ? (
         <StatisticsSection newspaperId={selectedNewspaper.id} isDirector={false} />
+      ) : selectedNewspaper && selectedTab === "branding" ? (
+        <BrandingSection newspaperId={selectedNewspaper.id} currentColor={selectedNewspaper.primary_color} />
       ) : null}
     </PortalLayout>
   );

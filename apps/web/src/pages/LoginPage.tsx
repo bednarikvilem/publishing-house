@@ -53,7 +53,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
       <AuthCard
         title={slugToDisplayName(newspaperName ?? "")}

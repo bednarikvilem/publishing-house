@@ -2,7 +2,8 @@ import { db } from "../db";
 import { newspapers, users, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
+import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
+import { VALID_COLORS, type NewspaperColor } from "../schemas/newspapers";
 import type { AuthUser, Roles } from "./context";
 
 export async function listNewspapers(user: AuthUser | null, roles: Roles) {
@@ -21,7 +22,7 @@ export async function listNewspapers(user: AuthUser | null, roles: Roles) {
     logger.info("Newspapers list fetched", { userId: user.id, roles, count: result.length });
 
     return {
-        data: result.map(n => ({ id: n.id, name: n.name, slug: n.slug })),
+        data: result.map(n => ({ id: n.id, name: n.name, slug: n.slug, primary_color: n.primaryColor ?? null })),
     };
 }
 
@@ -35,7 +36,7 @@ export async function getNewspaperBySlug(slug: string) {
         throw new NotFoundError("NEWSPAPER_NOT_FOUND");
     }
 
-    return { id: newspaper.id, name: newspaper.name, slug: newspaper.slug };
+    return { id: newspaper.id, name: newspaper.name, slug: newspaper.slug, primary_color: newspaper.primaryColor ?? null };
 }
 
 export async function getNewspaperById(newspaperId: string) {
@@ -45,7 +46,36 @@ export async function getNewspaperById(newspaperId: string) {
 
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
 
-    return { id: newspaper.id, name: newspaper.name, slug: newspaper.slug };
+    return { id: newspaper.id, name: newspaper.name, slug: newspaper.slug, primary_color: newspaper.primaryColor ?? null };
+}
+
+export async function updateNewspaperColor(
+    newspaperId: string,
+    color: NewspaperColor | null,
+    user: AuthUser | null,
+    roles: Roles,
+) {
+    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
+    if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
+        throw new ForbiddenError("FORBIDDEN");
+    }
+
+    if (color !== null && !VALID_COLORS.includes(color)) {
+        throw new BadRequestError("INVALID_COLOR");
+    }
+
+    const newspaper = await db.query.newspapers.findFirst({
+        where: eq(newspapers.id, newspaperId),
+    });
+    if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
+
+    await db.update(newspapers)
+        .set({ primaryColor: color })
+        .where(eq(newspapers.id, newspaperId));
+
+    logger.info("Newspaper color updated", { userId: user.id, newspaperId, color });
+
+    return { id: newspaper.id, name: newspaper.name, slug: newspaper.slug, primary_color: color };
 }
 
 export async function getEditors(newspaperId: string, user: AuthUser | null, roles: Roles) {

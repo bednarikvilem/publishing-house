@@ -26,7 +26,7 @@ export function NewspaperHomepage() {
 
   if (notFound) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <div className="flex h-64 flex-col items-center justify-center gap-2">
           <p className="text-foreground text-[18px] font-semibold">
@@ -44,7 +44,7 @@ export function NewspaperHomepage() {
   const [featured, ...rest] = articles;
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar
         newspaperName={newspaperName ?? ""}
         displayName={newspaper?.name}

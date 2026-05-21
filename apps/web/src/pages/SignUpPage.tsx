@@ -69,7 +69,7 @@ export function SignUpPage() {
 
   if (success) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <AuthCard title={slugToDisplayName(newspaperName ?? "")} subtitle="Create your account">
           <div className="flex flex-col items-center gap-4 text-center">
@@ -94,7 +94,7 @@ export function SignUpPage() {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
       <AuthCard
         title={slugToDisplayName(newspaperName ?? "")}

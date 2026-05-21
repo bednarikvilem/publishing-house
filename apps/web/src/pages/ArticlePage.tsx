@@ -191,7 +191,7 @@ export function ArticlePage() {
           ? "This article could not be found."
           : "Failed to load the article. Please try again later.";
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex h-64 flex-col items-center justify-center gap-3">
           <p className="text-muted-foreground text-[15px]">{message}</p>
@@ -202,7 +202,7 @@ export function ArticlePage() {
 
   if (!article) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="text-muted-foreground flex h-64 items-center justify-center text-[15px]">
           Loading…
@@ -215,7 +215,7 @@ export function ArticlePage() {
   const readTime = estimateReadTime(article.content);
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       {/* Hero */}

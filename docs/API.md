@@ -2162,7 +2162,8 @@ Authorization: Bearer <token>
         {
             "id": "n1n2n3...",
             "name": "Daily Tech",
-            "created_at": "2025-01-01T00:00:00Z"
+            "slug": "daily-tech",
+            "primary_color": "blue"
         }
     ]
 }
@@ -2199,8 +2200,100 @@ Return the details of a single newspaper.
 {
     "id": "n1n2n3...",
     "name": "Daily Tech",
-    "created_at": "2025-01-01T00:00:00Z"
+    "slug": "daily-tech",
+    "primary_color": "blue"
 }
+```
+
+`primary_color` is one of `"blue"`, `"rose"`, `"emerald"`, `"violet"`, `"orange"`, `"teal"`, or `null` (default amber theme).
+
+`404 Not Found` — newspaper does not exist
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+---
+
+### GET /api/newspapers/by-slug/:slug
+
+Return a newspaper by its URL slug. Used by the frontend to resolve a newspaper from the URL.
+
+**Auth required:** No
+
+**URL parameters:**
+
+| Parameter | Description          |
+|-----------|----------------------|
+| slug      | URL slug of the newspaper |
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "n1n2n3...",
+    "name": "Daily Tech",
+    "slug": "daily-tech",
+    "primary_color": "blue"
+}
+```
+
+`404 Not Found` — newspaper does not exist
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+---
+
+### PATCH /api/newspapers/:newspaper_id
+
+Update a newspaper's brand accent color. Only Director and System Administrator can call this.
+
+**Auth required:** Yes — `DIRECTOR` or `SYSTEM_ADMINISTRATOR`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Body:**
+```json
+{ "primary_color": "blue" }
+```
+
+`primary_color` must be one of `"blue"`, `"rose"`, `"emerald"`, `"violet"`, `"orange"`, `"teal"`, or `null` (resets to default amber).
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "n1n2n3...",
+    "name": "Daily Tech",
+    "slug": "daily-tech",
+    "primary_color": "blue"
+}
+```
+
+`400 Bad Request` — invalid preset key
+```json
+{ "error": "INVALID_COLOR" }
+```
+
+`401 Unauthorized` — no token provided
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — user is not Director or System Administrator
+```json
+{ "error": "FORBIDDEN" }
 ```
 
 `404 Not Found` — newspaper does not exist

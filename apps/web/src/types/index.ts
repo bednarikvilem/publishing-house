@@ -26,6 +26,7 @@ export interface Newspaper {
   id: string;
   name: string;
   slug: string;
+  primary_color: string | null;
 }
 
 export interface User {
