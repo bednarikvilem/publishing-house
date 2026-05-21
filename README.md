@@ -1,93 +1,195 @@
-# Pb138
+# PB138 Project — Newspaper Platform
 
+A web-based platform for a publication house managing multiple newspapers, with roles ranging from Visitor to Director.
 
+## Tech Stack
 
-## Getting started
+- **Runtime:** Bun
+- **Monorepo:** Turborepo
+- **Frontend:** React 19, React Router, TailwindCSS, shadcn/ui, Lexical (rich text editor)
+- **API:** Elysia, OpenAPI (`@elysiajs/openapi`)
+- **Auth:** JWT (`@elysiajs/jwt`), `Bun.password` (argon2)
+- **Database:** Drizzle ORM, PostgreSQL 17
+- **Cache:** Redis (via `Bun.redis`)
+- **Image Storage:** MinIO (S3-compatible, self-hosted)
+- **Email:** Nodemailer (Mailtrap sandbox for development)
+- **Linting / Formatting:** ESLint, Prettier
+- **Language:** TypeScript
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Project Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.fi.muni.cz/xbedna12/pb138.git
-git branch -M main
-git push -uf origin main
+├── apps/
+│   ├── server/        # Elysia backend API
+│   └── web/           # React frontend
+├── packages/
+│   └── shared/        # Shared types
+├── docs/              # Documentation, diagrams, API contract
+├── docker-compose.yml
+├── turbo.json
+└── package.json
 ```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](https://gitlab.fi.muni.cz/xbedna12/pb138/-/settings/integrations)
+## Running with Docker (full stack)
 
-## Collaborate with your team
+Docker runs all components in isolated containers. This is the simplest way to get everything running.
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+**Prerequisites:** Docker Desktop installed and running (on Windows/WSL: install Docker Desktop on Windows).
 
-## Test and Deploy
+### First-time setup
 
-Use the built-in continuous integration in GitLab.
+```bash
+# 1. Copy environment file and fill in values
+cp .env.example .env
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+# 2. Install dependencies (needed for the bun workspace)
+bun install
 
-***
+# 3. Start all containers
+docker compose up --build -d
 
-# Editing this README
+# 4. Apply the database schema
+cd apps/server && bun db:push
 
-Done.
+# 5. Seed the database with initial data
+bun db:seed
+```
 
-## Suggestions for a good README
+### Daily use
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+```bash
+docker compose up -d          # start (keeps existing data)
+docker compose down           # stop (keeps existing data)
+```
 
-## Name
-Choose a self-explaining name for your project.
+> **Warning:** `docker compose up --build -d` followed by `docker compose down -v` will **wipe** the database volume.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Use `--build` again only when `package.json` or the Bun version changes.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Accessing the app
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+| Service        | URL                          |
+|----------------|------------------------------|
+| Frontend       | http://localhost:5173        |
+| Backend API    | http://localhost:3000        |
+| MinIO console  | http://localhost:9001        |
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+---
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## Running in dev mode (recommended for development)
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+In dev mode you run the server and frontend directly on your machine with hot reload. Only the infrastructure services (database, Redis, MinIO) run in Docker.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Prerequisites
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Install Bun 1.3.10+:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```bash
+# Linux / WSL
+curl -fsSL https://bun.sh/install | bash
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Restart your terminal and verify:
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+```bash
+bun --version
+```
 
-## License
-For open source projects, say how it is licensed.
+If you get `command not found`, add Bun to your PATH in `~/.bashrc`:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+source ~/.bashrc
+```
+
+### Setup
+
+```bash
+# 1. Copy environment file and fill in values
+cp .env.example .env
+
+# 2. Install dependencies
+bun install
+
+# 3. Start only the infrastructure containers
+docker compose up db redis minio minio-init -d
+
+# 4. Apply the database schema (first time only, or after schema changes)
+cd apps/server && bun db:push
+
+# 5. Seed the database (first time only)
+bun db:seed
+```
+
+### Starting the dev servers
+
+Open two terminals:
+
+```bash
+# Terminal 1 — backend (http://localhost:3000)
+cd apps/server && bun run dev
+
+# Terminal 2 — frontend (http://localhost:5173)
+cd apps/web && bun run dev
+```
+
+Changes are applied automatically; refresh the browser for frontend changes.
+
+### After each `git pull`
+
+```bash
+bun install          # pick up new dependencies
+cd apps/server && bun db:push   # apply any schema changes
+```
+
+---
+
+## Docker components
+
+| Service      | Image                  | Port(s)       | Purpose                                                              |
+|--------------|------------------------|---------------|----------------------------------------------------------------------|
+| `db`         | `postgres:17`          | 5432          | Primary PostgreSQL database. Data is persisted in a named volume.    |
+| `server`     | (local Dockerfile)     | 3000          | Elysia backend API. Serves REST endpoints consumed by the frontend.  |
+| `web`        | (local Dockerfile)     | 5173          | React frontend. Served as a static Bun bundle.                       |
+| `redis`      | `redis:8-alpine`       | 6379          | In-memory cache and session store used by the backend.               |
+| `minio`      | `minio/minio:latest`   | 9000, 9001    | S3-compatible object storage for article images. Console on 9001.   |
+| `minio-init` | `minio/mc`             | —             | One-time init container: creates the image bucket and sets it public.|
+
+---
+
+## Linting and formatting
+
+Before committing, run these in `apps/web`:
+
+```bash
+bun run lint      # check for style issues (fix before committing)
+bun run format    # auto-fix formatting
+```
+
+---
+
+## Database tooling
+
+```bash
+cd apps/server
+
+bun db:push       # sync Drizzle schema to the database (no migration files)
+bun db:seed       # populate with initial/seed data
+bun db:studio     # open Drizzle Studio at https://local.drizzle.studio
+```
+
+---
+
+## Email (development)
+
+The project uses [Mailtrap](https://mailtrap.io) as a sandbox SMTP server so outgoing emails are captured and never delivered. Sign up for a free account, go to **Inboxes → SMTP Settings**, and copy the credentials into your `.env`:
+
+```
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=your-mailtrap-username
+SMTP_PASS=your-mailtrap-password
+```

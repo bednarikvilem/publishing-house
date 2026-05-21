@@ -1,0 +1,34 @@
+import { db } from "../index";
+import * as schema from "../schema";
+import { eq } from "drizzle-orm";
+
+export async function seedSystemAdmin() {
+    const existing = await db.query.globalRoles.findFirst({
+        where: eq(schema.globalRoles.role, "SYSTEM_ADMINISTRATOR"),
+    });
+
+    if (existing) {
+        console.log("SYSTEM_ADMINISTRATOR already exists, skipping.");
+        return;
+    }
+
+    const passwordHash = await Bun.password.hash("admin1234");
+
+    const [user] = await db.insert(schema.users).values({
+        email: "admin@admin.cz",
+        username: "sysadmin",
+        fullname: "System Administrator",
+        passwordHash,
+        newspaperId: null,
+        email_verified: true,
+    }).returning({ id: schema.users.id });
+
+    await db.insert(schema.globalRoles).values({
+        userId: user.id,
+        role: "SYSTEM_ADMINISTRATOR",
+    });
+
+    console.log("System Administrator seeded!");
+    console.log("  Email:    admin@admin.cz");
+    console.log("  Password: admin1234");
+}
