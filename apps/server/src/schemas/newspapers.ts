@@ -17,13 +17,5 @@ export const newspaperListResponse = t.Object({
 });
 
 export const updateNewspaperColorBody = t.Object({
-	primary_color: t.Union([
-		t.Literal("blue"),
-		t.Literal("rose"),
-		t.Literal("emerald"),
-		t.Literal("violet"),
-		t.Literal("orange"),
-		t.Literal("teal"),
-		t.Null(),
-	]),
+	primary_color: t.Nullable(t.String({ enum: [...VALID_COLORS] })),
 });

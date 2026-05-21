@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
-import { newspaperIdParam, updateNewspaperColorBody } from "../schemas/newspapers";
+import { newspaperIdParam, updateNewspaperColorBody, type NewspaperColor } from "../schemas/newspapers";
 import * as newspaperService from "../services/newspapers";
 
 export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
@@ -22,7 +22,7 @@ export const newspaperRoutes = new Elysia({ detail: { tags: ["Newspapers"] } })
 
     // PATCH /api/newspapers/:newspaper_id — DIRECTOR / SYSTEM_ADMINISTRATOR
     .patch("/api/newspapers/:newspaper_id", ({ params, body, user, roles }) =>
-        newspaperService.updateNewspaperColor(params.newspaper_id, body.primary_color, user, roles), {
+        newspaperService.updateNewspaperColor(params.newspaper_id, body.primary_color as NewspaperColor | null, user, roles), {
         params: newspaperIdParam,
         body: updateNewspaperColorBody,
     })
