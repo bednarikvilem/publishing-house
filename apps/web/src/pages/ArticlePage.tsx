@@ -9,7 +9,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
 import { Heart, MessageCircle } from "lucide-react";
 import { ImageNode } from "../lib/lexical/ImageNode";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { API_BASE_URL, authHeaders, requestSubscription } from "../lib/api";
 import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
@@ -85,7 +85,8 @@ export function ArticlePage() {
   const { articleId } = useParams<{ articleId: string }>();
   const { newspaperName, newspaper } = useNewspaper();
   const [article, setArticle] = useState<ArticleDetail | null>(null);
-  const [error, setError] = useState<"unauthorized" | "not_found" | "error" | null>(null);
+  const [error, setError] = useState<"unauthorized" | "subscription_required" | "not_found" | "error" | null>(null);
+  const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
   const [likesCount, setLikesCount] = useState(0);
   const [likedByMe, setLikedByMe] = useState(false);
   const [isTogglingLike, setIsTogglingLike] = useState(false);
@@ -108,8 +109,17 @@ export function ArticlePage() {
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`,
       { headers: authHeaders() }
     )
-      .then((res) => {
-        if (res.status === 401 || res.status === 403) {
+      .then(async (res) => {
+        if (res.status === 403) {
+          const body = await res.json().catch(() => ({})) as { error?: string };
+          if (body.error === "SUBSCRIPTION_REQUIRED") {
+            setError("subscription_required");
+          } else {
+            setError("unauthorized");
+          }
+          return null;
+        }
+        if (res.status === 401) {
           setError("unauthorized");
           return null;
         }
@@ -181,6 +191,51 @@ export function ArticlePage() {
     } finally {
       setIsSubmittingComment(false);
     }
+  }
+
+  async function handleSubscribeFromPaywall() {
+    if (!newspaper) return;
+    try {
+      await requestSubscription(newspaper.id);
+      setSubscribeMessage("Check your email for your subscription QR code.");
+    } catch {
+      setSubscribeMessage("Failed to send QR code. Please try again.");
+    }
+  }
+
+  if (error === "subscription_required") {
+    return (
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+        <Navbar newspaperName={newspaperName ?? ""} />
+        <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
+          <div className="border-border bg-card flex w-full max-w-[420px] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
+            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              Subscriber-only content
+            </h2>
+            <p className="text-muted-foreground text-[14px]">
+              This article is available to subscribers only.
+            </p>
+            {subscribeMessage ? (
+              <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
+            ) : isLoggedIn ? (
+              <button
+                onClick={handleSubscribeFromPaywall}
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              >
+                Subscribe
+              </button>
+            ) : (
+              <a
+                href={`/${newspaperName}/login`}
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              >
+                Log in to subscribe
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {

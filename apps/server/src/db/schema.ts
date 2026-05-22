@@ -84,6 +84,7 @@ export const articles = pgTable("articles", {
     newspaperId: uuid("newspaper_id").notNull().references(() => newspapers.id),
     categoryId: uuid("category_id").references(() => articleCategory.id),
     publicationDate: timestamp("publication_date"),
+    isSubscriberOnly: boolean("is_subscriber_only").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow()
 });
 
@@ -184,6 +185,31 @@ export const auditLogs = pgTable("audit_logs", {
     result: auditResultEnum("result").notNull(),
     timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
+
+export const subscriptions = pgTable("subscriptions", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    newspaperId: uuid("newspaper_id").notNull().references(() => newspapers.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ([
+    unique().on(table.userId, table.newspaperId),
+]));
+
+export type Subscription = InferSelectModel<typeof subscriptions>;
+export type NewSubscription = InferInsertModel<typeof subscriptions>;
+
+export const subscriptionTokens = pgTable("subscription_tokens", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    newspaperId: uuid("newspaper_id").notNull().references(() => newspapers.id, { onDelete: "cascade" }),
+    usedAt: timestamp("used_at"),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type SubscriptionToken = InferSelectModel<typeof subscriptionTokens>;
+export type NewSubscriptionToken = InferInsertModel<typeof subscriptionTokens>;
 
 export const usersRelations = relations(users, ({ one, many }) => ({
     newspaper: one(newspapers, { fields: [users.newspaperId], references: [newspapers.id] }),

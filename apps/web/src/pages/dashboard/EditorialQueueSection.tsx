@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { API_BASE_URL, authHeaders, setArticleSubscriberOnly } from "../../lib/api";
 import type { PaginatedResponse, ReviewDecision } from "../../types";
 import type { QueueArticle } from "../../types/dashboard";
 import { SectionTitle } from "../../components/SectionTitle";
@@ -28,6 +28,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
   const [editors, setEditors] = useState<Editor[]>([]);
   const [editorsLoading, setEditorsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     if (!newspaperId) return;
@@ -105,6 +106,24 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
     }
   }
 
+  async function handleToggleSubscriberOnly(articleId: string, current: boolean) {
+    setTogglingIds((prev) => new Set(prev).add(articleId));
+    try {
+      await setArticleSubscriberOnly(newspaperId, articleId, !current);
+      setArticles((prev) =>
+        prev.map((a) => (a.id === articleId ? { ...a, is_subscriber_only: !current } : a))
+      );
+    } catch {
+      alert("Failed to update subscriber-only setting. Please try again.");
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(articleId);
+        return next;
+      });
+    }
+  }
+
   async function handleApprove(articleId: string, decision: ReviewDecision, note: string) {
     setSubmitting(true);
     try {
@@ -162,6 +181,26 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                           <span>Editor: {article.assigned_editor.full_name}</span>
                         )}
                         <span>Submitted: {formatDate(article.submitted_at)}</span>
+                      </div>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <button
+                          role="switch"
+                          aria-checked={!!article.is_subscriber_only}
+                          disabled={togglingIds.has(article.id)}
+                          onClick={() =>
+                            handleToggleSubscriberOnly(article.id, !!article.is_subscriber_only)
+                          }
+                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none disabled:opacity-50 ${
+                            article.is_subscriber_only ? "bg-foreground" : "bg-input"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                              article.is_subscriber_only ? "translate-x-4" : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                        <span className="text-muted-foreground text-[12px]">Subscribers only</span>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">

@@ -16,6 +16,7 @@ import { eq, and, desc, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
 import { ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableError } from "../errors";
+import { getSubscriptionStatus } from "./subscriptions";
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type {
@@ -41,6 +42,7 @@ const articleSummary = (a: any) => {
         category: a.category?.categoryName ?? null,
         keywords: a.keywords ? a.keywords.split(",").map((k: string) => k.trim()) : [],
         primary_image: primary ? { url: primary.url, caption: primary.caption } : null,
+        is_subscriber_only: a.isSubscriberOnly ?? false,
     };
 };
 
@@ -354,6 +356,10 @@ export async function getArticle(
         with: { category: true, images: true },
     });
     if (!article) throw new NotFoundError("ARTICLE_NOT_FOUND");
+    if (article.isSubscriberOnly) {
+        const sub = await getSubscriptionStatus(user.id, newspaperId);
+        if (!sub.is_active) throw new ForbiddenError("SUBSCRIPTION_REQUIRED");
+    }
     const author = await db.query.users.findFirst({ where: eq(users.id, article.authorId) });
     const authorProfile = author
         ? await db.query.newspaperAuthors.findFirst({
@@ -989,4 +995,26 @@ export async function publishArticle(
         status: "PUBLISHED",
         publication_date: now.toISOString(),
     };
+}
+
+export async function setSubscriberOnly(
+    newspaperId: string,
+    articleId: string,
+    user: AuthUser | null,
+    roles: Roles,
+    isSubscriberOnly: boolean,
+) {
+    if (!user) throw new UnauthorizedError();
+    if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
+
+    const article = await db.query.articles.findFirst({
+        where: and(eq(articles.id, articleId), eq(articles.newspaperId, newspaperId)),
+    });
+    if (!article) throw new NotFoundError("ARTICLE_NOT_FOUND");
+
+    await db.update(articles).set({ isSubscriberOnly }).where(eq(articles.id, articleId));
+    await audit({ userId: user.id, operationType: "ARTICLE_UPDATED", targetObjectId: articleId, result: "SUCCESS" });
+    logger.info("Article subscriber-only toggled", { articleId, isSubscriberOnly, managerId: user.id });
+
+    return { id: articleId, is_subscriber_only: isSubscriberOnly };
 }

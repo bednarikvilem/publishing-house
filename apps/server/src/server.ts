@@ -15,6 +15,7 @@ import { openapi } from "@elysiajs/openapi";
 import { logger } from "./utils/logger";
 import { audit } from "./utils/audit";
 import { viewRoutes } from "./routes/views_route.ts";
+import { subscriptionRoutes } from "./routes/subscriptions.ts";
 import { HttpError } from "./errors";
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -44,6 +45,7 @@ export const app = new Elysia()
                     { name: "Likes", description: "Liking and unliking articles" },
                     { name: "Authors", description: "Author profiles and their article listings" },
                     { name: "Admin", description: "System administration: roles, users, configuration" },
+                    { name: "Subscriptions", description: "Per-newspaper subscriptions and QR code activation" },
                 ],
             },
         })
@@ -56,6 +58,7 @@ export const app = new Elysia()
     .use(commentRoutes)
     .use(likeRoutes)
     .use(viewRoutes)
+    .use(subscriptionRoutes)
     .use(adminRoutes)
     .use(authorRoutes)
     .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))

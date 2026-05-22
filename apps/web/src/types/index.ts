@@ -80,6 +80,7 @@ export interface Article {
   keywords: string[];
   primary_image: { url: string; caption: string } | null;
   author: ArticleAuthorSummary;
+  is_subscriber_only?: boolean;
 }
 
 export interface ArticleDetail {

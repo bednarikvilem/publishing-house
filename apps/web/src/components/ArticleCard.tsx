@@ -12,7 +12,7 @@ export function ArticleCard({ article }: { article: Article }) {
       className="border-border bg-card flex cursor-pointer flex-col overflow-hidden rounded-xl border"
       onClick={() => navigate(`/${newspaperName}/articles/${article.id}`)}
     >
-      <div className="h-[200px] overflow-hidden">
+      <div className="relative h-[200px] overflow-hidden">
         {article.primary_image ? (
           <img
             src={article.primary_image.url}
@@ -21,6 +21,11 @@ export function ArticleCard({ article }: { article: Article }) {
           />
         ) : (
           <div className="bg-muted h-full w-full" />
+        )}
+        {article.is_subscriber_only && (
+          <span className="absolute top-2 right-2 rounded bg-black/70 px-2 py-0.5 text-[11px] font-semibold text-white">
+            Subscribers only
+          </span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">

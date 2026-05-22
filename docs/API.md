@@ -3125,6 +3125,160 @@ Side effects:
 
 ---
 
+## Subscriptions
+
+### POST /api/newspapers/:newspaper_id/subscription/request
+
+Sends a QR code to the authenticated user's email to activate or renew a subscription for this newspaper.
+
+**Auth required:** Yes
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Request body:** None
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Subscription QR code sent to your email." }
+```
+
+`401 Unauthorized` — not logged in
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`404 Not Found` — newspaper not found
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+Side effects:
+- Creates a single-use subscription token (valid 7 days) in the database
+- Sends an email to the user containing a QR code and a direct confirmation URL
+
+---
+
+### POST /api/newspapers/:newspaper_id/subscription/confirm
+
+Redeems a subscription token and activates (or extends) the user's subscription.
+
+**Auth required:** No
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Request body:**
+```json
+{ "token": "<uuid>" }
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "message": "Subscription activated.",
+    "expires_at": "2026-07-22T10:00:00.000Z"
+}
+```
+
+`400 Bad Request` — token not found, already used, or expired
+```json
+{ "error": "INVALID_TOKEN" }
+```
+
+Side effects:
+- Marks the token as used (single-use enforcement)
+- Creates or updates the subscription record; if an active subscription exists, the 30-day period extends from the current `expires_at`
+
+---
+
+### GET /api/newspapers/:newspaper_id/subscription/status
+
+Returns the current subscription status of the authenticated user for this newspaper.
+
+**Auth required:** Yes
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Responses:**
+
+`200 OK` — active subscription
+```json
+{
+    "is_active": true,
+    "expires_at": "2026-07-22T10:00:00.000Z"
+}
+```
+
+`200 OK` — no active subscription
+```json
+{
+    "is_active": false,
+    "expires_at": null
+}
+```
+
+`401 Unauthorized` — not logged in
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+---
+
+### PATCH /api/newspapers/:newspaper_id/articles/:article_id/subscriber-only
+
+Sets or clears the subscriber-only flag on an article. Only accessible to NEWSPAPER_MANAGER.
+
+**Auth required:** Yes (NEWSPAPER_MANAGER role)
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+| article_id   | UUID of the article   |
+
+**Request body:**
+```json
+{ "is_subscriber_only": true }
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Article updated." }
+```
+
+`403 Forbidden` — missing NEWSPAPER_MANAGER role
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — article not found in this newspaper
+```json
+{ "error": "ARTICLE_NOT_FOUND" }
+```
+
+Side effects:
+- Creates an audit log entry (operation: ARTICLE_SUBSCRIBER_ONLY_UPDATED)
+
+---
+
 ## Article State Machine
 
 For reference, the full article lifecycle is as follows:

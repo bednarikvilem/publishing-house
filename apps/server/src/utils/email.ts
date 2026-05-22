@@ -35,6 +35,50 @@ export async function sendVerificationEmail(
 	});
 }
 
+export async function sendSubscriptionQrEmail(
+	to: string,
+	newspaperName: string,
+	qrDataUrl: string,
+	confirmUrl: string,
+): Promise<void> {
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject: `Your subscription QR code for ${newspaperName}`,
+		text: `Scan the QR code or open this link to activate your 30-day subscription to ${newspaperName}:\n\n${confirmUrl}`,
+		html: `
+<p>Here is your QR code to activate your 30-day subscription to <strong>${newspaperName}</strong>.</p>
+<p>Scan the code with your phone camera, or click the link below.</p>
+<p><img src="${qrDataUrl}" alt="Subscription QR code" width="200" height="200" /></p>
+<p><a href="${confirmUrl}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Activate subscription</a></p>
+<p>This link expires in 7 days.</p>
+`,
+	});
+}
+
+export async function sendSubscriptionRenewalEmail(
+	to: string,
+	newspaperName: string,
+	expiresAt: Date,
+	qrDataUrl: string,
+	confirmUrl: string,
+): Promise<void> {
+	const expiryStr = expiresAt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject: `Renew your subscription to ${newspaperName}`,
+		text: `Your subscription to ${newspaperName} expires on ${expiryStr}. Scan the QR code or open this link to renew for another 30 days:\n\n${confirmUrl}`,
+		html: `
+<p>Your subscription to <strong>${newspaperName}</strong> expires on <strong>${expiryStr}</strong>.</p>
+<p>Scan the QR code or click the button below to renew for another 30 days.</p>
+<p><img src="${qrDataUrl}" alt="Renewal QR code" width="200" height="200" /></p>
+<p><a href="${confirmUrl}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Renew subscription</a></p>
+<p>This link expires in 7 days.</p>
+`,
+	});
+}
+
 export async function sendPasswordResetEmail(
 	to: string,
 	token: string,
