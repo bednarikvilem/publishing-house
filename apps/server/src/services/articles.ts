@@ -1,5 +1,5 @@
 import { uploadImage, deleteImage } from "../utils/storage";
-import { db } from "../db";
+import type { Tx } from "../db/rls";
 import {
     articles,
     articleImages,
@@ -45,15 +45,16 @@ const articleSummary = (a: any) => {
 };
 
 export async function searchArticles(
+    tx: Tx,
     newspaperId: string,
     query: Static<typeof articlesSearchQuery>,
 ) {
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
 
-    const all = await db.query.articles.findMany({
+    const all = await tx.query.articles.findMany({
         where: and(
             eq(articles.newspaperId, newspaperId),
             eq(articles.state, "PUBLISHED"),
@@ -113,6 +114,7 @@ export async function searchArticles(
 }
 
 export async function listMyArticles(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -121,7 +123,7 @@ export async function listMyArticles(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
@@ -129,7 +131,7 @@ export async function listMyArticles(
     const { page, limit, status } = query;
     const offset = (page - 1) * limit;
 
-    const all = await db.query.articles.findMany({
+    const all = await tx.query.articles.findMany({
         where: and(
             eq(articles.authorId, user.id),
             eq(articles.newspaperId, newspaperId),
@@ -145,7 +147,7 @@ export async function listMyArticles(
 
     const result = await Promise.all(
         paged.map(async (a: any) => {
-            const latestReview = await db.query.articleReviews.findFirst({
+            const latestReview = await tx.query.articleReviews.findFirst({
                 where: eq(articleReviews.articleId, a.id),
                 orderBy: [desc(articleReviews.createdAt)],
             });
@@ -169,6 +171,7 @@ export async function listMyArticles(
 }
 
 export async function getMyArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -177,7 +180,7 @@ export async function getMyArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -187,7 +190,7 @@ export async function getMyArticle(
     });
     if (!article) throw new NotFoundError("ARTICLE_NOT_FOUND");
 
-    const images = await db.query.articleImages.findMany({
+    const images = await tx.query.articleImages.findMany({
         where: eq(articleImages.articleId, article.id),
     });
 
@@ -211,6 +214,7 @@ export async function getMyArticle(
 }
 
 export async function getReviewQueue(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -223,7 +227,7 @@ export async function getReviewQueue(
     const isDirector = roles.includes("DIRECTOR");
     if (!isEditor && !isManager && !isDirector) throw new ForbiddenError();
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
@@ -249,7 +253,7 @@ export async function getReviewQueue(
         allowedStates = [status];
     }
 
-    const all = await db.query.articles.findMany({
+    const all = await tx.query.articles.findMany({
         where: eq(articles.newspaperId, newspaperId),
         with: { category: true },
     });
@@ -257,7 +261,7 @@ export async function getReviewQueue(
     let filtered = all.filter((a: any) => allowedStates.includes(a.state));
 
     if (effectiveRole === "EDITOR") {
-        const assignedReviews = await db.query.articleReviews.findMany({
+        const assignedReviews = await tx.query.articleReviews.findMany({
             where: eq(articleReviews.reviewerId, user.id),
         });
         const assignedIds = new Set(assignedReviews.map((r: any) => r.articleId));
@@ -282,17 +286,18 @@ export async function getReviewQueue(
 }
 
 export async function listArticles(
+    tx: Tx,
     newspaperId: string,
     query: Static<typeof articlesListQuery>,
 ) {
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
     const { page, limit, category } = query;
     const offset = (page - 1) * limit;
 
-    const all = await db.query.articles.findMany({
+    const all = await tx.query.articles.findMany({
         where: and(
             eq(articles.newspaperId, newspaperId),
             eq(articles.state, "PUBLISHED"),
@@ -310,9 +315,9 @@ export async function listArticles(
 
     const result = await Promise.all(
         paged.map(async (a: any) => {
-            const author = await db.query.users.findFirst({ where: eq(users.id, a.authorId) });
+            const author = await tx.query.users.findFirst({ where: eq(users.id, a.authorId) });
             const authorProfile = author
-                ? await db.query.newspaperAuthors.findFirst({
+                ? await tx.query.newspaperAuthors.findFirst({
                     where: and(
                         eq(newspaperAuthors.userId, author.id),
                         eq(newspaperAuthors.newspaperId, newspaperId),
@@ -339,13 +344,14 @@ export async function listArticles(
 }
 
 export async function getArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
 ) {
     if (!user) throw new UnauthorizedError();
     if (user.newspaperId !== newspaperId) throw new ForbiddenError();
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -354,9 +360,9 @@ export async function getArticle(
         with: { category: true, images: true },
     });
     if (!article) throw new NotFoundError("ARTICLE_NOT_FOUND");
-    const author = await db.query.users.findFirst({ where: eq(users.id, article.authorId) });
+    const author = await tx.query.users.findFirst({ where: eq(users.id, article.authorId) });
     const authorProfile = author
-        ? await db.query.newspaperAuthors.findFirst({
+        ? await tx.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, author.id),
                 eq(newspaperAuthors.newspaperId, newspaperId),
@@ -364,16 +370,16 @@ export async function getArticle(
         })
         : null;
 
-    const [likesResult] = await db
+    const [likesResult] = await tx
         .select({ count: count() })
         .from(likes)
         .where(eq(likes.articleId, article.id));
 
-    const likedByMe = !!(await db.query.likes.findFirst({
+    const likedByMe = !!(await tx.query.likes.findFirst({
         where: and(eq(likes.userId, user.id), eq(likes.articleId, article.id)),
     }));
 
-    const articleComments = await db.query.comments.findMany({
+    const articleComments = await tx.query.comments.findMany({
         where: eq(comments.articleId, article.id),
         with: { user: true },
         orderBy: [desc(comments.createdAt)],
@@ -414,6 +420,7 @@ export async function getArticle(
 }
 
 export async function createArticle(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -423,7 +430,7 @@ export async function createArticle(
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
     if (user.newspaperId !== newspaperId) throw new ForbiddenError();
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
@@ -431,13 +438,13 @@ export async function createArticle(
     const { title, perex, content, category_id, keywords } = body;
 
     if (category_id) {
-        const cat = await db.query.articleCategory.findFirst({
+        const cat = await tx.query.articleCategory.findFirst({
             where: eq(articleCategory.id, category_id),
         });
         if (!cat) throw new NotFoundError("CATEGORY_NOT_FOUND");
     }
 
-    const [article] = await db
+    const [article] = await tx
         .insert(articles)
         .values({
             title,
@@ -452,7 +459,7 @@ export async function createArticle(
         .returning();
 
     const cat = category_id
-        ? await db.query.articleCategory.findFirst({
+        ? await tx.query.articleCategory.findFirst({
             where: eq(articleCategory.id, category_id),
         })
         : null;
@@ -475,6 +482,7 @@ export async function createArticle(
 }
 
 export async function updateArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -484,7 +492,7 @@ export async function updateArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -506,10 +514,10 @@ export async function updateArticle(
         updateData.keywords = Array.isArray(keywords) ? keywords.join(", ") : keywords;
 
     if (Object.keys(updateData).length > 0) {
-        await db.update(articles).set(updateData).where(eq(articles.id, articleId));
+        await tx.update(articles).set(updateData).where(eq(articles.id, articleId));
     }
 
-    const updated = await db.query.articles.findFirst({
+    const updated = await tx.query.articles.findFirst({
         where: eq(articles.id, articleId),
         with: { category: true },
     });
@@ -532,6 +540,7 @@ export async function updateArticle(
 }
 
 export async function deleteArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -539,7 +548,7 @@ export async function deleteArticle(
 ) {
     if (!user) throw new UnauthorizedError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -551,13 +560,14 @@ export async function deleteArticle(
     const isAdmin = roles.includes("SYSTEM_ADMINISTRATOR");
     if (!isOwner && !isAdmin) throw new ForbiddenError();
 
-    await db.delete(articles).where(eq(articles.id, articleId));
+    await tx.delete(articles).where(eq(articles.id, articleId));
 
     await audit({ userId: user.id, operationType: "ARTICLE_DELETED", targetObjectId: articleId, result: "SUCCESS" });
     logger.info("Article deleted", { articleId, deletedBy: user.id });
 }
 
 export async function submitArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -566,7 +576,7 @@ export async function submitArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -577,7 +587,7 @@ export async function submitArticle(
     if (article.state !== "DRAFT") throw new ForbiddenError();
 
     const authorProfile = user.newspaperId
-        ? await db.query.newspaperAuthors.findFirst({
+        ? await tx.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, user.id),
                 eq(newspaperAuthors.newspaperId, user.newspaperId),
@@ -589,11 +599,11 @@ export async function submitArticle(
         throw new UnprocessableError("AUTHOR_PROFILE_INCOMPLETE");
     }
 
-    await db.query.articleImages.findMany({
+    await tx.query.articleImages.findMany({
         where: eq(articleImages.articleId, article.id),
     });
 
-    await db
+    await tx
         .update(articles)
         .set({ state: "SUBMITTED" })
         .where(eq(articles.id, article.id));
@@ -607,6 +617,7 @@ export async function submitArticle(
 // `request` is passed in to parse the multipart/JSON body — transport I/O the
 // handler tightly couples with validation/upload error shaping.
 export async function uploadArticleImage(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -616,7 +627,7 @@ export async function uploadArticleImage(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -662,12 +673,12 @@ export async function uploadArticleImage(
         throw new UnprocessableError("VALIDATION_ERROR", { fields: { image: "Invalid file" } });
     }
 
-    const existingImages = await db.query.articleImages.findMany({
+    const existingImages = await tx.query.articleImages.findMany({
         where: eq(articleImages.articleId, article.id),
     });
     const isPrimary = existingImages.length === 0;
 
-    const [image] = await db
+    const [image] = await tx
         .insert(articleImages)
         .values({ articleId: article.id, url: imageUrl, caption, isPrimary })
         .returning();
@@ -679,6 +690,7 @@ export async function uploadArticleImage(
 }
 
 export async function deleteArticleImage(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     imageId: string,
@@ -688,7 +700,7 @@ export async function deleteArticleImage(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -697,24 +709,24 @@ export async function deleteArticleImage(
     if (!article) throw new NotFoundError("ARTICLE_NOT_FOUND");
     if (article.authorId !== user.id) throw new ForbiddenError();
 
-    const image = await db.query.articleImages.findFirst({
+    const image = await tx.query.articleImages.findFirst({
         where: eq(articleImages.id, imageId),
     });
     if (!image) throw new NotFoundError("IMAGE_NOT_FOUND");
 
-    const allImages = await db.query.articleImages.findMany({
+    const allImages = await tx.query.articleImages.findMany({
         where: eq(articleImages.articleId, article.id),
     });
     if (allImages.length === 1) {
         throw new UnprocessableError("ARTICLE_MUST_HAVE_ONE_IMAGE");
     }
 
-    await db.delete(articleImages).where(eq(articleImages.id, imageId));
+    await tx.delete(articleImages).where(eq(articleImages.id, imageId));
 
     if (image.isPrimary) {
         const remaining = allImages.filter((i: any) => i.id !== imageId);
         if (remaining[0]) {
-            await db
+            await tx
                 .update(articleImages)
                 .set({ isPrimary: true })
                 .where(eq(articleImages.id, remaining[0].id));
@@ -728,6 +740,7 @@ export async function deleteArticleImage(
 }
 
 export async function assignEditor(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -737,7 +750,7 @@ export async function assignEditor(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -750,7 +763,7 @@ export async function assignEditor(
 
     const { editor_id } = body;
 
-    const editorRole = await db.query.userRoles.findFirst({
+    const editorRole = await tx.query.userRoles.findFirst({
         where: and(
             eq(userRoles.userId, editor_id),
             eq(userRoles.newspaperId, newspaperId),
@@ -761,19 +774,19 @@ export async function assignEditor(
         throw new UnprocessableError("INVALID_ARTICLE_STATE");
     }
 
-    await db
+    await tx
         .update(articles)
         .set({ state: "IN_REVIEW" })
         .where(eq(articles.id, article.id));
 
-    await db.insert(articleReviews).values({
+    await tx.insert(articleReviews).values({
         articleId: article.id,
         reviewerId: editor_id,
         decision: null,
         feedback: null,
     });
 
-    const editor = await db.query.users.findFirst({ where: eq(users.id, editor_id) });
+    const editor = await tx.query.users.findFirst({ where: eq(users.id, editor_id) });
 
     await audit({ userId: user.id, operationType: "ARTICLE_EDITOR_ASSIGNED", targetObjectId: article.id, result: "SUCCESS" });
     logger.info("Editor assigned to article", { articleId: article.id, editorId: editor_id, managerId: user.id });
@@ -786,6 +799,7 @@ export async function assignEditor(
 }
 
 export async function reviewArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -795,7 +809,7 @@ export async function reviewArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("EDITOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -815,8 +829,8 @@ export async function reviewArticle(
     };
     const newState = stateMap[decision]!;
 
-    await db.update(articles).set({ state: newState as any }).where(eq(articles.id, article.id));
-    await db.insert(articleReviews).values({
+    await tx.update(articles).set({ state: newState as any }).where(eq(articles.id, article.id));
+    await tx.insert(articleReviews).values({
         articleId: article.id,
         reviewerId: user.id,
         decision:
@@ -835,6 +849,7 @@ export async function reviewArticle(
 }
 
 export async function approveArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -857,7 +872,7 @@ export async function approveArticle(
         else effectiveRole = "NEWSPAPER_MANAGER";
     }
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -892,12 +907,12 @@ export async function approveArticle(
         throw new UnprocessableError("INVALID_ARTICLE_STATE");
     }
 
-    await db
+    await tx
         .update(articles)
         .set({ state: nextState as any })
         .where(eq(articles.id, article.id));
 
-    await db.insert(articleReviews).values({
+    await tx.insert(articleReviews).values({
         articleId: article.id,
         reviewerId: user.id,
         decision:
@@ -916,6 +931,7 @@ export async function approveArticle(
 }
 
 export async function scheduleArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -925,7 +941,7 @@ export async function scheduleArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("DIRECTOR")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -942,7 +958,7 @@ export async function scheduleArticle(
         throw new UnprocessableError("INVALID_PUBLICATION_DATE");
     }
 
-    await db
+    await tx
         .update(articles)
         .set({ publicationDate: pubDate })
         .where(eq(articles.id, article.id));
@@ -958,6 +974,7 @@ export async function scheduleArticle(
 }
 
 export async function publishArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -966,7 +983,7 @@ export async function publishArticle(
     if (!user) throw new UnauthorizedError();
     if (!roles.includes("DIRECTOR") && !roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -979,7 +996,7 @@ export async function publishArticle(
     }
 
     const now = new Date();
-    await db
+    await tx
         .update(articles)
         .set({ state: "PUBLISHED" as any, publicationDate: now })
         .where(eq(articles.id, article.id));
