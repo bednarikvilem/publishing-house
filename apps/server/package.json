@@ -11,7 +11,9 @@
     "dev": "bun run --watch --env-file=../../.env src/server.ts",
     "build": "bun build src/server.ts --outdir dist",
     "db:studio": "bun --env-file=../../.env x drizzle-kit studio",
-    "db:push": "bun --env-file=../../.env x drizzle-kit push",
+    "db:generate": "bun --env-file=../../.env x drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../.env x drizzle-kit migrate",
+    "db:bootstrap": "bun --env-file=../../.env scripts/bootstrap-migrations.ts",
     "db:seed": "bun --env-file=../../.env src/db/seed.ts",
     "test": "bun test"
   },
