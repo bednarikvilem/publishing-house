@@ -9,11 +9,9 @@ export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
     // POST /api/newspapers/:newspaper_id/articles/:article_id/likes
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/likes",
-        async ({ params, user, set }) => {
-            const result = await likeService.likeArticle(
-                params.newspaper_id,
-                params.article_id,
-                user,
+        async ({ params, user, withDb, set }) => {
+            const result = await withDb((tx) =>
+                likeService.likeArticle(tx, params.newspaper_id, params.article_id, user),
             );
             set.status = 201;
             return result;
@@ -24,6 +22,7 @@ export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
     // DELETE /api/newspapers/:newspaper_id/articles/:article_id/likes
     .delete(
         "/api/newspapers/:newspaper_id/articles/:article_id/likes",
-        ({ params, user }) => likeService.unlikeArticle(params.article_id, user), {
+        ({ params, user, withDb }) =>
+            withDb((tx) => likeService.unlikeArticle(tx, params.article_id, user)), {
         params: likeRouteParams,
     });

@@ -1,12 +1,13 @@
-import { db } from "../db";
 import { likes, articles } from "../db/schema";
 import { eq, and, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
 import { ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
 import type { AuthUser } from "./context";
+import type { Tx } from "../db/rls";
 
 export async function likeArticle(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -25,7 +26,7 @@ export async function likeArticle(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -37,7 +38,7 @@ export async function likeArticle(
         throw new NotFoundError("ARTICLE_NOT_FOUND");
     }
 
-    const existing = await db.query.likes.findFirst({
+    const existing = await tx.query.likes.findFirst({
         where: and(eq(likes.userId, user.id), eq(likes.articleId, articleId)),
     });
     if (existing) {
@@ -45,9 +46,9 @@ export async function likeArticle(
         throw new ConflictError("ALREADY_LIKED");
     }
 
-    await db.insert(likes).values({ userId: user.id, articleId });
+    await tx.insert(likes).values({ userId: user.id, articleId });
 
-    const [result] = await db
+    const [result] = await tx
         .select({ count: count() })
         .from(likes)
         .where(eq(likes.articleId, articleId));
@@ -64,6 +65,7 @@ export async function likeArticle(
 }
 
 export async function unlikeArticle(
+    tx: Tx,
     articleId: string,
     user: AuthUser | null,
 ) {
@@ -72,7 +74,7 @@ export async function unlikeArticle(
         throw new UnauthorizedError("UNAUTHORIZED");
     }
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.state, "PUBLISHED"),
@@ -83,7 +85,7 @@ export async function unlikeArticle(
         throw new NotFoundError("LIKE_NOT_FOUND");
     }
 
-    const existing = await db.query.likes.findFirst({
+    const existing = await tx.query.likes.findFirst({
         where: and(eq(likes.userId, user.id), eq(likes.articleId, articleId)),
     });
     if (!existing) {
@@ -91,11 +93,11 @@ export async function unlikeArticle(
         throw new NotFoundError("LIKE_NOT_FOUND");
     }
 
-    await db.delete(likes).where(
+    await tx.delete(likes).where(
         and(eq(likes.userId, user.id), eq(likes.articleId, articleId)),
     );
 
-    const [result] = await db
+    const [result] = await tx
         .select({ count: count() })
         .from(likes)
         .where(eq(likes.articleId, articleId));
