@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { StarIcon } from "../components/Icons";
 import { API_BASE_URL } from "../lib/api";
 import type { Article, ArticlesResponse } from "../types/article";
 import { CategoryBadge } from "../components/CategoryBadge";
@@ -99,7 +100,7 @@ export function CategoryPage() {
           >
             <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               {/* Image */}
-              <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
+              <div className="relative h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
                     src={featured.primary_image.url}
@@ -108,6 +109,14 @@ export function CategoryPage() {
                   />
                 ) : (
                   <div className="bg-muted h-full w-full" />
+                )}
+                {featured.is_subscriber_only && (
+                  <span
+                    className="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/70"
+                    title="Subscribers only"
+                  >
+                    <StarIcon size={14} className="fill-yellow-400 stroke-yellow-400" />
+                  </span>
                 )}
               </div>
               {/* Content */}

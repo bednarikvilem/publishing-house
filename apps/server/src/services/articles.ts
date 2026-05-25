@@ -108,6 +108,7 @@ export async function searchArticles(
                 publication_date: a.publicationDate,
                 category: a.category?.categoryName ?? null,
                 primary_image: primary ? { url: primary.url, caption: primary.caption } : null,
+                is_subscriber_only: a.isSubscriberOnly ?? false,
             };
         }),
         pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },

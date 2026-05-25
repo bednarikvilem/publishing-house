@@ -213,7 +213,7 @@ export function ArticlePage() {
               Subscriber-only content
             </h2>
             <p className="text-muted-foreground text-[14px]">
-              This article is available to subscribers only.
+              You do not have access to this article.
             </p>
             {subscribeMessage ? (
               <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
@@ -241,7 +241,7 @@ export function ArticlePage() {
   if (error) {
     const message =
       error === "unauthorized"
-        ? "You must be a registered user to read full articles."
+        ? "You do not have access to this article."
         : error === "not_found"
           ? "This article could not be found."
           : "Failed to load the article. Please try again later.";

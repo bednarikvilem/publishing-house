@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRightIcon } from "../components/Icons";
+import { ArrowRightIcon, StarIcon } from "../components/Icons";
 import { API_BASE_URL } from "../lib/api";
 import type { Article, ArticlesResponse } from "../types/article";
 import { ArticleCard } from "../components/ArticleCard";
@@ -53,7 +53,7 @@ export function NewspaperHomepage() {
       {/* Hero Section */}
       {featured && (
         <section className="bg-background flex px-12">
-          <div className="h-[500px] flex-1 overflow-hidden">
+          <div className="relative h-[500px] flex-1 overflow-hidden">
             {featured.primary_image ? (
               <img
                 src={featured.primary_image.url}
@@ -62,6 +62,14 @@ export function NewspaperHomepage() {
               />
             ) : (
               <div className="bg-muted h-full w-full" />
+            )}
+            {featured.is_subscriber_only && (
+              <span
+                className="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/70"
+                title="Subscribers only"
+              >
+                <StarIcon size={14} className="fill-yellow-400 stroke-yellow-400" />
+              </span>
             )}
           </div>
           <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">

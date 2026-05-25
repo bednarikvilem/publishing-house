@@ -1,6 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import type { Article } from "../types/article";
 import { CategoryBadge } from "./CategoryBadge";
+import { StarIcon } from "./Icons";
 import { formatDate } from "../lib/utils";
 
 export function ArticleCard({ article }: { article: Article }) {
@@ -23,8 +24,11 @@ export function ArticleCard({ article }: { article: Article }) {
           <div className="bg-muted h-full w-full" />
         )}
         {article.is_subscriber_only && (
-          <span className="absolute top-2 right-2 rounded bg-black/70 px-2 py-0.5 text-[11px] font-semibold text-white">
-            Subscribers only
+          <span
+            className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70"
+            title="Subscribers only"
+          >
+            <StarIcon size={14} className="fill-yellow-400 stroke-yellow-400" />
           </span>
         )}
       </div>
