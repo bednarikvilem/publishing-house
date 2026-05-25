@@ -129,3 +129,57 @@ test("editor rejects article → author revises and resubmits", async ({ browser
   await janCtx.close();
   await emmaCtx.close();
 });
+
+test("manager rejects article after editor approval", async ({ browser }) => {
+  const janCtx  = await browser.newContext();
+  const emmaCtx = await browser.newContext();
+  const jan  = await janCtx.newPage();
+  const emma = await emmaCtx.newPage();
+
+  const articleTitle = `E2E Rejection Manager ${Date.now()}`;
+
+  // ── 1. Jan creates and submits article ──────────────────────────────────────
+  await loginNewspaper(jan, JAN.email, JAN.password);
+  await createAndSubmitArticle(jan, articleTitle);
+
+  // ── 2. Emma assigns herself as editor ───────────────────────────────────────
+  await loginNewspaper(emma, EMMA.email, EMMA.password);
+  await emma.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=editorial-queue`);
+  await expect(emma.getByRole("heading", { name: "Editorial Queue" })).toBeVisible();
+
+  const assignRow = emma.locator(`text=${articleTitle}`).locator("..").locator("..");
+  await assignRow.getByRole("button", { name: "Assign Editor" }).click();
+  await emma.locator("select").filter({ hasText: "Select an editor…" }).selectOption({ label: "Emma Bednarikova" });
+  const assignResponse = emma.waitForResponse((r) => r.url().includes("/assign-editor") && r.status() === 200);
+  await emma.getByRole("button", { name: "Assign", exact: true }).click();
+  await assignResponse;
+
+  // ── 3. Emma approves as editor ──────────────────────────────────────────────
+  await emma.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=review-queue`);
+  const reviewRow = emma.locator(`text=${articleTitle}`).locator("..").locator("..");
+  await reviewRow.getByRole("button", { name: "Review" }).click();
+  const reviewResponse = emma.waitForResponse((r) => r.url().includes("/review") && r.status() === 200);
+  await emma.getByRole("button", { name: "Submit" }).click();
+  await reviewResponse;
+
+  // ── 4. Emma rejects as manager ──────────────────────────────────────────────
+  await emma.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=editorial-queue`);
+  await expect(emma.getByRole("heading", { name: "Editorial Queue" })).toBeVisible();
+
+  const managerRow = emma.locator(`text=${articleTitle}`).locator("..").locator("..");
+  await managerRow.getByRole("button", { name: "Review" }).click();
+
+  await emma.getByRole("button", { name: "Reject", exact: true }).click();
+  await emma.getByPlaceholder("Note is required for this decision…").fill("Does not meet publication standards.");
+
+  const approveResponse = emma.waitForResponse((r) => r.url().includes("/approve") && r.status() === 200);
+  await emma.getByRole("button", { name: "Submit" }).click();
+  await approveResponse;
+
+  // ── 5. Jan sees article as REJECTED ─────────────────────────────────────────
+  await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=REJECTED`);
+  await expect(jan.getByText(articleTitle)).toBeVisible({ timeout: 5_000 });
+
+  await janCtx.close();
+  await emmaCtx.close();
+});
