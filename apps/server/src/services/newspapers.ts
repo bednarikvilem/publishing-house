@@ -1,16 +1,16 @@
-import { db } from "../db";
 import { newspapers, users, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
 import { type NewspaperColor } from "../schemas/newspapers";
 import type { AuthUser, Roles } from "./context";
+import type { Tx } from "../db/rls";
 
 function serializeNewspaper(n: { id: string; name: string; slug: string; primaryColor: string | null }) {
     return { id: n.id, name: n.name, slug: n.slug, primary_color: n.primaryColor ?? null };
 }
 
-export async function listNewspapers(user: AuthUser | null, roles: Roles) {
+export async function listNewspapers(tx: Tx, user: AuthUser | null, roles: Roles) {
     if (!user) {
         logger.warn("Fetch newspapers failed: unauthorized", {});
         throw new UnauthorizedError("UNAUTHORIZED");
@@ -21,15 +21,15 @@ export async function listNewspapers(user: AuthUser | null, roles: Roles) {
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const result = await db.select().from(newspapers);
+    const result = await tx.select().from(newspapers);
 
     logger.info("Newspapers list fetched", { userId: user.id, roles, count: result.length });
 
     return { data: result.map(serializeNewspaper) };
 }
 
-export async function getNewspaperBySlug(slug: string) {
-    const newspaper = await db.query.newspapers.findFirst({
+export async function getNewspaperBySlug(tx: Tx, slug: string) {
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.slug, slug),
     });
 
@@ -41,8 +41,8 @@ export async function getNewspaperBySlug(slug: string) {
     return serializeNewspaper(newspaper);
 }
 
-export async function getNewspaperById(newspaperId: string) {
-    const newspaper = await db.query.newspapers.findFirst({
+export async function getNewspaperById(tx: Tx, newspaperId: string) {
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
 
@@ -52,6 +52,7 @@ export async function getNewspaperById(newspaperId: string) {
 }
 
 export async function updateNewspaperColor(
+    tx: Tx,
     newspaperId: string,
     color: NewspaperColor | null,
     user: AuthUser | null,
@@ -62,12 +63,12 @@ export async function updateNewspaperColor(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
 
-    await db.update(newspapers)
+    await tx.update(newspapers)
         .set({ primaryColor: color })
         .where(eq(newspapers.id, newspaperId));
 
@@ -76,16 +77,16 @@ export async function updateNewspaperColor(
     return serializeNewspaper({ ...newspaper, primaryColor: color });
 }
 
-export async function getEditors(newspaperId: string, user: AuthUser | null, roles: Roles) {
+export async function getEditors(tx: Tx, newspaperId: string, user: AuthUser | null, roles: Roles) {
     if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError("FORBIDDEN");
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
 
-    const editorRoles = await db.query.userRoles.findMany({
+    const editorRoles = await tx.query.userRoles.findMany({
         where: and(
             eq(userRoles.newspaperId, newspaperId),
             eq(userRoles.role, "EDITOR"),
@@ -95,7 +96,7 @@ export async function getEditors(newspaperId: string, user: AuthUser | null, rol
     const editors = await Promise.all(
         editorRoles.map(async (r) => {
             const u = r.userId
-                ? await db.query.users.findFirst({ where: eq(users.id, r.userId) })
+                ? await tx.query.users.findFirst({ where: eq(users.id, r.userId) })
                 : null;
             return u ? { id: u.id, full_name: u.fullname ?? u.username } : null;
         }),
