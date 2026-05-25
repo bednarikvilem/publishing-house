@@ -62,7 +62,7 @@ test("admin removes EDITOR role from a newspaper user", async ({ page }) => {
 
   // ── 1. Navigate to ClaudeDaily newspaper users ────────────────────────────
   await page.getByRole("button", { name: /ClaudeDaily/i }).click();
-  await expect(page.getByText(/Users — ClaudeDaily/i)).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5_000 });
 
   // ── 2. Locate Jan Novak's row ─────────────────────────────────────────────
   const userRow = page
@@ -75,11 +75,12 @@ test("admin removes EDITOR role from a newspaper user", async ({ page }) => {
   if (!(await editorBadge.isVisible())) {
     await userRow.getByRole("button", { name: "Assign Role" }).click();
     await page.locator("select").filter({ hasText: "Select a role…" }).selectOption("EDITOR");
-    const assignResp = page.waitForResponse(
-      (r) => r.url().includes("/roles") && r.request().method() === "POST" && r.status() === 200
-    );
-    await page.getByRole("button", { name: "Assign", exact: true }).click();
-    await assignResp;
+    await Promise.all([
+      page.waitForResponse(
+        (r) => r.url().includes("/roles") && r.request().method() === "POST" && r.status() === 200
+      ),
+      page.getByRole("button", { name: "Assign", exact: true }).click(),
+    ]);
     await expect(editorBadge).toBeVisible({ timeout: 5_000 });
   }
 
