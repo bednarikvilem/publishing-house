@@ -8,7 +8,8 @@ apps/server/src/
 ├── db/
 │   ├── schema.ts           ← drizzle table definitions (single source of truth for the DB)
 │   ├── enums.ts            ← drizzle enums
-│   ├── index.ts            ← db client (postgres connection)
+│   ├── index.ts            ← db clients: superuser `db` (migrations/seeds) + RLS-bound `appDb`
+│   ├── rls.ts              ← withRls helper + Tx type for per-request RLS sessions
 │   ├── seed.ts             ← seed data script
 │   └── seeds/              ← seed payloads
 ├── schemas/                ← TypeBox schemas describing the HTTP wire format
@@ -60,16 +61,18 @@ apps/server/src/
 
 **`schemas/<resource>.ts`** — TypeBox schemas for the HTTP wire format of one resource: request params, queries, bodies, and response shapes. Field-level constraints flow from drizzle (`createInsertSchema(articles, ...)`) where the API and DB agree; HTTP-only fields (UUIDs in URLs, paging, role enums) are written by hand. `schemas/shared.ts` holds primitives and drizzle-typebox bases reused across resources.
 
-**`middleware/auth.ts`** — Elysia plugin that verifies the JWT bearer token and attaches `user` and `roles` to each request. Route files do `.use(authMiddleware)` to opt in.
+**`middleware/auth.ts`** — Elysia plugin that verifies the JWT bearer token and attaches `user`, `roles`, and `withDb` to each request. `withDb(fn)` opens a transaction on `appDb` (the non-superuser PostgreSQL connection), sets the per-request RLS session GUCs (`app.user_id`, `app.newspaper_id`, `app.roles`), and runs `fn(tx)` inside it. Route files do `.use(authMiddleware)` to opt in.
 
-**`routes/<resource>.ts`** — exports a *thin* Elysia sub-app per resource. Each route declares its TypeBox schemas in route options (`{ params, query, body, response }`); Elysia validates requests at runtime, and the same schemas drive OpenAPI docs and the Eden client's types. The handler does no logic itself — it pulls the validated inputs plus `user`/`roles` off the Elysia context and calls the matching service function.
+**`routes/<resource>.ts`** — exports a *thin* Elysia sub-app per resource. Each route declares its TypeBox schemas in route options (`{ params, query, body, response }`); Elysia validates requests at runtime, and the same schemas drive OpenAPI docs and the Eden client's types. The handler does no logic itself — it pulls the validated inputs plus `user`/`roles`/`withDb` off the Elysia context and wraps the service call in `withDb`.
 
 ```ts
 // routes/articles.ts (excerpt)
 export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
   .use(authMiddleware)
-  .post("/api/newspapers/:newspaper_id/articles", async ({ params, user, roles, body, set }) => {
-    const result = await articleService.createArticle(params.newspaper_id, user, roles, body);
+  .post("/api/newspapers/:newspaper_id/articles", async ({ params, user, roles, body, withDb, set }) => {
+    const result = await withDb((tx) =>
+      articleService.createArticle(tx, params.newspaper_id, user, roles, body),
+    );
     set.status = 201;
     return result;
   }, {
@@ -78,7 +81,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
   });
 ```
 
-**`services/<resource>.ts`** — the business logic + DB access for one resource. Functions take plain arguments (ids, validated bodies, `user`/`roles`) and return plain data. They never import from `elysia` and never touch the Elysia context (`set`, `params`, `request`*, `Response`). On a failure they `throw` an `HttpError` subclass instead of building an HTTP response. `services/context.ts` holds the shared `AuthUser`/`Roles` types passed in from `middleware/auth.ts`.
+**`services/<resource>.ts`** — the business logic + DB access for one resource. Functions take a `Tx` (the RLS-bound transaction from `withDb`) as their first argument, then plain arguments (ids, validated bodies, `user`/`roles`), and return plain data. They never import the superuser `db` and never touch the Elysia context (`set`, `params`, `request`*, `Response`). On a failure they `throw` an `HttpError` subclass instead of building an HTTP response. `services/context.ts` holds the shared `AuthUser`/`Roles` types passed in from `middleware/auth.ts`. **Exception:** `services/auth.ts` runs before any user context exists (registration, login, token verification) so it uses the superuser `db` directly — the one documented place that bypasses RLS at runtime.
 
 > *Two upload handlers (`users.updateProfilePicture`, `articles.uploadArticleImage`) receive the raw `Request` solely to parse the multipart/JSON body — a deliberate, documented exception because body parsing is transport I/O and the original code tightly couples parse + validate + upload error shaping. They still read no routing/status from it.
 
