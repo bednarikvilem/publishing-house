@@ -21,6 +21,9 @@ test("admin assigns EDITOR role to a newspaper user", async ({ page }) => {
 
   await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5000 });
 
+  // Wait for the user list to finish loading
+  await expect(page.getByText("Jan Novak")).toBeVisible({ timeout: 10_000 });
+
   const userRow = page
     .locator(`text=${TARGET_USER_NAME}`)
     .locator("..")
@@ -63,6 +66,9 @@ test("admin removes EDITOR role from a newspaper user", async ({ page }) => {
   // ── 1. Navigate to ClaudeDaily newspaper users ────────────────────────────
   await page.getByRole("button", { name: /ClaudeDaily/i }).click();
   await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5_000 });
+
+  // Wait for the user list to finish loading
+  await expect(page.getByText("Jan Novak")).toBeVisible({ timeout: 10_000 });
 
   // ── 2. Locate Jan Novak's row ─────────────────────────────────────────────
   const userRow = page
