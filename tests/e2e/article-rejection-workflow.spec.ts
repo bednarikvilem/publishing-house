@@ -156,8 +156,10 @@ test("manager rejects article after editor approval", async ({ browser }) => {
 
   // ── 3. Emma approves as editor ──────────────────────────────────────────────
   await emma.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=review-queue`);
+  await expect(emma.getByRole("heading", { name: "Review Queue" })).toBeVisible();
   const reviewRow = emma.locator(`text=${articleTitle}`).locator("..").locator("..");
   await reviewRow.getByRole("button", { name: "Review" }).click();
+  await emma.getByRole("button", { name: "Approve", exact: true }).click();
   const reviewResponse = emma.waitForResponse((r) => r.url().includes("/review") && r.status() === 200);
   await emma.getByRole("button", { name: "Submit" }).click();
   await reviewResponse;
@@ -172,9 +174,9 @@ test("manager rejects article after editor approval", async ({ browser }) => {
   await emma.getByRole("button", { name: "Reject", exact: true }).click();
   await emma.getByPlaceholder("Note is required for this decision…").fill("Does not meet publication standards.");
 
-  const approveResponse = emma.waitForResponse((r) => r.url().includes("/approve") && r.status() === 200);
+  const rejectResponse = emma.waitForResponse((r) => r.url().includes("/approve") && r.status() === 200);
   await emma.getByRole("button", { name: "Submit" }).click();
-  await approveResponse;
+  await rejectResponse;
 
   // ── 5. Jan sees article as REJECTED ─────────────────────────────────────────
   await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=REJECTED`);
