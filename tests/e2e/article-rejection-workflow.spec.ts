@@ -67,6 +67,10 @@ test("editor rejects article → author revises and resubmits", async ({ browser
   await loginNewspaper(jan, JAN.email, JAN.password);
   const articleEditUrl = await createAndSubmitArticle(jan, articleTitle);
 
+  // Jan checks article is visible as SUBMITTED
+  await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=SUBMITTED`);
+  await expect(jan.getByText(articleTitle)).toBeVisible({ timeout: 5_000 });
+
   // ── 2. Emma (NEWSPAPER_MANAGER) assigns herself as editor ───────────────────
 
   await loginNewspaper(emma, EMMA.email, EMMA.password);
