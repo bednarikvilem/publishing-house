@@ -465,8 +465,8 @@ export async function getStatistics(
             total_likes: totalLikes,
             total_comments: totalComments,
             engagement_rate,
-            avg_likes_per_article: published.length ? totalLikes / published.length : 0,
-            avg_comments_per_article: published.length ? totalComments / published.length : 0,
+            avg_likes_per_article: published.length ? Math.round((totalLikes / published.length) * 10) / 10 : 0,
+            avg_comments_per_article: published.length ? Math.round((totalComments / published.length) * 10) / 10 : 0,
         },
 
         editors,

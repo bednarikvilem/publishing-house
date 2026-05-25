@@ -9,6 +9,7 @@ import { seedEmma } from "./seeds/seedEmma";
 import { seedArticleReviews } from "./seeds/seedArticleReviews";
 import { seedLikes } from "./seeds/seedLikes";
 import { seedComments } from "./seeds/seedComments";
+import { seedArticleViews } from "./seeds/seedArticleViews";
 import { seedE2eUsers } from "./seeds/seedE2eUsers";
 
 
@@ -24,6 +25,7 @@ async function seed() {
     await seedArticleReviews();
     await seedLikes();
     await seedComments();
+    await seedArticleViews();
     await seedE2eUsers();
 
 }
