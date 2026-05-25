@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
@@ -13,9 +13,11 @@ export function SubscriptionConfirmPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const confirmedRef = useRef(false);
 
   useEffect(() => {
-    if (!newspaper) return;
+    if (!newspaper || confirmedRef.current) return;
+    confirmedRef.current = true;
     const token = searchParams.get("token");
     if (!token) {
       setErrorMessage("No token found in the link.");
