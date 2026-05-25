@@ -13,8 +13,10 @@ async function loginAdmin(page: Page) {
 }
 
 test("admin assigns EDITOR role to a newspaper user", async ({ page }) => {
+  // ── 1. Admin logs in ──────────────────────────────────────────────────────
   await loginAdmin(page);
 
+  // ── 2. Navigate to ClaudeDaily newspaper users ────────────────────────────
   await page.getByRole("button", { name: /ClaudeDaily/i }).click();
 
   await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5000 });
@@ -24,6 +26,19 @@ test("admin assigns EDITOR role to a newspaper user", async ({ page }) => {
     .locator("..")
     .locator("..");
 
+  // ── 3. Pre-cleanup: ensure Jan does not already have EDITOR ───────────────
+  // Pre-cleanup: remove EDITOR if Jan already has it from a previous run
+  const editorBadge = userRow.getByText("EDITOR");
+  if (await editorBadge.isVisible()) {
+    page.once("dialog", (dialog) => dialog.accept());
+    const removeResp = page.waitForResponse(
+      (r) => r.url().includes("/roles/EDITOR") && r.request().method() === "DELETE" && r.status() === 200
+    );
+    await userRow.getByRole("button", { name: "Remove EDITOR" }).click();
+    await removeResp;
+  }
+
+  // ── 4. Assign EDITOR role to Jan ──────────────────────────────────────────
   await userRow.getByRole("button", { name: "Assign Role" }).click();
 
   await page
@@ -38,5 +53,6 @@ test("admin assigns EDITOR role to a newspaper user", async ({ page }) => {
     page.getByRole("button", { name: "Assign", exact: true }).click(),
   ]);
 
+  // ── 5. Verify EDITOR badge is visible ─────────────────────────────────────
   await expect(userRow.getByText("EDITOR")).toBeVisible({ timeout: 5000 });
 });
