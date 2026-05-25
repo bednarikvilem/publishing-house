@@ -1,4 +1,3 @@
-import { db } from "../db";
 import { comments, articles, newspapers } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
@@ -7,8 +6,10 @@ import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type { commentBody } from "../schemas/comments";
+import type { Tx } from "../db/rls";
 
 export async function postComment(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
@@ -19,7 +20,7 @@ export async function postComment(
         throw new UnauthorizedError("UNAUTHORIZED");
     }
 
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -46,7 +47,7 @@ export async function postComment(
 
     const { content } = body;
 
-    const [comment] = await db
+    const [comment] = await tx
         .insert(comments)
         .values({ articleId, userId: user.id, content })
         .returning();
@@ -63,6 +64,7 @@ export async function postComment(
 }
 
 export async function deleteComment(
+    tx: Tx,
     articleId: string,
     commentId: string,
     user: AuthUser | null,
@@ -73,7 +75,7 @@ export async function deleteComment(
         throw new UnauthorizedError("UNAUTHORIZED");
     }
 
-    const comment = await db.query.comments.findFirst({
+    const comment = await tx.query.comments.findFirst({
         where: eq(comments.id, commentId),
     });
     if (!comment) {
@@ -101,13 +103,14 @@ export async function deleteComment(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    await db.delete(comments).where(eq(comments.id, commentId));
+    await tx.delete(comments).where(eq(comments.id, commentId));
 
     await audit({ userId: user.id, operationType: "COMMENT_DELETED", targetObjectId: commentId, result: "SUCCESS" });
     logger.info("Comment deleted", { commentId, deletedBy: user.id });
 }
 
 export async function listCommentsForModeration(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -127,7 +130,7 @@ export async function listCommentsForModeration(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -139,7 +142,7 @@ export async function listCommentsForModeration(
     const offset = (page - 1) * limit;
 
     // TODO, DB should be called instead of loading all
-    const allComments = await db.query.comments.findMany({
+    const allComments = await tx.query.comments.findMany({
         with: { article: true, user: true },
     });
 

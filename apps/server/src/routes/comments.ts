@@ -15,12 +15,9 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     // POST /api/newspapers/:newspaper_id/articles/:article_id/comments — REGISTERED_USER
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/comments",
-        async ({ params, user, body, set }) => {
-            const result = await commentService.postComment(
-                params.newspaper_id,
-                params.article_id,
-                user,
-                body,
+        async ({ params, user, body, withDb, set }) => {
+            const result = await withDb((tx) =>
+                commentService.postComment(tx, params.newspaper_id, params.article_id, user, body),
             );
             set.status = 201;
             return result;
@@ -32,12 +29,9 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     // DELETE /api/newspapers/:newspaper_id/articles/:article_id/comments/:comment_id
     .delete(
         "/api/newspapers/:newspaper_id/articles/:article_id/comments/:comment_id",
-        async ({ params, user, roles, set }) => {
-            await commentService.deleteComment(
-                params.article_id,
-                params.comment_id,
-                user,
-                roles,
+        async ({ params, user, roles, withDb, set }) => {
+            await withDb((tx) =>
+                commentService.deleteComment(tx, params.article_id, params.comment_id, user, roles),
             );
             set.status = 204;
             return null;
@@ -46,8 +40,8 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
     })
 
     // GET /api/newspapers/:newspaper_id/comments — moderation (EDITOR, MANAGER, SYSTEM_ADMIN)
-    .get("/api/newspapers/:newspaper_id/comments", ({ params, user, roles, query }) =>
-        commentService.listCommentsForModeration(params.newspaper_id, user, roles, query), {
+    .get("/api/newspapers/:newspaper_id/comments", ({ params, user, roles, query, withDb }) =>
+        withDb((tx) => commentService.listCommentsForModeration(tx, params.newspaper_id, user, roles, query)), {
         params: commentModerationParams,
         query: commentModerationQuery,
     });
