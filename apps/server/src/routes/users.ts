@@ -7,13 +7,15 @@ export const userRoutes = new Elysia({ prefix: "/api/users", detail: { tags: ["U
     .use(authMiddleware)
 
     // GET /api/users/me
-    .get("/me", ({ user, roles }) => userService.getMe(user, roles))
+    .get("/me", ({ user, roles, withDb }) =>
+        withDb((tx) => userService.getMe(tx, user, roles)))
 
     // PUT /api/users/me
-    .put("/me", ({ user, roles, body }) => userService.updateMe(user, roles, body), {
+    .put("/me", ({ user, roles, body, withDb }) =>
+        withDb((tx) => userService.updateMe(tx, user, roles, body)), {
         body: updateMeBody,
     })
 
     // POST /api/users/me/profile-picture
-    .post("/me/profile-picture", ({ user, roles, request }) =>
-        userService.updateProfilePicture(user, roles, request));
+    .post("/me/profile-picture", ({ user, roles, request, withDb }) =>
+        withDb((tx) => userService.updateProfilePicture(tx, user, roles, request)));

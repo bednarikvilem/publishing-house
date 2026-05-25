@@ -1,5 +1,4 @@
 import { uploadImage } from "../utils/storage";
-import { db } from "../db";
 import { users, newspaperAuthors } from "../db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { logger } from "../utils/logger";
@@ -8,15 +7,16 @@ import { ConflictError, ForbiddenError, UnauthorizedError, UnprocessableError } 
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type { updateMeBody } from "../schemas/users";
+import type { Tx } from "../db/rls";
 
-export async function getMe(user: AuthUser | null, roles: Roles) {
+export async function getMe(tx: Tx, user: AuthUser | null, roles: Roles) {
     if (!user) {
         logger.warn("Fetch current user failed: unauthorized", {});
         throw new UnauthorizedError("UNAUTHORIZED");
     }
 
     const authorProfile = user.newspaperId
-        ? await db.query.newspaperAuthors.findFirst({
+        ? await tx.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, user.id),
                 eq(newspaperAuthors.newspaperId, user.newspaperId),
@@ -39,6 +39,7 @@ export async function getMe(user: AuthUser | null, roles: Roles) {
 }
 
 export async function updateMe(
+    tx: Tx,
     user: AuthUser | null,
     roles: Roles,
     body: Static<typeof updateMeBody>,
@@ -53,10 +54,10 @@ export async function updateMe(
 
     if (username) {
         const existing = user.newspaperId
-            ? await db.query.users.findFirst({
+            ? await tx.query.users.findFirst({
                 where: and(eq(users.username, username), eq(users.newspaperId, user.newspaperId)),
             })
-            : await db.query.users.findFirst({
+            : await tx.query.users.findFirst({
                 where: and(eq(users.username, username), isNull(users.newspaperId)),
             });
         if (existing && existing.id !== user.id) {
@@ -71,25 +72,25 @@ export async function updateMe(
     if (password) updateData.passwordHash = await Bun.password.hash(password);
 
     if (Object.keys(updateData).length > 0) {
-        await db.update(users).set(updateData).where(eq(users.id, user.id));
+        await tx.update(users).set(updateData).where(eq(users.id, user.id));
     }
 
     if (bio !== undefined && user.newspaperId) {
-        const authorProfile = await db.query.newspaperAuthors.findFirst({
+        const authorProfile = await tx.query.newspaperAuthors.findFirst({
             where: and(
                 eq(newspaperAuthors.userId, user.id),
                 eq(newspaperAuthors.newspaperId, user.newspaperId),
             ),
         });
         if (authorProfile) {
-            await db
+            await tx
                 .update(newspaperAuthors)
                 .set({ biography: bio })
                 .where(eq(newspaperAuthors.id, authorProfile.id));
         }
     }
 
-    const updated = await db.query.users.findFirst({ where: eq(users.id, user.id) });
+    const updated = await tx.query.users.findFirst({ where: eq(users.id, user.id) });
 
     await audit({ userId: user.id, operationType: "USER_PROFILE_UPDATED", targetObjectId: user.id, result: "SUCCESS" });
     logger.info("User profile updated", { userId: user.id, fields: Object.keys(updateData) });
@@ -107,6 +108,7 @@ export async function updateMe(
 // handler tightly couples with validation/upload error shaping. The service
 // never reads routing/status from it.
 export async function updateProfilePicture(
+    tx: Tx,
     user: AuthUser | null,
     roles: Roles,
     request: Request,
@@ -150,7 +152,7 @@ export async function updateProfilePicture(
         throw new UnprocessableError("GLOBAL_USER_NO_PROFILE");
     }
 
-    const existing = await db.query.newspaperAuthors.findFirst({
+    const existing = await tx.query.newspaperAuthors.findFirst({
         where: and(
             eq(newspaperAuthors.userId, user.id),
             eq(newspaperAuthors.newspaperId, user.newspaperId),
@@ -158,12 +160,12 @@ export async function updateProfilePicture(
     });
 
     if (existing) {
-        await db
+        await tx
             .update(newspaperAuthors)
             .set({ profilePictureUrl })
             .where(eq(newspaperAuthors.id, existing.id));
     } else {
-        await db.insert(newspaperAuthors).values({
+        await tx.insert(newspaperAuthors).values({
             userId: user.id,
             newspaperId: user.newspaperId,
             profilePictureUrl,
