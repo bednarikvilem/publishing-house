@@ -187,6 +187,18 @@ bun db:studio                    # open Drizzle Studio at https://local.drizzle.
 
 Row-Level Security policies live in `apps/server/drizzle/0002_enable_rls.sql` and are applied by `bun db:migrate`. The app connects as the non-superuser `app_user` role created by that migration; the migration also sets up the session GUCs (`app.user_id`, `app.newspaper_id`, `app.roles`) used by the policies.
 
+### Creating a new migration
+
+For plain schema changes:
+
+1. Edit `apps/server/src/db/schema.ts`.
+2. `bun run db:generate` — writes the next `drizzle/NNNN_*.sql` and a matching snapshot in `drizzle/meta/`.
+3. Review the generated SQL.
+4. Commit both files together.
+5. `bun run db:migrate` to apply locally.
+
+For anything Drizzle can't express (RLS policies, SQL functions, triggers, role grants, data backfills) hand-write the file: create `apps/server/drizzle/NNNN_short_name.sql` and append a matching entry to `apps/server/drizzle/meta/_journal.json` (`idx`, `when: Date.now()`, `tag`, `breakpoints: true`).
+
 ---
 
 ## Email (development)

@@ -109,7 +109,9 @@ For more information, read the Bun API docs in `node_modules/bun-types/docs/**.m
 
 The `src/db/schema.ts` file contains the definition of the database scheme. You can also check ../../docs/erd.dbml
 
-Row-Level Security is enabled on every table (see `drizzle/0002_enable_rls.sql`). Service functions must run their queries through the `Tx` provided by `withDb` on the Elysia request context — never import the superuser `db` from `src/db/index.ts` in new request-path code. The only documented exception is `services/auth.ts`, which runs before a user session exists. New migrations are hand-written SQL files in `drizzle/` plus an entry in `drizzle/meta/_journal.json`, and are applied with `bun db:migrate`.
+Row-Level Security is enabled on every table (see `drizzle/0002_enable_rls.sql`). Service functions must run their queries through the `Tx` provided by `withDb` on the Elysia request context — never import the superuser `db` from `src/db/index.ts` in new request-path code. The only documented exception is `services/auth.ts`, which runs before a user session exists.
+
+For new migrations: `bun db:generate` reads `schema.ts`, diffs it against `drizzle/meta/*_snapshot.json`, and writes the next numbered `.sql` plus a new snapshot. Use it for plain DDL changes (add column, table, index, etc.). For anything Drizzle can't express — RLS policies, SQL functions, triggers, role grants, data backfills — hand-write the next `NNNN_short_name.sql` file and append an entry to `drizzle/meta/_journal.json` (idx, when, tag, breakpoints: true). Either way, `bun db:migrate` applies pending migrations.
 
 ## API calls
 
