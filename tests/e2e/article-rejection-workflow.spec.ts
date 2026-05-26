@@ -53,7 +53,7 @@ async function createAndSubmitArticle(page: Page, title: string): Promise<string
 
 // ── Test ───────────────────────────────────────────────────────────────────────
 
-test("editor rejects article → author revises and resubmits", async ({ browser }) => {
+test("editor rejects article and author sees REJECTED status", async ({ browser }) => {
   const janCtx = await browser.newContext();
   const emmaCtx = await browser.newContext();
 
@@ -111,18 +111,11 @@ test("editor rejects article → author revises and resubmits", async ({ browser
   await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=REJECTED`);
   await expect(jan.getByText(articleTitle)).toBeVisible({ timeout: 5_000 });
 
-  // ── 5. Jan revises and resubmits the article ─────────────────────────────────
+  // ── 5. Verify the edit page is read-only for a REJECTED article ─────────────
 
   await jan.goto(articleEditUrl);
-  await jan.locator("[contenteditable='true']").click();
-  await jan.keyboard.type(" Revised content added after rejection.");
-  await jan.getByRole("button", { name: "Submit for Review" }).click();
-  await expect(jan.getByText("Submitted")).toBeVisible({ timeout: 5_000 });
-
-  // ── 6. Jan sees the article as SUBMITTED ─────────────────────────────────────
-
-  await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=SUBMITTED`);
-  await expect(jan.getByText(articleTitle)).toBeVisible({ timeout: 5_000 });
+  await expect(jan.getByRole("button", { name: "Submit for Review" })).not.toBeVisible({ timeout: 5_000 });
+  await expect(jan.getByRole("button", { name: "Save Draft" })).not.toBeVisible({ timeout: 5_000 });
 
   // ── Cleanup ───────────────────────────────────────────────────────────────────
 
