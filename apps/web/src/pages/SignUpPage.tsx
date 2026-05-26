@@ -47,7 +47,9 @@ export function SignUpPage() {
 
       if (res.status === 201) { setSuccess(true); return; }
 
-      const body = await res.json();
+      const text = await res.text();
+      let body: { error?: string; fields?: Record<string, string> } = {};
+      try { body = JSON.parse(text); } catch { body = { error: text.trim() }; }
       if (res.status === 409) {
         if (body.error === "EMAIL_TAKEN") {
           setFieldErrors({ email: "This email is already registered" });

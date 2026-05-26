@@ -78,8 +78,10 @@ export const app = new Elysia()
     .error({ HttpError })
     .onError(({ error, request, set }) => {
         if (error instanceof HttpError) {
-            set.status = error.status;
-            return { error: error.code, ...(error.details ?? {}) };
+            return new Response(
+                JSON.stringify({ error: error.code, ...(error.details ?? {}) }),
+                { status: error.status, headers: { "Content-Type": "application/json" } }
+            );
         }
 
         set.status = set.status || 500;
@@ -92,9 +94,10 @@ export const app = new Elysia()
             stack: error instanceof Error ? error.stack : undefined,
         });
 
-        return {
-            error: "Internal Server Error",
-        };
+        return new Response(
+            JSON.stringify({ error: "Internal Server Error" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     })
     .listen(PORT);
 

@@ -37,13 +37,14 @@ export function LoginPage() {
         return;
       }
 
-      const body = await res.json();
       if (res.status === 401) { setError("Invalid email or password."); return; }
+      if (res.status === 404) { setError("Newspaper not found."); return; }
+      let body: { error?: string } = {};
+      try { body = await res.json(); } catch {}
       if (res.status === 403 && body.error === "EMAIL_NOT_VERIFIED") {
         setError("Please verify your email address before signing in.");
         return;
       }
-      if (res.status === 404) { setError("Newspaper not found."); return; }
       setError("Something went wrong. Please try again.");
     } catch {
       setError("Could not connect to the server. Please try again later.");
