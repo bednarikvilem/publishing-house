@@ -2,7 +2,6 @@ import { test, expect, Page } from "@playwright/test";
 
 const BASE = "http://localhost:5173";
 const ADMIN = { email: "admin@admin.cz", password: "admin1234" };
-const TARGET_USER_NAME = "Jan Novak";
 
 async function loginAdmin(page: Page) {
   await page.goto(`${BASE}/admin`);
@@ -21,13 +20,12 @@ test("admin assigns EDITOR role to a newspaper user", async ({ page }) => {
 
   await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5000 });
 
-  // Wait for the user list to finish loading
-  await expect(page.getByText("Jan Novak")).toBeVisible({ timeout: 10_000 });
+  // Wait for the user list to finish loading (at least one Assign Role button)
+  const firstAssignBtn = page.getByRole("button", { name: "Assign Role" }).first();
+  await expect(firstAssignBtn).toBeVisible({ timeout: 10_000 });
 
-  const userRow = page
-    .locator(`text=${TARGET_USER_NAME}`)
-    .locator("..")
-    .locator("..");
+  // Use the first user row (parent of the Assign Role button)
+  const userRow = firstAssignBtn.locator("..").locator("..");
 
   // ── 3. Pre-cleanup: ensure Jan does not already have EDITOR ───────────────
   // Pre-cleanup: remove EDITOR if Jan already has it from a previous run
@@ -67,14 +65,12 @@ test("admin removes EDITOR role from a newspaper user", async ({ page }) => {
   await page.getByRole("button", { name: /ClaudeDaily/i }).click();
   await expect(page.getByText("Users — ClaudeDaily")).toBeVisible({ timeout: 5_000 });
 
-  // Wait for the user list to finish loading
-  await expect(page.getByText("Jan Novak")).toBeVisible({ timeout: 10_000 });
+  // Wait for the user list to finish loading (at least one Assign Role button)
+  const firstAssignBtn = page.getByRole("button", { name: "Assign Role" }).first();
+  await expect(firstAssignBtn).toBeVisible({ timeout: 10_000 });
 
-  // ── 2. Locate Jan Novak's row ─────────────────────────────────────────────
-  const userRow = page
-    .locator(`text=${TARGET_USER_NAME}`)
-    .locator("..")
-    .locator("..");
+  // ── 2. Use the first user row (parent of the Assign Role button) ─────────────
+  const userRow = firstAssignBtn.locator("..").locator("..");
 
   // ── 3. Ensure Jan has EDITOR role (assign it if missing) ──────────────────
   const editorBadge = userRow.getByText("EDITOR");
