@@ -1,16 +1,17 @@
-import { db } from "../db";
 import { newspapers, newspaperAuthors, articles, users } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { NotFoundError } from "../errors";
+import type { Tx } from "../db/rls";
 
 export async function getAuthorProfile(
+    tx: Tx,
     newspaperId: string,
     authorId: string,
     page: number,
     limit: number,
 ) {
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -18,7 +19,7 @@ export async function getAuthorProfile(
         throw new NotFoundError("NEWSPAPER_NOT_FOUND");
     }
 
-    const authorProfile = await db.query.newspaperAuthors.findFirst({
+    const authorProfile = await tx.query.newspaperAuthors.findFirst({
         where: and(
             eq(newspaperAuthors.userId, authorId),
             eq(newspaperAuthors.newspaperId, newspaperId),
@@ -29,7 +30,7 @@ export async function getAuthorProfile(
         throw new NotFoundError("AUTHOR_NOT_FOUND");
     }
 
-    const user = await db.query.users.findFirst({ where: eq(users.id, authorId) });
+    const user = await tx.query.users.findFirst({ where: eq(users.id, authorId) });
     if (!user) {
         logger.warn("Author fetch failed: user not found", { authorId });
         throw new NotFoundError("AUTHOR_NOT_FOUND");
@@ -37,7 +38,7 @@ export async function getAuthorProfile(
 
     const offset = (page - 1) * limit;
 
-    const allArticles = await db.query.articles.findMany({
+    const allArticles = await tx.query.articles.findMany({
         where: and(
             eq(articles.authorId, authorId),
             eq(articles.newspaperId, newspaperId),

@@ -1,4 +1,3 @@
-import { db } from "../db";
 import { articleCategory, articles, newspapers } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 import { logger } from "../utils/logger";
@@ -13,6 +12,7 @@ import {
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type { categoryBody } from "../schemas/categories";
+import type { Tx } from "../db/rls";
 
 const slugify = (text: string): string =>
     text
@@ -27,8 +27,8 @@ const slugify = (text: string): string =>
 const canManage = (roles: Roles) =>
     roles.includes("NEWSPAPER_MANAGER") || roles.includes("SYSTEM_ADMINISTRATOR");
 
-export async function getCategoryBySlug(newspaperId: string, slug: string) {
-    const newspaper = await db.query.newspapers.findFirst({
+export async function getCategoryBySlug(tx: Tx, newspaperId: string, slug: string) {
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -36,7 +36,7 @@ export async function getCategoryBySlug(newspaperId: string, slug: string) {
         throw new NotFoundError("NEWSPAPER_NOT_FOUND");
     }
 
-    const category = await db.query.articleCategory.findFirst({
+    const category = await tx.query.articleCategory.findFirst({
         where: eq(articleCategory.slug, slug),
     });
     if (!category) {
@@ -47,8 +47,8 @@ export async function getCategoryBySlug(newspaperId: string, slug: string) {
     return { id: category.id, name: category.categoryName, slug: category.slug };
 }
 
-export async function listCategories(newspaperId: string) {
-    const newspaper = await db.query.newspapers.findFirst({
+export async function listCategories(tx: Tx, newspaperId: string) {
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -56,7 +56,7 @@ export async function listCategories(newspaperId: string) {
         throw new NotFoundError("NEWSPAPER_NOT_FOUND");
     }
 
-    const cats = await db.query.articleCategory.findMany({
+    const cats = await tx.query.articleCategory.findMany({
         where: eq(articleCategory.newspaperId, newspaperId),
     });
 
@@ -66,6 +66,7 @@ export async function listCategories(newspaperId: string) {
 }
 
 export async function createCategory(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -81,7 +82,7 @@ export async function createCategory(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -90,7 +91,7 @@ export async function createCategory(
     }
 
     const { name } = body;
-    const existing = await db.query.articleCategory.findFirst({
+    const existing = await tx.query.articleCategory.findFirst({
         where: and(
             eq(articleCategory.categoryName, name),
             eq(articleCategory.newspaperId, newspaperId),
@@ -102,7 +103,7 @@ export async function createCategory(
     }
 
     const slug = slugify(name);
-    const [created] = await db
+    const [created] = await tx
         .insert(articleCategory)
         .values({ categoryName: name, slug, newspaperId })
         .returning();
@@ -114,6 +115,7 @@ export async function createCategory(
 }
 
 export async function updateCategory(
+    tx: Tx,
     categoryId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -129,7 +131,7 @@ export async function updateCategory(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const category = await db.query.articleCategory.findFirst({
+    const category = await tx.query.articleCategory.findFirst({
         where: eq(articleCategory.id, categoryId),
     });
     if (!category) {
@@ -143,7 +145,7 @@ export async function updateCategory(
         throw new UnprocessableError("VALIDATION_ERROR", { fields: { name: "Name cannot be empty" } });
     }
 
-    const [updated] = await db
+    const [updated] = await tx
         .update(articleCategory)
         .set({ categoryName: name, slug: slugify(name) })
         .where(eq(articleCategory.id, categoryId))
@@ -156,6 +158,7 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(
+    tx: Tx,
     categoryId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -170,7 +173,7 @@ export async function deleteCategory(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const category = await db.query.articleCategory.findFirst({
+    const category = await tx.query.articleCategory.findFirst({
         where: eq(articleCategory.id, categoryId),
     });
     if (!category) {
@@ -178,7 +181,7 @@ export async function deleteCategory(
         throw new NotFoundError("CATEGORY_NOT_FOUND");
     }
 
-    const usedBy = await db.query.articles.findFirst({
+    const usedBy = await tx.query.articles.findFirst({
         where: eq(articles.categoryId, categoryId),
     });
     if (usedBy) {
@@ -186,7 +189,7 @@ export async function deleteCategory(
         throw new ConflictError("CATEGORY_IN_USE");
     }
 
-    await db.delete(articleCategory).where(eq(articleCategory.id, categoryId));
+    await tx.delete(articleCategory).where(eq(articleCategory.id, categoryId));
 
     await audit({ userId: user.id, operationType: "CATEGORY_DELETED", targetObjectId: categoryId, result: "SUCCESS" });
     logger.info("Category deleted", { categoryId, deletedBy: user.id });

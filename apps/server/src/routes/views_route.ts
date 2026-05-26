@@ -21,12 +21,9 @@ export const viewRoutes = new Elysia({ detail: { tags: ["Articles"] } })
     // Auth is optional — unauthenticated visitors still generate view counts.
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/views",
-        async ({ params, user, body, set }) => {
-            const result = await viewService.recordView(
-                params.newspaper_id,
-                params.article_id,
-                user,
-                body,
+        async ({ params, user, body, withDb, set }) => {
+            const result = await withDb((tx) =>
+                viewService.recordView(tx, params.newspaper_id, params.article_id, user, body),
             );
             set.status = result.updated ? 200 : 201;
             return { recorded: result.recorded };

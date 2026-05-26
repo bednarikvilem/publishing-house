@@ -1,16 +1,17 @@
-import { db } from "../db";
 import { articleViews, articles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { NotFoundError } from "../errors";
 import type { AuthUser } from "./context";
+import type { Tx } from "../db/rls";
 
 export async function recordView(
+    tx: Tx,
     newspaperId: string,
     articleId: string,
     user: AuthUser | null,
     body: { read_completed?: boolean } | undefined,
 ) {
-    const article = await db.query.articles.findFirst({
+    const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
             eq(articles.newspaperId, newspaperId),
@@ -26,7 +27,7 @@ export async function recordView(
     // Promote an existing incomplete view from the same user instead of
     // double-counting when they reach the end of the article.
     if (readCompleted && user?.id) {
-        const existing = await db.query.articleViews.findFirst({
+        const existing = await tx.query.articleViews.findFirst({
             where: and(
                 eq(articleViews.articleId, articleId),
                 eq(articleViews.userId, user.id),
@@ -35,7 +36,7 @@ export async function recordView(
         });
 
         if (existing) {
-            await db
+            await tx
                 .update(articleViews)
                 .set({ readCompleted: true })
                 .where(eq(articleViews.id, existing.id));
@@ -43,7 +44,7 @@ export async function recordView(
         }
     }
 
-    await db.insert(articleViews).values({
+    await tx.insert(articleViews).values({
         articleId,
         userId: user?.id ?? null,
         readCompleted,

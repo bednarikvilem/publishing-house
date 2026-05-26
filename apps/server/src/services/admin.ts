@@ -1,5 +1,5 @@
-import { db } from "../db";
 import { users, userRoles, globalRoles, newspapers, articles, articleViews, likes, comments } from "../db/schema";
+import type { Tx } from "../db/rls";
 import { eq, and, isNull, inArray, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
@@ -52,6 +52,7 @@ function requireSystemAdmin(user: AuthUser | null, roles: Roles) {
 }
 
 export async function listNewspaperUsers(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -59,7 +60,7 @@ export async function listNewspaperUsers(
 ) {
     requireSystemAdmin(user, roles);
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
     if (!newspaper) {
@@ -70,7 +71,7 @@ export async function listNewspaperUsers(
     const { page, limit } = query;
     const offset = (page - 1) * limit;
 
-    const allUsers = await db.query.users.findMany({
+    const allUsers = await tx.query.users.findMany({
         where: eq(users.newspaperId, newspaperId),
     });
 
@@ -79,13 +80,13 @@ export async function listNewspaperUsers(
 
     const result = await Promise.all(
         paged.map(async (u) => {
-            const userRolesList = await db.query.userRoles.findMany({
+            const userRolesList = await tx.query.userRoles.findMany({
                 where: and(
                     eq(userRoles.userId, u.id),
                     eq(userRoles.newspaperId, newspaperId),
                 ),
             });
-            const globalRolesList = await db.query.globalRoles.findMany({
+            const globalRolesList = await tx.query.globalRoles.findMany({
                 where: eq(globalRoles.userId, u.id),
             });
             return {
@@ -117,6 +118,7 @@ export async function listNewspaperUsers(
 }
 
 export async function assignRole(
+    tx: Tx,
     newspaperId: string,
     userId: string,
     user: AuthUser | null,
@@ -127,7 +129,7 @@ export async function assignRole(
 
     const { role } = body;
 
-    const targetUser = await db.query.users.findFirst({ where: eq(users.id, userId) });
+    const targetUser = await tx.query.users.findFirst({ where: eq(users.id, userId) });
     if (!targetUser) {
         logger.warn("Role assignment failed: user not found", { targetUserId: userId });
         throw new NotFoundError("USER_NOT_FOUND");
@@ -141,7 +143,7 @@ export async function assignRole(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const existing = await db.query.userRoles.findFirst({
+    const existing = await tx.query.userRoles.findFirst({
         where: and(
             eq(userRoles.userId, userId),
             eq(userRoles.newspaperId, newspaperId),
@@ -158,7 +160,7 @@ export async function assignRole(
     }
 
     if (role === "NEWSPAPER_MANAGER") {
-        const currentManager = await db.query.userRoles.findFirst({
+        const currentManager = await tx.query.userRoles.findFirst({
             where: and(
                 eq(userRoles.newspaperId, newspaperId),
                 eq(userRoles.role, "NEWSPAPER_MANAGER"),
@@ -167,13 +169,13 @@ export async function assignRole(
         if (currentManager) throw new ConflictError("MANAGER_ALREADY_EXISTS");
     }
 
-    await db.insert(userRoles).values({
+    await tx.insert(userRoles).values({
         userId,
         newspaperId,
         role,
     });
 
-    const allRoles = await db.query.userRoles.findMany({
+    const allRoles = await tx.query.userRoles.findMany({
         where: and(
             eq(userRoles.userId, userId),
             eq(userRoles.newspaperId, newspaperId),
@@ -190,6 +192,7 @@ export async function assignRole(
 }
 
 export async function removeRole(
+    tx: Tx,
     newspaperId: string,
     userId: string,
     role: Static<typeof NewspaperRoleEnum>,
@@ -203,7 +206,7 @@ export async function removeRole(
         throw new UnprocessableError("CANNOT_REMOVE_BASE_ROLE");
     }
 
-    const existing = await db.query.userRoles.findFirst({
+    const existing = await tx.query.userRoles.findFirst({
         where: and(
             eq(userRoles.userId, userId),
             eq(userRoles.newspaperId, newspaperId),
@@ -215,7 +218,7 @@ export async function removeRole(
         throw new NotFoundError("ROLE_NOT_FOUND");
     }
 
-    await db.delete(userRoles).where(
+    await tx.delete(userRoles).where(
         and(
             eq(userRoles.userId, userId),
             eq(userRoles.newspaperId, newspaperId),
@@ -223,7 +226,7 @@ export async function removeRole(
         ),
     );
 
-    const allRoles = await db.query.userRoles.findMany({
+    const allRoles = await tx.query.userRoles.findMany({
         where: and(
             eq(userRoles.userId, userId),
             eq(userRoles.newspaperId, newspaperId),
@@ -240,6 +243,7 @@ export async function removeRole(
 }
 
 export async function getStatistics(
+    tx: Tx,
     newspaperId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -253,7 +257,7 @@ export async function getStatistics(
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const newspaper = await db.query.newspapers.findFirst({
+    const newspaper = await tx.query.newspapers.findFirst({
         where: eq(newspapers.id, newspaperId),
     });
 
@@ -261,7 +265,7 @@ export async function getStatistics(
         throw new NotFoundError("NOT_FOUND");
     }
 
-    const allArticles = await db.query.articles.findMany({
+    const allArticles = await tx.query.articles.findMany({
         where: eq(articles.newspaperId, newspaperId),
         with: { category: true },
     });
@@ -276,7 +280,7 @@ export async function getStatistics(
     const publishedIds = new Set(published.map(a => a.id));
     const publishedIdList = [...publishedIds];
 
-    const allRoles = await db.query.userRoles.findMany({
+    const allRoles = await tx.query.userRoles.findMany({
         where: and(
             eq(userRoles.newspaperId, newspaperId),
             eq(userRoles.role, "REGISTERED_USER"),
@@ -286,7 +290,7 @@ export async function getStatistics(
     const totalSubscribers = allRoles.length;
 
     const relevantViews = publishedIdList.length > 0
-        ? await db.query.articleViews.findMany({
+        ? await tx.query.articleViews.findMany({
             where: inArray(articleViews.articleId, publishedIdList),
         })
         : [];
@@ -327,12 +331,12 @@ export async function getStatistics(
     }
 
     const allLikes = publishedIdList.length > 0
-        ? await db.query.likes.findMany({
+        ? await tx.query.likes.findMany({
             where: inArray(likes.articleId, publishedIdList),
         })
         : [];
     const allComments = publishedIdList.length > 0
-        ? await db.query.comments.findMany({
+        ? await tx.query.comments.findMany({
             where: inArray(comments.articleId, publishedIdList),
         })
         : [];
@@ -475,17 +479,17 @@ export async function getStatistics(
     };
 }
 
-export async function getGlobalStatistics(user: AuthUser | null, roles: Roles) {
+export async function getGlobalStatistics(tx: Tx, user: AuthUser | null, roles: Roles) {
     if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
         throw new ForbiddenError("FORBIDDEN");
     }
 
-    const allNewspapers = await db.query.newspapers.findMany();
+    const allNewspapers = await tx.query.newspapers.findMany();
 
     const perNewspaper = await Promise.all(
         allNewspapers.map(async (np) => {
-            const publishedArticles = await db.query.articles.findMany({
+            const publishedArticles = await tx.query.articles.findMany({
                 where: and(
                     eq(articles.newspaperId, np.id),
                     eq(articles.state, "PUBLISHED"),
@@ -493,7 +497,7 @@ export async function getGlobalStatistics(user: AuthUser | null, roles: Roles) {
             });
             const publishedIdList = publishedArticles.map(a => a.id);
 
-            const [subscriberCount] = await db
+            const [subscriberCount] = await tx
                 .select({ count: count() })
                 .from(userRoles)
                 .where(and(
@@ -514,12 +518,12 @@ export async function getGlobalStatistics(user: AuthUser | null, roles: Roles) {
                 };
             }
 
-            const [viewCount] = await db
+            const [viewCount] = await tx
                 .select({ count: count() })
                 .from(articleViews)
                 .where(inArray(articleViews.articleId, publishedIdList));
 
-            const [completedCount] = await db
+            const [completedCount] = await tx
                 .select({ count: count() })
                 .from(articleViews)
                 .where(and(
@@ -527,12 +531,12 @@ export async function getGlobalStatistics(user: AuthUser | null, roles: Roles) {
                     eq(articleViews.readCompleted, true),
                 ));
 
-            const [likeCount] = await db
+            const [likeCount] = await tx
                 .select({ count: count() })
                 .from(likes)
                 .where(inArray(likes.articleId, publishedIdList));
 
-            const [commentCount] = await db
+            const [commentCount] = await tx
                 .select({ count: count() })
                 .from(comments)
                 .where(inArray(comments.articleId, publishedIdList));
@@ -569,18 +573,18 @@ export async function getGlobalStatistics(user: AuthUser | null, roles: Roles) {
     return { totals, per_newspaper: perNewspaper };
 }
 
-export async function listGlobalUsers(user: AuthUser | null, roles: Roles) {
+export async function listGlobalUsers(tx: Tx, user: AuthUser | null, roles: Roles) {
     if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) throw new ForbiddenError("FORBIDDEN");
 
-    const globalUsersList = await db
+    const globalUsersList = await tx
         .select()
         .from(users)
         .where(isNull(users.newspaperId));
 
     const result = await Promise.all(
         globalUsersList.map(async (u) => {
-            const globalRolesList = await db.query.globalRoles.findMany({
+            const globalRolesList = await tx.query.globalRoles.findMany({
                 where: eq(globalRoles.userId, u.id),
             });
             return {
@@ -597,6 +601,7 @@ export async function listGlobalUsers(user: AuthUser | null, roles: Roles) {
 }
 
 export async function createGlobalUser(
+    tx: Tx,
     user: AuthUser | null,
     roles: Roles,
     body: Static<typeof createGlobalUserInput>,
@@ -606,12 +611,12 @@ export async function createGlobalUser(
 
     const { email, username, password, full_name, role } = body;
 
-    const currentHolder = await db.query.globalRoles.findFirst({
+    const currentHolder = await tx.query.globalRoles.findFirst({
         where: eq(globalRoles.role, role),
     });
     if (currentHolder) throw new ConflictError("ROLE_ALREADY_HELD_GLOBALLY");
 
-    const [emailExists] = await db
+    const [emailExists] = await tx
         .select()
         .from(users)
         .where(and(isNull(users.newspaperId), eq(users.email, email)));
@@ -619,7 +624,7 @@ export async function createGlobalUser(
 
     const passwordHash = await Bun.password.hash(password);
 
-    const [createdUser] = await db.insert(users).values({
+    const [createdUser] = await tx.insert(users).values({
         email,
         username,
         fullname: full_name,
@@ -629,7 +634,7 @@ export async function createGlobalUser(
     }).returning();
     const newUser = createdUser!;
 
-    await db.insert(globalRoles).values({ userId: newUser.id, role });
+    await tx.insert(globalRoles).values({ userId: newUser.id, role });
 
     return {
         id: newUser.id,
@@ -649,6 +654,7 @@ export async function getConfig(user: AuthUser | null, roles: Roles) {
 }
 
 export async function assignGlobalRole(
+    tx: Tx,
     userId: string,
     user: AuthUser | null,
     roles: Roles,
@@ -659,12 +665,12 @@ export async function assignGlobalRole(
 
     const { role } = body;
 
-    const targetUser = await db.query.users.findFirst({
+    const targetUser = await tx.query.users.findFirst({
         where: eq(users.id, userId),
     });
     if (!targetUser) throw new NotFoundError("USER_NOT_FOUND");
 
-    const currentHolder = await db.query.globalRoles.findFirst({
+    const currentHolder = await tx.query.globalRoles.findFirst({
         where: eq(globalRoles.role, role),
     });
     if (currentHolder && currentHolder.userId === userId) {
@@ -672,9 +678,9 @@ export async function assignGlobalRole(
     }
     if (currentHolder) throw new ConflictError("ROLE_ALREADY_HELD_GLOBALLY");
 
-    await db.insert(globalRoles).values({ userId, role });
+    await tx.insert(globalRoles).values({ userId, role });
 
-    const allGlobalRoles = await db.query.globalRoles.findMany({
+    const allGlobalRoles = await tx.query.globalRoles.findMany({
         where: eq(globalRoles.userId, userId),
     });
 
@@ -685,6 +691,7 @@ export async function assignGlobalRole(
 }
 
 export async function removeGlobalRole(
+    tx: Tx,
     userId: string,
     role: Static<typeof GlobalRoleEnum>,
     user: AuthUser | null,
@@ -697,7 +704,7 @@ export async function removeGlobalRole(
         throw new UnprocessableError("CANNOT_REMOVE_OWN_ADMIN_ROLE");
     }
 
-    const existing = await db.query.globalRoles.findFirst({
+    const existing = await tx.query.globalRoles.findFirst({
         where: and(
             eq(globalRoles.userId, userId),
             eq(globalRoles.role, role),
@@ -705,14 +712,14 @@ export async function removeGlobalRole(
     });
     if (!existing) throw new NotFoundError("ROLE_NOT_FOUND");
 
-    await db.delete(globalRoles).where(
+    await tx.delete(globalRoles).where(
         and(
             eq(globalRoles.userId, userId),
             eq(globalRoles.role, role),
         ),
     );
 
-    const allGlobalRoles = await db.query.globalRoles.findMany({
+    const allGlobalRoles = await tx.query.globalRoles.findMany({
         where: eq(globalRoles.userId, userId),
     });
 
