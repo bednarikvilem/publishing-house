@@ -89,6 +89,10 @@ export const scheduleBody = t.Object({
 	publication_date: t.String({ format: "date-time" }),
 });
 
+export const subscriberOnlyBody = t.Object({
+	is_subscriber_only: t.Boolean(),
+});
+
 const PrimaryImage = t.Nullable(
 	t.Pick(imageSelectBase, ["url", "caption"])
 );

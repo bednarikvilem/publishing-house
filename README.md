@@ -50,8 +50,8 @@ bun install
 # 3. Start all containers
 docker compose up --build -d
 
-# 4. Apply the database migrations (creates schema + RLS policies)
-cd apps/server && bun db:migrate
+# 4. Set up the database (creates schema + RLS policies)
+cd apps/server && bun db:setup
 
 # 5. Seed the database with initial data
 bun db:seed
@@ -117,8 +117,8 @@ bun install
 # 3. Start only the infrastructure containers
 docker compose up db redis minio minio-init -d
 
-# 4. Apply the database migrations (first time only, or after pulling new ones)
-cd apps/server && bun db:migrate
+# 4. Set up the database (first time only)
+cd apps/server && bun db:setup
 
 # 5. Seed the database (first time only)
 bun db:seed
@@ -144,8 +144,6 @@ Changes are applied automatically; refresh the browser for frontend changes.
 bun install                       # pick up new dependencies
 cd apps/server && bun db:migrate  # apply any new migrations
 ```
-
-> If your DB was built with the old `db:push` workflow (i.e. it already has tables that the early migration files would re-create), you need a one-time bootstrap to mark those migrations as applied. See the comment in `apps/server/scripts/bootstrap-migrations.ts` and run e.g. `bun db:bootstrap 0001_add_article_views` before the first `db:migrate`.
 
 ---
 
@@ -178,14 +176,17 @@ bun run format    # auto-fix formatting
 ```bash
 cd apps/server
 
-bun db:generate                  # generate a new migration .sql from changes to schema.ts
-bun db:migrate                   # apply pending migrations
-bun db:bootstrap <migration-tag> # mark a migration as already-applied without running it
+bun db:setup                     # first-time init: push schema + apply RLS migrations
 bun db:seed                      # populate with initial/seed data
+bun db:generate                  # generate a new migration .sql from changes to schema.ts
+bun db:migrate                   # apply pending migrations (use after git pull, not for first-time setup)
+bun db:bootstrap <migration-tag> # mark a migration as already-applied without running it
 bun db:studio                    # open Drizzle Studio at https://local.drizzle.studio
 ```
 
-Row-Level Security policies live in `apps/server/drizzle/0002_enable_rls.sql` and are applied by `bun db:migrate`. The app connects as the non-superuser `app_user` role created by that migration; the migration also sets up the session GUCs (`app.user_id`, `app.newspaper_id`, `app.roles`) used by the policies.
+**First-time vs. ongoing:** use `bun db:setup` on a fresh database (new Docker volume). Use `bun db:migrate` to pick up new migrations after a `git pull`.
+
+Row-Level Security policies live in `apps/server/drizzle/0002_enable_rls.sql`. The app connects as the non-superuser `app_user` role created by that migration; it also sets up the session GUCs (`app.user_id`, `app.newspaper_id`, `app.roles`) used by the policies.
 
 ### Creating a new migration
 

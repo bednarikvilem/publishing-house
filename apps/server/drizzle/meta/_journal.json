@@ -1,34 +1,48 @@
 {
-    "version": "7",
-    "dialect": "postgresql",
-    "entries": [
-        {
-            "idx": 0,
-            "version": "7",
-            "when": 1778759832000,
-            "tag": "0001_add_article_views",
-            "breakpoints": true
-        },
-        {
-            "idx": 1,
-            "version": "7",
-            "when": 1779699728000,
-            "tag": "0002_enable_rls",
-            "breakpoints": true
-        },
-        {
-            "idx": 2,
-            "version": "7",
-            "when": 1779801055658,
-            "tag": "0003_add_newspaper_primary_color",
-            "breakpoints": true
-        },
-        {
-            "idx": 3,
-            "version": "7",
-            "when": 1748563200000,
-            "tag": "0004_fix_author_visibility",
-            "breakpoints": true
-        }
-    ]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1778759832000,
+      "tag": "0001_add_article_views",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779699728000,
+      "tag": "0002_enable_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779801055658,
+      "tag": "0003_add_newspaper_primary_color",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748563200000,
+      "tag": "0004_fix_author_visibility",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1780138077372,
+      "tag": "0005_small_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1780138200000,
+      "tag": "0006_add_subscriptions_rls",
+      "breakpoints": true
+    }
+  ]
 }

@@ -11,7 +11,7 @@ import {
 } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { API_BASE_URL, authHeaders, requestSubscription, getSubscriptionStatus } from "../lib/api";
 import { slugToDisplayName } from "../lib/utils";
 
 interface Category {
@@ -51,6 +51,8 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+  const [subscriptionStatus, setSubscriptionStatus] = useState<{ is_active: boolean; expires_at: string | null } | null>(null);
+  const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setSearchQuery(searchParams.get("q") ?? "");
@@ -79,6 +81,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     const loggedInNewspaperId = localStorage.getItem("newspaper_id");
     if (!token || !newspaper || loggedInNewspaperId !== newspaper.id) {
       setUser(null);
+      setSubscriptionStatus(null);
       return;
     }
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
@@ -88,6 +91,9 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       })
       .then((data) => setUser(data))
       .catch(() => setUser(null));
+    getSubscriptionStatus(newspaper.id)
+      .then((s) => setSubscriptionStatus(s))
+      .catch(() => {});
   }, [newspaper]);
 
   function handleSearch(e: React.FormEvent) {
@@ -96,6 +102,16 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     if (q) {
       setMobileMenuOpen(false);
       navigate(`/${newspaperName}/search?q=${encodeURIComponent(q)}`);
+    }
+  }
+
+  async function handleSubscribe() {
+    if (!newspaper) return;
+    try {
+      await requestSubscription(newspaper.id);
+      setSubscribeMessage("Check your email for your subscription QR code.");
+    } catch {
+      setSubscribeMessage("Failed to send QR code. Please try again.");
     }
   }
 
@@ -180,6 +196,27 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 <LayoutDashboardIcon size={16} />
                 Dashboard
               </Link>
+            )}
+            {user && (
+              subscribeMessage ? (
+                <span className="text-muted-foreground text-[13px]">{subscribeMessage}</span>
+              ) : subscriptionStatus?.is_active ? (
+                <span className="text-muted-foreground text-[13px]">
+                  Subscribed until{" "}
+                  {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+              ) : (
+                <button
+                  onClick={handleSubscribe}
+                  className="border-border text-foreground hover:bg-muted rounded-lg border px-4 py-2 text-[14px] font-medium transition-colors"
+                >
+                  Subscribe
+                </button>
+              )
             )}
             {user ? (
               <div className="relative">
@@ -295,6 +332,27 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 <LayoutDashboardIcon size={16} />
                 Dashboard
               </Link>
+            )}
+            {user && (
+              subscribeMessage ? (
+                <span className="text-muted-foreground text-center text-[13px]">{subscribeMessage}</span>
+              ) : subscriptionStatus?.is_active ? (
+                <span className="text-muted-foreground text-center text-[13px]">
+                  Subscribed until{" "}
+                  {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+              ) : (
+                <button
+                  onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }}
+                  className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2.5 text-[14px] font-medium transition-colors"
+                >
+                  Subscribe
+                </button>
+              )
             )}
             {user ? (
               <>

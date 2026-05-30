@@ -5,7 +5,7 @@ import {
 	articlesListQuery, articlesSearchQuery, articlesMineQuery,
 	articlesQueueQuery, articleApproveQuery,
 	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
-	scheduleBody,
+	scheduleBody, subscriberOnlyBody,
 } from "../schemas/articles";
 import * as articleService from "../services/articles";
 
@@ -177,4 +177,13 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         ({ params, user, roles, withDb }) =>
             withDb((tx) => articleService.publishArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
         params: articleRouteParams,
+    })
+
+    // ── PATCH .../articles/:article_id/subscriber-only — NEWSPAPER_MANAGER
+    .patch(
+        "/api/newspapers/:newspaper_id/articles/:article_id/subscriber-only",
+        ({ params, user, roles, body, withDb }) =>
+            withDb((tx) => articleService.setSubscriberOnly(tx, params.newspaper_id, params.article_id, user, roles, body.is_subscriber_only)), {
+        params: articleRouteParams,
+        body: subscriberOnlyBody,
     });
