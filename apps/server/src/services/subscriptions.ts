@@ -28,9 +28,17 @@ export async function requestSubscription(userId: string, newspaperId: string) {
     const confirmUrl = `${frontendUrl}/${newspaper.slug}/subscription/confirm?token=${token!.id}`;
     const qrDataUrl = await QRCode.toDataURL(confirmUrl);
 
-    await sendSubscriptionQrEmail(user.email, newspaper.name, qrDataUrl, confirmUrl);
+    try {
+        await sendSubscriptionQrEmail(user.email, newspaper.name, qrDataUrl, confirmUrl);
+        logger.info("Subscription QR sent", { userId, newspaperId });
+    } catch (err) {
+        logger.error("SMTP error sending subscription QR (email may still have been delivered)", {
+            userId,
+            newspaperId,
+            error: err instanceof Error ? err.message : String(err),
+        });
+    }
 
-    logger.info("Subscription QR sent", { userId, newspaperId });
     return { message: "Subscription QR code sent to your email." };
 }
 

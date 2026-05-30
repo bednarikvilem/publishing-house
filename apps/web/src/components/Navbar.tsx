@@ -199,16 +199,24 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             )}
             {user && (
               subscribeMessage ? (
-                <span className="text-muted-foreground text-[13px]">{subscribeMessage}</span>
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                >
+                  {subscribeMessage}
+                </button>
               ) : subscriptionStatus?.is_active ? (
-                <span className="text-muted-foreground text-[13px]">
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                >
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   })}
-                </span>
+                </button>
               ) : (
                 <button
                   onClick={handleSubscribe}
@@ -335,16 +343,24 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             )}
             {user && (
               subscribeMessage ? (
-                <span className="text-muted-foreground text-center text-[13px]">{subscribeMessage}</span>
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                >
+                  {subscribeMessage}
+                </button>
               ) : subscriptionStatus?.is_active ? (
-                <span className="text-muted-foreground text-center text-[13px]">
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                >
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   })}
-                </span>
+                </button>
               ) : (
                 <button
                   onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }}
