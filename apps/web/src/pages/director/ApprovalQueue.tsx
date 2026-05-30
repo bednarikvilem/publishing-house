@@ -7,7 +7,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { DecisionForm } from "../../components/DecisionForm";
-import { STATUS_STYLES } from "../../lib/articleStatus";
+import { STATUS_STYLES, STATUS_LABELS } from "../../lib/articleStatus";
 import { formatDate } from "../../lib/utils";
 
 export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
@@ -79,7 +79,7 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
                   <span className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status] ?? ""}`}>
-                    {article.status}
+                    {STATUS_LABELS[article.status]}
                   </span>
                   <button
                     onClick={() => setActiveId(activeId === article.id ? null : article.id)}
