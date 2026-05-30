@@ -44,13 +44,13 @@ export async function sendSubscriptionQrEmail(
 	await transporter.sendMail({
 		from: FROM,
 		to,
-		subject: `Your subscription QR code for ${newspaperName}`,
-		text: `Scan the QR code or open this link to activate your 30-day subscription to ${newspaperName}:\n\n${confirmUrl}`,
+		subject: `Subscription payment for ${newspaperName}`,
+		text: `Scan the QR code or open this link to pay for your 30-day subscription to ${newspaperName}:\n\n${confirmUrl}`,
 		html: `
-<p>Here is your QR code to activate your 30-day subscription to <strong>${newspaperName}</strong>.</p>
+<p>Here is your QR payment code to pay for your 30-day subscription to <strong>${newspaperName}</strong>.</p>
 <p>Scan the code with your phone camera, or click the link below.</p>
 <p><img src="${qrDataUrl}" alt="Subscription QR code" width="200" height="200" /></p>
-<p><a href="${confirmUrl}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Activate subscription</a></p>
+<p><a href="${confirmUrl}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Pay for subscription</a></p>
 <p>This link expires in 7 days.</p>
 `,
 	});
