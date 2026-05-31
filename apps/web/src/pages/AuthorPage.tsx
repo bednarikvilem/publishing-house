@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { UserIcon } from "../components/Icons";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
+import { formatDate } from "../lib/utils";
 import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
@@ -9,14 +10,6 @@ import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 
 type SortOrder = "latest" | "oldest";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
@@ -65,7 +58,7 @@ export function AuthorPage() {
 
   if (error) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <p className="text-muted-foreground py-16 text-center">
           Author not found.
@@ -76,7 +69,7 @@ export function AuthorPage() {
 
   if (!author) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <p className="text-muted-foreground py-16 text-center">Loading…</p>
       </div>
@@ -86,7 +79,7 @@ export function AuthorPage() {
   const articleCount = author.articles.pagination.total;
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName} />
 
       {/* Author Hero */}

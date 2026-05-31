@@ -60,7 +60,7 @@ export function SearchResultsPage() {
   const query = searchParams.get("q") ?? "";
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-col gap-6 px-16 py-12">

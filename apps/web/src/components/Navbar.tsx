@@ -11,7 +11,8 @@ import {
 } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { API_BASE_URL, authHeaders, requestSubscription, getSubscriptionStatus } from "../lib/api";
+import { slugToDisplayName } from "../lib/utils";
 
 interface Category {
   id: string;
@@ -50,6 +51,8 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+  const [subscriptionStatus, setSubscriptionStatus] = useState<{ is_active: boolean; expires_at: string | null } | null>(null);
+  const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setSearchQuery(searchParams.get("q") ?? "");
@@ -60,12 +63,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     setMobileMenuOpen(false);
   }, [searchParams]);
 
-  displayName ??=
-    newspaper?.name ??
-    newspaperName
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+  displayName ??= newspaper?.name ?? slugToDisplayName(newspaperName);
 
   useEffect(() => {
     if (!newspaper) return;
@@ -83,6 +81,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     const loggedInNewspaperId = localStorage.getItem("newspaper_id");
     if (!token || !newspaper || loggedInNewspaperId !== newspaper.id) {
       setUser(null);
+      setSubscriptionStatus(null);
       return;
     }
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
@@ -92,6 +91,9 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
       })
       .then((data) => setUser(data))
       .catch(() => setUser(null));
+    getSubscriptionStatus(newspaper.id)
+      .then((s) => setSubscriptionStatus(s))
+      .catch(() => {});
   }, [newspaper]);
 
   function handleSearch(e: React.FormEvent) {
@@ -100,6 +102,16 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     if (q) {
       setMobileMenuOpen(false);
       navigate(`/${newspaperName}/search?q=${encodeURIComponent(q)}`);
+    }
+  }
+
+  async function handleSubscribe() {
+    if (!newspaper) return;
+    try {
+      await requestSubscription(newspaper.id);
+      setSubscribeMessage("Check your email for your subscription QR code.");
+    } catch {
+      setSubscribeMessage("Failed to send QR code. Please try again.");
     }
   }
 
@@ -184,6 +196,35 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 <LayoutDashboardIcon size={16} />
                 Dashboard
               </Link>
+            )}
+            {user && (
+              subscribeMessage ? (
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                >
+                  {subscribeMessage}
+                </button>
+              ) : subscriptionStatus?.is_active ? (
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                >
+                  Subscribed until{" "}
+                  {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubscribe}
+                  className="border-border text-foreground hover:bg-muted rounded-lg border px-4 py-2 text-[14px] font-medium transition-colors"
+                >
+                  Subscribe
+                </button>
+              )
             )}
             {user ? (
               <div className="relative">
@@ -299,6 +340,35 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 <LayoutDashboardIcon size={16} />
                 Dashboard
               </Link>
+            )}
+            {user && (
+              subscribeMessage ? (
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                >
+                  {subscribeMessage}
+                </button>
+              ) : subscriptionStatus?.is_active ? (
+                <button
+                  disabled
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                >
+                  Subscribed until{" "}
+                  {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }}
+                  className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2.5 text-[14px] font-medium transition-colors"
+                >
+                  Subscribe
+                </button>
+              )
             )}
             {user ? (
               <>

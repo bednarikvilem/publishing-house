@@ -14,6 +14,9 @@ import { cors } from "@elysiajs/cors";
 import { openapi } from "@elysiajs/openapi";
 import { logger } from "./utils/logger";
 import { audit } from "./utils/audit";
+import { viewRoutes } from "./routes/views_route.ts";
+import { subscriptionRoutes } from "./routes/subscriptions.ts";
+import { HttpError } from "./errors";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -42,6 +45,7 @@ export const app = new Elysia()
                     { name: "Likes", description: "Liking and unliking articles" },
                     { name: "Authors", description: "Author profiles and their article listings" },
                     { name: "Admin", description: "System administration: roles, users, configuration" },
+                    { name: "Subscriptions", description: "Per-newspaper subscriptions and QR code activation" },
                 ],
             },
         })
@@ -53,6 +57,8 @@ export const app = new Elysia()
     .use(categoryRoutes)
     .use(commentRoutes)
     .use(likeRoutes)
+    .use(viewRoutes)
+    .use(subscriptionRoutes)
     .use(adminRoutes)
     .use(authorRoutes)
     .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))
@@ -72,7 +78,15 @@ export const app = new Elysia()
             return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
         }
     })
+    .error({ HttpError })
     .onError(({ error, request, set }) => {
+        if (error instanceof HttpError) {
+            return new Response(
+                JSON.stringify({ error: error.code, ...(error.details ?? {}) }),
+                { status: error.status, headers: { "Content-Type": "application/json" } }
+            );
+        }
+
         set.status = set.status || 500;
 
         logger.error("Unhandled server error", {
@@ -83,9 +97,10 @@ export const app = new Elysia()
             stack: error instanceof Error ? error.stack : undefined,
         });
 
-        return {
-            error: "Internal Server Error",
-        };
+        return new Response(
+            JSON.stringify({ error: "Internal Server Error" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     })
     .listen(PORT);
 

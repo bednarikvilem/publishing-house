@@ -1,14 +1,8 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import type { Article } from "../types/article";
 import { CategoryBadge } from "./CategoryBadge";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { StarIcon } from "./Icons";
+import { formatDate } from "../lib/utils";
 
 export function ArticleCard({ article }: { article: Article }) {
   const { newspaperName } = useParams<{ newspaperName: string }>();
@@ -19,7 +13,7 @@ export function ArticleCard({ article }: { article: Article }) {
       className="border-border bg-card flex cursor-pointer flex-col overflow-hidden rounded-xl border"
       onClick={() => navigate(`/${newspaperName}/articles/${article.id}`)}
     >
-      <div className="h-[200px] overflow-hidden">
+      <div className="relative h-[200px] overflow-hidden">
         {article.primary_image ? (
           <img
             src={article.primary_image.url}
@@ -28,6 +22,14 @@ export function ArticleCard({ article }: { article: Article }) {
           />
         ) : (
           <div className="bg-muted h-full w-full" />
+        )}
+        {article.is_subscriber_only && (
+          <span
+            className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70"
+            title="Subscribers only"
+          >
+            <StarIcon size={14} className="fill-yellow-400 stroke-yellow-400" />
+          </span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">

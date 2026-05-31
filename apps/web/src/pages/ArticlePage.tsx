@@ -9,18 +9,12 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
 import { Heart, MessageCircle } from "lucide-react";
 import { ImageNode } from "../lib/lexical/ImageNode";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { API_BASE_URL, authHeaders, requestSubscription } from "../lib/api";
 import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+import { useArticleViewTracker } from "../hooks/useArticleViewTracker";
+import { formatDate } from "../lib/utils";
 
 function estimateReadTime(content: string) {
   const words = content.trim().split(/\s+/).length;
@@ -91,7 +85,8 @@ export function ArticlePage() {
   const { articleId } = useParams<{ articleId: string }>();
   const { newspaperName, newspaper } = useNewspaper();
   const [article, setArticle] = useState<ArticleDetail | null>(null);
-  const [error, setError] = useState<"unauthorized" | "not_found" | "error" | null>(null);
+  const [error, setError] = useState<"unauthorized" | "subscription_required" | "not_found" | "error" | null>(null);
+  const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
   const [likesCount, setLikesCount] = useState(0);
   const [likedByMe, setLikedByMe] = useState(false);
   const [isTogglingLike, setIsTogglingLike] = useState(false);
@@ -101,6 +96,12 @@ export function ArticlePage() {
 
   const isLoggedIn = !!localStorage.getItem("token");
 
+  const { sentinelRef } = useArticleViewTracker({
+    newspaperId: newspaper?.id,
+    articleId: articleId,
+    enabled: article !== null,
+  });
+
   useEffect(() => {
     if (!newspaper || !articleId) return;
     setError(null);
@@ -108,8 +109,17 @@ export function ArticlePage() {
       `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`,
       { headers: authHeaders() }
     )
-      .then((res) => {
-        if (res.status === 401 || res.status === 403) {
+      .then(async (res) => {
+        if (res.status === 403) {
+          const body = await res.json().catch(() => ({})) as { error?: string };
+          if (body.error === "SUBSCRIPTION_REQUIRED") {
+            setError("subscription_required");
+          } else {
+            setError("unauthorized");
+          }
+          return null;
+        }
+        if (res.status === 401) {
           setError("unauthorized");
           return null;
         }
@@ -183,15 +193,60 @@ export function ArticlePage() {
     }
   }
 
+  async function handleSubscribeFromPaywall() {
+    if (!newspaper) return;
+    try {
+      await requestSubscription(newspaper.id);
+      setSubscribeMessage("Check your email for your subscription QR code.");
+    } catch {
+      setSubscribeMessage("Failed to send QR code. Please try again.");
+    }
+  }
+
+  if (error === "subscription_required") {
+    return (
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+        <Navbar newspaperName={newspaperName ?? ""} />
+        <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
+          <div className="border-border bg-card flex w-full max-w-[420px] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
+            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              Subscriber-only content
+            </h2>
+            <p className="text-muted-foreground text-[14px]">
+              You do not have access to this article.
+            </p>
+            {subscribeMessage ? (
+              <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
+            ) : isLoggedIn ? (
+              <button
+                onClick={handleSubscribeFromPaywall}
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              >
+                Subscribe
+              </button>
+            ) : (
+              <a
+                href={`/${newspaperName}/login`}
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              >
+                Log in to subscribe
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
     const message =
       error === "unauthorized"
-        ? "You must be a registered user to read full articles."
+        ? "You do not have access to this article."
         : error === "not_found"
           ? "This article could not be found."
           : "Failed to load the article. Please try again later.";
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex h-64 flex-col items-center justify-center gap-3">
           <p className="text-muted-foreground text-[15px]">{message}</p>
@@ -202,7 +257,7 @@ export function ArticlePage() {
 
   if (!article) {
     return (
-      <div className="bg-background text-foreground min-h-screen w-full">
+      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="text-muted-foreground flex h-64 items-center justify-center text-[15px]">
           Loading…
@@ -215,7 +270,7 @@ export function ArticlePage() {
   const readTime = estimateReadTime(article.content);
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       {/* Hero */}
@@ -279,7 +334,7 @@ export function ArticlePage() {
                 By {article.author.full_name}
               </span>
               <span className="text-[13px] text-white/67">
-                {formatDate(article.publication_date)} · {readTime} min read
+                {formatDate(article.publication_date, "long")} · {readTime} min read
               </span>
             </div>
           </Link>
@@ -292,8 +347,13 @@ export function ArticlePage() {
         <p className="text-foreground mb-6 text-[18px] leading-[1.7]">
           {article.perex}
         </p>
+
         <hr className="border-border mb-6" />
+
         <ArticleContent content={article.content} />
+
+        {/* Article read tracking sentinel */}
+        <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
       </section>
 
       {/* Likes & Comments */}
@@ -366,7 +426,7 @@ export function ArticlePage() {
                   <div className="mb-2 flex items-center gap-2">
                     <span className="text-[13px] font-semibold">@{comment.author.username}</span>
                     <span className="text-muted-foreground text-[12px]">
-                      {formatDate(comment.created_at)}
+                      {formatDate(comment.created_at, "long")}
                     </span>
                   </div>
                   <p className="text-foreground text-[14px] leading-[1.6]">{comment.content}</p>

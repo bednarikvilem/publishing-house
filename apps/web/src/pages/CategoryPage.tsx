@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { StarIcon } from "../components/Icons";
 import { API_BASE_URL } from "../lib/api";
 import type { Article, ArticlesResponse } from "../types/article";
 import { CategoryBadge } from "../components/CategoryBadge";
@@ -56,7 +57,7 @@ export function CategoryPage() {
   const [featured, ...rest] = sorted;
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName} />
 
       {/* Category Hero */}
@@ -99,7 +100,7 @@ export function CategoryPage() {
           >
             <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               {/* Image */}
-              <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
+              <div className="relative h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
                     src={featured.primary_image.url}
@@ -108,6 +109,14 @@ export function CategoryPage() {
                   />
                 ) : (
                   <div className="bg-muted h-full w-full" />
+                )}
+                {featured.is_subscriber_only && (
+                  <span
+                    className="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/70"
+                    title="Subscribers only"
+                  >
+                    <StarIcon size={14} className="fill-yellow-400 stroke-yellow-400" />
+                  </span>
                 )}
               </div>
               {/* Content */}
@@ -125,23 +134,31 @@ export function CategoryPage() {
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
-                  {featured.author.profile_picture ? (
-                    <img
-                      src={featured.author.profile_picture}
-                      alt={featured.author.full_name}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
+                  {featured.author ? (
+                    <>
+                      {featured.author.profile_picture ? (
+                        <img
+                          src={featured.author.profile_picture}
+                          alt={featured.author.full_name}
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="bg-muted h-8 w-8 rounded-full" />
+                      )}
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-card-foreground text-[13px] font-semibold">
+                          {featured.author.full_name}
+                        </span>
+                        <span className="text-muted-foreground text-[12px]">
+                          {formatDate(featured.publication_date)}
+                        </span>
+                      </div>
+                    </>
                   ) : (
-                    <div className="bg-muted h-8 w-8 rounded-full" />
-                  )}
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-card-foreground text-[13px] font-semibold">
-                      {featured.author.full_name}
-                    </span>
                     <span className="text-muted-foreground text-[12px]">
                       {formatDate(featured.publication_date)}
                     </span>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

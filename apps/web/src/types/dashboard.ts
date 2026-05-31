@@ -21,6 +21,7 @@ export interface QueueArticle {
   submitted_at: string;
   author: { id: string; full_name: string };
   assigned_editor: { id: string; full_name: string } | null;
+  is_subscriber_only?: boolean;
 }
 
 export interface Statistics {

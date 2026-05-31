@@ -2162,7 +2162,8 @@ Authorization: Bearer <token>
         {
             "id": "n1n2n3...",
             "name": "Daily Tech",
-            "created_at": "2025-01-01T00:00:00Z"
+            "slug": "daily-tech",
+            "primary_color": "blue"
         }
     ]
 }
@@ -2199,8 +2200,100 @@ Return the details of a single newspaper.
 {
     "id": "n1n2n3...",
     "name": "Daily Tech",
-    "created_at": "2025-01-01T00:00:00Z"
+    "slug": "daily-tech",
+    "primary_color": "blue"
 }
+```
+
+`primary_color` is one of `"blue"`, `"rose"`, `"emerald"`, `"violet"`, `"orange"`, `"teal"`, or `null` (default amber theme).
+
+`404 Not Found` — newspaper does not exist
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+---
+
+### GET /api/newspapers/by-slug/:slug
+
+Return a newspaper by its URL slug. Used by the frontend to resolve a newspaper from the URL.
+
+**Auth required:** No
+
+**URL parameters:**
+
+| Parameter | Description          |
+|-----------|----------------------|
+| slug      | URL slug of the newspaper |
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "n1n2n3...",
+    "name": "Daily Tech",
+    "slug": "daily-tech",
+    "primary_color": "blue"
+}
+```
+
+`404 Not Found` — newspaper does not exist
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+---
+
+### PATCH /api/newspapers/:newspaper_id
+
+Update a newspaper's brand accent color. Only Director and System Administrator can call this.
+
+**Auth required:** Yes — `DIRECTOR` or `SYSTEM_ADMINISTRATOR`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Body:**
+```json
+{ "primary_color": "blue" }
+```
+
+`primary_color` must be one of `"blue"`, `"rose"`, `"emerald"`, `"violet"`, `"orange"`, `"teal"`, or `null` (resets to default amber).
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "id": "n1n2n3...",
+    "name": "Daily Tech",
+    "slug": "daily-tech",
+    "primary_color": "blue"
+}
+```
+
+`400 Bad Request` — invalid preset key
+```json
+{ "error": "INVALID_COLOR" }
+```
+
+`401 Unauthorized` — no token provided
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`403 Forbidden` — user is not Director or System Administrator
+```json
+{ "error": "FORBIDDEN" }
 ```
 
 `404 Not Found` — newspaper does not exist
@@ -3029,6 +3122,160 @@ overwritten.
 Side effects:
 - Changes take effect immediately for new requests
 - Creates an audit log entry (operation: SYSTEM_CONFIG_UPDATED)
+
+---
+
+## Subscriptions
+
+### POST /api/newspapers/:newspaper_id/subscription/request
+
+Sends a QR code to the authenticated user's email to activate or renew a subscription for this newspaper.
+
+**Auth required:** Yes
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Request body:** None
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Subscription QR code sent to your email." }
+```
+
+`401 Unauthorized` — not logged in
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+`404 Not Found` — newspaper not found
+```json
+{ "error": "NEWSPAPER_NOT_FOUND" }
+```
+
+Side effects:
+- Creates a single-use subscription token (valid 7 days) in the database
+- Sends an email to the user containing a QR code and a direct confirmation URL
+
+---
+
+### POST /api/newspapers/:newspaper_id/subscription/confirm
+
+Redeems a subscription token and activates (or extends) the user's subscription.
+
+**Auth required:** No
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Request body:**
+```json
+{ "token": "<uuid>" }
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{
+    "message": "Subscription activated.",
+    "expires_at": "2026-07-22T10:00:00.000Z"
+}
+```
+
+`400 Bad Request` — token not found, already used, or expired
+```json
+{ "error": "INVALID_TOKEN" }
+```
+
+Side effects:
+- Marks the token as used (single-use enforcement)
+- Creates or updates the subscription record; if an active subscription exists, the 30-day period extends from the current `expires_at`
+
+---
+
+### GET /api/newspapers/:newspaper_id/subscription/status
+
+Returns the current subscription status of the authenticated user for this newspaper.
+
+**Auth required:** Yes
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+
+**Responses:**
+
+`200 OK` — active subscription
+```json
+{
+    "is_active": true,
+    "expires_at": "2026-07-22T10:00:00.000Z"
+}
+```
+
+`200 OK` — no active subscription
+```json
+{
+    "is_active": false,
+    "expires_at": null
+}
+```
+
+`401 Unauthorized` — not logged in
+```json
+{ "error": "UNAUTHORIZED" }
+```
+
+---
+
+### PATCH /api/newspapers/:newspaper_id/articles/:article_id/subscriber-only
+
+Sets or clears the subscriber-only flag on an article. Only accessible to NEWSPAPER_MANAGER.
+
+**Auth required:** Yes (NEWSPAPER_MANAGER role)
+
+**URL parameters:**
+
+| Parameter    | Description           |
+|--------------|-----------------------|
+| newspaper_id | UUID of the newspaper |
+| article_id   | UUID of the article   |
+
+**Request body:**
+```json
+{ "is_subscriber_only": true }
+```
+
+**Responses:**
+
+`200 OK`
+```json
+{ "message": "Article updated." }
+```
+
+`403 Forbidden` — missing NEWSPAPER_MANAGER role
+```json
+{ "error": "FORBIDDEN" }
+```
+
+`404 Not Found` — article not found in this newspaper
+```json
+{ "error": "ARTICLE_NOT_FOUND" }
+```
+
+Side effects:
+- Creates an audit log entry (operation: ARTICLE_SUBSCRIBER_ONLY_UPDATED)
 
 ---
 
