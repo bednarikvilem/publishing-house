@@ -100,3 +100,100 @@ export async function sendPasswordResetEmail(
 `,
 	});
 }
+
+const STATE_SUBJECTS: Record<string, string> = {
+	IN_REVIEW: "is now under review",
+	APPROVED_BY_EDITOR: "has been approved by the editor",
+	APPROVED_BY_MANAGER: "has been approved by the manager",
+	APPROVED_BY_DIRECTOR: "has been approved by the director",
+	PUBLISHED: "is now live!",
+	REJECTED: "has been rejected",
+	DRAFT: "requires revisions",
+};
+
+export async function sendAuthorStateChangeEmail(
+	to: string,
+	articleTitle: string,
+	newState: string,
+	feedback?: string | null,
+	reviewerName?: string | null,
+	articleLink?: string | null,
+): Promise<void> {
+	const suffix = STATE_SUBJECTS[newState] ?? `moved to state: ${newState}`;
+	const subject = `Your article "${articleTitle}" ${suffix}`;
+
+	let feedbackBlock = "";
+	if ((newState === "REJECTED" || newState === "DRAFT") && (feedback || reviewerName)) {
+		feedbackBlock = `
+<hr style="margin:20px 0;border:none;border-top:1px solid #eee;">
+${reviewerName ? `<p><strong>Reviewed by:</strong> ${reviewerName}</p>` : ""}
+${feedback ? `<p><strong>Feedback:</strong> ${feedback}</p>` : ""}`;
+	}
+
+	let actionBlock = "";
+	if (newState === "PUBLISHED" && articleLink) {
+		actionBlock = `<p><a href="${articleLink}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Read your article</a></p>`;
+	}
+
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject,
+		text: subject + (reviewerName ? `\n\nReviewed by: ${reviewerName}` : "") + (feedback ? `\nFeedback: ${feedback}` : "") + (articleLink ? `\n\n${articleLink}` : ""),
+		html: `
+<p>Your article <strong>"${articleTitle}"</strong> ${suffix}.</p>
+${actionBlock}${feedbackBlock}
+`,
+	});
+}
+
+export async function sendEditorAssignmentEmail(
+	to: string,
+	articleTitle: string,
+	dashboardLink: string,
+): Promise<void> {
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject: `You have been assigned to review "${articleTitle}"`,
+		text: `You have been assigned to review the article "${articleTitle}".\n\nOpen your dashboard to begin the review:\n\n${dashboardLink}`,
+		html: `
+<p>You have been assigned to review the article <strong>"${articleTitle}"</strong>.</p>
+<p><a href="${dashboardLink}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Go to dashboard</a></p>
+`,
+	});
+}
+
+export async function sendManagerArticleReadyEmail(
+	to: string,
+	articleTitle: string,
+	dashboardLink: string,
+): Promise<void> {
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject: `A new article is ready for your review: "${articleTitle}"`,
+		text: `The article "${articleTitle}" is ready for your review.\n\nOpen your dashboard:\n\n${dashboardLink}`,
+		html: `
+<p>The article <strong>"${articleTitle}"</strong> is ready for your review.</p>
+<p><a href="${dashboardLink}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Go to dashboard</a></p>
+`,
+	});
+}
+
+export async function sendDirectorArticleReadyEmail(
+	to: string,
+	articleTitle: string,
+	dashboardLink: string,
+): Promise<void> {
+	await transporter.sendMail({
+		from: FROM,
+		to,
+		subject: `An article is ready for your approval: "${articleTitle}"`,
+		text: `The article "${articleTitle}" is ready for your approval.\n\nOpen your dashboard:\n\n${dashboardLink}`,
+		html: `
+<p>The article <strong>"${articleTitle}"</strong> is ready for your approval.</p>
+<p><a href="${dashboardLink}" style="display:inline-block;padding:10px 20px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Go to dashboard</a></p>
+`,
+	});
+}

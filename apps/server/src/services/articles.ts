@@ -1,4 +1,5 @@
 import { uploadImage, deleteImage } from "../utils/storage";
+import * as notifications from "./notifications";
 import type { Tx } from "../db/rls";
 import {
     articles,
@@ -618,6 +619,8 @@ export async function submitArticle(
     await audit({ userId: user.id, operationType: "ARTICLE_SUBMITTED", targetObjectId: article.id, result: "SUCCESS" });
     logger.info("Article submitted for review", { articleId: article.id, authorId: user.id });
 
+    await notifications.notifyArticleSubmitted(tx, article);
+
     return { id: article.id, status: "SUBMITTED" };
 }
 
@@ -768,6 +771,9 @@ export async function assignEditor(
         throw new UnprocessableError("INVALID_ARTICLE_STATE");
     }
 
+    const newspaper = await tx.query.newspapers.findFirst({ where: eq(newspapers.id, newspaperId) });
+    if (!newspaper) throw new NotFoundError("NEWSPAPER_NOT_FOUND");
+
     const { editor_id } = body;
 
     const editorRole = await tx.query.userRoles.findFirst({
@@ -797,6 +803,8 @@ export async function assignEditor(
 
     await audit({ userId: user.id, operationType: "ARTICLE_EDITOR_ASSIGNED", targetObjectId: article.id, result: "SUCCESS" });
     logger.info("Editor assigned to article", { articleId: article.id, editorId: editor_id, managerId: user.id });
+
+    await notifications.notifyEditorAssigned(tx, article, { id: editor!.id, email: editor!.email });
 
     return {
         id: article.id,
@@ -851,6 +859,8 @@ export async function reviewArticle(
 
     await audit({ userId: user.id, operationType: "ARTICLE_REVIEWED", targetObjectId: article.id, result: "SUCCESS" });
     logger.info("Article reviewed", { articleId: article.id, reviewerId: user.id, decision, newState });
+
+    await notifications.notifyEditorReviewed(tx, article, newState, note ?? null, user.fullname ?? null);
 
     return { id: article.id, status: newState, note: note ?? null };
 }
@@ -934,6 +944,12 @@ export async function approveArticle(
     await audit({ userId: user.id, operationType: decision === "APPROVE" ? "ARTICLE_APPROVED" : "ARTICLE_REJECTED", targetObjectId: article.id, result: "SUCCESS" });
     logger.info("Article approval decision", { articleId: article.id, decidedBy: user.id, decision, nextState });
 
+    if (effectiveRole === "NEWSPAPER_MANAGER") {
+        await notifications.notifyManagerApproved(tx, article, nextState, note ?? null, user.fullname ?? null);
+    } else {
+        await notifications.notifyDirectorApproved(tx, article, nextState, note ?? null, user.fullname ?? null);
+    }
+
     return { id: article.id, status: nextState };
 }
 
@@ -1007,6 +1023,8 @@ export async function publishArticle(
         .update(articles)
         .set({ state: "PUBLISHED" as any, publicationDate: now })
         .where(eq(articles.id, article.id));
+
+    await notifications.notifyArticlePublished(tx, article);
 
     return {
         id: article.id,
