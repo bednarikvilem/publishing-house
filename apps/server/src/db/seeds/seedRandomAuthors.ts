@@ -12,6 +12,7 @@ export async function seedRandomAuthors(authorsPerNewspaper: number) {
         throw new Error("No newspapers found in the database. Seed newspapers first!");
     }
 
+    const passwordHash = await Bun.password.hash("test1234");
     const usersToInsert: NewUser[] = [];
 
     for (const newspaper of allNewspapers) {
@@ -20,7 +21,7 @@ export async function seedRandomAuthors(authorsPerNewspaper: number) {
                 username: faker.internet.username(),
                 fullname: faker.person.fullName(),
                 email: faker.internet.email(),
-                passwordHash: faker.internet.password(),
+                passwordHash,
                 newspaperId: newspaper.id,
                 email_verified: true,
             });
@@ -31,7 +32,7 @@ export async function seedRandomAuthors(authorsPerNewspaper: number) {
                 username: faker.internet.username(),
                 fullname: faker.person.fullName(),
                 email: faker.internet.email(),
-                passwordHash: faker.internet.password(),
+                passwordHash,
                 newspaperId: newspaper.id,
                 email_verified: true,
             });
