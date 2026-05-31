@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { ProfileInfoCard } from "./profile/ProfileInfoCard";
 import { PasswordCard } from "./profile/PasswordCard";
 import { DangerZoneCard } from "./profile/DangerZoneCard";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 interface UserProfile {
   id: string;
@@ -18,7 +18,7 @@ interface UserProfile {
 }
 
 export function UserProfilePage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadError, setLoadError] = useState(false);
 
@@ -33,7 +33,7 @@ export function UserProfilePage() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-col gap-7 px-12 py-8">

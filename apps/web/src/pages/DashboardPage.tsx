@@ -85,7 +85,7 @@ export function DashboardPage() {
   const hasAccess = userRoles.some((r) => (EDITORIAL_ROLES as readonly string[]).includes(r));
 
   return (
-    <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
+    <div className={`bg-background text-foreground flex min-h-screen w-full flex-col${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={np} />
 
       <div className="flex flex-1 flex-col md:flex-row">
