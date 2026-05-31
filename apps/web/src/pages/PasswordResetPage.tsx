@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
 import { CheckIcon } from "../components/Icons";
 import { slugToDisplayName } from "../lib/utils";
-
-// TODO: replace with a real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
+import { useNewspaper } from "../hooks/useNewspaper";
 
 export function PasswordResetPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
 
   const [email, setEmail]         = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -20,13 +18,14 @@ export function PasswordResetPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!newspaper) return;
     setError(null);
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: NEWSPAPER_ID, email }),
+        body: JSON.stringify({ newspaper_id: newspaper.id, email }),
       });
 
       if (res.ok) { setSubmitted(true); return; }
@@ -45,7 +44,7 @@ export function PasswordResetPage() {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
       <AuthCard
         title={slugToDisplayName(newspaperName ?? "")}
@@ -77,7 +76,7 @@ export function PasswordResetPage() {
             {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !newspaper}
               className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Sending…" : "Send Reset Link"}
