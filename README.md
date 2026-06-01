@@ -171,6 +171,46 @@ bun run format    # auto-fix formatting
 
 ---
 
+## Seed data
+
+Running `bun db:seed` populates the database with the following five newspapers:
+
+| Name | Slug | Categories |
+|------|------|------------|
+| AudioWire | `audiowire` | Pop & Rock, Rap, Electronic, Live Events |
+| The Statline | `the-statline` | Mundial, Premier League, LaLiga, Transfers & Rumors, Match Analysis |
+| The Binge Ledger | `the-binge-ledger` | Drama, Comedy & Sitcoms, Sci-Fi & Fantasy, Reality TV |
+| ClaudeDaily | `claudedaily` | AI & Machine Learning, New Tech & Gadgets, Software & Coding, Cybersecurity |
+| The PokéScope | `the-pokescope` | Video Games, Trading Card Game, Anime & Movies, Pokémon GO |
+
+### Known seed credentials
+
+| Account | Email | Password | Role |
+|---------|-------|----------|------|
+| System Administrator | `admin@newspapers.com` | `test1234` | SYSTEM_ADMINISTRATOR |
+| Director | `director@claudedaily.cz` | `test1234` | DIRECTOR |
+| ClaudeDaily manager/editor/author | `emma.bednarikova@email.cz` | `test1234` | NEWSPAPER_MANAGER, EDITOR, AUTHOR, REGISTERED_USER |
+| ClaudeDaily test author | `jan.novak@claudedaily.cz` | `test1234` | AUTHOR, REGISTERED_USER |
+| Registered user (all newspapers) | `seed@seed.com` | `test1234` | REGISTERED_USER |
+
+### Re-seeding from scratch
+
+There is no `db:reset` script. To wipe all data and re-seed, connect to the database and run:
+
+```sql
+TRUNCATE TABLE
+    audit_logs, subscription_tokens, subscriptions,
+    article_views, likes, comments, article_reviews,
+    article_images, articles, newspaper_authors,
+    user_roles, global_roles, article_category,
+    users, newspapers
+CASCADE;
+```
+
+Then run `bun db:seed` again.
+
+---
+
 ## Database tooling
 
 ```bash
