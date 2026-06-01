@@ -153,7 +153,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     country: ["France", "Brazil", "England", "Spain", "Argentina"],
                     adjective: ["Early", "Surprise", "Runaway", "Joint"],
                 },
-                imageKeywords: "soccer,world cup,football",
+                imageKeywords: "soccer,football,sport",
             },
             {
                 name: "Premier League",
@@ -174,7 +174,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     fixture: ["Clash", "Derby", "Showdown", "Encounter", "Match"],
                     position: ["Top", "Second", "Third", "Into the Top Four", "Above Rivals"],
                 },
-                imageKeywords: "premier league,football,soccer,stadium",
+                imageKeywords: "football,soccer,stadium",
             },
             {
                 name: "LaLiga",
@@ -196,7 +196,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     fixture: ["Clash", "Showdown", "Derby", "Encounter"],
                     claim: ["Wide Open", "Already Over", "Anyone's to Win", "A Two-Horse Race"],
                 },
-                imageKeywords: "laliga,real madrid,barcelona,football",
+                imageKeywords: "football,soccer,spain",
             },
             {
                 name: "Transfers & Rumors",
@@ -333,7 +333,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     season: ["12", "13", "14", "15", "16"],
                     adjective: ["Shock", "Surprise", "Controversial", "Emotional", "Dramatic", "Historic"],
                 },
-                imageKeywords: "reality tv,television,entertainment",
+                imageKeywords: "television,entertainment,celebrity",
             },
         ],
     },
@@ -374,7 +374,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     competitor: ["GPT-4", "Gemini 1.5", "Llama 3", "Claude 3", "Mistral Medium"],
                     benchmark: ["MMLU", "HumanEval", "MATH", "BIG-Bench", "GPQA"],
                 },
-                imageKeywords: "artificial intelligence,technology,computer",
+                imageKeywords: "technology,computer,robot",
             },
             {
                 name: "New Tech & Gadgets",
@@ -479,7 +479,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     period: ["Opening Weekend", "First Week", "First Month", "24 Hours"],
                     record: ["Nintendo Switch Records", "Series Records", "Digital Sales Records", "Global Sales Records"],
                 },
-                imageKeywords: "pokemon,video game,nintendo",
+                imageKeywords: "gaming,console,videogame",
             },
             {
                 name: "Trading Card Game",
@@ -502,7 +502,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     deck: ["Charizard ex", "Raging Bolt", "Dragapult", "Gardevoir ex", "Lugia VSTAR"],
                     adjective: ["Rogue", "Consistent", "Surprise", "Dominant", "Meta-Defining"],
                 },
-                imageKeywords: "pokemon card,trading card,tcg",
+                imageKeywords: "cards,collectible,gaming",
             },
             {
                 name: "Anime & Movies",
@@ -520,7 +520,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     reveal: ["Legendary Pokémon", "Returning Character", "New Form", "Evolution", "Plot Twist"],
                     amount: ["$50M", "$100M", "$200M", "$300M", "$500M"],
                 },
-                imageKeywords: "pokemon anime,cartoon,animation",
+                imageKeywords: "anime,cartoon,animation",
             },
             {
                 name: "Pokémon GO",
@@ -538,7 +538,7 @@ export const NEWSPAPERS: NewspaperConfig[] = [
                     feature: ["Raid", "PvP", "Buddy", "Trading", "Remote Raid", "Adventure Sync"],
                     move: ["Frenzy Plant", "Hydro Cannon", "Blast Burn", "Shadow Ball", "Body Slam"],
                 },
-                imageKeywords: "pokemon go,mobile game,augmented reality",
+                imageKeywords: "mobile,gaming,outdoor",
             },
         ],
     },
