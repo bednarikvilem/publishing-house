@@ -27,6 +27,11 @@ export async function seedNewArticleCategory() {
         }
     }
 
+    if (categoriesToInsert.length === 0) {
+        console.warn("No categories to insert — were newspapers seeded first?");
+        return;
+    }
+
     await db.insert(schema.articleCategory).values(categoriesToInsert);
     console.log(`Categories added successfully! (${categoriesToInsert.length} total)`);
 }
