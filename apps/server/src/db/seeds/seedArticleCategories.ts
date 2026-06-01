@@ -1,34 +1,32 @@
 import { db } from "../index";
 import * as schema from "../schema";
 import type { NewArticleCategory } from "../schema";
-import { slugify } from "../help_functions/slugify"
-import { faker } from "@faker-js/faker";
+import { eq } from "drizzle-orm";
+import { NEWSPAPERS } from "./data/newspapers";
 
 export async function seedNewArticleCategory() {
-    const CATEGORIES = ["Sport", "Music", "Tech", "Politics", "Pokemon", "Bridgerton"];
-    const existingNewspapers = await db.query.newspapers.findMany(
-        {
-            columns: { id: true }
+    const categoriesToInsert: NewArticleCategory[] = [];
+
+    for (const newspaperConfig of NEWSPAPERS) {
+        const newspaper = await db.query.newspapers.findFirst({
+            where: eq(schema.newspapers.name, newspaperConfig.name),
+            columns: { id: true },
+        });
+
+        if (!newspaper) {
+            console.warn(`Newspaper "${newspaperConfig.name}" not found, skipping its categories.`);
+            continue;
         }
-    );
 
-    const shuffled = faker.helpers.shuffle([...CATEGORIES]);
+        for (const category of newspaperConfig.categories) {
+            categoriesToInsert.push({
+                categoryName: category.name,
+                slug: category.slug,
+                newspaperId: newspaper.id,
+            });
+        }
+    }
 
-    // Guarantee every newspaper gets at least one category
-    const guaranteed: NewArticleCategory[] = existingNewspapers.map((np, i) => ({
-        categoryName: shuffled[i % shuffled.length],
-        slug: slugify(shuffled[i % shuffled.length]),
-        newspaperId: np.id,
-    }));
-
-    // Distribute remaining categories randomly
-    const remaining: NewArticleCategory[] = shuffled.slice(existingNewspapers.length).map((name) => ({
-        categoryName: name,
-        slug: slugify(name),
-        newspaperId: faker.helpers.arrayElement(existingNewspapers).id,
-    }));
-
-    await db.insert(schema.articleCategory).values([...guaranteed, ...remaining]);
-
-    console.log("Categories added successfully!");
+    await db.insert(schema.articleCategory).values(categoriesToInsert);
+    console.log(`Categories added successfully! (${categoriesToInsert.length} total)`);
 }
