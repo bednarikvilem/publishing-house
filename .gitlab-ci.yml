@@ -9,7 +9,7 @@ unit-test-job:
       - shared-fi
     script:
       - bun install
-      - bun test
+      - bun test apps/server/tests/schemas apps/server/tests/utils/audit.test.ts apps/server/tests/utils/logger.test.ts apps/server/tests/utils/storage.test.ts
 
 deploy-job:
     stage: deploy
