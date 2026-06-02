@@ -2,8 +2,19 @@ import { faker } from "@faker-js/faker";
 import { db } from "../index";
 import * as schema from "../schema";
 import type { NewNewspaperAuthor, NewUser, NewUserRole } from "../schema";
+import { NEWSPAPERS } from "./data/newspapers";
+import { generateFromTemplate } from "./helpers";
 
 const EDITORS_PER_NEWSPAPER = 5;
+
+function generateBio(newspaperName: string): string {
+    const config = NEWSPAPERS.find((np) => np.name === newspaperName);
+    if (!config) return faker.lorem.sentence();
+    return generateFromTemplate(
+        faker.helpers.arrayElement(config.bioTemplates),
+        config.bioWordBank
+    );
+}
 
 export async function seedRandomAuthors(authorsPerNewspaper: number) {
     const allNewspapers = await db.query.newspapers.findMany();
@@ -58,7 +69,7 @@ export async function seedRandomAuthors(authorsPerNewspaper: number) {
             authorProfiles.push({
                 userId: user.id,
                 newspaperId: newspaper.id,
-                biography: faker.lorem.sentence(),
+                biography: generateBio(newspaper.name),
             });
         }
 

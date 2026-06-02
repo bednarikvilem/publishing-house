@@ -11,6 +11,7 @@ import { seedLikes } from "./seeds/seedLikes";
 import { seedComments } from "./seeds/seedComments";
 import { seedArticleViews } from "./seeds/seedArticleViews";
 import { seedE2eUsers } from "./seeds/seedE2eUsers";
+import { seedSeedUser } from "./seeds/seedSeedUser";
 
 
 async function seed() {
@@ -27,6 +28,7 @@ async function seed() {
     await seedComments();
     await seedArticleViews();
     await seedE2eUsers();
+    await seedSeedUser();
 
 }
 
