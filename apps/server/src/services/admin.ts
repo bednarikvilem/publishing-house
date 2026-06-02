@@ -1,4 +1,4 @@
-import { users, userRoles, globalRoles, newspapers, articles, articleViews, likes, comments } from "../db/schema";
+import { users, userRoles, globalRoles, newspapers, articles, articleViews, articleReviews, likes, comments } from "../db/schema";
 import type { Tx } from "../db/rls";
 import { eq, and, isNull, inArray, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
@@ -415,6 +415,19 @@ export async function getStatistics(
         ([category, count]) => ({ category, count }),
     );
 
+    const authorIds = Object.keys(authorMap);
+    if (authorIds.length > 0) {
+        const authorUsers = await tx.query.users.findMany({
+            where: inArray(users.id, authorIds),
+            columns: { id: true, fullname: true },
+        });
+        for (const u of authorUsers) {
+            if (authorMap[u.id]) {
+                authorMap[u.id]!.full_name = u.fullname ?? null;
+            }
+        }
+    }
+
     const published_by_author = Object.entries(authorMap).map(
         ([author_id, data]) => ({
             author_id,
@@ -423,8 +436,66 @@ export async function getStatistics(
         }),
     );
 
+    const publicationTimelineMap: Record<string, number> = {};
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        publicationTimelineMap[d.toISOString().split("T")[0]!] = 0;
+    }
+    for (const a of published) {
+        if (!a.publicationDate) continue;
+        const day = new Date(a.publicationDate).toISOString().split("T")[0]!;
+        if (day in publicationTimelineMap) {
+            publicationTimelineMap[day]!++;
+        }
+    }
+    const publication_timeline = Object.entries(publicationTimelineMap)
+        .map(([date, published_count]) => ({ date, published_count }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+    const allArticleIds = allArticles.map(a => a.id);
+    const allReviews = allArticleIds.length > 0
+        ? await tx.query.articleReviews.findMany({
+            where: inArray(articleReviews.articleId, allArticleIds),
+        })
+        : [];
+
+    const editorMap: Record<string, { name: string | null; approved: number; rejected: number; revisions: number }> = {};
+    for (const r of allReviews) {
+        if (!editorMap[r.reviewerId]) {
+            editorMap[r.reviewerId] = { name: null, approved: 0, rejected: 0, revisions: 0 };
+        }
+        if (r.decision === "APPROVED") editorMap[r.reviewerId]!.approved++;
+        else if (r.decision === "REJECTED") editorMap[r.reviewerId]!.rejected++;
+        else if (r.decision === "REVISION_REQUESTED") editorMap[r.reviewerId]!.revisions++;
+    }
+
+    const editorIds = Object.keys(editorMap);
+    if (editorIds.length > 0) {
+        const editorUsers = await tx.query.users.findMany({
+            where: inArray(users.id, editorIds),
+            columns: { id: true, fullname: true },
+        });
+        for (const u of editorUsers) {
+            if (editorMap[u.id]) {
+                editorMap[u.id]!.name = u.fullname ?? null;
+            }
+        }
+    }
+
     const editors = {
-        performance: [],
+        performance: Object.entries(editorMap).map(([id, data]) => {
+            const total = data.approved + data.rejected + data.revisions;
+            return {
+                id,
+                name: data.name,
+                total,
+                approved: data.approved,
+                rejected: data.rejected,
+                revisions: data.revisions,
+                approval_rate: total > 0 ? Math.round((data.approved / total) * 100) : 0,
+            };
+        }),
     };
 
     const totalLikes = allLikes.filter(l => publishedIds.has(l.articleId)).length;
@@ -475,7 +546,7 @@ export async function getStatistics(
 
         editors,
 
-        publication_timeline: [],
+        publication_timeline,
     };
 }
 
