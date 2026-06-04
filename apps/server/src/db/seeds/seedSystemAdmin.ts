@@ -29,6 +29,5 @@ export async function seedSystemAdmin() {
     });
 
     console.log("System Administrator seeded!");
-    console.log("  Email:    admin@newspapers.com");
-    console.log("  Password: test1234");
+    console.log("  Email: admin@newspapers.com");
 }
