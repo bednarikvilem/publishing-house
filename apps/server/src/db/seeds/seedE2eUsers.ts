@@ -61,7 +61,7 @@ export async function seedE2eUsers() {
             profilePictureUrl: "http://localhost:9000/pb138-images/profiles/e2e-placeholder.webp",
         });
 
-        console.log(`Jan Novak seeded!  email: ${JAN.email}  password: ${JAN.password}`);
+        console.log(`Jan Novak seeded!  email: ${JAN.email}`);
     }
 
     // Director — global DIRECTOR role only (unique constraint: one director in the system).
@@ -103,7 +103,7 @@ export async function seedE2eUsers() {
             console.log("Removed DIRECTOR role from previous holder.");
         }
         await db.insert(schema.globalRoles).values({ userId: directorUser.id, role: "DIRECTOR" });
-        console.log(`Director seeded!  email: ${DIRECTOR.email}  password: ${DIRECTOR.password}`);
+        console.log(`Director seeded!  email: ${DIRECTOR.email}`);
     }
 }
 
