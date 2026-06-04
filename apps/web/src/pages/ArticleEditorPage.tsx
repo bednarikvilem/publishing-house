@@ -316,7 +316,7 @@ export function ArticleEditorPage() {
           ? `${API_BASE_URL}/api/newspapers/${newspaperId}/articles`
           : `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}`,
         {
-          method: isNew ? "POST" : "PUT",
+          method: isNew ? "POST" : "PATCH",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
           body: JSON.stringify(body),
         }
