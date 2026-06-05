@@ -12,7 +12,7 @@ const LEVEL_RANK: Record<LogLevel, number> = {
 function minRank(): number {
   const raw = process.env.LOG_LEVEL?.toLowerCase();
   if (raw && raw in LEVEL_RANK) return LEVEL_RANK[raw as LogLevel];
-  return LEVEL_RANK.debug;
+  return process.env.NODE_ENV === "production" ? LEVEL_RANK.info : LEVEL_RANK.debug;
 }
 
 function log(level: LogLevel, message: string, meta?: Record<string, unknown>): void {
@@ -25,8 +25,6 @@ function log(level: LogLevel, message: string, meta?: Record<string, unknown>): 
     ...meta,
   });
 
-  // Route to the correct stdio stream so external collectors
-  // (Docker, systemd, etc.) can separate error traffic from info.
   if (level === "error" || level === "warn") {
     console.error(line);
   } else {
