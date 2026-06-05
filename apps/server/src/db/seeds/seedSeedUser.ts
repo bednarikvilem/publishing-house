@@ -46,6 +46,5 @@ export async function seedSeedUser() {
     }
 
     console.log(`Seed user seeded for ${newspapers.length} newspapers.`);
-    console.log(`  Email:    ${SEED_EMAIL}`);
-    console.log(`  Password: ${SEED_PASSWORD}`);
+    console.log(`  Email: ${SEED_EMAIL}`);
 }

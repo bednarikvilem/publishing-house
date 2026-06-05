@@ -78,8 +78,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         body: createArticleBody,
     })
 
-    // ── PUT /api/newspapers/:newspaper_id/articles/:article_id ────────────
-    .put(
+    // ── PATCH /api/newspapers/:newspaper_id/articles/:article_id ──────────
+    .patch(
         "/api/newspapers/:newspaper_id/articles/:article_id",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.updateArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
