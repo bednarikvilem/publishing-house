@@ -1,4 +1,4 @@
-# Project Review: pb138
+# Project Review: pb138 — Newspaper Platform
 
 **Date:** 2026-06-06
 
@@ -6,7 +6,7 @@
 
 ## Project Orientation
 
-The project is a monorepo (Turborepo + Bun workspaces) containing three packages: `apps/server` (Elysia backend), `apps/web` (React 19 + React Router DOM v7 frontend), and a shared `packages/shared` types package, with a separate `tests/` workspace running Playwright e2e tests. The backend uses Elysia v1.4 with `@elysiajs/jwt`, `@elysiajs/bearer`, Drizzle ORM on PostgreSQL 17, Redis for JWT blocklisting, and MinIO (S3-compatible) for image storage. The frontend uses TailwindCSS v4, Base UI primitives wrapped as shadcn-style components, and the Lexical rich-text editor. Auth is JWT-based with Bun's built-in argon2 (`Bun.password`), and the database enforces Row-Level Security policies that are set per-request via session GUCs. Infrastructure runs in Docker Compose.
+The project is a full-stack Turborepo monorepo with two apps (`apps/server` — Elysia backend, `apps/web` — React 19 frontend) and a shared types package. The backend uses Elysia v1.4 on Bun with Drizzle ORM + PostgreSQL, JWT auth via `@elysiajs/jwt`, Redis for token blocklisting, and MinIO for image storage. The frontend uses React Router DOM v7, TanStack Query v5, shadcn/ui via `@base-ui/react`, and Tailwind CSS v4. Infrastructure is containerised with Docker Compose, and the test suite combines `bun test` unit/integration tests (including a thorough RLS policy test) and Playwright end-to-end tests. A notable architectural highlight is the use of PostgreSQL Row-Level Security (RLS) policies to enforce multi-tenant data isolation at the database level.
 
 ---
 
@@ -16,7 +16,7 @@ The project is a monorepo (Turborepo + Bun workspaces) containing three packages
 | --------------------- | ------ |
 | Component Library     | ⚠️ Concerns |
 | Styling               | ⚠️ Concerns |
-| Loading Data          | ❌ Issues |
+| Loading Data          | ⚠️ Concerns |
 | Environment Variables | ✅ Good |
 | REST API Design       | ✅ Good |
 | Database              | ✅ Good |
@@ -24,7 +24,7 @@ The project is a monorepo (Turborepo + Bun workspaces) containing three packages
 | Auth                  | ✅ Good |
 | Testing               | ✅ Good |
 | Logging & Monitoring  | ✅ Good |
-| Error Handling        | ✅ Good |
+| Error Handling        | ⚠️ Concerns |
 | Security              | ✅ Good |
 | Forms                 | ❌ Issues |
 | Frontend Structure    | ⚠️ Concerns |
@@ -37,95 +37,90 @@ Status legend: ✅ Good | ⚠️ Concerns | ❌ Issues | N/A
 
 ### 1. Component Library
 
-**Status:** ⚠️ Concerns — library present but inconsistently applied
+**Status:** ⚠️ Concerns — Library is configured but inconsistently adopted
 
 **Findings:**
 
-`@base-ui/react` is the chosen headless component library, with `shadcn` as the CLI tooling used to scaffold wrapper components. Thin wrappers live in `apps/web/src/components/ui/` — `button.tsx` wraps `ButtonPrimitive`, `input.tsx` wraps `InputPrimitive`, `select.tsx` wraps `SelectPrimitive`, and so on. This is the right approach.
+`components.json` confirms shadcn/ui is set up using `@base-ui/react` as the primitive layer. Six UI wrapper components exist in `apps/web/src/components/ui/`: `button.tsx`, `input.tsx`, `textarea.tsx`, `card.tsx`, `select.tsx`, `label.tsx`. These components are used in `APITester.tsx`, but page and dashboard components overwhelmingly bypass them in favour of raw HTML elements.
 
-However, these wrappers are used in very few places. `APITester.tsx` imports from `@/components/ui/button`, `@/components/ui/input`, etc., but the bulk of the application — `Navbar.tsx`, `Sidebar.tsx`, `PortalLayout.tsx`, `DecisionForm.tsx`, `Pagination.tsx`, `SignUpPage.tsx`, `SetNewPasswordPage.tsx`, `GlobalLoginPage.tsx` — uses raw `<button>`, `<input>`, and `<textarea>` elements directly:
+Raw `<button>` elements appear across at least a dozen page files:
+- `apps/web/src/pages/director/DirectorDashboardPage.tsx` — 6 raw `<button>` elements
+- `apps/web/src/pages/admin/GlobalUsersSection.tsx` — raw `<button>` and raw `<select>`
+- `apps/web/src/pages/director/ApprovalQueue.tsx:84` — raw `<button className="border-border ...">` with hand-rolled Tailwind styles matching the design system tokens
+- `apps/web/src/components/Navbar.tsx` — 12 raw `<button>` and `<input>` elements
+- `apps/web/src/components/DecisionForm.tsx` — raw `<button>` and `<textarea>`
 
-```
-apps/web/src/components/Navbar.tsx:181:   <button
-apps/web/src/components/Navbar.tsx:202:   <button
-apps/web/src/components/Sidebar.tsx:216:  <button
-apps/web/src/pages/SignUpPage.tsx:162:    <button
-apps/web/src/pages/SetNewPasswordPage.tsx:133: <button
-```
-
-`FormField.tsx` also renders raw `<textarea>` and `<input>` (lines 36 and 43) instead of importing from `components/ui/textarea` and `components/ui/input`, which is self-contradictory.
+The UI component wrappers exist but are only used in the developer utility (`APITester.tsx`). Production pages hand-roll every interactive element.
 
 **Recommendations:**
 
-1. Replace all raw `<button>` elements throughout `Navbar.tsx`, `Sidebar.tsx`, `PortalLayout.tsx`, `Pagination.tsx`, and `DecisionForm.tsx` with the `Button` component from `@/components/ui/button`. This ensures consistent focus styles and accessibility semantics.
-2. Update `FormField.tsx` (lines 36 and 43) to use `<Input>` and `<Textarea>` from `components/ui/` rather than raw HTML elements.
-3. Audit remaining raw `<select>` tags (e.g., `ArticleEditorPage.tsx:EditorSidebar`) and replace with the `Select` wrapper.
+1. Replace raw `<button>` elements in page files with the `Button` component from `@/components/ui/button` to ensure consistent focus rings, disabled states, and hover behaviour.
+2. Use `Input` and `Textarea` from `@/components/ui/` in all forms rather than bare `<input>` and `<textarea>` tags.
+3. Replace the raw `<select>` in `GlobalUsersSection.tsx:113` with the `Select` UI component.
 
 ---
 
 ### 2. Styling
 
-**Status:** ⚠️ Concerns — arbitrary Tailwind values used frequently instead of theme tokens
+**Status:** ⚠️ Concerns — Tailwind used well overall, but inline styles and arbitrary values recur
 
 **Findings:**
 
-The project uses Tailwind CSS v4 as its sole styling mechanism — no global CSS classes with BEM, no CSS modules in production code (only a `styles/globals.css` for design tokens). One `!important` appears in `apps/web/src/index.css:31` for an animation override, which is reasonable.
+The project uses Tailwind CSS v4 with CSS variable-based design tokens (good). However, several issues appear:
 
-Inline `style={{}}` attributes appear in 14 locations. Most are one of two patterns:
+**Repeated inline `style` for font family.** The string `style={{ fontFamily: "Outfit, Inter, sans-serif" }}` appears in at least six component and page files:
+- `apps/web/src/components/PortalLayout.tsx:21,47,81`
+- `apps/web/src/pages/profile/PasswordCard.tsx:64`
+- `apps/web/src/components/AuthCard.tsx:14`
+- `apps/web/src/pages/UserProfilePage.tsx:42`
+- `apps/web/src/pages/profile/DangerZoneCard.tsx:6`
+- `apps/web/src/pages/profile/ProfileInfoCard.tsx:129`
 
-1. **Dynamic percentage widths** for bar charts (e.g., `HorizBar.tsx:15 style={{ width: \`${pct}%\` }}`, `Timeline.tsx:25 style={{ height: ... }}`). This is acceptable — Tailwind cannot handle runtime-computed percentages.
-2. **Font-family overrides** applied redundantly across multiple components (`AuthCard.tsx:14`, `PortalLayout.tsx:21`, `PortalLayout.tsx:47`, `PortalLayout.tsx:81`, `UserProfilePage.tsx:42`, `DangerZoneCard.tsx:6`, `ProfileInfoCard.tsx:129`, `PasswordCard.tsx:64`):
-   ```tsx
-   style={{ fontFamily: "Outfit, Inter, sans-serif" }}
-   ```
-   This is scattered across 8 files and should be centralised in the CSS base layer.
+This should be a Tailwind utility class or a CSS variable on `:root` in `globals.css`.
 
-Arbitrary pixel values for font sizes appear throughout: `text-[14px]`, `text-[13px]`, `text-[22px]`, `text-[26px]`, `text-[15px]`, `text-[12px]` in `AuthCard.tsx`, `FormField.tsx`, `Navbar.tsx`, and others. Tailwind ships `text-sm` (14px), `text-xs` (12px), `text-base` (16px), `text-xl`, `text-2xl` — these should be used instead of arbitrary pixel values.
+**Justified dynamic inline styles** (acceptable): `GlobalStatsDashboard.tsx:52`, `HorizBar.tsx:15`, and `Timeline.tsx:25` use `style={{ width/height: \`${pct}%\` }}` for data-driven bar widths — correct usage.
+
+**Arbitrary pixel values** are used extensively instead of Tailwind theme tokens:
+- `text-[16px]`, `text-[15px]`, `text-[14px]`, `text-[13px]`, `text-[12px]`, `text-[11px]`, `text-[26px]`, `text-[24px]` appear across many files. Tailwind 4 encourages using the design-system scale (`text-sm`, `text-base`, etc.) or extending the theme.
+
+One `!important` in `apps/web/src/index.css:31` overrides animation — acceptable for an animation reset utility.
 
 **Recommendations:**
 
-1. Move `fontFamily: "Outfit, Inter, sans-serif"` into `globals.css` as a base-layer rule (e.g., `body { font-family: Outfit, Inter, sans-serif; }`). Remove all 8 inline `style` overrides.
-2. Replace arbitrary font-size classes (`text-[14px]`, `text-[13px]`, `text-[12px]`, etc.) with Tailwind's named scale equivalents (`text-sm`, `text-xs`, `text-base`, etc.) or define a custom scale in the Tailwind config.
-3. The dynamic percentage `style={{ width }}` usages in chart components are justified; leave them as-is.
+1. Define a `font-display` Tailwind utility in `globals.css` (e.g., `@utility font-display { font-family: Outfit, Inter, sans-serif; }`) and replace all six inline `style={{ fontFamily }}` occurrences.
+2. Map the recurring pixel sizes to Tailwind theme tokens in the Tailwind v4 config rather than using arbitrary `[14px]` values — this makes type scale changes a one-line update.
+3. Audit remaining `style={}` attributes; only data-driven dynamic values (percentages, pixels computed at runtime) are justified.
 
 ---
 
 ### 3. Loading Data
 
-**Status:** ❌ Issues — no data fetching library; all fetching done via raw `fetch()` inside components
+**Status:** ⚠️ Concerns — TanStack Query present but inconsistently adopted
 
 **Findings:**
 
-Neither TanStack Query nor SWR appears in any `package.json`. Every page and component manages its own data fetching via `useEffect` + `useState` + raw `fetch()`. Representative examples:
+TanStack Query v5 is installed and correctly wired in `apps/web/src/frontend.tsx` via `QueryClientProvider`. It is used properly in:
+- `apps/web/src/hooks/useNewspaper.ts` — `queryKey: ["newspaper", newspaperName]`
+- `apps/web/src/hooks/useCategory.ts` — `queryKey: ["category", newspaperId, categorySlug]`
+- `apps/web/src/components/Navbar.tsx:62` — `queryKey: ["categories", newspaper?.id]`
+- `apps/web/src/pages/dashboard/EditorialQueueSection.tsx` — `useQuery` + `useMutation` with proper cache invalidation
 
-```ts
-// apps/web/src/pages/CategoryPage.tsx:46
-useEffect(() => {
-  fetch(`${API_BASE_URL}/api/...`)
-    .then(res => { ... })
-    .then(data => { setArticles(data.articles); })
-}, [slug]);
+However, several pages bypass TanStack Query entirely and call `fetch` directly inside `useEffect`:
 
-// apps/web/src/pages/DashboardPage.tsx:37
-fetch(`${API_BASE_URL}/api/users/me`, ...)
-  .then(res => res.json())
-  .then(data => setUserRoles(data.roles ?? []))
-```
+- `apps/web/src/pages/ArticleEditorPage.tsx:241,248,260` — three raw `fetch` calls in `useEffect` hooks
+- `apps/web/src/pages/director/ApprovalQueue.tsx:20–34` — fetch inside a `useCallback` + `useEffect`
+- `apps/web/src/pages/director/PublicationQueue.tsx:18,38` — two direct fetch calls
+- `apps/web/src/pages/AuthorPage.tsx:48–52` — direct fetch + `.then()` chaining
+- `apps/web/src/pages/UserProfilePage.tsx:27–31` — direct fetch + `.then()` chaining
+- `apps/web/src/components/StatisticsSection.tsx:37–41` — direct fetch + `.then()` chaining
 
-This pattern is repeated across `UserProfilePage.tsx`, `AuthorPage.tsx`, `DirectorDashboardPage.tsx`, `Navbar.tsx`, `StatisticsSection.tsx`, `PublicationQueue.tsx`, `ReviewQueueSection.tsx`, and `MyArticlesSection.tsx`. Each component independently tracks `loading`, `error`, and data state — resulting in 7–18 `useState` calls per file. There is no shared caching, no cache invalidation after mutations, and no deduplication of identical requests.
+These components miss out on caching, background refetch, loading/error state management, and deduplication that TanStack Query provides.
 
 **Recommendations:**
 
-1. Install TanStack Query (`@tanstack/react-query`) and wrap the app in a `QueryClientProvider`. This single change removes duplicated loading/error state from every component.
-2. Replace each `useEffect + fetch + setState` pattern with `useQuery`. Example:
-   ```ts
-   const { data, isLoading, error } = useQuery({
-     queryKey: ['articles', newspaperId, slug],
-     queryFn: () => fetch(`${API_BASE_URL}/api/.../articles`).then(r => r.json()),
-   });
-   ```
-3. Use `useMutation` for write operations (submit article, post comment, etc.) and call `queryClient.invalidateQueries` on success to keep the UI in sync.
-4. Use stable array query keys (e.g., `['articles', newspaperId, { page, status }]`) so cache entries are correctly scoped.
+1. Migrate `director/ApprovalQueue.tsx` and `director/PublicationQueue.tsx` to `useQuery` — these are read-heavy components where cache and background refresh would be immediately beneficial.
+2. Move the three `useEffect` fetch calls in `ArticleEditorPage.tsx` to `useQuery` hooks with appropriate keys like `["categories", newspaperId]` and `["article", articleId]`.
+3. Move the article data fetch in `AuthorPage.tsx` and `UserProfilePage.tsx` to `useQuery` hooks.
 
 ---
 
@@ -135,21 +130,15 @@ This pattern is repeated across `UserProfilePage.tsx`, `AuthorPage.tsx`, `Direct
 
 **Findings:**
 
-`.env` is listed in `.gitignore` (confirmed). An `.env.example` file is present at the repo root with all required variables and placeholder values — `POSTGRES_PASSWORD=newspaper`, `JWT_SECRET=newspaper`, `SMTP_USER=your-mailtrap-username`, etc. All server-side configuration is accessed through `process.env.*` or `Bun.env.*`:
+`.gitignore` explicitly lists `.env`, `.env.development.local`, `.env.test.local`, `.env.production.local`, and `.env.local`. An `.env.example` is committed at the repo root with placeholder values for all required variables (database, JWT secret, SMTP, Redis, MinIO, test credentials).
 
-```ts
-// apps/server/src/server.ts:21
-const PORT = Number(process.env.PORT) || 3000;
-// apps/server/src/utils/email.ts:5
-host: process.env.SMTP_HOST,
-```
+The only hardcoded URL in source is in a seed script — `apps/server/src/db/seeds/seedE2eUsers.ts:61` sets `profilePictureUrl: "http://localhost:9000/pb138-images/profiles/e2e-placeholder.webp"` — acceptable in a seed file. External image URLs in `seedArticles.ts` point to `loremflickr.com` for test data, also acceptable.
 
-The only `localhost` references in source code are in seed scripts (`seedE2eUsers.ts:61`) and a dev-only fallback in `server.ts` (`process.env.FRONTEND_URL ?? "http://localhost:5173"`), both appropriate. No hardcoded database connection strings or API secrets were found in non-seed, non-test source files.
+All production configuration is accessed via `process.env.*`. The server validates critical environment variables at startup (`DATABASE_URL`, `JWT_SECRET`) and exits with a structured log message if missing.
 
 **Recommendations:**
 
-1. No immediate action required.
-2. Minor: the `tests/.env.example` duplicates some variables from the root `.env.example` with different placeholder values (e.g., `TEST_EMAIL=testuser@example.com` vs the root file's `TEST_EMAIL=emma.bednarikova@email.cz`). Consider consolidating or clearly commenting which values the test runner expects.
+1. The `tests/.env.example` duplicates some keys from the root `.env.example` with different placeholder names — consolidate into one `.env.example` at the repo root with a `TEST_*` section to reduce confusion.
 
 ---
 
@@ -159,21 +148,25 @@ The only `localhost` references in source code are in seed scripts (`seedE2eUser
 
 **Findings:**
 
-URLs follow resource-oriented conventions throughout: `/api/newspapers/:id/articles`, `/api/newspapers/:id/categories/:id`, `/api/newspapers/:id/users`, etc. No verb-in-path anti-patterns were detected by grep. HTTP verbs are correctly assigned:
+Routes in `apps/server/src/routes/` follow REST conventions correctly:
 
-- POST for creation, with `set.status = 201` on creates (`articles.ts:74`, `categories.ts:24`, `likes.ts:16`, `auth.ts:21`, `comments.ts:22`)
-- DELETE with `set.status = 204` on deletes (`articles.ts:97`, `articles.ts:131`, `categories.ts:45`, `comments.ts:36`)
-- PATCH for partial updates: `PATCH /api/newspapers/:id` (color only), `PATCH .../articles/:id` (partial article fields), `PATCH .../articles/:id/subscriber-only` (single flag toggle) — all correct partial-update semantics
-- PUT for full-entity replacements: `PUT /api/users/me` (full profile), `PUT /api/admin/config` (full config object) — idempotent and appropriate
+- Resource-oriented plural URLs: `/api/newspapers`, `/api/newspapers/:id/articles`, `/api/newspapers/:id/categories`
+- Correct HTTP verbs: GET for reads, POST for create, PATCH for partial update, DELETE for delete
+- Status codes: 201 on article/image creation (`set.status = 201`), 204 on delete (`set.status = 204`), 401/403 in middleware, typed HttpError hierarchy (400, 401, 403, 404, 409, 422)
+- Input validation via TypeBox (`t.Object`, `t.String`, `t.Optional`) on all route bodies and query params — e.g., `createArticleBody`, `updateArticleBody`, `assignEditorBody`
 
-Request/response validation uses Elysia's built-in TypeBox wrapper (`t.Object`, `t.String`, `t.Optional`, etc.) in `apps/server/src/schemas/`. All route handlers reference a `body:`, `params:`, and `query:` schema. Error responses map to a well-defined `HttpError` hierarchy: `BadRequestError` → 400, `UnauthorizedError` → 401, `ForbiddenError` → 403, `NotFoundError` → 404, `ConflictError` → 409, `UnprocessableError` → 422.
+Action sub-resources (`/submit`, `/review`, `/approve`, `/publish`, `/schedule`, `/assign-editor`) are POST endpoints representing workflow state transitions. This is an accepted pattern for state machines where PATCH would not be semantically clear.
 
-Query parameters are used correctly for filtering and pagination (e.g., `articlesListQuery`, `articlesSearchQuery`, `articlesMineQuery`).
+PATCH is correctly used for partial updates: `/api/newspapers/:id` and `/api/newspapers/:id/articles/:id/subscriber-only` accept partial bodies.
+
+No verb-in-path anti-patterns found. Query parameters are used for filtering, sorting, and pagination only.
+
+One schema note: `apps/server/src/db/schema.ts:49` — `global_roles` has `unique("global_roles_role_unique").on(table.role)`, which means only one user can hold each global role (e.g., only one SYSTEM_ADMINISTRATOR). This is likely intentional given the domain model, but is a hard constraint worth documenting.
 
 **Recommendations:**
 
-1. The `POST .../articles/:id/submit`, `POST .../articles/:id/review`, `POST .../articles/:id/approve`, `POST .../articles/:id/publish` action endpoints use POST on sub-resources (e.g., `/submit`, `/review`). This is a reasonable design for state-machine transitions and is widely accepted. No change required, but worth noting in documentation that these are intentional action endpoints, not resource creates.
-2. Consider returning `201` from `POST .../articles/:id/submit` (currently returns 200 implicitly) to clearly signal a new resource state was created.
+1. Document the `unique` constraint on `global_roles.role` in a code comment or README — it is non-obvious that the system enforces singleton global roles and could surprise future maintainers.
+2. Consider returning 201 for the `/submit` and `/review` endpoints if they create new review records — currently they return 200, which is also acceptable since they primarily update article state.
 
 ---
 
@@ -183,42 +176,47 @@ Query parameters are used correctly for filtering and pagination (e.g., `article
 
 **Findings:**
 
-The schema in `apps/server/src/db/schema.ts` is well-structured. All primary keys use UUIDs (`uuid().primaryKey().defaultRandom()`), foreign keys are declared consistently, and join tables (`userRoles`, `globalRoles`, `newspaperAuthors`, `articleCategory`) use composite primary keys. Unique indexes are explicit (`uniqueIndex("email_newspaper_idx")`, `unique("newspaper_slug_idx")`).
+The schema in `apps/server/src/db/schema.ts` is well-structured:
+- All tables use UUID primary keys consistently
+- Foreign keys declared on all relationships
+- No `bytea`/`blob` columns — images stored as `text` URLs pointing to MinIO (correct)
+- Unique constraints where needed: `email_newspaper_idx`, `newspaper_slug_idx`, `article_category_slug_newspaper_unique`
+- Correct use of `ON DELETE CASCADE` and `ON DELETE SET NULL` depending on relationship semantics
 
-Images are stored in MinIO (S3), with only URL strings persisted in the database — no `bytea`/`blob` columns found. Six numbered SQL migration files exist in `apps/server/drizzle/` (`0001_add_article_views.sql` through `0006_add_subscriptions_rls.sql`), all versioned and tracked in `drizzle/meta/_journal.json`. RLS policies live in `0002_enable_rls.sql` and `0006_add_subscriptions_rls.sql`, hand-written as expected since Drizzle cannot express them.
+Six SQL migration files exist (`0001` through `0006`) in `apps/server/drizzle/`, covering schema evolution, RLS enablement, and policy additions. Migrations are versioned with a `meta/_journal.json` and follow the Drizzle convention for both auto-generated and hand-written migrations (RLS, role grant files).
 
-Raw SQL is limited to three `db.execute(sql\`SELECT set_config(...)\`)` calls in `apps/server/src/db/rls.ts` (lines 17–19), which are necessary for setting session GUCs before each transaction. All other queries go through Drizzle's query builder.
+RLS policies live in `apps/server/drizzle/0002_enable_rls.sql` and `0006_add_subscriptions_rls.sql`, enforcing multi-tenant isolation at the database level via `app.user_id`, `app.newspaper_id`, and `app.roles` session GUCs set by `apps/server/src/db/rls.ts`.
+
+All queries use Drizzle ORM. No raw SQL string interpolation found in service code.
 
 **Recommendations:**
 
-1. The `globalRoles` table has `unique("global_roles_role_unique").on(table.role)` which enforces only one person per global role (e.g., only one SYSTEM_ADMINISTRATOR globally). Verify this is an intentional business constraint and document it — it will cause confusing `ConflictError`s if users attempt to assign a second person to a global role.
-2. `apps/server/src/db/migrations/addGlobalEmailUniqueIndex.ts` is a TypeScript migration file sitting outside the `drizzle/` folder and outside the `_journal.json` tracking. Verify it has been applied and is not being silently skipped.
+1. The `articles` table has no index on `(newspaper_id, state)` — the most common query pattern (listing articles for a newspaper filtered by state) will do a full scan as data grows. Add a composite index.
+2. `articleViews` will grow large quickly; consider a partial index on `(article_id)` or periodic archival strategy.
 
 ---
 
-### 7. BE Design Patterns
+### 7. Backend Design Patterns
 
 **Status:** ✅ Good
 
 **Findings:**
 
-The backend uses a clear two-layer pattern: `routes/` (thin HTTP handlers) and `services/` (all business logic and DB queries). There are no `*.controller.ts` or `*.repository.ts` files — the `services/` layer directly calls Drizzle, which is appropriate for this project scale.
+The backend follows a clear three-layer pattern:
 
-Route files import only from `schemas/` and `services/`, never from `db/schema` directly:
-```ts
-// apps/server/src/routes/articles.ts
-import * as articleService from "../services/articles";
-import { createArticleBody, updateArticleBody, ... } from "../schemas/articles";
-```
+- **Routes** (`apps/server/src/routes/*.ts`): thin HTTP adapters. Each handler extracts params/body, calls a service function via `withDb`, and sets the status code. No business logic or DB access found in route files.
+- **Services** (`apps/server/src/services/*.ts`): all business logic, access control checks, error throwing, and DB queries. Services accept a `Tx` (RLS-wrapped transaction client) from the route context.
+- **Middleware** (`apps/server/src/middleware/auth.ts`): JWT verification, user/roles derivation, RLS context binding.
+- **Utils** (`apps/server/src/utils/`): logger, audit, storage, Redis helpers — pure utilities with no route coupling.
 
-Services contain all DB calls. `articles.ts` (1,057 lines) and `admin.ts` (824 lines) are large, but this is justified by the complexity of the article state machine and the breadth of admin operations. Multi-step operations use Drizzle transactions (`withRls` wraps every call, which establishes the transaction and sets session GUCs for RLS before any query runs).
+The `withDb` / `withRls` pattern elegantly ensures every service call runs inside an RLS context. The `errors/index.ts` hierarchy (`BadRequestError`, `ForbiddenError`, etc.) produces consistent HTTP responses via the global `onError` handler.
 
-Authorization is correctly placed in services (not routes): `ForbiddenError` is thrown in service methods after checking `roles.includes("NEWSPAPER_MANAGER")` etc., and the `requireRole()` middleware in `auth.ts` provides an additional route-level guard.
+`articles.ts` at 1057 lines is the largest service, but the size is warranted — it handles a complex multi-step state machine (DRAFT → SUBMITTED → IN_REVIEW → APPROVED → PUBLISHED) with role checks at each transition.
 
 **Recommendations:**
 
-1. `articles.ts` at 1,057 lines is at the upper boundary for a single service file. Consider extracting article image operations (`uploadArticleImage`, `deleteArticleImage`) into a separate `articleImages.ts` service, and the state-machine transitions (`submitArticle`, `reviewArticle`, `approveArticle`, `scheduleArticle`, `publishArticle`) into an `articleWorkflow.ts` service. This is a quality-of-life refactor, not urgent.
-2. The `auth.ts` service (359 lines) handles registration, login, email verification, and password reset — four distinct concerns. Splitting into `auth.ts` (login/logout) and `authVerification.ts` (email/password flows) would improve navigability.
+1. `admin.ts` at 824 lines may benefit from splitting into `admin/roles.ts`, `admin/users.ts`, and `admin/config.ts` sub-services for readability.
+2. Consider extracting the article state-machine transition rules into a dedicated `articleStateMachine.ts` utility to make allowed transitions explicit and testable in isolation.
 
 ---
 
@@ -228,25 +226,22 @@ Authorization is correctly placed in services (not routes): `ForbiddenError` is 
 
 **Findings:**
 
-The project uses `@elysiajs/jwt` and `@elysiajs/bearer` for token handling — not raw `jsonwebtoken`. Password hashing uses `Bun.password.hash()` and `Bun.password.verify()` (argon2id, built into Bun):
+Authentication uses `@elysiajs/jwt` (not raw `jsonwebtoken`) and `Bun.password` (argon2) for hashing — no hand-rolled crypto found. The JWT contains a `jti` claim checked against a Redis blocklist on every request, enabling proper server-side logout (`apps/server/src/middleware/auth.ts:25`).
 
-```ts
-// apps/server/src/services/auth.ts:71
-const passwordHash = await Bun.password.hash(password);
-// apps/server/src/services/auth.ts:125
-const isPasswordValid = await Bun.password.verify(password, user.passwordHash);
-```
+The `authMiddleware` derives `{ user, roles, withDb }` and injects them into every route handler. `requireAuth` and `requireRole(role)` middlewares reject unauthorised/unpermitted requests with 401/403 before the handler runs.
 
-JWT tokens include a `jti` claim, and a Redis blocklist (`isJtiBlocklisted`) is checked on every request, enabling proper logout/revocation (`auth.ts middleware:27`).
+Authorization is enforced at two levels:
+1. **Middleware**: `requireRole` checks the roles array before the handler executes.
+2. **RLS policies**: PostgreSQL enforces row-level visibility and write permissions via session GUCs set per transaction.
 
-Authorization is multi-layered: route-level guards via `requireRole()`, service-level role checks (`roles.includes("SYSTEM_ADMINISTRATOR")`), ownership checks (e.g., `comments.ts:92` verifies `comment.userId === user.id || roles.includes("EDITOR")`), and PostgreSQL RLS policies enforced at the database level as a final backstop.
+Service-level checks additionally verify ownership (e.g., `apps/server/src/services/likes.ts:21` cross-newspaper forbidden check, article state-machine checks that the requesting user is the assigned editor/manager).
 
-Email verification is required before login. Password-reset tokens use a short expiry defined in `apps/server/src/utils/jwt.ts`.
+Password reset and email verification use short-lived JWT tokens.
 
 **Recommendations:**
 
-1. No critical issues. The layered authorization (middleware → service → RLS) is strong.
-2. Minor: `process.env.JWT_SECRET!` uses a non-null assertion. Add a startup guard (similar to the existing `DATABASE_URL` check in `server.ts`) to fail fast if `JWT_SECRET` is missing or too short.
+1. Document the token lifetime and blocklist TTL relationship (`JWT_EXPIRATION.session = "2h"` in `utils/jwt.ts`) to ensure Redis blocklist entries outlive the tokens they protect.
+2. Ensure email verification token expiry is shorter than the session token expiry so old verification links cannot be replayed.
 
 ---
 
@@ -256,28 +251,24 @@ Email verification is required before login. Password-reset tokens use a short e
 
 **Findings:**
 
-29 test files are present across two test suites:
+The project has a two-tier test strategy:
 
-**Backend unit/integration tests** (`apps/server/tests/`, run with `bun test`):
-- `tests/schemas/` — TypeBox schema validation for all input types (auth, articles, categories, users, subscriptions, comments, admin)
-- `tests/utils/` — unit tests for logger, email, storage, and audit utilities
-- `tests/rls/policies.test.ts` — integration tests for PostgreSQL RLS policies, verifying that each role sees the correct rows
-- `tests/seeds/e2e-users.test.ts` — verifies the e2e seed script produces the expected database state
+**Unit/integration tests** (13 files, `bun test`):
+- `apps/server/tests/rls/policies.test.ts`: comprehensive RLS visibility tests for all role combinations (visitor, author, editor, manager, admin, cross-newspaper). Uses a real DB connection with test fixtures — not mocked.
+- `apps/server/tests/schemas/`: validates TypeBox schemas for all major request bodies (auth, articles, categories, comments, users, admin, subscriptions).
+- `apps/server/tests/utils/`: covers audit logging, email, logger, and storage utilities.
 
-**End-to-end tests** (`tests/e2e/`, run with Playwright):
-- Covers visitor flows (`homepage.spec.ts`, `registration.spec.ts`, `search.spec.ts`)
-- Auth flows (`login.spec.ts`)
-- Author workflows (`create-article.spec.ts`, `edit-article.spec.ts`, `dashboard.spec.ts`)
-- Registered user flows (`article-view.spec.ts`, `comments.spec.ts`, `likes.spec.ts`, `profile.spec.ts`)
-- Full article approval and rejection workflows (`article-approval-workflow.spec.ts`, `article-rejection-workflow.spec.ts`)
-- Admin role management and subscription workflow
+**End-to-end tests** (16 Playwright spec files):
+- Full workflow coverage: article approval workflow, rejection workflow, subscription workflow
+- Role-specific flows: visitor (homepage, registration, search), author (create, edit, dashboard), registered user (article view, comments, likes, profile)
+- Admin flows: role management
 
-No skipped or `.todo()` tests were found.
+No skipped or todo-marked tests found. `bun test` is configured in `apps/server/package.json` with `--env-file`.
 
 **Recommendations:**
 
-1. No frontend component unit tests exist. Consider adding at least smoke tests for key components (`Navbar`, `ArticleCard`, `Pagination`) using `bun test` with a DOM library (e.g., `@testing-library/react`).
-2. The RLS policy tests (`policies.test.ts`) are particularly strong — they test cross-newspaper isolation directly at the database layer. This approach is worth highlighting.
+1. The service layer (`apps/server/src/services/*.ts`) is not directly unit-tested — only RLS policies and schema validators are. Adding targeted service tests for the article state-machine transitions (e.g., "author cannot approve their own article") would catch regressions that RLS tests do not cover.
+2. The e2e specs for article workflows share significant setup — consider a shared Playwright fixture to reduce duplication.
 
 ---
 
@@ -287,61 +278,49 @@ No skipped or `.todo()` tests were found.
 
 **Findings:**
 
-A hand-rolled structured JSON logger lives in `apps/server/src/utils/logger.ts`. It:
-- Emits NDJSON lines (`{ level, timestamp, message, ...meta }`) to stdout
-- Routes `error`/`warn` to `console.error` and `info`/`debug` to `console.log`
-- Respects a `LOG_LEVEL` environment variable (defaults to `info` in production, `debug` elsewhere)
-- Optionally mirrors output to a file via `LOG_FILE` env var with silent failure on write errors
+A custom structured logger is implemented at `apps/server/src/utils/logger.ts`. It:
+- Emits NDJSON (`JSON.stringify({ level, timestamp, message, ...meta })`) — machine-parseable
+- Is level-filtered via `LOG_LEVEL` env var (defaults to `debug` in dev, `info` in production)
+- Writes errors/warnings to stderr, info/debug to stdout
+- Optionally mirrors all output to a file via `LOG_FILE` env var
 
-The logger is used consistently across services (`logger.warn`, `logger.error`, `logger.info`), including contextual metadata: `{ userId, roles, articleId }` etc.
+The server uses `logger.info/error/warn/debug` throughout services. The global `onError` handler logs unhandled errors with method, URL, status, and stack trace.
 
-The 48 `console.log` calls found are almost entirely in seed scripts (`seedUsers.ts`, `seedLikes.ts`, `seedArticles.ts`), the build script (`build.ts`), and the startup line in `apps/web/src/index.ts:42`. None appear in production route or service code.
+The logger is covered by `apps/server/tests/utils/logger.test.ts`.
 
-No sensitive values (passwords, tokens) are found in log statements.
+48 `console.log` calls exist in non-test source, but the majority are in seed scripts and the build script where CLI output is appropriate. Only `apps/web/src/index.ts:42` uses `console.log` in a runtime server path.
+
+No sensitive data (passwords, tokens, secrets) found in log calls.
 
 **Recommendations:**
 
-1. The custom logger is functional, but consider replacing it with `pino` in a future iteration. Pino provides async log transport (avoiding I/O on the request path), child loggers with bound context, and first-class integration with log aggregators. For a student project, the current implementation is entirely acceptable.
-2. The web frontend (`apps/web/src/index.ts:42`) emits a startup `console.log` with an emoji. This is fine in development but could be replaced with `logger` for consistency if the frontend server ever runs in a monitored environment.
+1. Replace `apps/web/src/index.ts:42` `console.log` with the structured logger if the web server ever needs production log aggregation.
+2. Consider adding Elysia request/response logging hooks to capture HTTP method, path, status, and duration for each request.
 
 ---
 
 ### 11. Error Handling
 
-**Status:** ✅ Good
+**Status:** ⚠️ Concerns — Backend is solid; frontend has gaps in some pages
 
 **Findings:**
 
-The backend has a typed `HttpError` hierarchy defined in `apps/server/src/errors/index.ts`:
-- `BadRequestError` → 400
-- `UnauthorizedError` → 401
-- `ForbiddenError` → 403
-- `NotFoundError` → 404
-- `ConflictError` → 409
-- `UnprocessableError` → 422
+**Backend** is well-handled:
+- `apps/server/src/errors/index.ts` defines `BadRequestError`, `UnauthorizedError`, `ForbiddenError`, `NotFoundError`, `ConflictError`, `UnprocessableError` — each maps to the correct HTTP status.
+- The global `onError` handler in `apps/server/src/server.ts:93–115` catches all unhandled errors, logs them with context, and returns a 500 with a safe message.
 
-A global `.onError()` handler in `server.ts:89` catches all `HttpError` instances and returns the appropriate status code and JSON body. Unhandled errors fall through to a generic 500 handler with structured logging.
+**Frontend** has some weak spots:
 
-Frontend catch blocks are generally meaningful — they set user-visible error state rather than swallowing silently. However, one exception exists in `GlobalUsersSection.tsx`:
-
-```ts
-// apps/web/src/pages/admin/GlobalUsersSection.tsx:32
-} catch {
-  /* empty */
-} finally {
-  setLoading(false);
-}
-```
-
-This silently discards fetch errors on the initial data load, leaving the user staring at an empty list with no indication of failure.
-
-All non-trivial forms show error messages to the user. The `alert()` calls in `GlobalUsersSection.tsx:62` and `:79` are functional but not production-quality.
+1. `apps/web/src/pages/director/ApprovalQueue.tsx:29` — the `load()` function has an empty catch block: `catch { /* empty */ }`. If the fetch fails, the loading spinner resolves with an empty list and no user feedback.
+2. `apps/web/src/pages/director/PublicationQueue.tsx` — similar missing error state.
+3. No global React `ErrorBoundary` wrapping the app (only the Lexical editor has its own error boundary). An unhandled render error will crash the entire UI.
+4. Several components use `alert()` for mutation errors (`EditorialQueueSection.tsx:73,80,106`) — not ideal UX but at least errors are not silently swallowed.
 
 **Recommendations:**
 
-1. Replace the `/* empty */` catch block in `GlobalUsersSection.tsx:32` with at minimum a `setError(...)` call so users see a failure state.
-2. Replace `alert("Failed to create global user")` (lines 62, 79) with inline error state that renders in the component, consistent with how other components handle errors.
-3. Consider adding a React `ErrorBoundary` at the route level to catch unexpected rendering errors and show a recovery UI rather than a blank page.
+1. Replace the empty catch in `ApprovalQueue.tsx:29` with a visible error state rendered to the user.
+2. Add a root-level `ErrorBoundary` component in `apps/web/src/frontend.tsx` wrapping the router to prevent full-page crashes on unexpected render errors.
+3. Replace `alert()` calls in `EditorialQueueSection.tsx` with inline error messages or toast notifications.
 
 ---
 
@@ -351,121 +330,73 @@ All non-trivial forms show error messages to the user. The `alert()` calls in `G
 
 **Findings:**
 
-CORS is configured with a specific origin from `process.env.FRONTEND_URL` — no wildcard `*`:
-```ts
-// apps/server/src/server.ts:31
-cors({
-  origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-})
-```
-
-No hardcoded secrets or API keys were found in source. No raw SQL string interpolation patterns (`sql\`...${userInput}\``) were detected outside of the safe parameterised `set_config` calls. Database queries all go through Drizzle's query builder with parameterised values.
-
-PostgreSQL RLS policies (`0002_enable_rls.sql`, `0006_add_subscriptions_rls.sql`) provide defence-in-depth: even if the application layer has a bug in role checking, the database refuses cross-newspaper reads/writes for `app_user`.
-
-`.gitignore` covers `.env`, `.env.local`, `.env.*.local`. No secrets were found committed in the checked files.
-
-Image uploads enforce content-type and size limits before passing to MinIO:
-```ts
-// apps/server/src/services/articles.ts:664
-if (!["image/jpeg", "image/png"].includes(blob.type)) { throw ... }
-if (blob.size > 10 * 1024 * 1024) { throw ... }
-```
+- **CORS**: explicitly configured in `apps/server/src/server.ts:36–41` using `process.env.FRONTEND_URL` as the allowed origin. No wildcard `*` found.
+- **Secrets in source**: none found. No API keys, tokens, or passwords hardcoded.
+- **SQL injection**: all queries use Drizzle ORM's parameterised query builder. No raw SQL string interpolation found outside migration files.
+- **`.gitignore`**: covers `.env` and all variant files.
+- **Multi-tenant isolation**: PostgreSQL RLS policies enforce that users can only read/write data within their newspaper context.
+- **Token revocation**: logout blocklists the JWT `jti` in Redis, preventing replay of revoked tokens.
+- **Password hashing**: `Bun.password` (argon2) — appropriate modern algorithm.
 
 **Recommendations:**
 
-1. The `JWT_SECRET` in `.env.example` is the literal string `"newspaper"`. Add a comment explicitly warning that this must be replaced with a long random secret in any non-local environment, and consider adding a startup check that rejects secrets shorter than 32 characters.
-2. The image content-type check reads `blob.type`, which is the MIME type from the HTTP request — this is client-supplied and can be spoofed. For stronger validation, consider using `sharp` (already a dependency) to attempt decoding the image before storing it.
+1. Verify that the `@elysiajs/openapi` plugin's schema endpoint (`/api/openapi`) is disabled or protected in production builds so internal API structure is not publicly browsable.
+2. Consider adding rate limiting on auth endpoints (`/register`, `/login`, `/forgot-password`) to mitigate brute-force attacks.
 
 ---
 
 ### 13. Forms
 
-**Status:** ❌ Issues — no form library; all forms are hand-rolled with many `useState` calls and manual validation
+**Status:** ❌ Issues — No form library; all forms are hand-rolled with useState
 
 **Findings:**
 
-No form library (React Hook Form, TanStack Form, Formik) is present in any `package.json`. Zod is listed in the root `package.json` as a version override but is not imported in any frontend component.
+No form library (`react-hook-form`, `@tanstack/react-form`, `formik`) is present in `apps/web/package.json`. Zod is present as a root workspace override but is only used server-side; the frontend does not use Zod for form validation.
 
-Every form in the application follows the same anti-pattern: multiple `useState` calls for each field plus a parallel set of loading/error states, manual `handleSubmit`, and inline `if`-based validation. The top offenders by `useState` count:
+The **form-as-useState** anti-pattern is pervasive:
 
-| File | useState count |
-|---|---|
-| `ArticleEditorPage.tsx` | 18 |
-| `ProfileInfoCard.tsx` | 12 |
-| `EditorialQueueSection.tsx` | 11 |
-| `SignUpPage.tsx` | 10 |
-| `PasswordCard.tsx` | 7 |
+- `apps/web/src/pages/SignUpPage.tsx:13–20` — five field states (`fullName`, `username`, `email`, `password`, `confirmPassword`) plus `error`, `fieldErrors`, `loading`, `success`, with a manual `handleSubmit` function performing ad-hoc validation by parsing HTTP status codes.
+- `apps/web/src/pages/ArticleEditorPage.tsx:216–234` — five form-field states (`title`, `perex`, `content`, `categoryId`, `keywords`) plus separate loading, error, and status states, with five direct `fetch` calls for different save operations.
+- `apps/web/src/pages/profile/ProfileInfoCard.tsx` — 12 `useState` calls for a profile edit form.
+- `apps/web/src/pages/profile/PasswordCard.tsx` — 7 `useState` calls for a two-field password change form.
+- `apps/web/src/pages/dashboard/CategoriesSection.tsx` — 8 `useState` calls.
 
-`ArticleEditorPage.tsx` is the most severe case. Its 18 `useState` declarations (lines 216–234) span form fields (`title`, `perex`, `content`, `categoryId`, `keywords`), image state, loading flags (`saving`, `submitting`, `deleting`, `uploadingImage`), and error state — all in a single component.
-
-Manual validation examples:
-```ts
-// apps/web/src/pages/SetNewPasswordPage.tsx:25
-setError("Passwords do not match.");
-// apps/web/src/pages/profile/PasswordCard.tsx:23
-setError("Password must be at least 8 characters.");
-```
-
-The same length/match rules that are validated on the backend (TypeBox schemas) are re-implemented by hand on the frontend with no shared schema.
+None of these forms use schema validation — validation logic is absent or embedded in the submit handler as manual if-checks.
 
 **Recommendations:**
 
-1. Adopt **React Hook Form** (`react-hook-form`) as the form library and **Zod** (already present) as the validation schema library with `@hookform/resolvers/zod`. This eliminates the `useState`-per-field pattern.
-2. For `SignUpPage.tsx`, `LoginPage.tsx`, `PasswordCard.tsx`, and `SetNewPasswordPage.tsx`, the form schema can be derived directly from the TypeBox validators already defined in `@pb138/server`'s schemas (or from a shared Zod schema in `packages/shared`). This eliminates duplicated validation logic.
-3. Replace `setError("Passwords do not match")` and similar manual checks with Zod's `.refine()`:
-   ```ts
-   z.object({ password: z.string().min(8), confirm: z.string() })
-    .refine(d => d.password === d.confirm, { message: "Passwords do not match", path: ["confirm"] });
-   ```
-4. The `alert()` calls for form submission errors (`GlobalUsersSection.tsx`) should also be replaced as part of this effort.
+1. Install `react-hook-form` and `@hookform/resolvers` in `apps/web`. Add `zod` as a direct frontend dependency. Replace the `SignUpPage` form with a `useForm` + `z.object` schema — this alone eliminates 8 `useState` calls and provides declarative field-level error messages.
+2. Migrate the article editor form fields in `ArticleEditorPage.tsx` to a `useForm` instance to centralise field state and add validation.
+3. Define Zod schemas for each form (registration, login, password change, article create/edit) and consider sharing validation logic with the backend via `packages/shared`.
+4. Replace the `PasswordCard` (7 `useState` calls for two fields) with a form library instance as a minimal starting example.
 
 ---
 
 ### 14. Frontend Structure
 
-**Status:** ⚠️ Concerns — two god components exceed 400 lines; all data fetching lives inside component bodies
+**Status:** ⚠️ Concerns — Two god components; limited custom hook extraction
 
 **Findings:**
 
-**Large page files:**
+The majority of page files are reasonably sized (under 280 lines). However, two files exceed the concern threshold:
 
-| File | Lines |
-|---|---|
-| `ArticleEditorPage.tsx` | 561 |
-| `ArticlePage.tsx` | 441 |
-| `EditorialQueueSection.tsx` | 298 |
-| `AuthorPage.tsx` | 248 |
+**`apps/web/src/pages/ArticleEditorPage.tsx` — 561 lines, 18 `useState` calls, 5 direct `fetch` calls inside `useEffect`.**
+This is a god component combining: category fetching, author profile fetching, article loading (edit mode), article save, article submit, article delete, image upload, and image delete — all in a single component body alongside dense rendering JSX.
 
-`ArticleEditorPage.tsx` (561 lines) mixes: article data loading (3 separate `useEffect`/`fetch` calls), form state (18 `useState`), Lexical editor integration, image upload/delete logic, article submit/delete/save handlers, and the `EditorSidebar` sub-component — all in one file. This is a textbook god component.
+**`apps/web/src/pages/ArticlePage.tsx` — 441 lines, 10 `useState` calls.**
+This page handles article rendering, comment submission, likes, read-completion tracking, and subscriber-only gating. It is large but partially justified by the density of declarative Lexical editor markup.
 
-`ArticlePage.tsx` (441 lines) combines article loading, Lexical read-only renderer, comment list fetching, comment submission, like/unlike logic, subscription gating, and infinite-scroll with an `IntersectionObserver`. It is denser but more defensible given the feature richness of the article page.
+**Custom hooks:** Only four exist (`useNewspaper`, `useCategory`, `useTheme`, `useArticleViewTracker`). Given the volume of repeated data-fetching logic across pages, more hooks are warranted.
 
-**Data fetching placement:**
-
-The project uses React Router DOM v7, which supports loaders in `createBrowserRouter`. However, data fetching is done exclusively inside component bodies via `useEffect + fetch`:
-
-```ts
-// apps/web/src/pages/CategoryPage.tsx:46
-useEffect(() => {
-  fetch(...)
-    .then(res => res.json())
-    .then(data => setArticles(data));
-}, [slug]);
-```
-
-This means pages load in two phases: render skeleton → trigger fetch → re-render with data. React Router loaders would allow data fetching to begin before the component renders.
-
-**Custom hooks:**
-
-Only 4 custom hooks exist: `useArticleViewTracker`, `useCategory`, `useNewspaper`, `useTheme`. The data-fetching logic for categories (`useCategory.ts`) and newspaper context (`useNewspaper.ts`) are correctly extracted. But the many other fetch/state patterns in `AuthorPage.tsx`, `UserProfilePage.tsx`, `DashboardPage.tsx`, `DirectorDashboardPage.tsx`, `StatisticsSection.tsx` have no equivalent custom hooks.
+**Pages that bypass TanStack Query** (fetching with raw `useEffect` + `fetch`):
+- `apps/web/src/pages/director/ApprovalQueue.tsx`
+- `apps/web/src/pages/director/PublicationQueue.tsx`
+- `apps/web/src/pages/ArticleEditorPage.tsx`
+- `apps/web/src/pages/AuthorPage.tsx`
 
 **Recommendations:**
 
-1. Extract `ArticleEditorPage.tsx` into smaller units: move image upload/delete logic into a `useArticleImages` hook, move form state into `useArticleForm` (or switch to React Hook Form per category 13), and keep the page component as an orchestrator under ~200 lines.
-2. For `ArticlePage.tsx`, extract the comment section (fetch + form + list) into a `<CommentSection articleId={id} />` component, and the like/subscription logic into a `useArticleSocial` hook.
-3. Migrate repetitive `useEffect + fetch + setState` patterns — at minimum for `AuthorPage`, `UserProfilePage`, `DirectorDashboardPage` — into dedicated custom hooks (e.g., `useAuthor(id)`, `useUserProfile()`). This is a stepping stone toward adopting TanStack Query (category 3).
-4. Consider using React Router v7 loaders for the primary data fetches on `CategoryPage`, `AuthorPage`, and `ArticlePage` to eliminate loading waterfalls on navigation.
+1. Extract `ArticleEditorPage.tsx` into at least three units: a `useArticleEditor` hook (state + fetch logic), an `ArticleForm` component (fields + submit), and an `ArticleImageManager` component (image upload/delete).
+2. Create `useArticle(articleId)` and `useCategories(newspaperId)` hooks backed by `useQuery` to replace the `useEffect`/fetch pairs in `ArticleEditorPage.tsx`.
+3. Create `useApprovalQueue(newspaperId)` and `usePublicationQueue(newspaperId)` hooks using `useQuery` to replace the `useCallback`/`useEffect`/fetch pattern in the director pages.
+4. Extract the comments section of `ArticlePage.tsx` into a `<CommentsSection articleId={...} />` component to bring the main file under 300 lines.
