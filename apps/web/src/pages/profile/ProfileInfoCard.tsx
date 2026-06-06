@@ -125,8 +125,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
       <h2
-        className="text-foreground text-[18px] font-bold"
-        style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+        className="text-foreground text-[18px] font-bold font-outfit"
       >
         Profile Information
       </h2>

@@ -2,8 +2,7 @@ export function DangerZoneCard() {
   return (
     <div className="border-destructive bg-card flex flex-col gap-4 rounded-xl border p-8">
       <h2
-        className="text-destructive text-[18px] font-bold"
-        style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+        className="text-destructive text-[18px] font-bold font-outfit"
       >
         Danger Zone
       </h2>

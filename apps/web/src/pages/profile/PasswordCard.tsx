@@ -60,8 +60,7 @@ export function PasswordCard() {
     >
       <div className="flex flex-col gap-1">
         <h2
-          className="text-foreground text-[18px] font-bold"
-          style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+          className="text-foreground text-[18px] font-bold font-outfit"
         >
           Change Password
         </h2>
