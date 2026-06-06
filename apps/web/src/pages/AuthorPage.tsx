@@ -115,7 +115,7 @@ export function AuthorPage() {
 
             <div className="flex items-start justify-between gap-8">
               <div className="flex flex-col gap-2">
-                <h1 className="text-3xl-plus leading-none font-extrabold tracking-[-0.5px] text-white">
+                <h1 className="text-3xl-plus leading-none font-extrabold tracking-tight-px text-white">
                   {author.full_name}
                 </h1>
                 <p className="max-w-[600px] text-sm leading-[1.6] text-white/70">
@@ -164,7 +164,7 @@ export function AuthorPage() {
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-[-0.5px]">
+                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-tight-px">
                   {featured.title}
                 </h2>
                 <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-[1.6]">

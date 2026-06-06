@@ -80,7 +80,7 @@ export function CategoryPage() {
             <span>{category?.name ?? categorySlug}</span>
           </p>
           {/* Category title */}
-          <h1 className="text-5xl leading-none font-black tracking-[-1px] text-white">
+          <h1 className="text-5xl leading-none font-black tracking-tighter-px text-white">
             {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
@@ -127,7 +127,7 @@ export function CategoryPage() {
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-[-0.5px]">
+                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-tight-px">
                   {featured.title}
                 </h2>
                 <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-[1.6]">
