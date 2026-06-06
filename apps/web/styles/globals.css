@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource/outfit";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,6 +43,34 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: "Inter Variable", sans-serif;
+
+  /* Typography: font families */
+  --font-outfit: "Outfit", "Inter Variable", sans-serif;
+
+  /* Typography: font sizes (non-standard Tailwind sizes) */
+  --text-3xs: 0.6875rem;    /* 11px */
+  --text-2xs: 0.8125rem;    /* 13px */
+  --text-xs-plus: 0.9375rem; /* 15px */
+  --text-xl-plus: 1.375rem;  /* 22px */
+  --text-2xl-plus: 1.625rem; /* 26px */
+  --text-3xl-minus: 1.75rem; /* 28px */
+  --text-3xl-plus: 2rem;     /* 32px */
+  --text-4xl-plus: 2.5rem;   /* 40px */
+
+  /* Typography: letter-spacing tokens */
+  --tracking-snug: -0.3px;
+  --tracking-tight-px: -0.5px;
+  --tracking-tighter-px: -1px;
+  --tracking-wide-sm: 0.5px;
+
+  /* Typography: line-height tokens */
+  --leading-2xs: 1.15;
+  --leading-xs: 1.2;
+  --leading-sm: 1.3;
+  --leading-md: 1.4;
+  --leading-lg: 1.7;
+  --leading-xl: 1.8;
+
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
