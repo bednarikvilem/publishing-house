@@ -22,7 +22,12 @@ const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
-    console.error("Missing DATABASE_URL environment variable");
+    logger.error("Missing DATABASE_URL environment variable");
+    process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+    logger.error("Missing JWT_SECRET environment variable");
     process.exit(1);
 }
 
