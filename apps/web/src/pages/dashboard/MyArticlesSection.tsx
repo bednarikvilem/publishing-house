@@ -10,7 +10,8 @@ import { Pagination } from "../../components/Pagination";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorState } from "../../components/ErrorState";
-import { STATUS_LABELS, STATUS_STYLES, MY_ARTICLE_FILTERS } from "../../lib/articleStatus";
+import { STATUS_LABELS, MY_ARTICLE_FILTERS, statusToVariant } from "../../lib/articleStatus";
+import { Badge } from "../../components/ui/badge";
 import { formatDate } from "../../lib/utils";
 
 export function MyArticlesSection({
@@ -127,11 +128,9 @@ export function MyArticlesSection({
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
-                    >
+                    <Badge variant={statusToVariant(article.status)}>
                       {STATUS_LABELS[article.status]}
-                    </span>
+                    </Badge>
                     {article.status === "DRAFT" && (
                       <Link
                         to={`/${newspaperName}/articles/${article.id}/edit`}

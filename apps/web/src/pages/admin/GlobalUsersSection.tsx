@@ -6,6 +6,25 @@ import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../components/ui/select";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "../../components/ui/dialog";
+import { useToast } from "../../components/ui/toaster";
 
 type GlobalUser = {
   id: string;
@@ -16,6 +35,7 @@ type GlobalUser = {
 };
 
 export function GlobalUsersSection() {
+  const { toast } = useToast();
   const [globalUsers, setGlobalUsers] = useState<GlobalUser[]>([]);
   const [loading, setLoading]         = useState(true);
   const [showCreate, setShowCreate]   = useState(false);
@@ -49,9 +69,13 @@ export function GlobalUsersSection() {
       });
       if (res.status === 409) {
         const data = (await res.json()) as { error: string };
-        alert(data.error === "ROLE_ALREADY_HELD_GLOBALLY"
-          ? "A user already holds this global role."
-          : "Email is already taken.");
+        toast({
+          title: "Conflict",
+          description: data.error === "ROLE_ALREADY_HELD_GLOBALLY"
+            ? "A user already holds this global role."
+            : "Email is already taken.",
+          variant: "error",
+        });
         return;
       }
       if (!res.ok) throw new Error();
@@ -59,24 +83,26 @@ export function GlobalUsersSection() {
       setForm({ email: "", username: "", full_name: "", password: "", role: "DIRECTOR" });
       load();
     } catch {
-      alert("Failed to create global user.");
+      toast({ title: "Error", description: "Failed to create global user.", variant: "error" });
     } finally {
       setSaving(false);
     }
   }
 
   async function handleRemove(userId: string, role: string) {
-    if (!confirm(`Remove ${role} from this user?`)) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}/global-roles/${role}`, {
         method: "DELETE",
         headers: authHeaders(),
       });
-      if (res.status === 422) { alert("Cannot remove your own SYSTEM_ADMINISTRATOR role."); return; }
+      if (res.status === 422) {
+        toast({ title: "Not allowed", description: "Cannot remove your own SYSTEM_ADMINISTRATOR role.", variant: "error" });
+        return;
+      }
       if (!res.ok) throw new Error();
       load();
     } catch {
-      alert("Failed to remove role.");
+      toast({ title: "Error", description: "Failed to remove role.", variant: "error" });
     }
   }
 
@@ -84,13 +110,10 @@ export function GlobalUsersSection() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <SectionTitle title="Global Users" />
-        <button
-          onClick={() => setShowCreate((v) => !v)}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
-        >
+        <Button onClick={() => setShowCreate((v) => !v)}>
           <PlusIcon />
           New Global User
-        </button>
+        </Button>
       </div>
 
       {showCreate && (
@@ -110,23 +133,24 @@ export function GlobalUsersSection() {
             ))}
             <div className="flex flex-col gap-1.5">
               <label className="text-foreground text-[14px] font-medium">Role</label>
-              <select
-                value={form.role}
-                onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                className="border-border bg-background text-foreground focus:ring-ring h-9 rounded-md border px-3 text-[13px] outline-none focus:ring-2"
-              >
-                <option value="DIRECTOR">DIRECTOR</option>
-                <option value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</option>
-              </select>
+              <Select value={form.role} onValueChange={(v) => v !== null && setForm((f) => ({ ...f, role: v }))}>
+                <SelectTrigger className="w-full rounded-md">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DIRECTOR">DIRECTOR</SelectItem>
+                  <SelectItem value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setShowCreate(false)} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px]">
+            <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>
               Cancel
-            </button>
-            <button type="submit" disabled={saving} className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold disabled:opacity-50">
+            </Button>
+            <Button type="submit" disabled={saving}>
               {saving ? "Creating…" : "Create"}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -147,7 +171,30 @@ export function GlobalUsersSection() {
                     {u.roles.map((role) => (
                       <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
                         {role}
-                        <button onClick={() => handleRemove(u.id, role)} className="ml-0.5 transition-colors hover:text-[#dc2626]" aria-label={`Remove ${role}`}>×</button>
+                        <Dialog>
+                          <DialogTrigger
+                            className="ml-0.5 transition-colors hover:text-destructive"
+                            aria-label={`Remove ${role}`}
+                          >
+                            ×
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Remove role</DialogTitle>
+                              <DialogDescription>
+                                Remove <strong>{role}</strong> from {u.full_name ?? u.username}? This cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+                              <DialogClose
+                                render={<Button variant="destructive" onClick={() => handleRemove(u.id, role)} />}
+                              >
+                                Remove
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </span>
                     ))}
                   </div>

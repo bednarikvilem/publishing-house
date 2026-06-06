@@ -1,5 +1,19 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import type { ReviewDecision } from "../types";
+
+const DECISION_LABELS: Record<ReviewDecision, string> = {
+  APPROVE: "Approve",
+  REJECT: "Reject",
+  REQUEST_REVISION: "Request Revision",
+};
+
+const DECISION_ACTIVE_CLASS: Record<ReviewDecision, string> = {
+  APPROVE: "bg-green-600 text-white hover:bg-green-600",
+  REJECT: "bg-red-600 text-white hover:bg-red-600",
+  REQUEST_REVISION: "bg-orange-600 text-white hover:bg-orange-600",
+};
 
 export function DecisionForm({
   onSubmit,
@@ -30,28 +44,20 @@ export function DecisionForm({
     >
       <div className="flex gap-2">
         {(["APPROVE", "REJECT", "REQUEST_REVISION"] as ReviewDecision[]).map((d) => (
-          <button
+          <Button
             key={d}
             type="button"
+            size="sm"
+            variant={decision === d ? "default" : "outline"}
+            className={decision === d ? DECISION_ACTIVE_CLASS[d] : undefined}
             onClick={() => setDecision(d)}
-            className={`rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors ${
-              decision === d
-                ? d === "APPROVE"
-                  ? "bg-[#16a34a] text-white"
-                  : d === "REJECT"
-                    ? "bg-[#dc2626] text-white"
-                    : "bg-[#ea580c] text-white"
-                : "border-border bg-background text-muted-foreground hover:bg-muted border"
-            }`}
           >
-            {d === "REQUEST_REVISION"
-              ? "Request Revision"
-              : d.charAt(0) + d.slice(1).toLowerCase()}
-          </button>
+            {DECISION_LABELS[d]}
+          </Button>
         ))}
       </div>
 
-      <textarea
+      <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder={
@@ -61,24 +67,19 @@ export function DecisionForm({
         }
         required={noteRequired}
         rows={3}
-        className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
       />
 
       <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium"
-        >
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
+          size="sm"
           disabled={submitting || (noteRequired && !note.trim())}
-          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {submitting ? "Submitting…" : "Submit"}
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -14,6 +14,8 @@ import type { ArticleDetail, Comment } from "../types";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useArticleViewTracker } from "../hooks/useArticleViewTracker";
+import { Button } from "../components/ui/button";
+import { Textarea } from "../components/ui/textarea";
 import { formatDate } from "../lib/utils";
 
 function estimateReadTime(content: string) {
@@ -218,12 +220,12 @@ export function ArticlePage() {
             {subscribeMessage ? (
               <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
             ) : isLoggedIn ? (
-              <button
+              <Button
                 onClick={handleSubscribeFromPaywall}
-                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+                className="mt-2"
               >
                 Subscribe
-              </button>
+              </Button>
             ) : (
               <a
                 href={`/${newspaperName}/login`}
@@ -363,21 +365,18 @@ export function ArticlePage() {
         {/* Like button */}
         <div className="mb-10 flex items-center gap-3">
           {isLoggedIn ? (
-            <button
+            <Button
+              variant={likedByMe ? "outline" : "outline"}
               onClick={handleToggleLike}
               disabled={isTogglingLike}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[14px] font-medium transition-colors ${
-                likedByMe
-                  ? "border-red-400 bg-red-50 text-red-600 hover:bg-red-100"
-                  : "border-border text-muted-foreground hover:border-red-300 hover:text-red-500"
-              }`}
+              className={likedByMe ? "border-red-400 bg-red-50 text-red-600 hover:bg-red-100 rounded-full" : "rounded-full"}
             >
               <Heart
                 size={16}
                 className={likedByMe ? "fill-red-500 stroke-red-500" : ""}
               />
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
-            </button>
+            </Button>
           ) : (
             <span className="text-muted-foreground flex items-center gap-2 text-[14px]">
               <Heart size={16} />
@@ -396,22 +395,20 @@ export function ArticlePage() {
           {/* Comment form */}
           {isLoggedIn && (
             <form onSubmit={handleSubmitComment} className="flex flex-col gap-3">
-              <textarea
+              <Textarea
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Write a comment…"
                 maxLength={2000}
                 rows={3}
-                className="border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-lg border px-4 py-3 text-[14px] outline-none focus:ring-2 focus:ring-primary/30 resize-none"
               />
               <div className="flex justify-end">
-                <button
+                <Button
                   type="submit"
                   disabled={!commentText.trim() || isSubmittingComment}
-                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2 text-[14px] font-medium disabled:opacity-50 hover:opacity-90 transition-opacity"
                 >
                   {isSubmittingComment ? "Posting…" : "Post comment"}
-                </button>
+                </Button>
               </div>
             </form>
           )}

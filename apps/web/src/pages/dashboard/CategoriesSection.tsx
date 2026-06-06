@@ -7,8 +7,12 @@ import { ListRow } from "../../components/ListRow";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorState } from "../../components/ErrorState";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { useToast } from "../../components/ui/toaster";
 
 export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
+  const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -57,7 +61,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
       setNewName("");
       load();
     } catch {
-      alert("Failed to create category.");
+      toast({ title: "Error", description: "Failed to create category.", variant: "error" });
     } finally {
       setSaving(false);
     }
@@ -80,7 +84,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
       setEditName("");
       load();
     } catch {
-      alert("Failed to update category.");
+      toast({ title: "Error", description: "Failed to update category.", variant: "error" });
     } finally {
       setSaving(false);
     }
@@ -94,13 +98,13 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         { method: "DELETE", headers: authHeaders() }
       );
       if (res.status === 409) {
-        alert("Cannot delete: articles are assigned to this category.");
+        toast({ title: "Cannot delete", description: "Articles are assigned to this category.", variant: "error" });
         return;
       }
       if (!res.ok) throw new Error();
       load();
     } catch {
-      alert("Failed to delete category.");
+      toast({ title: "Error", description: "Failed to delete category.", variant: "error" });
     }
   }
 
@@ -112,21 +116,17 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         onSubmit={handleCreate}
         className="border-border bg-card flex items-center gap-3 rounded-lg border px-5 py-4"
       >
-        <input
+        <Input
           type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="New category name…"
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+          className="flex-1"
         />
-        <button
-          type="submit"
-          disabled={saving || !newName.trim()}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={saving || !newName.trim()}>
           <PlusIcon />
           Add Category
-        </button>
+        </Button>
       </form>
 
       {error ? (
@@ -145,12 +145,12 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
             >
               <div className="flex items-center gap-4">
                 {editId === cat.id ? (
-                  <input
+                  <Input
                     autoFocus
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-[13px] outline-none focus:ring-2"
+                    className="flex-1"
                   />
                 ) : (
                   <span className="text-foreground flex-1 text-[14px] font-medium">
@@ -160,19 +160,20 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                 <div className="flex shrink-0 items-center gap-2">
                   {editId === cat.id ? (
                     <>
-                      <button
+                      <Button
+                        size="sm"
                         onClick={() => handleUpdate(cat.id)}
                         disabled={saving || !editName.trim()}
-                        className="bg-foreground text-background rounded-md px-3 py-1.5 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                       >
                         Save
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => { setEditId(null); setEditName(""); }}
-                        className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-medium"
                       >
                         Cancel
-                      </button>
+                      </Button>
                     </>
                   ) : (
                     <>

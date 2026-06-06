@@ -9,6 +9,7 @@ interface UserProfile {
   full_name: string | null;
   bio: string | null;
   profile_picture: string | null;
+  email_verified: boolean;
   roles: string[];
 }
 

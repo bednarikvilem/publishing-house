@@ -4,6 +4,25 @@ import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
+import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../components/ui/select";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "../../components/ui/dialog";
+import { useToast } from "../../components/ui/toaster";
 
 type NewspaperEntry = { id: string; name: string; slug: string };
 
@@ -19,11 +38,12 @@ type UserEntry = {
 const NEWSPAPER_ROLES = ["REGISTERED_USER", "AUTHOR", "EDITOR", "NEWSPAPER_MANAGER"];
 
 export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry }) {
-  const [users, setUsers]             = useState<UserEntry[]>([]);
-  const [loading, setLoading]         = useState(true);
+  const { toast } = useToast();
+  const [users, setUsers]               = useState<UserEntry[]>([]);
+  const [loading, setLoading]           = useState(true);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
-  const [roleInput, setRoleInput]     = useState("");
-  const [saving, setSaving]           = useState(false);
+  const [roleInput, setRoleInput]       = useState("");
+  const [saving, setSaving]             = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,9 +78,13 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
       );
       if (res.status === 409) {
         const data = (await res.json()) as { error: string };
-        alert(data.error === "MANAGER_ALREADY_EXISTS"
-          ? "This newspaper already has a manager. Remove the existing one first."
-          : "User already has this role.");
+        toast({
+          title: "Conflict",
+          description: data.error === "MANAGER_ALREADY_EXISTS"
+            ? "This newspaper already has a manager. Remove the existing one first."
+            : "User already has this role.",
+          variant: "error",
+        });
         return;
       }
       if (!res.ok) throw new Error();
@@ -68,15 +92,17 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
       setRoleInput("");
       load();
     } catch {
-      alert("Failed to assign role.");
+      toast({ title: "Error", description: "Failed to assign role.", variant: "error" });
     } finally {
       setSaving(false);
     }
   }
 
   async function handleRemoveRole(userId: string, role: string) {
-    if (role === "REGISTERED_USER") { alert("Cannot remove the base REGISTERED_USER role."); return; }
-    if (!confirm(`Remove role ${role} from this user?`)) return;
+    if (role === "REGISTERED_USER") {
+      toast({ title: "Not allowed", description: "Cannot remove the base REGISTERED_USER role.", variant: "error" });
+      return;
+    }
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaper.id}/users/${userId}/roles/${role}`,
@@ -85,7 +111,7 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
       if (!res.ok) throw new Error();
       load();
     } catch {
-      alert("Failed to remove role.");
+      toast({ title: "Error", description: "Failed to remove role.", variant: "error" });
     }
   }
 
@@ -109,37 +135,67 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
                       <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
                         {role}
                         {role !== "REGISTERED_USER" && (
-                          <button onClick={() => handleRemoveRole(user.id, role)} className="ml-0.5 transition-colors hover:text-[#dc2626]" aria-label={`Remove ${role}`}>×</button>
+                          <Dialog>
+                            <DialogTrigger
+                              className="ml-0.5 transition-colors hover:text-destructive"
+                              aria-label={`Remove ${role}`}
+                            >
+                              ×
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Remove role</DialogTitle>
+                                <DialogDescription>
+                                  Remove <strong>{role}</strong> from {user.full_name ?? user.username}? This cannot be undone.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+                                <DialogClose
+                                  render={<Button variant="destructive" onClick={() => handleRemoveRole(user.id, role)} />}
+                                >
+                                  Remove
+                                </DialogClose>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         )}
                       </span>
                     ))}
                   </div>
                 </div>
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setActiveUserId(activeUserId === user.id ? null : user.id)}
-                  className="border-border text-foreground hover:bg-muted shrink-0 rounded-md border px-3 py-1.5 text-[12px] font-semibold"
                 >
                   Assign Role
-                </button>
+                </Button>
               </div>
               {activeUserId === user.id && (
                 <div className="border-border bg-muted/30 mt-3 flex items-center gap-3 rounded-lg border p-4">
-                  <select
-                    value={roleInput}
-                    onChange={(e) => setRoleInput(e.target.value)}
-                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+                  <Select value={roleInput} onValueChange={(v) => v !== null && setRoleInput(v)}>
+                    <SelectTrigger className="flex-1 rounded-md">
+                      <SelectValue placeholder="Select a role…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {NEWSPAPER_ROLES.filter((r) => !user.roles.includes(r)).map((r) => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={() => handleAssignRole(user.id)}
+                    disabled={saving || !roleInput}
                   >
-                    <option value="">Select a role…</option>
-                    {NEWSPAPER_ROLES.filter((r) => !user.roles.includes(r)).map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                  <button onClick={() => handleAssignRole(user.id)} disabled={saving || !roleInput} className="bg-foreground text-background rounded-md px-3 py-2 text-[13px] font-semibold disabled:opacity-50">
                     {saving ? "Saving…" : "Assign"}
-                  </button>
-                  <button onClick={() => { setActiveUserId(null); setRoleInput(""); }} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-2 text-[13px]">
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => { setActiveUserId(null); setRoleInput(""); }}
+                  >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               )}
             </ListRow>

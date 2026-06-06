@@ -6,7 +6,8 @@ import { LoadingState } from "../components/LoadingState";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
 import { FormField } from "../components/FormField";
-import { STATUS_LABELS, STATUS_STYLES } from "../lib/articleStatus";
+import { STATUS_LABELS, statusToVariant } from "../lib/articleStatus";
+import { Badge } from "../components/ui/badge";
 import type { Category, ArticleStatus } from "../types";
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -73,11 +74,9 @@ function EditorSidebar({
       {!isNew && (
         <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
           <h2 className="text-foreground text-[13px] font-semibold">Status</h2>
-          <span
-            className={`self-start rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[articleStatus]}`}
-          >
+          <Badge variant={statusToVariant(articleStatus)} className="self-start">
             {STATUS_LABELS[articleStatus]}
-          </span>
+          </Badge>
           {!isDraft && (
             <p className="text-muted-foreground text-[12px]">
               This article cannot be edited in its current state.

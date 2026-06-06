@@ -66,7 +66,7 @@ export function UserProfilePage() {
                 </p>
               </div>
             )}
-            <ProfileInfoCard profile={profile} onSaved={setProfile} />
+            <ProfileInfoCard profile={profile} onSaved={(updated) => setProfile(updated)} />
             <PasswordCard />
             <DangerZoneCard />
           </>

@@ -1,4 +1,22 @@
 import type { ArticleStatus } from "../types";
+import type { VariantProps } from "class-variance-authority";
+import type { badgeVariants } from "@/components/ui/badge";
+
+type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>;
+
+export function statusToVariant(status: ArticleStatus): BadgeVariant {
+  const map: Record<ArticleStatus, BadgeVariant> = {
+    DRAFT: "draft",
+    SUBMITTED: "submitted",
+    IN_REVIEW: "in-review",
+    APPROVED_BY_EDITOR: "approved-editor",
+    APPROVED_BY_MANAGER: "approved-manager",
+    APPROVED_BY_DIRECTOR: "approved-director",
+    PUBLISHED: "published",
+    REJECTED: "rejected",
+  };
+  return map[status];
+}
 
 export const STATUS_LABELS: Record<ArticleStatus, string> = {
   DRAFT: "Draft",

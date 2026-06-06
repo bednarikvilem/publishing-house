@@ -11,12 +11,17 @@ import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorState } from "../../components/ErrorState";
 import { DecisionForm } from "../../components/DecisionForm";
-import { STATUS_LABELS, STATUS_STYLES } from "../../lib/articleStatus";
+import { STATUS_LABELS, statusToVariant } from "../../lib/articleStatus";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
+import { useToast } from "../../components/ui/toaster";
 import { formatDate } from "../../lib/utils";
 
 type Editor = { id: string; full_name: string };
 
 export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") ?? "1");
   const queryClient = useQueryClient();
@@ -70,14 +75,14 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
       setAssignEditorId("");
       invalidateQueue();
     },
-    onError: () => alert("Failed to assign editor. Please try again."),
+    onError: () => toast({ title: "Error", description: "Failed to assign editor. Please try again.", variant: "error" }),
   });
 
   const toggleSubscriber = useMutation({
     mutationFn: ({ articleId, current }: { articleId: string; current: boolean }) =>
       setArticleSubscriberOnly(newspaperId, articleId, !current),
     onSuccess: invalidateQueue,
-    onError: () => alert("Failed to update subscriber-only setting. Please try again."),
+    onError: () => toast({ title: "Error", description: "Failed to update subscriber-only setting. Please try again.", variant: "error" }),
   });
 
   const approve = useMutation({
@@ -103,7 +108,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
       setActiveId(null);
       invalidateQueue();
     },
-    onError: () => alert("Failed to submit review. Please try again."),
+    onError: () => toast({ title: "Error", description: "Failed to submit review. Please try again.", variant: "error" }),
   });
 
   function toggleActive(articleId: string) {
@@ -176,17 +181,16 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
-                      <span
-                        className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
-                      >
+                      <Badge variant={statusToVariant(article.status)}>
                         {STATUS_LABELS[article.status]}
-                      </span>
-                      <button
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => toggleActive(article.id)}
-                        className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
                       >
                         {isSubmitted ? "Assign Editor" : "Review"}
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -211,40 +215,44 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                             No editors available in this newspaper.
                           </p>
                         ) : (
-                          <select
+                          <Select
                             value={assignEditorId}
-                            onChange={(e) => setAssignEditorId(e.target.value)}
+                            onValueChange={(v) => v !== null && setAssignEditorId(v)}
                             required
-                            className="border-border bg-background text-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
                           >
-                            <option value="">Select an editor…</option>
-                            {editors.map((editor) => (
-                              <option key={editor.id} value={editor.id}>
-                                {editor.full_name}
-                              </option>
-                            ))}
-                          </select>
+                            <SelectTrigger className="mt-1.5 w-full rounded-md">
+                              <SelectValue placeholder="Select an editor…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {editors.map((editor) => (
+                                <SelectItem key={editor.id} value={editor.id}>
+                                  {editor.full_name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         )}
                       </label>
                       <div className="flex justify-end gap-2">
-                        <button
+                        <Button
                           type="button"
+                          variant="outline"
+                          size="sm"
                           onClick={() => setActiveId(null)}
-                          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium"
                         >
                           Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="submit"
+                          size="sm"
                           disabled={
                             assignEditor.isPending ||
                             !assignEditorId.trim() ||
                             editors.length === 0
                           }
-                          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                         >
                           {assignEditor.isPending ? "Assigning…" : "Assign"}
-                        </button>
+                        </Button>
                       </div>
                     </form>
                   )}

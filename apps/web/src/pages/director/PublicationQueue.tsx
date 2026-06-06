@@ -6,8 +6,11 @@ import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../components/ui/toaster";
 
 export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
+  const { toast } = useToast();
   const [articles, setArticles]     = useState<QueueArticle[]>([]);
   const [loading, setLoading]       = useState(true);
   const [publishing, setPublishing] = useState<string | null>(null);
@@ -42,7 +45,7 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
       if (!res.ok) throw new Error();
       load();
     } catch {
-      alert("Failed to publish article.");
+      toast({ title: "Error", description: "Failed to publish article.", variant: "error" });
     } finally {
       setPublishing(null);
     }
@@ -68,13 +71,13 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
                     <span>Category: {article.category}</span>
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => handlePublish(article.id)}
                   disabled={publishing === article.id}
-                  className="rounded-md bg-[#16a34a] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                  size="sm"
                 >
                   {publishing === article.id ? "Publishing…" : "Publish"}
-                </button>
+                </Button>
               </div>
             </ListRow>
           ))}

@@ -1,10 +1,6 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-
-const inputClass =
-  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none";
-
-const textareaClass =
-  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface BaseProps {
   id: string;
@@ -13,11 +9,11 @@ interface BaseProps {
   required?: boolean;
 }
 
-interface InputFieldProps extends BaseProps, InputHTMLAttributes<HTMLInputElement> {
+interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "id">, BaseProps {
   as?: "input";
 }
 
-interface TextareaFieldProps extends BaseProps, TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaFieldProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "id">, BaseProps {
   as: "textarea";
 }
 
@@ -33,17 +29,15 @@ export function FormField(props: FormFieldProps) {
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
       {as === "textarea" ? (
-        <textarea
+        <Textarea
           id={id}
           aria-invalid={!!error}
-          className={`${textareaClass} aria-[invalid=true]:border-destructive`}
           {...(rest as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       ) : (
-        <input
+        <Input
           id={id}
           aria-invalid={!!error}
-          className={`${inputClass} aria-[invalid=true]:border-destructive`}
           {...(rest as InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
