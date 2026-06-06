@@ -6,6 +6,7 @@ import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { slugToDisplayName } from "../lib/utils";
+import { Button } from "../components/ui/button";
 
 export function SignUpPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -159,13 +160,13 @@ export function SignUpPage() {
 
           {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
 
-          <button
+          <Button
             type="submit"
             disabled={loading || !newspaper}
-            className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="w-full"
           >
             {loading ? "Creating account…" : "Create Account"}
-          </button>
+          </Button>
 
           <div className="flex items-center gap-3">
             <div className="bg-border h-px flex-1" />
@@ -173,12 +174,13 @@ export function SignUpPage() {
             <div className="bg-border h-px flex-1" />
           </div>
 
-          <button
+          <Button
             type="button"
-            className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-[14px] font-medium transition-colors"
+            variant="outline"
+            className="w-full"
           >
             Sign up with Google
-          </button>
+          </Button>
         </form>
 
         <p className="text-muted-foreground text-center text-[14px]">

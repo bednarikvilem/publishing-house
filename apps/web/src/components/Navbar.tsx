@@ -14,6 +14,8 @@ import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
 import { API_BASE_URL, authHeaders, client, requestSubscription, getSubscriptionStatus } from "../lib/api";
 import { slugToDisplayName } from "../lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface UserInfo {
   full_name: string | null;
@@ -158,14 +160,14 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
 
         {/* Desktop search bar */}
         <form onSubmit={handleSearch} className="hidden flex-1 md:flex">
-          <div className="border-border bg-muted/50 focus-within:bg-background focus-within:border-ring flex h-9 w-full max-w-sm items-center gap-2 rounded-lg border px-3 transition-colors">
-            <SearchIcon size={15} className="text-muted-foreground shrink-0" />
-            <input
+          <div className="relative flex-1 max-w-sm">
+            <SearchIcon size={15} className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 shrink-0" />
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles…"
-              className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[13px] outline-none"
+              className="pl-8 text-[13px] bg-muted/50 focus-visible:bg-background rounded-lg"
             />
           </div>
         </form>
@@ -173,13 +175,15 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         {/* Right-side controls */}
         <div className="ml-auto flex items-center gap-2">
           {/* Dark mode toggle */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={toggle}
             aria-label="Toggle dark mode"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors"
+            className="text-muted-foreground hover:text-foreground"
           >
             {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
-          </button>
+          </Button>
 
           {/* Desktop: dashboard + user menu */}
           <div className="hidden items-center gap-2 md:flex">
@@ -194,38 +198,30 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             )}
             {user && (
               subscribeMessage ? (
-                <button
-                  disabled
-                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
-                >
+                <Button variant="outline" disabled className="rounded-lg px-4 text-[14px] cursor-default">
                   {subscribeMessage}
-                </button>
+                </Button>
               ) : subscriptionStatus?.is_active ? (
-                <button
-                  disabled
-                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
-                >
+                <Button variant="outline" disabled className="rounded-lg px-4 text-[14px] cursor-default">
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   })}
-                </button>
+                </Button>
               ) : (
-                <button
-                  onClick={handleSubscribe}
-                  className="border-border text-foreground hover:bg-muted rounded-lg border px-4 py-2 text-[14px] font-medium transition-colors"
-                >
+                <Button variant="outline" onClick={handleSubscribe} className="rounded-lg px-4 text-[14px]">
                   Subscribe
-                </button>
+                </Button>
               )
             )}
             {user ? (
               <div className="relative">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setUserMenuOpen((o) => !o)}
-                  className="hover:bg-muted flex items-center gap-2 rounded-lg px-3 py-2 transition-colors"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2"
                 >
                   <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
                     <span className="text-primary-foreground text-[12px] font-semibold">
@@ -236,24 +232,26 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                     {user.full_name ?? user.username}
                   </span>
                   <ChevronDownIcon size={16} className="text-muted-foreground" />
-                </button>
+                </Button>
                 {userMenuOpen && (
-                  <div className="border-border bg-background absolute right-0 mt-1 w-44 rounded-lg border shadow-md">
-                    <button
+                  <div className="border-border bg-background absolute right-0 mt-1 w-44 overflow-hidden rounded-lg border shadow-md">
+                    <Button
+                      variant="ghost"
                       onClick={() => {
                         setUserMenuOpen(false);
                         navigate(`/${newspaperName}/profile`);
                       }}
-                      className="text-foreground hover:bg-muted w-full rounded-t-lg px-4 py-2.5 text-left text-[14px] font-medium"
+                      className="text-foreground w-full justify-start rounded-none px-4 py-2.5 text-[14px] font-medium"
                     >
                       Profile
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={handleLogout}
-                      className="text-destructive hover:bg-muted w-full rounded-b-lg px-4 py-2.5 text-left text-[14px] font-medium"
+                      className="text-destructive hover:text-destructive w-full justify-start rounded-none px-4 py-2.5 text-[14px] font-medium"
                     >
                       Log out
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -276,13 +274,15 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           </div>
 
           {/* Mobile: hamburger */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMobileMenuOpen((o) => !o)}
             aria-label="Toggle menu"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors md:hidden"
+            className="text-muted-foreground hover:text-foreground md:hidden"
           >
             {mobileMenuOpen ? <XIcon size={20} /> : <MenuIcon size={20} />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -291,14 +291,14 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         <div className="border-border bg-background border-t px-6 pb-4 md:hidden">
           {/* Search */}
           <form onSubmit={handleSearch} className="pt-4">
-            <div className="border-border bg-muted/50 focus-within:bg-background focus-within:border-ring flex h-10 items-center gap-2 rounded-lg border px-3 transition-colors">
-              <SearchIcon size={15} className="text-muted-foreground shrink-0" />
-              <input
+            <div className="relative">
+              <SearchIcon size={15} className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 shrink-0" />
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles…"
-                className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[14px] outline-none"
+                className="pl-8 text-[14px] rounded-lg"
               />
             </div>
           </form>
@@ -338,50 +338,43 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             )}
             {user && (
               subscribeMessage ? (
-                <button
-                  disabled
-                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
-                >
+                <Button variant="outline" disabled className="rounded-md px-4 py-2.5 text-[14px] cursor-default">
                   {subscribeMessage}
-                </button>
+                </Button>
               ) : subscriptionStatus?.is_active ? (
-                <button
-                  disabled
-                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
-                >
+                <Button variant="outline" disabled className="rounded-md px-4 py-2.5 text-[14px] cursor-default">
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   })}
-                </button>
+                </Button>
               ) : (
-                <button
-                  onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }}
-                  className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2.5 text-[14px] font-medium transition-colors"
-                >
+                <Button variant="outline" onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }} className="rounded-md px-4 py-2.5 text-[14px]">
                   Subscribe
-                </button>
+                </Button>
               )
             )}
             {user ? (
               <>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     navigate(`/${newspaperName}/profile`);
                   }}
-                  className="text-foreground hover:bg-muted rounded-md px-4 py-2.5 text-left text-[14px] font-medium transition-colors"
+                  className="text-foreground w-full justify-start rounded-md px-4 py-2.5 text-[14px] font-medium"
                 >
                   Profile
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={handleLogout}
-                  className="text-destructive hover:bg-muted rounded-md px-4 py-2.5 text-left text-[14px] font-medium transition-colors"
+                  className="text-destructive hover:text-destructive w-full justify-start rounded-md px-4 py-2.5 text-[14px] font-medium"
                 >
                   Log out
-                </button>
+                </Button>
               </>
             ) : (
               <div className="flex gap-2">

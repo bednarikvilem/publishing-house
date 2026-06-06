@@ -4,6 +4,7 @@ import type { NewspaperStats, GlobalStats } from "./stats/types";
 import { NewspaperStatsDashboard } from "./stats/NewspaperStatsDashboard";
 import { GlobalStatsDashboard } from "./stats/GlobalStatsDashboard";
 import { LoadingState } from "./LoadingState";
+import { Button } from "@/components/ui/button";
 
 export function StatisticsSection({
   newspaperId,
@@ -58,26 +59,26 @@ export function StatisticsSection({
           {isDirector && !!newspaperId && (
             <div className="flex gap-1 border-border border rounded-lg p-1">
               {(["global", "newspaper"] as const).map((v) => (
-                <button
+                <Button
                   key={v}
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setView(v)}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    view === v
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={view === v ? "bg-foreground text-background hover:bg-foreground/90 hover:text-background" : "text-muted-foreground hover:text-foreground"}
                 >
                   {v === "global" ? "All Newspapers" : "This Newspaper"}
-                </button>
+                </Button>
               ))}
             </div>
           )}
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={() => setRefreshKey((k) => k + 1)}
-            className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             title="Refresh statistics"
             disabled={loading}
+            className="text-muted-foreground hover:text-foreground"
           >
             <svg
               className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
@@ -92,7 +93,7 @@ export function StatisticsSection({
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
 

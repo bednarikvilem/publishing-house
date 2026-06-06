@@ -13,6 +13,7 @@ import { MyArticlesSection } from "./dashboard/MyArticlesSection";
 import { ReviewQueueSection } from "./dashboard/ReviewQueueSection";
 import { EditorialQueueSection } from "./dashboard/EditorialQueueSection";
 import { CategoriesSection } from "./dashboard/CategoriesSection";
+import { Button } from "../components/ui/button";
 
 function deriveDefaultSection(roles: string[]): string {
   if (roles.includes("AUTHOR")) return "my-articles";
@@ -62,14 +63,12 @@ export function DashboardPage() {
         Filter by Status
       </p>
       {MY_ARTICLE_FILTERS.map((item) => (
-        <button
+        <Button
           key={String(item.value)}
           onClick={() => setStatusFilter(item.value)}
-          className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
-            statusInSearch === item.value
-              ? "bg-muted text-foreground"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          }`}
+          variant="ghost"
+          size="sm"
+          className={`w-full justify-start gap-2.5 ${statusInSearch === item.value ? "bg-muted text-foreground" : ""}`}
         >
           {item.value ? (
             <span className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[item.value]}`} />
@@ -77,7 +76,7 @@ export function DashboardPage() {
             <span className="border-muted-foreground h-2 w-2 shrink-0 rounded-full border" />
           )}
           {item.label}
-        </button>
+        </Button>
       ))}
     </div>
   ) : null;

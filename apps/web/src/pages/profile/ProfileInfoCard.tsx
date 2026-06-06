@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 interface UserProfile {
   id: string;
@@ -147,14 +149,15 @@ export function ProfileInfoCard({ profile, onSaved }: {
             <>
               <span className="text-muted-foreground text-[13px]">JPG, PNG or GIF. Max 2MB.</span>
               {avatarError && <span className="text-destructive text-[12px]">{avatarError}</span>}
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={avatarUploading}
-                className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
               >
                 {avatarUploading ? "Uploading…" : "Change Photo"}
-              </button>
+              </Button>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -193,17 +196,17 @@ export function ProfileInfoCard({ profile, onSaved }: {
         error={fieldErrors.username}
       />
 
-      {/* Email — read-only, not using FormField since it has special styling */}
+      {/* Email — read-only */}
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="text-foreground text-[14px] font-medium">
           Email Address
         </label>
-        <input
+        <Input
           id="email"
           type="email"
           value={profile.email}
           readOnly
-          className="border-input bg-muted text-muted-foreground h-10 w-full cursor-not-allowed rounded-md border px-3 text-[14px]"
+          className="bg-muted text-muted-foreground cursor-not-allowed"
         />
       </div>
 
@@ -223,13 +226,9 @@ export function ProfileInfoCard({ profile, onSaved }: {
       {success && <p className="text-[13px] text-green-600">Profile updated successfully.</p>}
 
       <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={saving}>
           {saving ? "Saving…" : "Save Changes"}
-        </button>
+        </Button>
       </div>
     </form>
   );

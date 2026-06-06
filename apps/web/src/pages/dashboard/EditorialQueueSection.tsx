@@ -154,7 +154,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                         <span>Submitted: {formatDate(article.submitted_at)}</span>
                       </div>
                       <div className="mt-1.5 flex items-center gap-2">
-                        <button
+                        <Button
                           role="switch"
                           aria-checked={!!article.is_subscriber_only}
                           disabled={
@@ -167,8 +167,11 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                               current: !!article.is_subscriber_only,
                             })
                           }
-                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none disabled:opacity-50 ${
-                            article.is_subscriber_only ? "bg-foreground" : "bg-input"
+                          variant="ghost"
+                          className={`relative h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent p-0 active:translate-y-0 ${
+                            article.is_subscriber_only
+                              ? "bg-foreground hover:bg-foreground/90"
+                              : "bg-input hover:bg-input/90"
                           }`}
                         >
                           <span
@@ -176,7 +179,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                               article.is_subscriber_only ? "translate-x-4" : "translate-x-0"
                             }`}
                           />
-                        </button>
+                        </Button>
                         <span className="text-muted-foreground text-[12px]">Subscribers only</span>
                       </div>
                     </div>

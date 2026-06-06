@@ -7,6 +7,7 @@ import { FormField } from "../components/FormField";
 import { CheckIcon } from "../components/Icons";
 import { slugToDisplayName } from "../lib/utils";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { Button } from "../components/ui/button";
 
 export function SetNewPasswordPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -130,13 +131,13 @@ export function SetNewPasswordPage() {
                 )}
               </div>
             )}
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="w-full"
             >
               {loading ? "Resetting…" : "Reset Password"}
-            </button>
+            </Button>
           </form>
         )}
 

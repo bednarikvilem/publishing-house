@@ -8,6 +8,10 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import { FormField } from "../components/FormField";
 import { STATUS_LABELS, statusToVariant } from "../lib/articleStatus";
 import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../components/ui/select";
 import type { Category, ArticleStatus } from "../types";
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -93,19 +97,21 @@ function EditorSidebar({
           <label className="text-muted-foreground text-[12px] font-medium">
             Category <span className="text-[#dc2626]">*</span>
           </label>
-          <select
+          <Select
             value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            disabled={!canEdit}
-            className="border-border bg-background text-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2 disabled:opacity-60"
+            onValueChange={(v) => v !== null && setCategoryId(v)}
           >
-            <option value="">Select category…</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full" disabled={!canEdit}>
+              <SelectValue placeholder="Select category…" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <FormField
@@ -140,13 +146,15 @@ function EditorSidebar({
             />
             {coverImage.id && canEdit && (
               <div className="bg-background/80 absolute inset-x-0 bottom-0 flex justify-end px-2 py-1 backdrop-blur-sm">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="xs"
                   onClick={() => onImageDelete(coverImage.id!)}
-                  className="text-muted-foreground text-[11px] font-medium transition-colors hover:text-[#dc2626]"
+                  className="hover:text-destructive"
                 >
                   Remove
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -167,14 +175,16 @@ function EditorSidebar({
               className="hidden"
               onChange={onImageUpload}
             />
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
+              className="w-full"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingImage}
-              className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
             >
               {uploadingImage ? "Uploading…" : coverImage ? "Replace Cover Image" : "Upload Cover Image"}
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -183,14 +193,16 @@ function EditorSidebar({
       {!isNew && isDraft && (
         <div className="border-border bg-card rounded-lg border px-4 py-4">
           <h2 className="text-foreground mb-3 text-[13px] font-semibold">Danger Zone</h2>
-          <button
+          <Button
             type="button"
+            variant="destructive"
+            size="sm"
+            className="w-full"
             onClick={onDelete}
             disabled={deleting}
-            className="w-full rounded-md border border-[#dc2626]/30 px-3 py-2 text-[12px] font-medium text-[#dc2626] transition-colors hover:bg-[#dc262608] disabled:opacity-50"
           >
             {deleting ? "Deleting…" : "Delete Article"}
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -450,24 +462,25 @@ export function ArticleEditorPage() {
           </Link>
           <div className="flex items-center gap-2">
             {canEdit && (
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleSave}
                 disabled={saving}
-                className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2 text-[13px] font-semibold transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save Draft"}
-              </button>
+              </Button>
             )}
             {!isNew && isDraft && (
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="bg-foreground text-background rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
               >
                 {submitting ? "Submitting…" : "Submit for Review"}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -487,13 +500,13 @@ export function ArticleEditorPage() {
                 <label className="text-foreground text-[13px] font-semibold">
                   Title <span className="text-[#dc2626]">*</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Article title…"
                   disabled={!canEdit}
-                  className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-4 py-2.5 text-[15px] font-semibold outline-none focus:ring-2 disabled:opacity-60"
+                  className="bg-card rounded-lg px-4 py-2.5 text-[15px] font-semibold"
                 />
               </div>
 
@@ -501,13 +514,13 @@ export function ArticleEditorPage() {
                 <label className="text-foreground text-[13px] font-semibold">
                   Perex <span className="text-[#dc2626]">*</span>
                 </label>
-                <textarea
+                <Textarea
                   value={perex}
                   onChange={(e) => setPerex(e.target.value)}
                   placeholder="Short introduction shown in article listings…"
                   disabled={!canEdit}
                   rows={3}
-                  className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:ring-ring w-full resize-none rounded-lg border px-4 py-3 text-[14px] leading-relaxed outline-none focus:ring-2 disabled:opacity-60"
+                  className="bg-card rounded-lg px-4 py-3 text-[14px] leading-relaxed"
                 />
               </div>
 

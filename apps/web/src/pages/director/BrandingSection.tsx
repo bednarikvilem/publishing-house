@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { SectionTitle } from "../../components/SectionTitle";
+import { Button } from "../../components/ui/button";
 
 const PRESETS: { key: string | null; label: string }[] = [
   { key: null,       label: "Default"  },
@@ -49,11 +50,12 @@ export function BrandingSection({
           {PRESETS.map(({ key, label }) => {
             const isActive = selected === key;
             return (
-              <button
+              <Button
                 key={String(key)}
                 onClick={() => handleSelect(key)}
                 title={label}
-                className={`flex flex-col items-center gap-1.5 rounded-md p-2 transition-colors hover:bg-muted ${isActive ? "bg-muted" : ""}`}
+                variant="ghost"
+                className={`h-auto flex-col gap-1.5 p-2 ${isActive ? "bg-muted" : ""}`}
               >
                 <span
                   className={`h-9 w-9 rounded-full border-2 transition-all ${key ? `theme-${key}` : ""} ${isActive ? "ring-2 ring-offset-2 ring-current border-transparent" : "border-border"}`}
@@ -62,7 +64,7 @@ export function BrandingSection({
                 <span className={`text-[11px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
                   {label}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>

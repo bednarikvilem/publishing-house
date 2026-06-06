@@ -5,6 +5,7 @@ import { useTheme } from "../hooks/useTheme";
 import { SunIcon, MoonIcon } from "../components/Icons";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
+import { Button } from "../components/ui/button";
 
 interface GlobalLoginPageProps {
   title: string;
@@ -54,13 +55,15 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
 
   return (
     <div className="bg-background text-foreground min-h-screen w-full">
-      <button
+      <Button
         onClick={toggle}
         aria-label="Toggle dark mode"
-        className="text-muted-foreground hover:text-foreground hover:bg-muted fixed top-4 right-4 rounded-md p-2 transition-colors"
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 right-4"
       >
         {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
-      </button>
+      </Button>
 
       <AuthCard title={title} subtitle={subtitle}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -85,13 +88,13 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
 
           {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="w-full"
           >
             {loading ? "Signing in…" : "Sign In"}
-          </button>
+          </Button>
         </form>
       </AuthCard>
     </div>

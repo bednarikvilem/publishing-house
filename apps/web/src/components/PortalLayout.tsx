@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SunIcon, MoonIcon, MenuIcon, XIcon } from "./Icons";
 import { useTheme } from "../hooks/useTheme";
+import { Button } from "@/components/ui/button";
 
 export function PortalLayout({
   title,
@@ -22,13 +23,15 @@ export function PortalLayout({
       >
         {title}
       </span>
-      <button
+      <Button
+        variant="ghost"
+        size="icon-sm"
         onClick={toggle}
         aria-label="Toggle dark mode"
-        className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors"
+        className="text-muted-foreground hover:text-foreground"
       >
         {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
-      </button>
+      </Button>
     </div>
   );
 
@@ -49,21 +52,25 @@ export function PortalLayout({
           {title}
         </span>
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={toggle}
             aria-label="Toggle dark mode"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors"
+            className="text-muted-foreground hover:text-foreground"
           >
             {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground gap-1.5"
           >
             <MenuIcon size={18} />
             Menu
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -82,12 +89,14 @@ export function PortalLayout({
               >
                 {title}
               </span>
-              <button
+              <Button
+                variant="ghost"
+                size="icon-sm"
                 onClick={() => setDrawerOpen(false)}
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <XIcon size={18} />
-              </button>
+              </Button>
             </div>
             {sidebarContent}
           </aside>

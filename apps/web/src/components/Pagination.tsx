@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export function Pagination({
   currentPage,
   totalPages,
@@ -16,20 +18,22 @@ export function Pagination({
         Page {currentPage} of {totalPages} — {total} item{total !== 1 ? "s" : ""}
       </span>
       <div className="flex gap-2">
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
         >
           Previous
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

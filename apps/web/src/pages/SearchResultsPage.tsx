@@ -6,6 +6,7 @@ import { ArticleCard } from "../components/ArticleCard";
 import { SearchIcon } from "../components/Icons";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { Input } from "../components/ui/input";
 
 export function SearchResultsPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -75,12 +76,12 @@ export function SearchResultsPage() {
                 size={18}
                 className="text-muted-foreground shrink-0"
               />
-              <input
+              <Input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Search articles..."
-                className="text-foreground placeholder:text-muted-foreground flex-1 bg-transparent text-[15px] outline-none"
+                className="flex-1 border-0 bg-transparent px-0 text-[15px] focus-visible:ring-0 h-full"
               />
             </div>
           </form>

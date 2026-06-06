@@ -177,20 +177,23 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                     </>
                   ) : (
                     <>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() => { setEditId(cat.id); setEditName(cat.name); }}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
                         aria-label="Edit category"
                       >
                         <PencilIcon />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() => handleDelete(cat.id)}
-                        className="text-muted-foreground transition-colors hover:text-[#dc2626]"
                         aria-label="Delete category"
+                        className="hover:text-destructive"
                       >
                         <TrashIcon />
-                      </button>
+                      </Button>
                     </>
                   )}
                 </div>

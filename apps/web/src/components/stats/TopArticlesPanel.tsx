@@ -4,6 +4,7 @@ import { HorizBar } from "./HorizBar";
 import { StatCard } from "./StatCard";
 import { Empty } from "./internal";
 import { Icons } from "./internal";
+import { Button } from "../ui/button";
 
 type TopTab = "views" | "likes" | "comments";
 
@@ -33,17 +34,14 @@ export function TopArticlesPanel({ stats }: { stats: NewspaperStats }) {
     <StatCard title="Top Articles" icon={<Icons.Trend />}>
       <div className="flex gap-2 mb-4">
         {tabs.map((t) => (
-          <button
+          <Button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              tab === t.key
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            }`}
+            variant={tab === t.key ? "default" : "secondary"}
+            size="xs"
           >
             {t.label}
-          </button>
+          </Button>
         ))}
       </div>
       {data.length === 0 ? (

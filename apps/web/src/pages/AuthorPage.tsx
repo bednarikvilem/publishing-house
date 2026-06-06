@@ -8,6 +8,7 @@ import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { Button } from "../components/ui/button";
 
 type SortOrder = "latest" | "oldest";
 
@@ -202,26 +203,20 @@ export function AuthorPage() {
             <span className="text-muted-foreground text-[14px] font-medium">
               Sort by:
             </span>
-            <button
+            <Button
               onClick={() => setSortOrder("latest")}
-              className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
-                sortOrder === "latest"
-                  ? "bg-foreground text-background"
-                  : "border-border text-muted-foreground hover:text-foreground border"
-              }`}
+              variant={sortOrder === "latest" ? "default" : "outline"}
+              size="sm"
             >
               Latest
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setSortOrder("oldest")}
-              className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
-                sortOrder === "oldest"
-                  ? "bg-foreground text-background"
-                  : "border-border text-muted-foreground hover:text-foreground border"
-              }`}
+              variant={sortOrder === "oldest" ? "default" : "outline"}
+              size="sm"
             >
               Oldest
-            </button>
+            </Button>
           </div>
           <span className="text-muted-foreground text-[13px]">
             {articleCount} article{articleCount !== 1 ? "s" : ""} total

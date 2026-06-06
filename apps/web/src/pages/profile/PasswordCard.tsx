@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
 
 export function PasswordCard() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -102,13 +103,9 @@ export function PasswordCard() {
       {success && <p className="text-[13px] text-green-600">Password updated successfully.</p>}
 
       <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={saving}>
           {saving ? "Updating…" : "Update Password"}
-        </button>
+        </Button>
       </div>
     </form>
   );
