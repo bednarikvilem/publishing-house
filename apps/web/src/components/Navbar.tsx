@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ChevronDownIcon,
@@ -11,14 +12,8 @@ import {
 } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
-import { API_BASE_URL, authHeaders, requestSubscription, getSubscriptionStatus } from "../lib/api";
+import { API_BASE_URL, authHeaders, client, requestSubscription, getSubscriptionStatus } from "../lib/api";
 import { slugToDisplayName } from "../lib/utils";
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
 
 interface UserInfo {
   full_name: string | null;
@@ -46,7 +41,6 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
   const [searchParams] = useSearchParams();
-  const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,16 +59,17 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
 
   displayName ??= newspaper?.name ?? slugToDisplayName(newspaperName);
 
-  useEffect(() => {
-    if (!newspaper) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/categories`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<{ data: Category[] }>;
-      })
-      .then((data) => setCategories(data.data))
-      .catch(() => {});
-  }, [newspaper]);
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories", newspaper?.id],
+    enabled: !!newspaper,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaper!.id })
+        .categories.get();
+      if (error) throw error;
+      return data.data;
+    },
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");

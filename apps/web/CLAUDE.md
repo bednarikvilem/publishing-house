@@ -108,6 +108,8 @@ For more information, read the Bun API docs in `node_modules/bun-types/docs/**.m
 
 When communicating with backend, use API calls defined in ../../docs/API.md. Always follow their definition.
 
+Fetch data with TanStack Query (`useQuery` for reads, `useMutation` for writes) on top of the Eden `client` from `src/lib/api.ts` — never call `fetch()` directly in components. See ../../docs/data_fetching.md for the pattern and reference implementations.
+
 ## Design of the frontend pages
 
 The file ../../docs/design/design.pen was created using the Pencil app. It contains information for visualizing the frontend pages. When generating new pages, follow the design defined in this file.

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import type { Newspaper } from "../types";
 
 interface UseNewspaperResult {
@@ -11,31 +12,23 @@ interface UseNewspaperResult {
 
 export function useNewspaper(): UseNewspaperResult {
   const { newspaperName } = useParams<{ newspaperName: string }>();
-  const [newspaper, setNewspaper] = useState<Newspaper | null>(null);
-  const [notFound, setNotFound] = useState(false);
+
+  const { data: newspaper = null, isError } = useQuery({
+    queryKey: ["newspaper", newspaperName],
+    enabled: !!newspaperName,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await client.api.newspapers["by-slug"]({
+        slug: newspaperName!,
+      }).get();
+      if (error) throw error;
+      return data as Newspaper;
+    },
+  });
 
   useEffect(() => {
-    if (!newspaperName) return;
-    setNotFound(false);
-    fetch(`${API_BASE_URL}/api/newspapers/by-slug/${newspaperName}`, {
-      headers: authHeaders(),
-    })
-      .then((res) => {
-        if (res.status === 404) {
-          setNotFound(true);
-          return null;
-        }
-        if (!res.ok) throw new Error("Failed to fetch newspaper");
-        return res.json() as Promise<Newspaper>;
-      })
-      .then((data) => {
-        if (data) {
-          setNewspaper(data);
-          document.title = data.name;
-        }
-      })
-      .catch(() => setNotFound(true));
-  }, [newspaperName]);
+    if (newspaper) document.title = newspaper.name;
+  }, [newspaper]);
 
-  return { newspaperName: newspaperName ?? "", newspaper, notFound };
+  return { newspaperName: newspaperName ?? "", newspaper, notFound: isError };
 }
