@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders, setArticleSubscriberOnly } from "../../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client, setArticleSubscriberOnly } from "../../lib/api";
 import type { PaginatedResponse, ReviewDecision } from "../../types";
 import type { QueueArticle } from "../../types/dashboard";
 import { SectionTitle } from "../../components/SectionTitle";
@@ -18,140 +19,105 @@ type Editor = { id: string; full_name: string };
 export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") ?? "1");
+  const queryClient = useQueryClient();
 
-  const [articles, setArticles] = useState<QueueArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assignEditorId, setAssignEditorId] = useState("");
-  const [editors, setEditors] = useState<Editor[]>([]);
-  const [editorsLoading, setEditorsLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    await null;
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: "20",
-        view: "NEWSPAPER_MANAGER",
-      });
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-      setPagination({
-        total: data.pagination.total,
-        total_pages: data.pagination.total_pages,
-      });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId, currentPage]);
+  const queueQuery = useQuery({
+    queryKey: ["editorial-queue", newspaperId, currentPage],
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles.queue.get({
+          query: { page: currentPage, limit: 20, view: "NEWSPAPER_MANAGER" },
+        });
+      if (error) throw error;
+      return data as PaginatedResponse<QueueArticle>;
+    },
+  });
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
+  const articles = queueQuery.data?.data ?? [];
+  const totalPages = queueQuery.data?.pagination.total_pages ?? 1;
+  const total = queueQuery.data?.pagination.total ?? 0;
 
-  async function openAssignEditor(articleId: string) {
-    setActiveId(activeId === articleId ? null : articleId);
-    if (activeId === articleId) return;
-    setAssignEditorId("");
-    setEditorsLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/editors`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: Editor[] };
-      setEditors(data.data);
-    } catch {
-      setEditors([]);
-    } finally {
-      setEditorsLoading(false);
-    }
-  }
+  const editorsQuery = useQuery({
+    queryKey: ["editors", newspaperId],
+    enabled: activeId !== null,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .editors.get();
+      if (error) throw error;
+      return (data as { data: Editor[] }).data;
+    },
+  });
+  const editors = editorsQuery.data ?? [];
 
-  async function handleAssignEditor(articleId: string) {
-    if (!assignEditorId.trim()) return;
-    setSubmitting(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/assign-editor`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ editor_id: assignEditorId.trim() }),
-        }
-      );
-      if (!res.ok) throw new Error();
+  const invalidateQueue = () =>
+    queryClient.invalidateQueries({ queryKey: ["editorial-queue", newspaperId] });
+
+  const assignEditor = useMutation({
+    mutationFn: async ({ articleId, editorId }: { articleId: string; editorId: string }) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })["assign-editor"]
+        .post({ editor_id: editorId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
       setActiveId(null);
       setAssignEditorId("");
-      load();
-    } catch {
-      alert("Failed to assign editor. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
+      invalidateQueue();
+    },
+    onError: () => alert("Failed to assign editor. Please try again."),
+  });
 
-  async function handleToggleSubscriberOnly(articleId: string, current: boolean) {
-    setTogglingIds((prev) => new Set(prev).add(articleId));
-    try {
-      await setArticleSubscriberOnly(newspaperId, articleId, !current);
-      setArticles((prev) =>
-        prev.map((a) => (a.id === articleId ? { ...a, is_subscriber_only: !current } : a))
-      );
-    } catch {
-      alert("Failed to update subscriber-only setting. Please try again.");
-    } finally {
-      setTogglingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(articleId);
-        return next;
-      });
-    }
-  }
+  const toggleSubscriber = useMutation({
+    mutationFn: ({ articleId, current }: { articleId: string; current: boolean }) =>
+      setArticleSubscriberOnly(newspaperId, articleId, !current),
+    onSuccess: invalidateQueue,
+    onError: () => alert("Failed to update subscriber-only setting. Please try again."),
+  });
 
-  async function handleApprove(articleId: string, decision: ReviewDecision, note: string) {
-    setSubmitting(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve?view=NEWSPAPER_MANAGER`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ decision, note: note || undefined }),
-        }
-      );
-      if (!res.ok) throw new Error();
+  const approve = useMutation({
+    mutationFn: async ({
+      articleId,
+      decision,
+      note,
+    }: {
+      articleId: string;
+      decision: ReviewDecision;
+      note: string;
+    }) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .approve.post(
+          { decision, note: note || undefined },
+          { query: { view: "NEWSPAPER_MANAGER" } }
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => {
       setActiveId(null);
-      load();
-    } catch {
-      alert("Failed to submit review. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+      invalidateQueue();
+    },
+    onError: () => alert("Failed to submit review. Please try again."),
+  });
+
+  function toggleActive(articleId: string) {
+    setActiveId((prev) => (prev === articleId ? null : articleId));
+    setAssignEditorId("");
   }
 
   return (
     <div className="flex flex-col gap-7">
       <SectionTitle title="Editorial Queue" />
 
-      {error ? (
+      {queueQuery.isError ? (
         <ErrorState />
-      ) : loading ? (
+      ) : queueQuery.isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState message="No articles awaiting editorial action." />
@@ -186,9 +152,15 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                         <button
                           role="switch"
                           aria-checked={!!article.is_subscriber_only}
-                          disabled={togglingIds.has(article.id)}
+                          disabled={
+                            toggleSubscriber.isPending &&
+                            toggleSubscriber.variables?.articleId === article.id
+                          }
                           onClick={() =>
-                            handleToggleSubscriberOnly(article.id, !!article.is_subscriber_only)
+                            toggleSubscriber.mutate({
+                              articleId: article.id,
+                              current: !!article.is_subscriber_only,
+                            })
                           }
                           className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none disabled:opacity-50 ${
                             article.is_subscriber_only ? "bg-foreground" : "bg-input"
@@ -210,11 +182,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                         {STATUS_LABELS[article.status]}
                       </span>
                       <button
-                        onClick={() =>
-                          isSubmitted
-                            ? openAssignEditor(article.id)
-                            : setActiveId(activeId === article.id ? null : article.id)
-                        }
+                        onClick={() => toggleActive(article.id)}
                         className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
                       >
                         {isSubmitted ? "Assign Editor" : "Review"}
@@ -224,12 +192,19 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
 
                   {activeId === article.id && isSubmitted && (
                     <form
-                      onSubmit={(e) => { e.preventDefault(); handleAssignEditor(article.id); }}
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!assignEditorId.trim()) return;
+                        assignEditor.mutate({
+                          articleId: article.id,
+                          editorId: assignEditorId.trim(),
+                        });
+                      }}
                       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
                     >
                       <label className="text-foreground text-[13px] font-medium">
                         Assign Editor
-                        {editorsLoading ? (
+                        {editorsQuery.isLoading ? (
                           <p className="text-muted-foreground mt-1.5 text-[13px]">Loading editors…</p>
                         ) : editors.length === 0 ? (
                           <p className="text-muted-foreground mt-1.5 text-[13px]">
@@ -261,10 +236,14 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                         </button>
                         <button
                           type="submit"
-                          disabled={submitting || !assignEditorId.trim() || editors.length === 0}
+                          disabled={
+                            assignEditor.isPending ||
+                            !assignEditorId.trim() ||
+                            editors.length === 0
+                          }
                           className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                         >
-                          {submitting ? "Assigning…" : "Assign"}
+                          {assignEditor.isPending ? "Assigning…" : "Assign"}
                         </button>
                       </div>
                     </form>
@@ -272,9 +251,11 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
 
                   {activeId === article.id && !isSubmitted && (
                     <DecisionForm
-                      onSubmit={(d, n) => handleApprove(article.id, d, n)}
+                      onSubmit={(d, n) =>
+                        approve.mutate({ articleId: article.id, decision: d, note: n })
+                      }
                       onCancel={() => setActiveId(null)}
-                      submitting={submitting}
+                      submitting={approve.isPending}
                     />
                   )}
                 </ListRow>
@@ -283,8 +264,8 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
           </div>
           <Pagination
             currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
+            totalPages={totalPages}
+            total={total}
             onPageChange={(p) => {
               const next = new URLSearchParams(searchParams);
               next.set("page", String(p));
