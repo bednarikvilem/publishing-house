@@ -153,7 +153,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                     className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-[13px] outline-none focus:ring-2"
                   />
                 ) : (
-                  <span className="text-foreground flex-1 text-[14px] font-medium">
+                  <span className="text-foreground flex-1 text-sm font-medium">
                     {cat.name}
                   </span>
                 )}
@@ -163,13 +163,13 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                       <button
                         onClick={() => handleUpdate(cat.id)}
                         disabled={saving || !editName.trim()}
-                        className="bg-foreground text-background rounded-md px-3 py-1.5 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+                        className="bg-foreground text-background rounded-md px-3 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                       >
                         Save
                       </button>
                       <button
                         onClick={() => { setEditId(null); setEditName(""); }}
-                        className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-medium"
+                        className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-xs font-medium"
                       >
                         Cancel
                       </button>

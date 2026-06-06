@@ -60,11 +60,11 @@ export function PasswordCard() {
     >
       <div className="flex flex-col gap-1">
         <h2
-          className="text-foreground text-[18px] font-bold font-outfit"
+          className="text-foreground text-lg font-bold font-outfit"
         >
           Change Password
         </h2>
-        <p className="text-muted-foreground text-[14px]">
+        <p className="text-muted-foreground text-sm">
           Update your password to keep your account secure.
         </p>
       </div>
@@ -104,7 +104,7 @@ export function PasswordCard() {
         <button
           type="submit"
           disabled={saving}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="bg-foreground text-background rounded-md px-5 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "Updating…" : "Update Password"}
         </button>

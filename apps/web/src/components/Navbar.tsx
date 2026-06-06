@@ -141,7 +141,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         <nav className="hidden items-center gap-6 md:flex">
           <Link
             to={`/${newspaperName}`}
-            className="text-muted-foreground hover:text-foreground text-[14px] font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
           >
             Home
           </Link>
@@ -149,7 +149,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             <Link
               key={cat.id}
               to={`/${newspaperName}/category/${cat.slug}`}
-              className="text-muted-foreground hover:text-foreground text-[14px] font-medium transition-colors"
+              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
             >
               {cat.name}
             </Link>
@@ -186,7 +186,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             {hasDashboardAccess && (
               <Link
                 to={`/${newspaperName}/author-dashboard`}
-                className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-md px-4 py-2 text-[14px] font-medium hover:opacity-90"
+                className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium hover:opacity-90"
               >
                 <LayoutDashboardIcon size={16} />
                 Dashboard
@@ -196,14 +196,14 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               subscribeMessage ? (
                 <button
                   disabled
-                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-sm font-medium opacity-60"
                 >
                   {subscribeMessage}
                 </button>
               ) : subscriptionStatus?.is_active ? (
                 <button
                   disabled
-                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-[14px] font-medium opacity-60"
+                  className="border-border text-muted-foreground cursor-default rounded-lg border px-4 py-2 text-sm font-medium opacity-60"
                 >
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
@@ -215,7 +215,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               ) : (
                 <button
                   onClick={handleSubscribe}
-                  className="border-border text-foreground hover:bg-muted rounded-lg border px-4 py-2 text-[14px] font-medium transition-colors"
+                  className="border-border text-foreground hover:bg-muted rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
                 >
                   Subscribe
                 </button>
@@ -228,11 +228,11 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                   className="hover:bg-muted flex items-center gap-2 rounded-lg px-3 py-2 transition-colors"
                 >
                   <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
-                    <span className="text-primary-foreground text-[12px] font-semibold">
+                    <span className="text-primary-foreground text-xs font-semibold">
                       {getInitials(user)}
                     </span>
                   </div>
-                  <span className="text-foreground text-[14px] font-medium">
+                  <span className="text-foreground text-sm font-medium">
                     {user.full_name ?? user.username}
                   </span>
                   <ChevronDownIcon size={16} className="text-muted-foreground" />
@@ -244,13 +244,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                         setUserMenuOpen(false);
                         navigate(`/${newspaperName}/profile`);
                       }}
-                      className="text-foreground hover:bg-muted w-full rounded-t-lg px-4 py-2.5 text-left text-[14px] font-medium"
+                      className="text-foreground hover:bg-muted w-full rounded-t-lg px-4 py-2.5 text-left text-sm font-medium"
                     >
                       Profile
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="text-destructive hover:bg-muted w-full rounded-b-lg px-4 py-2.5 text-left text-[14px] font-medium"
+                      className="text-destructive hover:bg-muted w-full rounded-b-lg px-4 py-2.5 text-left text-sm font-medium"
                     >
                       Log out
                     </button>
@@ -261,13 +261,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               <>
                 <Link
                   to={`/${newspaperName}/login`}
-                  className="text-foreground hover:bg-muted rounded-lg px-4 py-2 text-[14px] font-medium"
+                  className="text-foreground hover:bg-muted rounded-lg px-4 py-2 text-sm font-medium"
                 >
                   Log in
                 </Link>
                 <Link
                   to={`/${newspaperName}/register`}
-                  className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-[14px] font-semibold hover:opacity-90"
+                  className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-semibold hover:opacity-90"
                 >
                   Sign up
                 </Link>
@@ -298,7 +298,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles…"
-                className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[14px] outline-none"
+                className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-sm outline-none"
               />
             </div>
           </form>
@@ -330,7 +330,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               <Link
                 to={`/${newspaperName}/author-dashboard`}
                 onClick={() => setMobileMenuOpen(false)}
-                className="bg-primary text-primary-foreground flex items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-[14px] font-medium hover:opacity-90"
+                className="bg-primary text-primary-foreground flex items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-medium hover:opacity-90"
               >
                 <LayoutDashboardIcon size={16} />
                 Dashboard
@@ -340,14 +340,14 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               subscribeMessage ? (
                 <button
                   disabled
-                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-sm font-medium opacity-60"
                 >
                   {subscribeMessage}
                 </button>
               ) : subscriptionStatus?.is_active ? (
                 <button
                   disabled
-                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-[14px] font-medium opacity-60"
+                  className="border-border text-muted-foreground cursor-default rounded-md border px-4 py-2.5 text-center text-sm font-medium opacity-60"
                 >
                   Subscribed until{" "}
                   {new Date(subscriptionStatus.expires_at!).toLocaleDateString("en-GB", {
@@ -359,7 +359,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               ) : (
                 <button
                   onClick={() => { setMobileMenuOpen(false); handleSubscribe(); }}
-                  className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2.5 text-[14px] font-medium transition-colors"
+                  className="border-border text-foreground hover:bg-muted rounded-md border px-4 py-2.5 text-sm font-medium transition-colors"
                 >
                   Subscribe
                 </button>
@@ -372,13 +372,13 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                     setMobileMenuOpen(false);
                     navigate(`/${newspaperName}/profile`);
                   }}
-                  className="text-foreground hover:bg-muted rounded-md px-4 py-2.5 text-left text-[14px] font-medium transition-colors"
+                  className="text-foreground hover:bg-muted rounded-md px-4 py-2.5 text-left text-sm font-medium transition-colors"
                 >
                   Profile
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="text-destructive hover:bg-muted rounded-md px-4 py-2.5 text-left text-[14px] font-medium transition-colors"
+                  className="text-destructive hover:bg-muted rounded-md px-4 py-2.5 text-left text-sm font-medium transition-colors"
                 >
                   Log out
                 </button>
@@ -388,14 +388,14 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 <Link
                   to={`/${newspaperName}/login`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-foreground hover:bg-muted flex-1 rounded-lg px-4 py-2.5 text-center text-[14px] font-medium transition-colors"
+                  className="text-foreground hover:bg-muted flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   to={`/${newspaperName}/register`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="bg-primary text-primary-foreground flex-1 rounded-lg px-4 py-2.5 text-center text-[14px] font-semibold hover:opacity-90"
+                  className="bg-primary text-primary-foreground flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-semibold hover:opacity-90"
                 >
                   Sign up
                 </Link>

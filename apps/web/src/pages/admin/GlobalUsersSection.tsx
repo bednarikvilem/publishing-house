@@ -95,7 +95,7 @@ export function GlobalUsersSection() {
 
       {showCreate && (
         <form onSubmit={handleCreate} className="border-border bg-card flex flex-col gap-4 rounded-lg border p-5">
-          <p className="text-foreground text-[14px] font-semibold">Create Global User</p>
+          <p className="text-foreground text-sm font-semibold">Create Global User</p>
           <div className="grid grid-cols-2 gap-3">
             {(["email", "username", "full_name", "password"] as const).map((field) => (
               <FormField
@@ -109,7 +109,7 @@ export function GlobalUsersSection() {
               />
             ))}
             <div className="flex flex-col gap-1.5">
-              <label className="text-foreground text-[14px] font-medium">Role</label>
+              <label className="text-foreground text-sm font-medium">Role</label>
               <select
                 value={form.role}
                 onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
@@ -141,8 +141,8 @@ export function GlobalUsersSection() {
             <ListRow key={u.id} first={i === 0} last={i === globalUsers.length - 1}>
               <div className="flex items-center gap-4">
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="text-foreground text-[14px] font-semibold">{u.full_name ?? u.username}</span>
-                  <span className="text-muted-foreground text-[12px]">@{u.username} · {u.email}</span>
+                  <span className="text-foreground text-sm font-semibold">{u.full_name ?? u.username}</span>
+                  <span className="text-muted-foreground text-xs">@{u.username} · {u.email}</span>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {u.roles.map((role) => (
                       <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">

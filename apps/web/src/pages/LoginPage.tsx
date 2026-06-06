@@ -73,7 +73,7 @@ export function LoginPage() {
 
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-foreground text-[14px] font-medium">
+              <label htmlFor="password" className="text-foreground text-sm font-medium">
                 Password
               </label>
               <Link
@@ -90,7 +90,7 @@ export function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none"
+              className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>
 
@@ -99,7 +99,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading || !newspaper}
-            className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="bg-foreground text-background h-10 w-full rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Signing in…" : "Sign In"}
           </button>
@@ -112,13 +112,13 @@ export function LoginPage() {
 
           <button
             type="button"
-            className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-[14px] font-medium transition-colors"
+            className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-sm font-medium transition-colors"
           >
             Continue with Google
           </button>
         </form>
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Don't have an account?{" "}
           <Link
             to={`/${newspaperName}/register`}

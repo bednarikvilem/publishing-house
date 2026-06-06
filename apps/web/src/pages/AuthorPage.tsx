@@ -118,7 +118,7 @@ export function AuthorPage() {
                 <h1 className="text-[32px] leading-none font-extrabold tracking-[-0.5px] text-white">
                   {author.full_name}
                 </h1>
-                <p className="max-w-[600px] text-[14px] leading-[1.6] text-white/70">
+                <p className="max-w-[600px] text-sm leading-[1.6] text-white/70">
                   {author.bio}
                 </p>
               </div>
@@ -129,7 +129,7 @@ export function AuthorPage() {
                   <span className="text-[28px] font-extrabold text-white">
                     {formatCount(articleCount)}
                   </span>
-                  <span className="text-[12px] text-white/60">Articles</span>
+                  <span className="text-xs text-white/60">Articles</span>
                 </div>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function AuthorPage() {
                     <span className="text-card-foreground text-[13px] font-semibold">
                       {featured.author?.full_name}
                     </span>
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(featured.publication_date)}
                     </span>
                   </div>
@@ -199,7 +199,7 @@ export function AuthorPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-[14px] font-medium">
+            <span className="text-muted-foreground text-sm font-medium">
               Sort by:
             </span>
             <button

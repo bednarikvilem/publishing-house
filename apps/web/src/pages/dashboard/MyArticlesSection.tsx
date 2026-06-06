@@ -113,12 +113,12 @@ export function MyArticlesSection({
                       {article.perex}
                     </span>
                     {article.latest_feedback && (
-                      <span className="mt-1 text-[12px] leading-[1.4] text-[#dc2626]">
+                      <span className="mt-1 text-xs leading-[1.4] text-[#dc2626]">
                         Feedback: {article.latest_feedback}
                       </span>
                     )}
                     {article.assigned_editor && (
-                      <span className="text-muted-foreground text-[12px]">
+                      <span className="text-muted-foreground text-xs">
                         Editor: {article.assigned_editor.full_name}
                       </span>
                     )}
@@ -128,7 +128,7 @@ export function MyArticlesSection({
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <span
-                      className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[article.status]}`}
                     >
                       {STATUS_LABELS[article.status]}
                     </span>

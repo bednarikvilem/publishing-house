@@ -1,10 +1,10 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 const inputClass =
-  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-[14px] focus:ring-2 focus:outline-none";
+  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring h-10 w-full rounded-md border px-3 text-sm focus:ring-2 focus:outline-none";
 
 const textareaClass =
-  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-[14px] focus:ring-2 focus:outline-none";
+  "border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/50 focus:border-ring w-full resize-none rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none";
 
 interface BaseProps {
   id: string;
@@ -28,7 +28,7 @@ export function FormField(props: FormFieldProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-foreground text-[14px] font-medium">
+      <label htmlFor={id} className="text-foreground text-sm font-medium">
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
@@ -47,7 +47,7 @@ export function FormField(props: FormFieldProps) {
           {...(rest as InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
-      {error && <span className="text-destructive text-[12px]">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   );
 }

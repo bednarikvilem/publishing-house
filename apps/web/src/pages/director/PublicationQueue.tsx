@@ -63,7 +63,7 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="text-foreground text-[15px] font-semibold">{article.title}</span>
                   <span className="text-muted-foreground line-clamp-2 text-[13px]">{article.perex}</span>
-                  <div className="text-muted-foreground flex gap-3 text-[12px]">
+                  <div className="text-muted-foreground flex gap-3 text-xs">
                     <span>Author: {article.author.full_name}</span>
                     <span>Category: {article.category}</span>
                   </div>
@@ -71,7 +71,7 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
                 <button
                   onClick={() => handlePublish(article.id)}
                   disabled={publishing === article.id}
-                  className="rounded-md bg-[#16a34a] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="rounded-md bg-[#16a34a] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {publishing === article.id ? "Publishing…" : "Publish"}
                 </button>

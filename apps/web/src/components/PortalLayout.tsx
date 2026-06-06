@@ -17,7 +17,7 @@ export function PortalLayout({
   const header = (
     <div className="flex items-center justify-between px-2 pb-4">
       <span
-        className="text-foreground text-[16px] font-black tracking-[-0.5px] font-outfit"
+        className="text-foreground text-base font-black tracking-[-0.5px] font-outfit"
       >
         {title}
       </span>
@@ -75,7 +75,7 @@ export function PortalLayout({
           <aside className="border-border bg-card absolute inset-y-0 left-0 flex w-72 flex-col gap-1 border-r px-3 py-6 shadow-xl">
             <div className="flex items-center justify-between px-2 pb-4">
               <span
-                className="text-foreground text-[16px] font-black tracking-[-0.5px] font-outfit"
+                className="text-foreground text-base font-black tracking-[-0.5px] font-outfit"
               >
                 {title}
               </span>

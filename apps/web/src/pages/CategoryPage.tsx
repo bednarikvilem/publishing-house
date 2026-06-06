@@ -80,7 +80,7 @@ export function CategoryPage() {
             <span>{category?.name ?? categorySlug}</span>
           </p>
           {/* Category title */}
-          <h1 className="text-[48px] leading-none font-black tracking-[-1px] text-white">
+          <h1 className="text-5xl leading-none font-black tracking-[-1px] text-white">
             {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
@@ -149,13 +149,13 @@ export function CategoryPage() {
                         <span className="text-card-foreground text-[13px] font-semibold">
                           {featured.author.full_name}
                         </span>
-                        <span className="text-muted-foreground text-[12px]">
+                        <span className="text-muted-foreground text-xs">
                           {formatDate(featured.publication_date)}
                         </span>
                       </div>
                     </>
                   ) : (
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(featured.publication_date)}
                     </span>
                   )}
@@ -168,7 +168,7 @@ export function CategoryPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-[14px] font-medium">
+            <span className="text-muted-foreground text-sm font-medium">
               Sort by:
             </span>
             <button

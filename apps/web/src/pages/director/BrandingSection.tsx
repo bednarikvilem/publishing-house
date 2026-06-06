@@ -44,7 +44,7 @@ export function BrandingSection({
     <div className="flex flex-col gap-6">
       <SectionTitle title="Newspaper Branding" />
       <div className="flex flex-col gap-3">
-        <p className="text-foreground text-[14px] font-semibold">Accent Color</p>
+        <p className="text-foreground text-sm font-semibold">Accent Color</p>
         <div className="flex flex-wrap gap-4">
           {PRESETS.map(({ key, label }) => {
             const isActive = selected === key;

@@ -55,7 +55,7 @@ export function PasswordResetPage() {
             <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
               <CheckIcon size={22} className="text-foreground" />
             </div>
-            <p className="text-muted-foreground text-center text-[14px]">
+            <p className="text-muted-foreground text-center text-sm">
               If that address is registered, a reset link has been sent. Check your inbox.
             </p>
           </div>
@@ -77,14 +77,14 @@ export function PasswordResetPage() {
             <button
               type="submit"
               disabled={loading || !newspaper}
-              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="bg-foreground text-background h-10 w-full rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Sending…" : "Send Reset Link"}
             </button>
           </form>
         )}
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Remember your password?{" "}
           <Link
             to={`/${newspaperName}/login`}

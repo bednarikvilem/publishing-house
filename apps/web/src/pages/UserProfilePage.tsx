@@ -53,8 +53,8 @@ export function UserProfilePage() {
           <>
             {profile.roles.includes("AUTHOR") && (!profile.bio || !profile.profile_picture) && (
               <div className="border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 flex items-start gap-3 rounded-xl border p-4">
-                <span className="mt-0.5 text-amber-500 text-[18px] leading-none select-none">⚠</span>
-                <p className="text-amber-800 dark:text-amber-300 text-[14px] leading-snug">
+                <span className="mt-0.5 text-amber-500 text-lg leading-none select-none">⚠</span>
+                <p className="text-amber-800 dark:text-amber-300 text-sm leading-snug">
                   Your author profile is incomplete. Please set your{" "}
                   {!profile.bio && !profile.profile_picture
                     ? "bio and profile picture"

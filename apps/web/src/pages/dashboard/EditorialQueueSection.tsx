@@ -140,7 +140,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
                         {article.perex}
                       </span>
-                      <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
+                      <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
                         <span>Author: {article.author.full_name}</span>
                         <span>Category: {article.category}</span>
                         {article.assigned_editor && (
@@ -172,18 +172,18 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                             }`}
                           />
                         </button>
-                        <span className="text-muted-foreground text-[12px]">Subscribers only</span>
+                        <span className="text-muted-foreground text-xs">Subscribers only</span>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
                       <span
-                        className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[article.status]}`}
                       >
                         {STATUS_LABELS[article.status]}
                       </span>
                       <button
                         onClick={() => toggleActive(article.id)}
-                        className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold transition-colors"
+                        className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors"
                       >
                         {isSubmitted ? "Assign Editor" : "Review"}
                       </button>

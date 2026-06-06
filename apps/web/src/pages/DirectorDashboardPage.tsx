@@ -92,7 +92,7 @@ export function DirectorDashboardPage() {
                       <button
                         key={tab}
                         onClick={() => setActiveView({ newspaper: np, tab })}
-                        className={`rounded-md px-2 py-1.5 text-left text-[12px] font-medium transition-colors capitalize ${selectedTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                        className={`rounded-md px-2 py-1.5 text-left text-xs font-medium transition-colors capitalize ${selectedTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                       >
                         {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : tab === "statistics" ? "Statistics" : "Branding"}
                       </button>
@@ -131,7 +131,7 @@ export function DirectorDashboardPage() {
                     <span className="text-foreground flex-1 text-[15px] font-semibold">{np.name}</span>
                     <button
                       onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold"
+                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-xs font-semibold"
                     >
                       Open
                     </button>

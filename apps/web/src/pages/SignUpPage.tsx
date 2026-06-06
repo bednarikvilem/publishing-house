@@ -78,14 +78,14 @@ export function SignUpPage() {
             <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
               Check your email
             </h2>
-            <p className="text-muted-foreground text-[14px] leading-relaxed">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               We sent a confirmation link to{" "}
               <span className="text-foreground font-semibold">{email}</span>.
               Please verify your address to activate your account.
             </p>
             <Link
               to={`/${newspaperName}/login`}
-              className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+              className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
             >
               Back to Sign in
             </Link>
@@ -162,7 +162,7 @@ export function SignUpPage() {
           <button
             type="submit"
             disabled={loading || !newspaper}
-            className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="bg-foreground text-background h-10 w-full rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Creating account…" : "Create Account"}
           </button>
@@ -175,13 +175,13 @@ export function SignUpPage() {
 
           <button
             type="button"
-            className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-[14px] font-medium transition-colors"
+            className="border-border bg-background text-foreground hover:bg-muted h-10 w-full rounded-md border text-sm font-medium transition-colors"
           >
             Sign up with Google
           </button>
         </form>
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
           <Link
             to={`/${newspaperName}/login`}

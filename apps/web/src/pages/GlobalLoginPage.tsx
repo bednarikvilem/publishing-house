@@ -88,7 +88,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
           <button
             type="submit"
             disabled={loading}
-            className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="bg-foreground text-background h-10 w-full rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Signing in…" : "Sign In"}
           </button>

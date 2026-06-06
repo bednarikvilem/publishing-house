@@ -71,19 +71,19 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="text-foreground text-[15px] font-semibold">{article.title}</span>
                   <span className="text-muted-foreground line-clamp-2 text-[13px]">{article.perex}</span>
-                  <div className="text-muted-foreground flex gap-3 text-[12px]">
+                  <div className="text-muted-foreground flex gap-3 text-xs">
                     <span>Author: {article.author.full_name}</span>
                     <span>Category: {article.category}</span>
                     <span>Submitted: {formatDate(article.submitted_at)}</span>
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status] ?? ""}`}>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[article.status] ?? ""}`}>
                     {STATUS_LABELS[article.status]}
                   </span>
                   <button
                     onClick={() => setActiveId(activeId === article.id ? null : article.id)}
-                    className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold"
+                    className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-xs font-semibold"
                   >
                     Decide
                   </button>

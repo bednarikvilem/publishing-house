@@ -38,10 +38,10 @@ const viewerTheme = {
     "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
   heading: {
     h1: "text-[32px] font-bold tracking-[-0.3px] my-3",
-    h2: "text-[24px] font-bold tracking-[-0.3px] my-3",
-    h3: "text-[20px] font-bold my-2",
+    h2: "text-2xl font-bold tracking-[-0.3px] my-3",
+    h3: "text-xl font-bold my-2",
   },
-  paragraph: "text-foreground text-[16px] leading-[1.8] my-1",
+  paragraph: "text-foreground text-base leading-[1.8] my-1",
 };
 
 function ArticleContent({ content }: { content: string }) {
@@ -68,14 +68,14 @@ function ArticleContent({ content }: { content: string }) {
         >
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="text-foreground text-[16px] leading-[1.8] outline-none" />
+              <ContentEditable className="text-foreground text-base leading-[1.8] outline-none" />
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <ListPlugin />
         </LexicalComposer>
       ) : (
-        <p className="text-foreground text-[16px] leading-[1.8]">{content}</p>
+        <p className="text-foreground text-base leading-[1.8]">{content}</p>
       )}
     </div>
   );
@@ -212,22 +212,22 @@ export function ArticlePage() {
             <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
               Subscriber-only content
             </h2>
-            <p className="text-muted-foreground text-[14px]">
+            <p className="text-muted-foreground text-sm">
               You do not have access to this article.
             </p>
             {subscribeMessage ? (
-              <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
+              <p className="text-muted-foreground text-sm">{subscribeMessage}</p>
             ) : isLoggedIn ? (
               <button
                 onClick={handleSubscribeFromPaywall}
-                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90"
               >
                 Subscribe
               </button>
             ) : (
               <a
                 href={`/${newspaperName}/login`}
-                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90"
               >
                 Log in to subscribe
               </a>
@@ -308,7 +308,7 @@ export function ArticlePage() {
             <span className="font-medium text-white/87">Article</span>
           </nav>
           {/* Category badge */}
-          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-[12px] font-semibold tracking-[0.5px]">
+          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-xs font-semibold tracking-[0.5px]">
             {article.category}
           </span>
           {/* Title */}
@@ -330,7 +330,7 @@ export function ArticlePage() {
               <div className="h-9 w-9 rounded-full bg-white/20 ring-1 ring-white/27" />
             )}
             <div className="flex flex-col gap-0.5">
-              <span className="text-[14px] font-semibold text-white/90">
+              <span className="text-sm font-semibold text-white/90">
                 By {article.author.full_name}
               </span>
               <span className="text-[13px] text-white/67">
@@ -344,7 +344,7 @@ export function ArticlePage() {
       {/* Article Body */}
       <section className="px-16 py-12">
         {/* Lede */}
-        <p className="text-foreground mb-6 text-[18px] leading-[1.7]">
+        <p className="text-foreground mb-6 text-lg leading-[1.7]">
           {article.perex}
         </p>
 
@@ -366,7 +366,7 @@ export function ArticlePage() {
             <button
               onClick={handleToggleLike}
               disabled={isTogglingLike}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[14px] font-medium transition-colors ${
+              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 likedByMe
                   ? "border-red-400 bg-red-50 text-red-600 hover:bg-red-100"
                   : "border-border text-muted-foreground hover:border-red-300 hover:text-red-500"
@@ -379,7 +379,7 @@ export function ArticlePage() {
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </button>
           ) : (
-            <span className="text-muted-foreground flex items-center gap-2 text-[14px]">
+            <span className="text-muted-foreground flex items-center gap-2 text-sm">
               <Heart size={16} />
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </span>
@@ -388,7 +388,7 @@ export function ArticlePage() {
 
         {/* Comments */}
         <div className="flex flex-col gap-6">
-          <h2 className="flex items-center gap-2 text-[20px] font-bold">
+          <h2 className="flex items-center gap-2 text-xl font-bold">
             <MessageCircle size={20} />
             Comments ({comments.length})
           </h2>
@@ -402,13 +402,13 @@ export function ArticlePage() {
                 placeholder="Write a comment…"
                 maxLength={2000}
                 rows={3}
-                className="border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-lg border px-4 py-3 text-[14px] outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                className="border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-lg border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 resize-none"
               />
               <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={!commentText.trim() || isSubmittingComment}
-                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2 text-[14px] font-medium disabled:opacity-50 hover:opacity-90 transition-opacity"
+                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2 text-sm font-medium disabled:opacity-50 hover:opacity-90 transition-opacity"
                 >
                   {isSubmittingComment ? "Posting…" : "Post comment"}
                 </button>
@@ -418,18 +418,18 @@ export function ArticlePage() {
 
           {/* Comment list */}
           {comments.length === 0 ? (
-            <p className="text-muted-foreground text-[14px]">No comments yet. Be the first!</p>
+            <p className="text-muted-foreground text-sm">No comments yet. Be the first!</p>
           ) : (
             <div className="flex flex-col gap-4">
               {comments.map((comment) => (
                 <div key={comment.id} className="border-border rounded-lg border p-4">
                   <div className="mb-2 flex items-center gap-2">
                     <span className="text-[13px] font-semibold">@{comment.author.username}</span>
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(comment.created_at, "long")}
                     </span>
                   </div>
-                  <p className="text-foreground text-[14px] leading-[1.6]">{comment.content}</p>
+                  <p className="text-foreground text-sm leading-[1.6]">{comment.content}</p>
                 </div>
               ))}
             </div>

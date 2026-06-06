@@ -279,7 +279,7 @@ export function Sidebar({ children }: SidebarProps) {
           {/* Drawer */}
           <aside className="border-border bg-background absolute inset-y-0 left-0 flex w-72 flex-col border-r shadow-xl">
             <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-foreground text-[14px] font-semibold">
+              <span className="text-foreground text-sm font-semibold">
                 Dashboard Menu
               </span>
               <button

@@ -74,12 +74,12 @@ function EditorSidebar({
         <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
           <h2 className="text-foreground text-[13px] font-semibold">Status</h2>
           <span
-            className={`self-start rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[articleStatus]}`}
+            className={`self-start rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[articleStatus]}`}
           >
             {STATUS_LABELS[articleStatus]}
           </span>
           {!isDraft && (
-            <p className="text-muted-foreground text-[12px]">
+            <p className="text-muted-foreground text-xs">
               This article cannot be edited in its current state.
             </p>
           )}
@@ -91,7 +91,7 @@ function EditorSidebar({
         <h2 className="text-foreground text-[13px] font-semibold">Details</h2>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-[12px] font-medium">
+          <label className="text-muted-foreground text-xs font-medium">
             Category <span className="text-[#dc2626]">*</span>
           </label>
           <select
@@ -152,7 +152,7 @@ function EditorSidebar({
             )}
           </div>
         ) : (
-          <p className="text-muted-foreground text-[12px]">
+          <p className="text-muted-foreground text-xs">
             {isNew
               ? "Save the article first, then upload a cover image."
               : "No cover image yet. Required before submitting."}
@@ -172,7 +172,7 @@ function EditorSidebar({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingImage}
-              className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-50"
+              className="border-border text-foreground hover:bg-muted w-full rounded-md border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50"
             >
               {uploadingImage ? "Uploading…" : coverImage ? "Replace Cover Image" : "Upload Cover Image"}
             </button>
@@ -188,7 +188,7 @@ function EditorSidebar({
             type="button"
             onClick={onDelete}
             disabled={deleting}
-            className="w-full rounded-md border border-[#dc2626]/30 px-3 py-2 text-[12px] font-medium text-[#dc2626] transition-colors hover:bg-[#dc262608] disabled:opacity-50"
+            className="w-full rounded-md border border-[#dc2626]/30 px-3 py-2 text-xs font-medium text-[#dc2626] transition-colors hover:bg-[#dc262608] disabled:opacity-50"
           >
             {deleting ? "Deleting…" : "Delete Article"}
           </button>
@@ -478,7 +478,7 @@ export function ArticleEditorPage() {
           <LoadingState />
         ) : loadError ? (
           <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-5 py-4">
-            <p className="text-[14px] text-[#dc2626]">{loadError}</p>
+            <p className="text-sm text-[#dc2626]">{loadError}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -508,7 +508,7 @@ export function ArticleEditorPage() {
                   placeholder="Short introduction shown in article listings…"
                   disabled={!canEdit}
                   rows={3}
-                  className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:ring-ring w-full resize-none rounded-lg border px-4 py-3 text-[14px] leading-relaxed outline-none focus:ring-2 disabled:opacity-60"
+                  className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:ring-ring w-full resize-none rounded-lg border px-4 py-3 text-sm leading-relaxed outline-none focus:ring-2 disabled:opacity-60"
                 />
               </div>
 

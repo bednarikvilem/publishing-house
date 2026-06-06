@@ -60,7 +60,7 @@ export function VerifyEmailPage() {
               <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Verifying your email…
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 Please wait a moment.
               </p>
             </>
@@ -74,12 +74,12 @@ export function VerifyEmailPage() {
               <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Email verified!
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 Your account is now active. You can sign in.
               </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Go to Sign in
               </Link>
@@ -91,12 +91,12 @@ export function VerifyEmailPage() {
               <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Verification failed
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 {errorMessage}
               </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Back to Sign in
               </Link>

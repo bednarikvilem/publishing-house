@@ -59,7 +59,7 @@ export function SubscriptionConfirmPage() {
               <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Activating subscription…
               </h2>
-              <p className="text-muted-foreground text-[14px]">Please wait a moment.</p>
+              <p className="text-muted-foreground text-sm">Please wait a moment.</p>
             </>
           )}
 
@@ -72,13 +72,13 @@ export function SubscriptionConfirmPage() {
                 Subscription activated!
               </h2>
               {formattedExpiry && (
-                <p className="text-muted-foreground text-[14px]">
+                <p className="text-muted-foreground text-sm">
                   Valid until {formattedExpiry}.
                 </p>
               )}
               <Link
                 to={`/${newspaperName}`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Go to homepage
               </Link>
@@ -90,10 +90,10 @@ export function SubscriptionConfirmPage() {
               <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
                 Activation failed
               </h2>
-              <p className="text-muted-foreground text-[14px]">{errorMessage}</p>
+              <p className="text-muted-foreground text-sm">{errorMessage}</p>
               <Link
                 to={`/${newspaperName}`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Back to homepage
               </Link>

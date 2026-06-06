@@ -125,7 +125,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
       <h2
-        className="text-foreground text-[18px] font-bold font-outfit"
+        className="text-foreground text-lg font-bold font-outfit"
       >
         Profile Information
       </h2>
@@ -136,15 +136,15 @@ export function ProfileInfoCard({ profile, onSaved }: {
           {avatarUrl ? (
             <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
           ) : (
-            <span className="text-muted-foreground text-[24px] font-bold select-none">{initials}</span>
+            <span className="text-muted-foreground text-2xl font-bold select-none">{initials}</span>
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-foreground text-[14px] font-semibold">Profile Picture</span>
+          <span className="text-foreground text-sm font-semibold">Profile Picture</span>
           {isAuthor && (
             <>
               <span className="text-muted-foreground text-[13px]">JPG, PNG or GIF. Max 2MB.</span>
-              {avatarError && <span className="text-destructive text-[12px]">{avatarError}</span>}
+              {avatarError && <span className="text-destructive text-xs">{avatarError}</span>}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -193,7 +193,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
 
       {/* Email — read-only, not using FormField since it has special styling */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-foreground text-[14px] font-medium">
+        <label htmlFor="email" className="text-foreground text-sm font-medium">
           Email Address
         </label>
         <input
@@ -201,7 +201,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
           type="email"
           value={profile.email}
           readOnly
-          className="border-input bg-muted text-muted-foreground h-10 w-full cursor-not-allowed rounded-md border px-3 text-[14px]"
+          className="border-input bg-muted text-muted-foreground h-10 w-full cursor-not-allowed rounded-md border px-3 text-sm"
         />
       </div>
 
@@ -224,7 +224,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
         <button
           type="submit"
           disabled={saving}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="bg-foreground text-background rounded-md px-5 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "Saving…" : "Save Changes"}
         </button>

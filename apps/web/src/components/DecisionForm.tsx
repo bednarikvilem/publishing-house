@@ -34,7 +34,7 @@ export function DecisionForm({
             key={d}
             type="button"
             onClick={() => setDecision(d)}
-            className={`rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors ${
+            className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
               decision === d
                 ? d === "APPROVE"
                   ? "bg-[#16a34a] text-white"

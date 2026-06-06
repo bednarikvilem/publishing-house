@@ -29,10 +29,10 @@ export function NewspaperHomepage() {
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <div className="flex h-64 flex-col items-center justify-center gap-2">
-          <p className="text-foreground text-[18px] font-semibold">
+          <p className="text-foreground text-lg font-semibold">
             Newspaper not found
           </p>
-          <p className="text-muted-foreground text-[14px]">
+          <p className="text-muted-foreground text-sm">
             There is no newspaper at{" "}
             <span className="font-mono">/{newspaperName}</span>.
           </p>
@@ -92,7 +92,7 @@ export function NewspaperHomepage() {
                   <div className="bg-muted h-9 w-9 rounded-full" />
                 )}
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-foreground text-[14px] font-semibold">
+                  <span className="text-foreground text-sm font-semibold">
                     {featured.author.full_name}
                   </span>
                   <span className="text-muted-foreground text-[13px]">
@@ -110,7 +110,7 @@ export function NewspaperHomepage() {
             </p>
             <Link
               to={`/${newspaperName}/articles/${featured.id}`}
-              className="bg-foreground text-background flex w-fit items-center gap-2 rounded-lg px-5 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              className="bg-foreground text-background flex w-fit items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
             >
               Read Full Article
               <ArrowRightIcon />

@@ -60,12 +60,12 @@ export function SetNewPasswordPage() {
           subtitle="Reset your password"
         >
           <div className="flex flex-col items-center gap-4 text-center">
-            <p className="text-muted-foreground text-[14px]">
+            <p className="text-muted-foreground text-sm">
               This link is invalid. Please request a new password reset.
             </p>
             <Link
               to={`/${newspaperName}/forgot-password`}
-              className="text-foreground text-[14px] font-semibold underline-offset-4 hover:underline"
+              className="text-foreground text-sm font-semibold underline-offset-4 hover:underline"
             >
               Request a new link
             </Link>
@@ -87,12 +87,12 @@ export function SetNewPasswordPage() {
             <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
               <CheckIcon size={22} className="text-foreground" />
             </div>
-            <p className="text-muted-foreground text-center text-[14px]">
+            <p className="text-muted-foreground text-center text-sm">
               Your password has been reset. You can now sign in with your new password.
             </p>
             <Link
               to={`/${newspaperName}/login`}
-              className="text-foreground text-[14px] font-semibold underline-offset-4 hover:underline"
+              className="text-foreground text-sm font-semibold underline-offset-4 hover:underline"
             >
               Go to Sign in
             </Link>
@@ -133,14 +133,14 @@ export function SetNewPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="bg-foreground text-background h-10 w-full rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Resetting…" : "Reset Password"}
             </button>
           </form>
         )}
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Remember your password?{" "}
           <Link
             to={`/${newspaperName}/login`}
