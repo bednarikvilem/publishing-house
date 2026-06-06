@@ -109,11 +109,11 @@ export function MyArticlesSection({
                     <span className="text-foreground text-xs-plus leading-snug font-semibold">
                       {article.title}
                     </span>
-                    <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
+                    <span className="text-muted-foreground line-clamp-2 text-2xs leading-md">
                       {article.perex}
                     </span>
                     {article.latest_feedback && (
-                      <span className="mt-1 text-xs leading-[1.4] text-[#dc2626]">
+                      <span className="mt-1 text-xs leading-md text-[#dc2626]">
                         Feedback: {article.latest_feedback}
                       </span>
                     )}

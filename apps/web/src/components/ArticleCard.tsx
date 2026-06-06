@@ -34,10 +34,10 @@ export function ArticleCard({ article }: { article: Article }) {
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <CategoryBadge label={article.category} />
-        <p className="text-card-foreground line-clamp-3 text-base leading-[1.3] font-bold">
+        <p className="text-card-foreground line-clamp-3 text-base leading-sm font-bold">
           {article.title}
         </p>
-        <p className="text-muted-foreground line-clamp-3 text-2xs leading-[1.5]">
+        <p className="text-muted-foreground line-clamp-3 text-2xs leading-normal">
           {article.perex}
         </p>
         <div className="mt-auto flex items-center justify-between pt-2">

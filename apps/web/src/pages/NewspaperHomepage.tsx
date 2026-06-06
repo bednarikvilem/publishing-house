@@ -74,7 +74,7 @@ export function NewspaperHomepage() {
           </div>
           <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">
             <CategoryBadge label="Featured" />
-            <h1 className="text-foreground text-3xl-plus leading-[1.15] font-extrabold tracking-tight-px">
+            <h1 className="text-foreground text-3xl-plus leading-2xs font-extrabold tracking-tight-px">
               {featured.title}
             </h1>
             {featured.author ? (
@@ -105,7 +105,7 @@ export function NewspaperHomepage() {
                 {formatDate(featured.publication_date)}
               </span>
             )}
-            <p className="text-muted-foreground text-xs-plus leading-[1.6]">
+            <p className="text-muted-foreground text-xs-plus leading-relaxed">
               {featured.perex}
             </p>
             <Link
