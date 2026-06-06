@@ -119,11 +119,11 @@ export function SetNewPasswordPage() {
             />
             {error && (
               <div className="flex flex-col gap-1 text-center">
-                <p className="text-destructive text-[13px]">{error}</p>
+                <p className="text-destructive text-2xs">{error}</p>
                 {error.includes("expired or is invalid") && (
                   <Link
                     to={`/${newspaperName}/forgot-password`}
-                    className="text-foreground text-[13px] font-semibold underline-offset-4 hover:underline"
+                    className="text-foreground text-2xs font-semibold underline-offset-4 hover:underline"
                   >
                     Request a new link
                   </Link>

@@ -66,7 +66,7 @@ export function SearchResultsPage() {
       <div className="flex flex-col gap-6 px-16 py-12">
         {/* Search Section */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-foreground text-[32px] font-extrabold tracking-[-0.5px]">
+          <h1 className="text-foreground text-3xl-plus font-extrabold tracking-[-0.5px]">
             Search Results
           </h1>
           <form onSubmit={handleSearch}>
@@ -80,7 +80,7 @@ export function SearchResultsPage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Search articles..."
-                className="text-foreground placeholder:text-muted-foreground flex-1 bg-transparent text-[15px] outline-none"
+                className="text-foreground placeholder:text-muted-foreground flex-1 bg-transparent text-xs-plus outline-none"
               />
             </div>
           </form>
@@ -89,13 +89,13 @@ export function SearchResultsPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           {query ? (
-            <span className="text-foreground text-[15px] font-semibold">
+            <span className="text-foreground text-xs-plus font-semibold">
               {loading
                 ? "Searching…"
                 : `${total} Result${total !== 1 ? "s" : ""}`}
             </span>
           ) : (
-            <span className="text-foreground text-[15px] font-semibold">
+            <span className="text-foreground text-xs-plus font-semibold">
               Enter a search term above
             </span>
           )}

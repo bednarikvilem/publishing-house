@@ -42,7 +42,7 @@ export function PortalLayout({
       {/* Mobile trigger bar */}
       <div className="border-border bg-background flex items-center justify-between border-b px-4 py-3 md:hidden">
         <span
-          className="text-foreground text-[15px] font-black tracking-[-0.5px] font-outfit"
+          className="text-foreground text-xs-plus font-black tracking-[-0.5px] font-outfit"
         >
           {title}
         </span>
@@ -57,7 +57,7 @@ export function PortalLayout({
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-2xs font-medium transition-colors"
           >
             <MenuIcon size={18} />
             Menu

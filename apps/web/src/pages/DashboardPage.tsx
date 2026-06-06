@@ -58,14 +58,14 @@ export function DashboardPage() {
 
   const sidebarChildren = activeSection === "my-articles" ? (
     <div className="flex flex-col gap-0.5">
-      <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Filter by Status
       </p>
       {MY_ARTICLE_FILTERS.map((item) => (
         <button
           key={String(item.value)}
           onClick={() => setStatusFilter(item.value)}
-          className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+          className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-2xs font-medium transition-colors ${
             statusInSearch === item.value
               ? "bg-muted text-foreground"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"

@@ -37,7 +37,7 @@ export function ArticleCard({ article }: { article: Article }) {
         <p className="text-card-foreground line-clamp-3 text-base leading-[1.3] font-bold">
           {article.title}
         </p>
-        <p className="text-muted-foreground line-clamp-3 text-[13px] leading-[1.5]">
+        <p className="text-muted-foreground line-clamp-3 text-2xs leading-[1.5]">
           {article.perex}
         </p>
         <div className="mt-auto flex items-center justify-between pt-2">

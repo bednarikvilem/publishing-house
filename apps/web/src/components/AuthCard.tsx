@@ -10,11 +10,11 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
       <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-8 rounded-xl border p-10 shadow-sm">
         <div className="flex flex-col items-center gap-3">
           <span
-            className="text-foreground text-[26px] font-black tracking-[-1px] font-outfit"
+            className="text-foreground text-2xl-plus font-black tracking-[-1px] font-outfit"
           >
             {title}
           </span>
-          <span className="text-muted-foreground text-[15px]">{subtitle}</span>
+          <span className="text-muted-foreground text-xs-plus">{subtitle}</span>
         </div>
         {children}
       </div>

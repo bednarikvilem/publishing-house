@@ -97,8 +97,8 @@ export function PasswordCard() {
         />
       </div>
 
-      {error   && <p className="text-destructive text-[13px]">{error}</p>}
-      {success && <p className="text-[13px] text-green-600">Password updated successfully.</p>}
+      {error   && <p className="text-destructive text-2xs">{error}</p>}
+      {success && <p className="text-2xs text-green-600">Password updated successfully.</p>}
 
       <div className="flex justify-end">
         <button

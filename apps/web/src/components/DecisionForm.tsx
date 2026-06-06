@@ -61,21 +61,21 @@ export function DecisionForm({
         }
         required={noteRequired}
         rows={3}
-        className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+        className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-2xs outline-none focus:ring-2"
       />
 
       <div className="flex justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
-          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium"
+          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-2xs font-medium"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={submitting || (noteRequired && !note.trim())}
-          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="bg-foreground text-background rounded-md px-3 py-1.5 text-2xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {submitting ? "Submitting…" : "Submit"}
         </button>

@@ -57,7 +57,7 @@ export function VerifyEmailPage() {
         <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
           {status === "loading" && (
             <>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Verifying your email…
               </h2>
               <p className="text-muted-foreground text-sm">
@@ -71,7 +71,7 @@ export function VerifyEmailPage() {
               <div className="bg-muted mx-auto flex h-12 w-12 items-center justify-center rounded-full">
                 <CheckIcon size={22} className="text-foreground" />
               </div>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Email verified!
               </h2>
               <p className="text-muted-foreground text-sm">
@@ -88,7 +88,7 @@ export function VerifyEmailPage() {
 
           {status === "error" && (
             <>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Verification failed
               </h2>
               <p className="text-muted-foreground text-sm">

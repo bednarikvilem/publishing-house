@@ -59,7 +59,7 @@ export function BrandingSection({
                   className={`h-9 w-9 rounded-full border-2 transition-all ${key ? `theme-${key}` : ""} ${isActive ? "ring-2 ring-offset-2 ring-current border-transparent" : "border-border"}`}
                   style={{ backgroundColor: "var(--primary)" }}
                 />
-                <span className={`text-[11px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                <span className={`text-3xs font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
                   {label}
                 </span>
               </button>
@@ -67,10 +67,10 @@ export function BrandingSection({
           })}
         </div>
         {saved && (
-          <p className="text-[13px] font-medium text-emerald-600 dark:text-emerald-400">Saved</p>
+          <p className="text-2xs font-medium text-emerald-600 dark:text-emerald-400">Saved</p>
         )}
         {error && (
-          <p className="text-destructive text-[13px]">{error}</p>
+          <p className="text-destructive text-2xs">{error}</p>
         )}
       </div>
     </div>

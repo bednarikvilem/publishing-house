@@ -59,21 +59,21 @@ export function DirectorDashboardPage() {
     <>
       <button
         onClick={() => setActiveView("overview")}
-        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "overview" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+        className={`flex w-full items-center rounded-md px-2 py-2 text-2xs font-medium transition-colors ${activeView === "overview" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         All Newspapers
       </button>
 
       <button
         onClick={() => setActiveView("global-statistics")}
-        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "global-statistics" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+        className={`flex w-full items-center rounded-md px-2 py-2 text-2xs font-medium transition-colors ${activeView === "global-statistics" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         Global Statistics
       </button>
 
       {newspapers.length > 0 && (
         <>
-          <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+          <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
             Newspapers
           </p>
           {newspapers.map((np) => {
@@ -82,7 +82,7 @@ export function DirectorDashboardPage() {
               <div key={np.id}>
                 <button
                   onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
-                  className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${isActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                  className={`flex w-full items-center rounded-md px-2 py-2 text-2xs font-medium transition-colors ${isActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 >
                   {np.name}
                 </button>
@@ -108,7 +108,7 @@ export function DirectorDashboardPage() {
       <div className="mt-auto pt-4">
         <button
           onClick={handleLogout}
-          className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-[13px] font-medium transition-colors"
+          className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-2xs font-medium transition-colors"
         >
           Log Out
         </button>
@@ -128,7 +128,7 @@ export function DirectorDashboardPage() {
               {newspapers.map((np, i) => (
                 <ListRow key={np.id} first={i === 0} last={i === newspapers.length - 1}>
                   <div className="flex items-center gap-4">
-                    <span className="text-foreground flex-1 text-[15px] font-semibold">{np.name}</span>
+                    <span className="text-foreground flex-1 text-xs-plus font-semibold">{np.name}</span>
                     <button
                       onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
                       className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-xs font-semibold"

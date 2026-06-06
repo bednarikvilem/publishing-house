@@ -38,7 +38,7 @@ export function UserProfilePage() {
 
       <div className="flex flex-col gap-7 px-12 py-8">
         <h1
-          className="text-foreground text-[28px] font-extrabold tracking-[-0.5px] font-outfit"
+          className="text-foreground text-3xl-minus font-extrabold tracking-[-0.5px] font-outfit"
         >
           My Profile
         </h1>

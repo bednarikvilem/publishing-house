@@ -134,10 +134,10 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="text-foreground text-[15px] leading-snug font-semibold">
+                      <span className="text-foreground text-xs-plus leading-snug font-semibold">
                         {article.title}
                       </span>
-                      <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
+                      <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
                         {article.perex}
                       </span>
                       <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
@@ -202,12 +202,12 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       }}
                       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
                     >
-                      <label className="text-foreground text-[13px] font-medium">
+                      <label className="text-foreground text-2xs font-medium">
                         Assign Editor
                         {editorsQuery.isLoading ? (
-                          <p className="text-muted-foreground mt-1.5 text-[13px]">Loading editors…</p>
+                          <p className="text-muted-foreground mt-1.5 text-2xs">Loading editors…</p>
                         ) : editors.length === 0 ? (
-                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                          <p className="text-muted-foreground mt-1.5 text-2xs">
                             No editors available in this newspaper.
                           </p>
                         ) : (
@@ -215,7 +215,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                             value={assignEditorId}
                             onChange={(e) => setAssignEditorId(e.target.value)}
                             required
-                            className="border-border bg-background text-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+                            className="border-border bg-background text-foreground focus:ring-ring mt-1.5 w-full rounded-md border px-3 py-2 text-2xs outline-none focus:ring-2"
                           >
                             <option value="">Select an editor…</option>
                             {editors.map((editor) => (
@@ -230,7 +230,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                         <button
                           type="button"
                           onClick={() => setActiveId(null)}
-                          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium"
+                          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-2xs font-medium"
                         >
                           Cancel
                         </button>
@@ -241,7 +241,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                             !assignEditorId.trim() ||
                             editors.length === 0
                           }
-                          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+                          className="bg-foreground text-background rounded-md px-3 py-1.5 text-2xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                         >
                           {assignEditor.isPending ? "Assigning…" : "Assign"}
                         </button>

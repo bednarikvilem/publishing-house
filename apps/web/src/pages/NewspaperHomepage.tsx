@@ -74,7 +74,7 @@ export function NewspaperHomepage() {
           </div>
           <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">
             <CategoryBadge label="Featured" />
-            <h1 className="text-foreground text-[32px] leading-[1.15] font-extrabold tracking-[-0.5px]">
+            <h1 className="text-foreground text-3xl-plus leading-[1.15] font-extrabold tracking-[-0.5px]">
               {featured.title}
             </h1>
             {featured.author ? (
@@ -95,17 +95,17 @@ export function NewspaperHomepage() {
                   <span className="text-foreground text-sm font-semibold">
                     {featured.author.full_name}
                   </span>
-                  <span className="text-muted-foreground text-[13px]">
+                  <span className="text-muted-foreground text-2xs">
                     {formatDate(featured.publication_date)}
                   </span>
                 </div>
               </Link>
             ) : (
-              <span className="text-muted-foreground text-[13px]">
+              <span className="text-muted-foreground text-2xs">
                 {formatDate(featured.publication_date)}
               </span>
             )}
-            <p className="text-muted-foreground text-[15px] leading-[1.6]">
+            <p className="text-muted-foreground text-xs-plus leading-[1.6]">
               {featured.perex}
             </p>
             <Link
@@ -121,7 +121,7 @@ export function NewspaperHomepage() {
 
       {/* Latest News */}
       <section className="bg-background flex flex-col gap-8 px-12 py-12">
-        <h2 className="text-foreground text-[28px] font-extrabold tracking-[-0.5px]">
+        <h2 className="text-foreground text-3xl-minus font-extrabold tracking-[-0.5px]">
           Latest News
         </h2>
         <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">

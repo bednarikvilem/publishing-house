@@ -86,7 +86,7 @@ export function GlobalUsersSection() {
         <SectionTitle title="Global Users" />
         <button
           onClick={() => setShowCreate((v) => !v)}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
+          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
         >
           <PlusIcon />
           New Global User
@@ -113,7 +113,7 @@ export function GlobalUsersSection() {
               <select
                 value={form.role}
                 onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                className="border-border bg-background text-foreground focus:ring-ring h-9 rounded-md border px-3 text-[13px] outline-none focus:ring-2"
+                className="border-border bg-background text-foreground focus:ring-ring h-9 rounded-md border px-3 text-2xs outline-none focus:ring-2"
               >
                 <option value="DIRECTOR">DIRECTOR</option>
                 <option value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</option>
@@ -121,10 +121,10 @@ export function GlobalUsersSection() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setShowCreate(false)} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px]">
+            <button type="button" onClick={() => setShowCreate(false)} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-2xs">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-foreground text-background rounded-md px-3 py-1.5 text-2xs font-semibold disabled:opacity-50">
               {saving ? "Creating…" : "Create"}
             </button>
           </div>
@@ -145,7 +145,7 @@ export function GlobalUsersSection() {
                   <span className="text-muted-foreground text-xs">@{u.username} · {u.email}</span>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {u.roles.map((role) => (
-                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
+                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-3xs font-medium">
                         {role}
                         <button onClick={() => handleRemove(u.id, role)} className="ml-0.5 transition-colors hover:text-[#dc2626]" aria-label={`Remove ${role}`}>×</button>
                       </span>

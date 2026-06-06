@@ -47,7 +47,7 @@ function NavItem({
     <Link
       to={href}
       onClick={onClick}
-      className={`flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+      className={`flex items-center gap-2.5 rounded-md px-2 py-2 text-2xs font-medium transition-colors ${
         isActive
           ? "bg-muted text-foreground"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -68,7 +68,7 @@ function NavSection({
 }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-3xs font-semibold tracking-wider uppercase">
         {title}
       </p>
       {children}
@@ -116,17 +116,17 @@ function SidebarContent({
               className="h-full w-full rounded-full object-cover"
             />
           ) : (
-            <span className="text-muted-foreground text-[13px] font-bold select-none">
+            <span className="text-muted-foreground text-2xs font-bold select-none">
               {initials}
             </span>
           )}
         </div>
         <div className="flex min-w-0 flex-col">
-          <span className="text-foreground truncate text-[13px] font-semibold">
+          <span className="text-foreground truncate text-2xs font-semibold">
             {displayName}
           </span>
           {user?.username && (
-            <span className="text-muted-foreground truncate text-[11px]">
+            <span className="text-muted-foreground truncate text-3xs">
               @{user.username}
             </span>
           )}
@@ -215,7 +215,7 @@ function SidebarContent({
         />
         <button
           onClick={handleLogOut}
-          className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-2.5 rounded-md px-2 py-2 text-2xs font-medium transition-colors"
         >
           <LogOutIcon />
           Log Out
@@ -261,7 +261,7 @@ export function Sidebar({ children }: SidebarProps) {
       <div className="border-border bg-background flex items-center border-b px-4 py-3 md:hidden">
         <button
           onClick={() => setDrawerOpen(true)}
-          className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1.5 text-2xs font-medium transition-colors"
         >
           <MenuIcon size={18} />
           Menu

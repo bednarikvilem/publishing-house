@@ -75,7 +75,7 @@ export function MyArticlesSection({
         action={
           <Link
             to={`/${newspaperName}/articles/new`}
-            className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
+            className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
           >
             <PlusIcon />
             New Article
@@ -106,10 +106,10 @@ export function MyArticlesSection({
               >
                 <div className="flex items-center gap-4">
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-foreground text-[15px] leading-snug font-semibold">
+                    <span className="text-foreground text-xs-plus leading-snug font-semibold">
                       {article.title}
                     </span>
-                    <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
+                    <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
                       {article.perex}
                     </span>
                     {article.latest_feedback && (
@@ -122,7 +122,7 @@ export function MyArticlesSection({
                         Editor: {article.assigned_editor.full_name}
                       </span>
                     )}
-                    <span className="text-muted-foreground/60 text-[11px]">
+                    <span className="text-muted-foreground/60 text-3xs">
                       Updated {formatDate(article.updated_at)}
                     </span>
                   </div>

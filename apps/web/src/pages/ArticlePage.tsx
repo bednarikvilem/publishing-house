@@ -37,7 +37,7 @@ const viewerTheme = {
   quote:
     "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
   heading: {
-    h1: "text-[32px] font-bold tracking-[-0.3px] my-3",
+    h1: "text-3xl-plus font-bold tracking-[-0.3px] my-3",
     h2: "text-2xl font-bold tracking-[-0.3px] my-3",
     h3: "text-xl font-bold my-2",
   },
@@ -209,7 +209,7 @@ export function ArticlePage() {
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
           <div className="border-border bg-card flex w-full max-w-[420px] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
-            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+            <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
               Subscriber-only content
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -249,7 +249,7 @@ export function ArticlePage() {
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex h-64 flex-col items-center justify-center gap-3">
-          <p className="text-muted-foreground text-[15px]">{message}</p>
+          <p className="text-muted-foreground text-xs-plus">{message}</p>
         </div>
       </div>
     );
@@ -259,7 +259,7 @@ export function ArticlePage() {
     return (
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
-        <div className="text-muted-foreground flex h-64 items-center justify-center text-[15px]">
+        <div className="text-muted-foreground flex h-64 items-center justify-center text-xs-plus">
           Loading…
         </div>
       </div>
@@ -290,7 +290,7 @@ export function ArticlePage() {
         {/* Content anchored to bottom */}
         <div className="absolute inset-0 flex flex-col justify-end gap-4 px-16 pb-12">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-[13px]">
+          <nav className="flex items-center gap-2 text-2xs">
             <Link
               to={`/${newspaperName}`}
               className="text-white/67 hover:text-white/90"
@@ -312,7 +312,7 @@ export function ArticlePage() {
             {article.category}
           </span>
           {/* Title */}
-          <h1 className="max-w-[800px] text-[40px] leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
+          <h1 className="max-w-[800px] text-4xl-plus leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
             {article.title}
           </h1>
           {/* Author meta */}
@@ -333,7 +333,7 @@ export function ArticlePage() {
               <span className="text-sm font-semibold text-white/90">
                 By {article.author.full_name}
               </span>
-              <span className="text-[13px] text-white/67">
+              <span className="text-2xs text-white/67">
                 {formatDate(article.publication_date, "long")} · {readTime} min read
               </span>
             </div>
@@ -424,7 +424,7 @@ export function ArticlePage() {
               {comments.map((comment) => (
                 <div key={comment.id} className="border-border rounded-lg border p-4">
                   <div className="mb-2 flex items-center gap-2">
-                    <span className="text-[13px] font-semibold">@{comment.author.username}</span>
+                    <span className="text-2xs font-semibold">@{comment.author.username}</span>
                     <span className="text-muted-foreground text-xs">
                       {formatDate(comment.created_at, "long")}
                     </span>

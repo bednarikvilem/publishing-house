@@ -132,7 +132,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
         {/* Logo */}
         <Link
           to={`/${newspaperName}`}
-          className="text-foreground shrink-0 text-[22px] font-extrabold tracking-tight"
+          className="text-foreground shrink-0 text-xl-plus font-extrabold tracking-tight"
         >
           {displayName}
         </Link>
@@ -165,7 +165,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles…"
-              className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[13px] outline-none"
+              className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-2xs outline-none"
             />
           </div>
         </form>
@@ -308,7 +308,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
             <Link
               to={`/${newspaperName}`}
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground border-border border-b py-3 text-[15px] font-medium transition-colors"
+              className="text-muted-foreground hover:text-foreground border-border border-b py-3 text-xs-plus font-medium transition-colors"
             >
               Home
             </Link>
@@ -317,7 +317,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
                 key={cat.id}
                 to={`/${newspaperName}/category/${cat.slug}`}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-muted-foreground hover:text-foreground border-border border-b py-3 text-[15px] font-medium transition-colors"
+                className="text-muted-foreground hover:text-foreground border-border border-b py-3 text-xs-plus font-medium transition-colors"
               >
                 {cat.name}
               </Link>

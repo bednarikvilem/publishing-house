@@ -106,7 +106,7 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
                   <span className="text-muted-foreground text-xs">@{user.username} · {user.email}</span>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {user.roles.map((role) => (
-                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
+                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-3xs font-medium">
                         {role}
                         {role !== "REGISTERED_USER" && (
                           <button onClick={() => handleRemoveRole(user.id, role)} className="ml-0.5 transition-colors hover:text-[#dc2626]" aria-label={`Remove ${role}`}>×</button>
@@ -127,17 +127,17 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
                   <select
                     value={roleInput}
                     onChange={(e) => setRoleInput(e.target.value)}
-                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-2xs outline-none focus:ring-2"
                   >
                     <option value="">Select a role…</option>
                     {NEWSPAPER_ROLES.filter((r) => !user.roles.includes(r)).map((r) => (
                       <option key={r} value={r}>{r}</option>
                     ))}
                   </select>
-                  <button onClick={() => handleAssignRole(user.id)} disabled={saving || !roleInput} className="bg-foreground text-background rounded-md px-3 py-2 text-[13px] font-semibold disabled:opacity-50">
+                  <button onClick={() => handleAssignRole(user.id)} disabled={saving || !roleInput} className="bg-foreground text-background rounded-md px-3 py-2 text-2xs font-semibold disabled:opacity-50">
                     {saving ? "Saving…" : "Assign"}
                   </button>
-                  <button onClick={() => { setActiveUserId(null); setRoleInput(""); }} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-2 text-[13px]">
+                  <button onClick={() => { setActiveUserId(null); setRoleInput(""); }} className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-2 text-2xs">
                     Cancel
                   </button>
                 </div>

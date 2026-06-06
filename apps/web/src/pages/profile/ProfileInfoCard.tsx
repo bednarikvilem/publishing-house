@@ -143,13 +143,13 @@ export function ProfileInfoCard({ profile, onSaved }: {
           <span className="text-foreground text-sm font-semibold">Profile Picture</span>
           {isAuthor && (
             <>
-              <span className="text-muted-foreground text-[13px]">JPG, PNG or GIF. Max 2MB.</span>
+              <span className="text-muted-foreground text-2xs">JPG, PNG or GIF. Max 2MB.</span>
               {avatarError && <span className="text-destructive text-xs">{avatarError}</span>}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={avatarUploading}
-                className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
+                className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-2xs font-medium transition-colors disabled:opacity-60"
               >
                 {avatarUploading ? "Uploading…" : "Change Photo"}
               </button>
@@ -217,8 +217,8 @@ export function ProfileInfoCard({ profile, onSaved }: {
         />
       )}
 
-      {error   && <p className="text-destructive text-[13px]">{error}</p>}
-      {success && <p className="text-[13px] text-green-600">Profile updated successfully.</p>}
+      {error   && <p className="text-destructive text-2xs">{error}</p>}
+      {success && <p className="text-2xs text-green-600">Profile updated successfully.</p>}
 
       <div className="flex justify-end">
         <button

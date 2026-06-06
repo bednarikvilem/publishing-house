@@ -69,7 +69,7 @@ export function CategoryPage() {
         {/* Centered content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-12 text-center">
           {/* Breadcrumb */}
-          <p className="text-[13px] text-white/80">
+          <p className="text-2xs text-white/80">
             <Link
               to={`/${newspaperName}`}
               className="transition-colors hover:text-white"
@@ -84,7 +84,7 @@ export function CategoryPage() {
             {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
-          <span className="rounded-full border border-white/20 bg-white/[0.13] px-4 py-1.5 text-[13px] font-medium text-white">
+          <span className="rounded-full border border-white/20 bg-white/[0.13] px-4 py-1.5 text-2xs font-medium text-white">
             {articles.length} Article{articles.length !== 1 ? "s" : ""}
           </span>
         </div>
@@ -122,15 +122,15 @@ export function CategoryPage() {
               {/* Content */}
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-3xs font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
+                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-[-0.5px]">
                   {featured.title}
                 </h2>
-                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
+                <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-[1.6]">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
@@ -146,7 +146,7 @@ export function CategoryPage() {
                         <div className="bg-muted h-8 w-8 rounded-full" />
                       )}
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-card-foreground text-[13px] font-semibold">
+                        <span className="text-card-foreground text-2xs font-semibold">
                           {featured.author.full_name}
                         </span>
                         <span className="text-muted-foreground text-xs">
@@ -173,7 +173,7 @@ export function CategoryPage() {
             </span>
             <button
               onClick={() => setSortOrder("latest")}
-              className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
+              className={`rounded-full px-[14px] py-1.5 text-2xs font-medium transition-colors ${
                 sortOrder === "latest"
                   ? "bg-foreground text-background"
                   : "border-border text-muted-foreground hover:text-foreground border"
@@ -183,7 +183,7 @@ export function CategoryPage() {
             </button>
             <button
               onClick={() => setSortOrder("oldest")}
-              className={`rounded-full px-[14px] py-1.5 text-[13px] font-medium transition-colors ${
+              className={`rounded-full px-[14px] py-1.5 text-2xs font-medium transition-colors ${
                 sortOrder === "oldest"
                   ? "bg-foreground text-background"
                   : "border-border text-muted-foreground hover:text-foreground border"
@@ -192,7 +192,7 @@ export function CategoryPage() {
               Oldest
             </button>
           </div>
-          <span className="text-muted-foreground text-[13px]">
+          <span className="text-muted-foreground text-2xs">
             Showing {rest.length > 0 ? `1–${rest.length + 1}` : "0"} of{" "}
             {articles.length} article{articles.length !== 1 ? "s" : ""}
           </span>

@@ -117,12 +117,12 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="New category name…"
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-2xs outline-none focus:ring-2"
         />
         <button
           type="submit"
           disabled={saving || !newName.trim()}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           <PlusIcon />
           Add Category
@@ -150,7 +150,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-[13px] outline-none focus:ring-2"
+                    className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-2xs outline-none focus:ring-2"
                   />
                 ) : (
                   <span className="text-foreground flex-1 text-sm font-medium">
