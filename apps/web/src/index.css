@@ -24,6 +24,10 @@
   }
 }
 
+/* Accessibility: users who prefer reduced motion must have ALL animations
+   disabled, including those set with high specificity or inline styles.
+   The !important is intentional — remove only if using the Motion API
+   (prefers-reduced-motion) to gate animations individually instead. */
 @media (prefers-reduced-motion) {
   *,
   ::before,
