@@ -29,10 +29,10 @@ export function NewspaperHomepage() {
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
         <div className="flex h-64 flex-col items-center justify-center gap-2">
-          <p className="text-foreground text-[18px] font-semibold">
+          <p className="text-foreground text-lg font-semibold">
             Newspaper not found
           </p>
-          <p className="text-muted-foreground text-[14px]">
+          <p className="text-muted-foreground text-sm">
             There is no newspaper at{" "}
             <span className="font-mono">/{newspaperName}</span>.
           </p>
@@ -74,7 +74,7 @@ export function NewspaperHomepage() {
           </div>
           <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">
             <CategoryBadge label="Featured" />
-            <h1 className="text-foreground text-[32px] leading-[1.15] font-extrabold tracking-[-0.5px]">
+            <h1 className="text-foreground text-3xl-plus leading-2xs font-extrabold tracking-tight-px">
               {featured.title}
             </h1>
             {featured.author ? (
@@ -92,25 +92,25 @@ export function NewspaperHomepage() {
                   <div className="bg-muted h-9 w-9 rounded-full" />
                 )}
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-foreground text-[14px] font-semibold">
+                  <span className="text-foreground text-sm font-semibold">
                     {featured.author.full_name}
                   </span>
-                  <span className="text-muted-foreground text-[13px]">
+                  <span className="text-muted-foreground text-2xs">
                     {formatDate(featured.publication_date)}
                   </span>
                 </div>
               </Link>
             ) : (
-              <span className="text-muted-foreground text-[13px]">
+              <span className="text-muted-foreground text-2xs">
                 {formatDate(featured.publication_date)}
               </span>
             )}
-            <p className="text-muted-foreground text-[15px] leading-[1.6]">
+            <p className="text-muted-foreground text-xs-plus leading-relaxed">
               {featured.perex}
             </p>
             <Link
               to={`/${newspaperName}/articles/${featured.id}`}
-              className="bg-foreground text-background flex w-fit items-center gap-2 rounded-lg px-5 py-2.5 text-[14px] font-semibold hover:opacity-90"
+              className="bg-foreground text-background flex w-fit items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
             >
               Read Full Article
               <ArrowRightIcon />
@@ -121,7 +121,7 @@ export function NewspaperHomepage() {
 
       {/* Latest News */}
       <section className="bg-background flex flex-col gap-8 px-12 py-12">
-        <h2 className="text-foreground text-[28px] font-extrabold tracking-[-0.5px]">
+        <h2 className="text-foreground text-3xl-minus font-extrabold tracking-tight-px">
           Latest News
         </h2>
         <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">

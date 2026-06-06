@@ -45,8 +45,16 @@ async function createAndSubmitArticle(page: Page, title: string): Promise<string
   await expect(page.getByRole("button", { name: "Replace Cover Image" })).toBeVisible({ timeout: 10_000 });
 
   // Submit for review
+  // Wait for the article to fully load before submitting
+  await expect(page.getByText("Draft", { exact: true })).toBeVisible({ timeout: 10_000 });
+  const submitResponse = page.waitForResponse(
+    (r) => r.url().includes("/submit") && r.request().method() === "POST"
+  );
   await page.getByRole("button", { name: "Submit for Review" }).click();
-  await expect(page.getByText("Submitted")).toBeVisible({ timeout: 5_000 });
+  const submitRes = await submitResponse;
+  expect(submitRes.status()).toBe(200);
+  // Wait for navigation to author dashboard after successful submit
+  await page.waitForURL((url) => url.pathname.includes("/author-dashboard"), { timeout: 10_000 });
 
   return articleEditUrl;
 }

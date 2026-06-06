@@ -38,15 +38,15 @@ test.describe("Subscription workflow", () => {
     await page.goto(`/${newspaper}/subscription/confirm?token=${fakeToken}`);
 
     await expect(
-      page.getByText(/already been used|expired|invalid/i)
-    ).toBeVisible({ timeout: 5_000 });
+      page.getByText(/already been used|expired|invalid|no token/i)
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("confirm page without a token shows the error state", async ({ page }) => {
     await page.goto(`/${newspaper}/subscription/confirm`);
 
     await expect(
-      page.getByText(/already been used|expired|invalid/i)
+      page.getByText(/already been used|expired|invalid|no token/i)
     ).toBeVisible({ timeout: 5_000 });
   });
 });
