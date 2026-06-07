@@ -37,7 +37,7 @@ export const STATUS_STYLES: Record<ArticleStatus, string> = {
   APPROVED_BY_MANAGER: "bg-[#7c3aed18] text-[#7c3aed]",
   APPROVED_BY_DIRECTOR: "bg-[#0891b218] text-[#0891b2]",
   PUBLISHED: "bg-[#16a34a18] text-[#16a34a]",
-  REJECTED: "bg-[#dc262618] text-[#dc2626]",
+  REJECTED: "bg-destructive/10 text-destructive",
 };
 
 export const STATUS_DOT: Record<ArticleStatus, string> = {
@@ -48,7 +48,7 @@ export const STATUS_DOT: Record<ArticleStatus, string> = {
   APPROVED_BY_MANAGER: "bg-[#7c3aed]",
   APPROVED_BY_DIRECTOR: "bg-[#0891b2]",
   PUBLISHED: "bg-[#16a34a]",
-  REJECTED: "bg-[#dc2626]",
+  REJECTED: "bg-destructive",
 };
 
 export const MY_ARTICLE_FILTERS: { label: string; value: ArticleStatus | null }[] = [
