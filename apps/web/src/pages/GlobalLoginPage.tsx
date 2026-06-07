@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { useTheme } from "../hooks/useTheme";
@@ -13,18 +13,19 @@ interface GlobalLoginPageProps {
   redirectTo: string;
 }
 
+interface LoginFormValues { email: string; password: string }
+
 export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPageProps) {
   const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
-  const [email, setEmail]     = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]     = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { isSubmitting, errors },
+  } = useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  async function onSubmit({ email, password }: LoginFormValues) {
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/global/login`, {
         method: "POST",
@@ -40,16 +41,14 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
       }
 
       const body = await res.json();
-      if (res.status === 401) { setError("Invalid email or password."); return; }
+      if (res.status === 401) { setError("root", { message: "Invalid email or password." }); return; }
       if (res.status === 403 && body.error === "EMAIL_NOT_VERIFIED") {
-        setError("This account has not been verified.");
+        setError("root", { message: "This account has not been verified." });
         return;
       }
-      setError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setLoading(false);
+      setError("root", { message: "Could not connect to the server. Please try again later." });
     }
   }
 
@@ -66,34 +65,32 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
       </Button>
 
       <AuthCard title={title} subtitle={subtitle}>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <FormField
             id="email"
             label="Email Address"
             type="email"
             placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
+            {...register("email")}
           />
           <FormField
             id="password"
             label="Password"
             type="password"
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
+            {...register("password")}
           />
 
-          {error && <p className="text-destructive text-center text-2xs">{error}</p>}
+          {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}
 
           <Button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {isSubmitting ? "Signing in…" : "Sign In"}
           </Button>
         </form>
       </AuthCard>

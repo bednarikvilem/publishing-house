@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
@@ -9,19 +10,22 @@ import { slugToDisplayName } from "../lib/utils";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { Button } from "../components/ui/button";
 
+interface ResetFormValues { email: string }
+
 export function PasswordResetPage() {
   const { newspaperName, newspaper } = useNewspaper();
 
-  const [email, setEmail]         = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError]         = useState<string | null>(null);
-  const [loading, setLoading]     = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { isSubmitting, errors },
+  } = useForm<ResetFormValues>({ defaultValues: { email: "" } });
+
+  async function onSubmit({ email }: ResetFormValues) {
     if (!newspaper) return;
-    setError(null);
-    setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
         method: "POST",
@@ -33,14 +37,12 @@ export function PasswordResetPage() {
 
       const body = await res.json();
       if (res.status === 422) {
-        setError(body.fields?.email ?? "Please enter a valid email address.");
+        setError("root", { message: body.fields?.email ?? "Please enter a valid email address." });
         return;
       }
-      setError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setLoading(false);
+      setError("root", { message: "Could not connect to the server. Please try again later." });
     }
   }
 
@@ -61,7 +63,7 @@ export function PasswordResetPage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <p className="text-muted-foreground text-center text-2xs leading-relaxed">
               Enter the email address associated with your account and we'll send you a link to reset your password.
             </p>
@@ -70,17 +72,16 @@ export function PasswordResetPage() {
               label="Email Address"
               type="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
+              {...register("email")}
             />
-            {error && <p className="text-destructive text-center text-2xs">{error}</p>}
+            {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}
             <Button
               type="submit"
-              disabled={loading || !newspaper}
+              disabled={isSubmitting || !newspaper}
               className="w-full"
             >
-              {loading ? "Sending…" : "Send Reset Link"}
+              {isSubmitting ? "Sending…" : "Send Reset Link"}
             </Button>
           </form>
         )}
