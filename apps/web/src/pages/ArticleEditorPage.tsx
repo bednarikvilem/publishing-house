@@ -562,7 +562,7 @@ export function ArticleEditorPage() {
         {loading ? (
           <LoadingState />
         ) : loadError ? (
-          <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-5 py-4">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-5 py-4">
             <p className="text-sm text-destructive">{loadError}</p>
           </div>
         ) : (
@@ -645,10 +645,10 @@ export function ArticleEditorPage() {
           </div>
         )}
 
-        {/* Server-level error banner */}
-        {serverError && (
-          <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-4 py-3">
-            <p className="text-2xs text-destructive">{serverError}</p>
+        {/* Form error */}
+        {formError && (
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
+            <p className="text-2xs text-destructive">{formError}</p>
           </div>
         )}
       </main>
