@@ -57,11 +57,11 @@
   --text-3xl-plus: 2rem;     /* 32px */
   --text-4xl-plus: 2.5rem;   /* 40px */
 
-  /* Typography: letter-spacing tokens */
-  --tracking-snug: -0.3px;
-  --tracking-tight-px: -0.5px;
-  --tracking-tighter-px: -1px;
-  --tracking-wide-sm: 0.5px;
+  /* Typography: letter-spacing tokens (em scales with font size, preserving intent at any zoom level) */
+  --tracking-snug: -0.019em;      /* ≈ -0.3px at 16px base */
+  --tracking-tight-px: -0.031em;  /* ≈ -0.5px at 16px base */
+  --tracking-tighter-px: -0.063em; /* ≈ -1px at 16px base */
+  --tracking-wide-sm: 0.031em;    /* ≈ 0.5px at 16px base */
 
   /* Typography: line-height tokens */
   --leading-2xs: 1.15;
