@@ -60,7 +60,7 @@ export function DirectorDashboardPage() {
     <>
       <Button
         variant={activeView === "overview" ? "secondary" : "ghost"}
-        className="w-full justify-start text-[13px]"
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveView("overview")}
       >
         All Newspapers
@@ -68,7 +68,7 @@ export function DirectorDashboardPage() {
 
       <Button
         variant={activeView === "global-statistics" ? "secondary" : "ghost"}
-        className="w-full justify-start text-[13px]"
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveView("global-statistics")}
       >
         Global Statistics
@@ -76,7 +76,7 @@ export function DirectorDashboardPage() {
 
       {newspapers.length > 0 && (
         <>
-          <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+          <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
             Newspapers
           </p>
           {newspapers.map((np) => {
@@ -85,7 +85,7 @@ export function DirectorDashboardPage() {
               <div key={np.id}>
                 <Button
                   variant={isActive ? "secondary" : "ghost"}
-                  className="w-full justify-start text-[13px]"
+                  className="w-full justify-start text-2xs"
                   onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
                 >
                   {np.name}
@@ -97,7 +97,7 @@ export function DirectorDashboardPage() {
                         key={tab}
                         variant={selectedTab === tab ? "secondary" : "ghost"}
                         size="sm"
-                        className="w-full justify-start text-[12px] capitalize"
+                        className="w-full justify-start text-xs capitalize"
                         onClick={() => setActiveView({ newspaper: np, tab })}
                       >
                         {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : tab === "statistics" ? "Statistics" : "Branding"}
@@ -114,7 +114,7 @@ export function DirectorDashboardPage() {
       <div className="mt-auto pt-4">
         <Button
           variant="ghost"
-          className="w-full justify-start text-[13px]"
+          className="w-full justify-start text-2xs"
           onClick={handleLogout}
         >
           Log Out
@@ -135,7 +135,7 @@ export function DirectorDashboardPage() {
               {newspapers.map((np, i) => (
                 <ListRow key={np.id} first={i === 0} last={i === newspapers.length - 1}>
                   <div className="flex items-center gap-4">
-                    <span className="text-foreground flex-1 text-[15px] font-semibold">{np.name}</span>
+                    <span className="text-foreground flex-1 text-xs-plus font-semibold">{np.name}</span>
                     <Button
                       variant="outline"
                       size="sm"

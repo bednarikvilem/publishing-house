@@ -139,13 +139,13 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="text-foreground text-[15px] leading-snug font-semibold">
+                      <span className="text-foreground text-xs-plus leading-snug font-semibold">
                         {article.title}
                       </span>
-                      <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
+                      <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
                         {article.perex}
                       </span>
-                      <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
+                      <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
                         <span>Author: {article.author.full_name}</span>
                         <span>Category: {article.category}</span>
                         {article.assigned_editor && (
@@ -180,7 +180,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                             }`}
                           />
                         </Button>
-                        <span className="text-muted-foreground text-[12px]">Subscribers only</span>
+                        <span className="text-muted-foreground text-xs">Subscribers only</span>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
@@ -209,12 +209,12 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       }}
                       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
                     >
-                      <label className="text-foreground text-[13px] font-medium">
+                      <label className="text-foreground text-2xs font-medium">
                         Assign Editor
                         {editorsQuery.isLoading ? (
-                          <p className="text-muted-foreground mt-1.5 text-[13px]">Loading editors…</p>
+                          <p className="text-muted-foreground mt-1.5 text-2xs">Loading editors…</p>
                         ) : editors.length === 0 ? (
-                          <p className="text-muted-foreground mt-1.5 text-[13px]">
+                          <p className="text-muted-foreground mt-1.5 text-2xs">
                             No editors available in this newspaper.
                           </p>
                         ) : (

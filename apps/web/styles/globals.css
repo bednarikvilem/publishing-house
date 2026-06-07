@@ -79,6 +79,19 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
+
+  /* Layout size tokens */
+  --layout-card-image-height: 12.5rem;        /* 200px */
+  --layout-category-header-height: 17.5rem;   /* 280px */
+  --layout-featured-image-height: 22.5rem;    /* 360px */
+  --layout-featured-image-width: 35rem;       /* 560px */
+  --layout-article-hero-height: 30rem;        /* 480px */
+  --layout-hero-image-height: 31.25rem;       /* 500px */
+  --layout-hero-panel-width: 33.75rem;        /* 540px */
+  --layout-sidebar-width: 14.0625rem;         /* 225px */
+  --layout-auth-card-max-width: 26.25rem;     /* 420px */
+  --layout-editor-min-height: 26.25rem;       /* 420px */
+  --layout-article-title-max-width: 50rem;    /* 800px */
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);

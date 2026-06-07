@@ -75,12 +75,12 @@ export function LoginPage() {
 
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-foreground text-[14px] font-medium">
+              <label htmlFor="password" className="text-foreground text-sm font-medium">
                 Password
               </label>
               <Link
                 to={`/${newspaperName}/forgot-password`}
-                className="text-muted-foreground hover:text-foreground text-[13px] font-medium transition-colors"
+                className="text-muted-foreground hover:text-foreground text-2xs font-medium transition-colors"
               >
                 Forgot password?
               </Link>
@@ -95,7 +95,7 @@ export function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
+          {error && <p className="text-destructive text-center text-2xs">{error}</p>}
 
           <Button
             type="submit"
@@ -107,7 +107,7 @@ export function LoginPage() {
 
           <div className="flex items-center gap-3">
             <div className="bg-border h-px flex-1" />
-            <span className="text-muted-foreground text-[13px]">or</span>
+            <span className="text-muted-foreground text-2xs">or</span>
             <div className="bg-border h-px flex-1" />
           </div>
 
@@ -120,7 +120,7 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Don't have an account?{" "}
           <Link
             to={`/${newspaperName}/register`}

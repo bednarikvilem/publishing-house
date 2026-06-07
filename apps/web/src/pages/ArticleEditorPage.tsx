@@ -77,12 +77,12 @@ function EditorSidebar({
       {/* Status */}
       {!isNew && (
         <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
-          <h2 className="text-foreground text-[13px] font-semibold">Status</h2>
+          <h2 className="text-foreground text-2xs font-semibold">Status</h2>
           <Badge variant={statusToVariant(articleStatus)} className="self-start">
             {STATUS_LABELS[articleStatus]}
           </Badge>
           {!isDraft && (
-            <p className="text-muted-foreground text-[12px]">
+            <p className="text-muted-foreground text-xs">
               This article cannot be edited in its current state.
             </p>
           )}
@@ -91,11 +91,11 @@ function EditorSidebar({
 
       {/* Category & Keywords */}
       <div className="border-border bg-card flex flex-col gap-4 rounded-lg border px-4 py-4">
-        <h2 className="text-foreground text-[13px] font-semibold">Details</h2>
+        <h2 className="text-foreground text-2xs font-semibold">Details</h2>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-[12px] font-medium">
-            Category <span className="text-[#dc2626]">*</span>
+          <label className="text-muted-foreground text-xs font-medium">
+            Category <span className="text-destructive">*</span>
           </label>
           <Select
             value={categoryId}
@@ -123,7 +123,7 @@ function EditorSidebar({
           placeholder="comma, separated, keywords"
           disabled={!canEdit}
         />
-        <p className="text-muted-foreground/70 text-[11px] -mt-3">
+        <p className="text-muted-foreground/70 text-3xs -mt-3">
           Separate keywords with commas
         </p>
       </div>
@@ -131,8 +131,8 @@ function EditorSidebar({
       {/* Cover Image */}
       <div className="border-border bg-card flex flex-col gap-3 rounded-lg border px-4 py-4">
         <div>
-          <h2 className="text-foreground text-[13px] font-semibold">Cover Image</h2>
-          <p className="text-muted-foreground mt-0.5 text-[11px]">
+          <h2 className="text-foreground text-2xs font-semibold">Cover Image</h2>
+          <p className="text-muted-foreground mt-0.5 text-3xs">
             Displayed in article previews and on the homepage.
           </p>
         </div>
@@ -159,7 +159,7 @@ function EditorSidebar({
             )}
           </div>
         ) : (
-          <p className="text-muted-foreground text-[12px]">
+          <p className="text-muted-foreground text-xs">
             {isNew
               ? "Save the article first, then upload a cover image."
               : "No cover image yet. Required before submitting."}
@@ -192,7 +192,7 @@ function EditorSidebar({
       {/* Danger zone */}
       {!isNew && isDraft && (
         <div className="border-border bg-card rounded-lg border px-4 py-4">
-          <h2 className="text-foreground mb-3 text-[13px] font-semibold">Danger Zone</h2>
+          <h2 className="text-foreground mb-3 text-2xs font-semibold">Danger Zone</h2>
           <Button
             type="button"
             variant="destructive"
@@ -456,7 +456,7 @@ export function ArticleEditorPage() {
         <div className="flex items-center justify-between gap-4">
           <Link
             to={`/${np}/author-dashboard?section=my-articles`}
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-[13px] font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-2xs font-medium transition-colors"
           >
             ← Back to Dashboard
           </Link>
@@ -490,15 +490,15 @@ export function ArticleEditorPage() {
           <LoadingState />
         ) : loadError ? (
           <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-5 py-4">
-            <p className="text-[14px] text-[#dc2626]">{loadError}</p>
+            <p className="text-sm text-destructive">{loadError}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             {/* Left: main editor area */}
             <div className="flex min-w-0 flex-1 flex-col gap-5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-[13px] font-semibold">
-                  Title <span className="text-[#dc2626]">*</span>
+                <label className="text-foreground text-2xs font-semibold">
+                  Title <span className="text-destructive">*</span>
                 </label>
                 <Input
                   type="text"
@@ -506,13 +506,13 @@ export function ArticleEditorPage() {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Article title…"
                   disabled={!canEdit}
-                  className="bg-card rounded-lg px-4 py-2.5 text-[15px] font-semibold"
+                  className="bg-card rounded-lg px-4 py-2.5 text-xs-plus font-semibold"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-[13px] font-semibold">
-                  Perex <span className="text-[#dc2626]">*</span>
+                <label className="text-foreground text-2xs font-semibold">
+                  Perex <span className="text-destructive">*</span>
                 </label>
                 <Textarea
                   value={perex}
@@ -520,13 +520,13 @@ export function ArticleEditorPage() {
                   placeholder="Short introduction shown in article listings…"
                   disabled={!canEdit}
                   rows={3}
-                  className="bg-card rounded-lg px-4 py-3 text-[14px] leading-relaxed"
+                  className="bg-card rounded-lg px-4 py-3 text-sm leading-relaxed"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-[13px] font-semibold">
-                  Content <span className="text-[#dc2626]">*</span>
+                <label className="text-foreground text-2xs font-semibold">
+                  Content <span className="text-destructive">*</span>
                 </label>
                 <RichTextEditor
                   key={editorKey}
@@ -564,7 +564,7 @@ export function ArticleEditorPage() {
         {/* Form error */}
         {formError && (
           <div className="rounded-lg border border-[#dc2626]/20 bg-[#dc262608] px-4 py-3">
-            <p className="text-[13px] text-[#dc2626]">{formError}</p>
+            <p className="text-2xs text-destructive">{formError}</p>
           </div>
         )}
       </main>

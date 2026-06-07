@@ -104,13 +104,13 @@ export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
               >
                 <div className="flex items-start gap-4">
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-foreground text-[15px] leading-snug font-semibold">
+                    <span className="text-foreground text-xs-plus leading-snug font-semibold">
                       {article.title}
                     </span>
-                    <span className="text-muted-foreground line-clamp-2 text-[13px] leading-[1.4]">
+                    <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
                       {article.perex}
                     </span>
-                    <div className="text-muted-foreground flex flex-wrap gap-3 text-[12px]">
+                    <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">
                       <span>Author: {article.author.full_name}</span>
                       <span>Category: {article.category}</span>
                       <span>Submitted: {formatDate(article.submitted_at)}</span>

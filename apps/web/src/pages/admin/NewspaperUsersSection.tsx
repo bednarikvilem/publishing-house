@@ -128,11 +128,11 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
             <ListRow key={user.id} first={i === 0} last={i === users.length - 1}>
               <div className="flex items-start gap-4">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-foreground text-[14px] font-semibold">{user.full_name ?? user.username}</span>
-                  <span className="text-muted-foreground text-[12px]">@{user.username} · {user.email}</span>
+                  <span className="text-foreground text-sm font-semibold">{user.full_name ?? user.username}</span>
+                  <span className="text-muted-foreground text-xs">@{user.username} · {user.email}</span>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {user.roles.map((role) => (
-                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
+                      <span key={role} className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-3xs font-medium">
                         {role}
                         {role !== "REGISTERED_USER" && (
                           <Dialog>

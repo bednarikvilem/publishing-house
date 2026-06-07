@@ -62,7 +62,7 @@ export function CategoryPage() {
       <Navbar newspaperName={newspaperName} />
 
       {/* Category Hero */}
-      <div className="relative h-[280px] w-full overflow-hidden">
+      <div className="relative h-[var(--layout-category-header-height)] w-full overflow-hidden">
         {/* Background — generic gradient fallback looks intentional for every category */}
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
         {/* Dark overlay */}
@@ -70,7 +70,7 @@ export function CategoryPage() {
         {/* Centered content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-12 text-center">
           {/* Breadcrumb */}
-          <p className="text-[13px] text-white/80">
+          <p className="text-2xs text-white/80">
             <Link
               to={`/${newspaperName}`}
               className="transition-colors hover:text-white"
@@ -81,11 +81,11 @@ export function CategoryPage() {
             <span>{category?.name ?? categorySlug}</span>
           </p>
           {/* Category title */}
-          <h1 className="text-[48px] leading-none font-black tracking-[-1px] text-white">
+          <h1 className="text-5xl leading-none font-black tracking-[-1px] text-white">
             {category?.name ?? categorySlug}
           </h1>
           {/* Article count badge */}
-          <span className="rounded-full border border-white/20 bg-white/[0.13] px-4 py-1.5 text-[13px] font-medium text-white">
+          <span className="rounded-full border border-white/20 bg-white/[0.13] px-4 py-1.5 text-2xs font-medium text-white">
             {articles.length} Article{articles.length !== 1 ? "s" : ""}
           </span>
         </div>
@@ -101,7 +101,7 @@ export function CategoryPage() {
           >
             <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
               {/* Image */}
-              <div className="relative h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
+              <div className="relative h-[var(--layout-featured-image-height)] w-[var(--layout-featured-image-width)] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
                     src={featured.primary_image.url}
@@ -123,15 +123,15 @@ export function CategoryPage() {
               {/* Content */}
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-3xs font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
+                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-[-0.5px]">
                   {featured.title}
                 </h2>
-                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
+                <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-[1.6]">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
@@ -147,16 +147,16 @@ export function CategoryPage() {
                         <div className="bg-muted h-8 w-8 rounded-full" />
                       )}
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-card-foreground text-[13px] font-semibold">
+                        <span className="text-card-foreground text-2xs font-semibold">
                           {featured.author.full_name}
                         </span>
-                        <span className="text-muted-foreground text-[12px]">
+                        <span className="text-muted-foreground text-xs">
                           {formatDate(featured.publication_date)}
                         </span>
                       </div>
                     </>
                   ) : (
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(featured.publication_date)}
                     </span>
                   )}
@@ -169,7 +169,7 @@ export function CategoryPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-[14px] font-medium">
+            <span className="text-muted-foreground text-sm font-medium">
               Sort by:
             </span>
             <Button
@@ -187,7 +187,7 @@ export function CategoryPage() {
               Oldest
             </Button>
           </div>
-          <span className="text-muted-foreground text-[13px]">
+          <span className="text-muted-foreground text-2xs">
             Showing {rest.length > 0 ? `1–${rest.length + 1}` : "0"} of{" "}
             {articles.length} article{articles.length !== 1 ? "s" : ""}
           </span>

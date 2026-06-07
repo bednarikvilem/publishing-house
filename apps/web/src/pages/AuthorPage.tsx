@@ -147,7 +147,7 @@ export function AuthorPage() {
             className="block"
           >
             <div className="border-border bg-card flex overflow-hidden rounded-lg border shadow-sm">
-              <div className="h-[360px] w-[560px] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
+              <div className="h-[var(--layout-featured-image-height)] w-[var(--layout-featured-image-width)] shrink-0 overflow-hidden rounded-tl-lg rounded-bl-lg">
                 {featured.primary_image ? (
                   <img
                     src={featured.primary_image.url}

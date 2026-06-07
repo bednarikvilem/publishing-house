@@ -24,7 +24,7 @@ export function FormField(props: FormFieldProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-foreground text-[14px] font-medium">
+      <label htmlFor={id} className="text-foreground text-sm font-medium">
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
@@ -41,7 +41,7 @@ export function FormField(props: FormFieldProps) {
           {...(rest as InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
-      {error && <span className="text-destructive text-[12px]">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   );
 }

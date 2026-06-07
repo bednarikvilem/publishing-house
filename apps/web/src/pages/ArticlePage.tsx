@@ -39,11 +39,11 @@ const viewerTheme = {
   quote:
     "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
   heading: {
-    h1: "text-[32px] font-bold tracking-[-0.3px] my-3",
-    h2: "text-[24px] font-bold tracking-[-0.3px] my-3",
-    h3: "text-[20px] font-bold my-2",
+    h1: "text-3xl-plus font-bold tracking-[-0.3px] my-3",
+    h2: "text-2xl font-bold tracking-[-0.3px] my-3",
+    h3: "text-xl font-bold my-2",
   },
-  paragraph: "text-foreground text-[16px] leading-[1.8] my-1",
+  paragraph: "text-foreground text-base leading-[1.8] my-1",
 };
 
 function ArticleContent({ content }: { content: string }) {
@@ -70,14 +70,14 @@ function ArticleContent({ content }: { content: string }) {
         >
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="text-foreground text-[16px] leading-[1.8] outline-none" />
+              <ContentEditable className="text-foreground text-base leading-[1.8] outline-none" />
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <ListPlugin />
         </LexicalComposer>
       ) : (
-        <p className="text-foreground text-[16px] leading-[1.8]">{content}</p>
+        <p className="text-foreground text-base leading-[1.8]">{content}</p>
       )}
     </div>
   );
@@ -210,15 +210,15 @@ export function ArticlePage() {
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-          <div className="border-border bg-card flex w-full max-w-[420px] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
-            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+          <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
+            <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
               Subscriber-only content
             </h2>
-            <p className="text-muted-foreground text-[14px]">
+            <p className="text-muted-foreground text-sm">
               You do not have access to this article.
             </p>
             {subscribeMessage ? (
-              <p className="text-muted-foreground text-[14px]">{subscribeMessage}</p>
+              <p className="text-muted-foreground text-sm">{subscribeMessage}</p>
             ) : isLoggedIn ? (
               <Button
                 onClick={handleSubscribeFromPaywall}
@@ -229,7 +229,7 @@ export function ArticlePage() {
             ) : (
               <a
                 href={`/${newspaperName}/login`}
-                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-[14px] font-semibold hover:opacity-90"
+                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90"
               >
                 Log in to subscribe
               </a>
@@ -251,7 +251,7 @@ export function ArticlePage() {
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex h-64 flex-col items-center justify-center gap-3">
-          <p className="text-muted-foreground text-[15px]">{message}</p>
+          <p className="text-muted-foreground text-xs-plus">{message}</p>
         </div>
       </div>
     );
@@ -261,7 +261,7 @@ export function ArticlePage() {
     return (
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
-        <div className="text-muted-foreground flex h-64 items-center justify-center text-[15px]">
+        <div className="text-muted-foreground flex h-64 items-center justify-center text-xs-plus">
           Loading…
         </div>
       </div>
@@ -276,7 +276,7 @@ export function ArticlePage() {
       <Navbar newspaperName={newspaperName ?? ""} />
 
       {/* Hero */}
-      <div className="relative h-[480px] w-full overflow-hidden">
+      <div className="relative h-[var(--layout-article-hero-height)] w-full overflow-hidden">
         {/* Background image */}
         {primaryImage ? (
           <img
@@ -292,7 +292,7 @@ export function ArticlePage() {
         {/* Content anchored to bottom */}
         <div className="absolute inset-0 flex flex-col justify-end gap-4 px-16 pb-12">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-[13px]">
+          <nav className="flex items-center gap-2 text-2xs">
             <Link
               to={`/${newspaperName}`}
               className="text-white/67 hover:text-white/90"
@@ -310,11 +310,11 @@ export function ArticlePage() {
             <span className="font-medium text-white/87">Article</span>
           </nav>
           {/* Category badge */}
-          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-[12px] font-semibold tracking-[0.5px]">
+          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-xs font-semibold tracking-[0.5px]">
             {article.category}
           </span>
           {/* Title */}
-          <h1 className="max-w-[800px] text-[40px] leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
+          <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
             {article.title}
           </h1>
           {/* Author meta */}
@@ -332,10 +332,10 @@ export function ArticlePage() {
               <div className="h-9 w-9 rounded-full bg-white/20 ring-1 ring-white/27" />
             )}
             <div className="flex flex-col gap-0.5">
-              <span className="text-[14px] font-semibold text-white/90">
+              <span className="text-sm font-semibold text-white/90">
                 By {article.author.full_name}
               </span>
-              <span className="text-[13px] text-white/67">
+              <span className="text-2xs text-white/67">
                 {formatDate(article.publication_date, "long")} · {readTime} min read
               </span>
             </div>
@@ -346,7 +346,7 @@ export function ArticlePage() {
       {/* Article Body */}
       <section className="px-16 py-12">
         {/* Lede */}
-        <p className="text-foreground mb-6 text-[18px] leading-[1.7]">
+        <p className="text-foreground mb-6 text-lg leading-[1.7]">
           {article.perex}
         </p>
 
@@ -378,7 +378,7 @@ export function ArticlePage() {
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </Button>
           ) : (
-            <span className="text-muted-foreground flex items-center gap-2 text-[14px]">
+            <span className="text-muted-foreground flex items-center gap-2 text-sm">
               <Heart size={16} />
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </span>
@@ -387,7 +387,7 @@ export function ArticlePage() {
 
         {/* Comments */}
         <div className="flex flex-col gap-6">
-          <h2 className="flex items-center gap-2 text-[20px] font-bold">
+          <h2 className="flex items-center gap-2 text-xl font-bold">
             <MessageCircle size={20} />
             Comments ({comments.length})
           </h2>
@@ -415,18 +415,18 @@ export function ArticlePage() {
 
           {/* Comment list */}
           {comments.length === 0 ? (
-            <p className="text-muted-foreground text-[14px]">No comments yet. Be the first!</p>
+            <p className="text-muted-foreground text-sm">No comments yet. Be the first!</p>
           ) : (
             <div className="flex flex-col gap-4">
               {comments.map((comment) => (
                 <div key={comment.id} className="border-border rounded-lg border p-4">
                   <div className="mb-2 flex items-center gap-2">
-                    <span className="text-[13px] font-semibold">@{comment.author.username}</span>
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-2xs font-semibold">@{comment.author.username}</span>
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(comment.created_at, "long")}
                     </span>
                   </div>
-                  <p className="text-foreground text-[14px] leading-[1.6]">{comment.content}</p>
+                  <p className="text-foreground text-sm leading-[1.6]">{comment.content}</p>
                 </div>
               ))}
             </div>

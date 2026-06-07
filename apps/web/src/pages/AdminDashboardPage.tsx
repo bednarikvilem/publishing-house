@@ -48,25 +48,25 @@ export function AdminDashboardPage() {
 
   const sidebarContent = (
     <>
-      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Global
       </p>
       <Button
         variant={activeSection === "global-users" ? "secondary" : "ghost"}
-        className="w-full justify-start text-[13px]"
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveSection("global-users")}
       >
         Global Users
       </Button>
 
-      <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Newspapers
       </p>
       {newspapers.map((np) => (
         <Button
           key={np.id}
           variant={typeof activeSection === "object" && activeSection.newspaper.id === np.id ? "secondary" : "ghost"}
-          className="w-full justify-start text-[13px]"
+          className="w-full justify-start text-2xs"
           onClick={() => setActiveSection({ newspaper: np })}
         >
           {np.name}
@@ -76,7 +76,7 @@ export function AdminDashboardPage() {
       <div className="mt-auto pt-4">
         <Button
           variant="ghost"
-          className="w-full justify-start text-[13px]"
+          className="w-full justify-start text-2xs"
           onClick={handleLogout}
         >
           Log Out

@@ -153,7 +153,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                     className="flex-1"
                   />
                 ) : (
-                  <span className="text-foreground flex-1 text-[14px] font-medium">
+                  <span className="text-foreground flex-1 text-sm font-medium">
                     {cat.name}
                   </span>
                 )}

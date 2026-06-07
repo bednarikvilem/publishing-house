@@ -58,8 +58,7 @@ export function BrandingSection({
                 className={`h-auto flex-col gap-1.5 p-2 ${isActive ? "bg-muted" : ""}`}
               >
                 <span
-                  className={`h-9 w-9 rounded-full border-2 transition-all ${key ? `theme-${key}` : ""} ${isActive ? "ring-2 ring-offset-2 ring-current border-transparent" : "border-border"}`}
-                  style={{ backgroundColor: "var(--primary)" }}
+                  className={`bg-primary h-9 w-9 rounded-full border-2 transition-all ${key ? `theme-${key}` : ""} ${isActive ? "ring-2 ring-offset-2 ring-current border-transparent" : "border-border"}`}
                 />
                 <span className={`text-3xs font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
                   {label}

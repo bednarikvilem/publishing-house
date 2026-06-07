@@ -73,9 +73,9 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
             <ListRow key={article.id} first={i === 0} last={i === articles.length - 1}>
               <div className="flex items-start gap-4">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-foreground text-[15px] font-semibold">{article.title}</span>
-                  <span className="text-muted-foreground line-clamp-2 text-[13px]">{article.perex}</span>
-                  <div className="text-muted-foreground flex gap-3 text-[12px]">
+                  <span className="text-foreground text-xs-plus font-semibold">{article.title}</span>
+                  <span className="text-muted-foreground line-clamp-2 text-2xs">{article.perex}</span>
+                  <div className="text-muted-foreground flex gap-3 text-xs">
                     <span>Author: {article.author.full_name}</span>
                     <span>Category: {article.category}</span>
                     <span>Submitted: {formatDate(article.submitted_at)}</span>

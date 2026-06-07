@@ -54,7 +54,7 @@ export function VerifyEmailPage() {
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
+        <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
           {status === "loading" && (
             <>
               <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">

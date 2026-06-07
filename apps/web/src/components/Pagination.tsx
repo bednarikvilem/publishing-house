@@ -14,7 +14,7 @@ export function Pagination({
   if (totalPages <= 1) return null;
   return (
     <div className="flex items-center justify-between">
-      <span className="text-muted-foreground text-[13px]">
+      <span className="text-muted-foreground text-2xs">
         Page {currentPage} of {totalPages} — {total} item{total !== 1 ? "s" : ""}
       </span>
       <div className="flex gap-2">

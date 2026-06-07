@@ -86,7 +86,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
             required
           />
 
-          {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
+          {error && <p className="text-destructive text-center text-2xs">{error}</p>}
 
           <Button
             type="submit"

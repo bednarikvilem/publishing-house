@@ -56,13 +56,13 @@ export function PasswordResetPage() {
             <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
               <CheckIcon size={22} className="text-foreground" />
             </div>
-            <p className="text-muted-foreground text-center text-[14px]">
+            <p className="text-muted-foreground text-center text-sm">
               If that address is registered, a reset link has been sent. Check your inbox.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <p className="text-muted-foreground text-center text-[13px] leading-relaxed">
+            <p className="text-muted-foreground text-center text-2xs leading-relaxed">
               Enter the email address associated with your account and we'll send you a link to reset your password.
             </p>
             <FormField
@@ -74,7 +74,7 @@ export function PasswordResetPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
+            {error && <p className="text-destructive text-center text-2xs">{error}</p>}
             <Button
               type="submit"
               disabled={loading || !newspaper}
@@ -85,7 +85,7 @@ export function PasswordResetPage() {
           </form>
         )}
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Remember your password?{" "}
           <Link
             to={`/${newspaperName}/login`}

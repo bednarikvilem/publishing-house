@@ -53,7 +53,7 @@ export function NewspaperHomepage() {
       {/* Hero Section */}
       {featured && (
         <section className="bg-background flex px-12">
-          <div className="relative h-[500px] flex-1 overflow-hidden">
+          <div className="relative h-[var(--layout-hero-image-height)] flex-1 overflow-hidden">
             {featured.primary_image ? (
               <img
                 src={featured.primary_image.url}
@@ -72,7 +72,7 @@ export function NewspaperHomepage() {
               </span>
             )}
           </div>
-          <div className="flex w-[540px] shrink-0 flex-col justify-center gap-5 px-10 py-12">
+          <div className="flex w-[var(--layout-hero-panel-width)] shrink-0 flex-col justify-center gap-5 px-10 py-12">
             <CategoryBadge label="Featured" />
             <h1 className="text-foreground text-3xl-plus leading-2xs font-extrabold tracking-tight-px">
               {featured.title}

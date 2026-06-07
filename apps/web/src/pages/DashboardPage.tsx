@@ -59,7 +59,7 @@ export function DashboardPage() {
 
   const sidebarChildren = activeSection === "my-articles" ? (
     <div className="flex flex-col gap-0.5">
-      <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Filter by Status
       </p>
       {MY_ARTICLE_FILTERS.map((item) => (

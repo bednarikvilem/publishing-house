@@ -13,7 +13,7 @@ export function ArticleCard({ article }: { article: Article }) {
       className="border-border bg-card flex cursor-pointer flex-col overflow-hidden rounded-xl border"
       onClick={() => navigate(`/${newspaperName}/articles/${article.id}`)}
     >
-      <div className="relative h-[200px] overflow-hidden">
+      <div className="relative h-[var(--layout-card-image-height)] overflow-hidden">
         {article.primary_image ? (
           <img
             src={article.primary_image.url}

@@ -76,17 +76,17 @@ export function SignUpPage() {
         <Navbar newspaperName={newspaperName ?? ""} />
         <AuthCard title={slugToDisplayName(newspaperName ?? "")} subtitle="Create your account">
           <div className="flex flex-col items-center gap-4 text-center">
-            <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+            <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
               Check your email
             </h2>
-            <p className="text-muted-foreground text-[14px] leading-relaxed">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               We sent a confirmation link to{" "}
               <span className="text-foreground font-semibold">{email}</span>.
               Please verify your address to activate your account.
             </p>
             <Link
               to={`/${newspaperName}/login`}
-              className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+              className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
             >
               Back to Sign in
             </Link>
@@ -153,12 +153,12 @@ export function SignUpPage() {
             error={fieldErrors.confirmPassword}
           />
 
-          <p className="text-muted-foreground text-center text-[13px]">
+          <p className="text-muted-foreground text-center text-2xs">
             By signing up, you agree to our{" "}
             <span className="text-foreground font-semibold">Terms &amp; Privacy Policy</span>
           </p>
 
-          {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
+          {error && <p className="text-destructive text-center text-2xs">{error}</p>}
 
           <Button
             type="submit"
@@ -170,7 +170,7 @@ export function SignUpPage() {
 
           <div className="flex items-center gap-3">
             <div className="bg-border h-px flex-1" />
-            <span className="text-muted-foreground text-[13px]">or</span>
+            <span className="text-muted-foreground text-2xs">or</span>
             <div className="bg-border h-px flex-1" />
           </div>
 
@@ -183,7 +183,7 @@ export function SignUpPage() {
           </Button>
         </form>
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
           <Link
             to={`/${newspaperName}/login`}
