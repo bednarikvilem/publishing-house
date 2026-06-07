@@ -1,17 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import type { Control, UseFormRegister, FieldErrors } from "react-hook-form";
 import { Navbar } from "../components/Navbar";
 import { RichTextEditor } from "../components/RichTextEditor";
 import { LoadingState } from "../components/LoadingState";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { API_BASE_URL, authHeaders } from "../lib/api";
-import { FormField } from "../components/FormField";
 import { STATUS_LABELS, statusToVariant } from "../lib/articleStatus";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../components/ui/select";
 import type { Category, ArticleStatus } from "../types";
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -34,6 +41,14 @@ interface LoadedArticle {
   images: ArticleImage[];
 }
 
+interface ArticleFormValues {
+  title: string;
+  perex: string;
+  content: string;
+  categoryId: string;
+  keywords: string;
+}
+
 /* ── Editor Metadata Sidebar ────────────────────────────────────────────────── */
 
 function EditorSidebar({
@@ -41,10 +56,9 @@ function EditorSidebar({
   canEdit,
   articleStatus,
   categories,
-  categoryId,
-  setCategoryId,
-  keywords,
-  setKeywords,
+  control,
+  register,
+  errors,
   images,
   uploadingImage,
   fileInputRef,
@@ -57,10 +71,9 @@ function EditorSidebar({
   canEdit: boolean;
   articleStatus: ArticleStatus;
   categories: Category[];
-  categoryId: string;
-  setCategoryId: (id: string) => void;
-  keywords: string;
-  setKeywords: (k: string) => void;
+  control: Control<ArticleFormValues>;
+  register: UseFormRegister<ArticleFormValues>;
+  errors: FieldErrors<ArticleFormValues>;
   images: ArticleImage[];
   uploadingImage: boolean;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
@@ -94,38 +107,51 @@ function EditorSidebar({
         <h2 className="text-foreground text-2xs font-semibold">Details</h2>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-xs font-medium">
+          <label className="text-muted-foreground text-xs font-medium" htmlFor="categoryId">
             Category <span className="text-destructive">*</span>
           </label>
-          <Select
-            value={categoryId}
-            onValueChange={(v) => v !== null && setCategoryId(v)}
-          >
-            <SelectTrigger className="w-full" disabled={!canEdit}>
-              <SelectValue placeholder="Select category…" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            name="categoryId"
+            control={control}
+            rules={{ required: "Category is required." }}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={(v) => v !== null && field.onChange(v)}
+              >
+                <SelectTrigger id="categoryId" className="w-full" disabled={!canEdit}>
+                  <SelectValue placeholder="Select category…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.categoryId && (
+            <p className="text-destructive text-2xs">{errors.categoryId.message}</p>
+          )}
         </div>
 
-        <FormField
-          id="keywords"
-          label="Keywords"
-          type="text"
-          value={keywords}
-          onChange={(e) => setKeywords(e.target.value)}
-          placeholder="comma, separated, keywords"
-          disabled={!canEdit}
-        />
-        <p className="text-muted-foreground/70 text-3xs -mt-3">
-          Separate keywords with commas
-        </p>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-muted-foreground text-xs font-medium" htmlFor="keywords">
+            Keywords
+          </label>
+          <Input
+            id="keywords"
+            type="text"
+            placeholder="comma, separated, keywords"
+            disabled={!canEdit}
+            {...register("keywords")}
+          />
+          <p className="text-muted-foreground/70 text-3xs">
+            Separate keywords with commas
+          </p>
+        </div>
       </div>
 
       {/* Cover Image */}
@@ -183,7 +209,11 @@ function EditorSidebar({
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingImage}
             >
-              {uploadingImage ? "Uploading…" : coverImage ? "Replace Cover Image" : "Upload Cover Image"}
+              {uploadingImage
+                ? "Uploading…"
+                : coverImage
+                  ? "Replace Cover Image"
+                  : "Upload Cover Image"}
             </Button>
           </>
         )}
@@ -223,16 +253,9 @@ export function ArticleEditorPage() {
   const np = newspaperName ?? "";
   const newspaperId = newspaper?.id ?? "";
 
-  /* ── Form state ──────────────────────────────────────────────────────────── */
-  const [title, setTitle] = useState("");
-  const [perex, setPerex] = useState("");
-  const [content, setContent] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [keywords, setKeywords] = useState("");
+  /* ── Non-form state ─────────────────────────────────────────────────────── */
   const [articleStatus, setArticleStatus] = useState<ArticleStatus>("DRAFT");
   const [images, setImages] = useState<ArticleImage[]>([]);
-
-  /* ── UI state ────────────────────────────────────────────────────────────── */
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -240,11 +263,23 @@ export function ArticleEditorPage() {
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [authorProfileComplete, setAuthorProfileComplete] = useState(true);
   const [editorKey, setEditorKey] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /* ── React Hook Form ────────────────────────────────────────────────────── */
+  const {
+    register,
+    control,
+    handleSubmit: rhfHandleSubmit,
+    setValue,
+    setError,
+    formState: { errors },
+  } = useForm<ArticleFormValues>({
+    defaultValues: { title: "", perex: "", content: "", categoryId: "", keywords: "" },
+  });
 
   /* ── Load categories ────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -259,18 +294,25 @@ export function ArticleEditorPage() {
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { bio?: string | null; profile_picture?: string | null; roles?: string[] } | null) => {
-        if (data?.roles?.includes("AUTHOR")) {
-          setAuthorProfileComplete(!!(data.bio && data.profile_picture));
+      .then(
+        (
+          data: {
+            bio?: string | null;
+            profile_picture?: string | null;
+            roles?: string[];
+          } | null
+        ) => {
+          if (data?.roles?.includes("AUTHOR")) {
+            setAuthorProfileComplete(!!(data.bio && data.profile_picture));
+          }
         }
-      })
+      )
       .catch(() => {});
   }, []);
 
   /* ── Load existing article ──────────────────────────────────────────────── */
   useEffect(() => {
     if (isNew || !articleId || !newspaperId) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setLoadError(null);
     fetch(
@@ -282,11 +324,11 @@ export function ArticleEditorPage() {
         return res.json() as Promise<LoadedArticle>;
       })
       .then((data) => {
-        setTitle(data.title ?? "");
-        setPerex(data.perex ?? "");
-        setContent(data.content ?? "");
-        setCategoryId(data.category_id ?? "");
-        setKeywords(Array.isArray(data.keywords) ? data.keywords.join(", ") : "");
+        setValue("title", data.title ?? "");
+        setValue("perex", data.perex ?? "");
+        setValue("content", data.content ?? "");
+        setValue("categoryId", data.category_id ?? "");
+        setValue("keywords", Array.isArray(data.keywords) ? data.keywords.join(", ") : "");
         setArticleStatus(data.status ?? "DRAFT");
         setImages(data.images ?? []);
         setEditorKey((k) => k + 1);
@@ -302,24 +344,17 @@ export function ArticleEditorPage() {
         );
       })
       .finally(() => setLoading(false));
-  }, [isNew, articleId, newspaperId]);
+  }, [isNew, articleId, newspaperId, setValue]);
 
   /* ── Save as draft ──────────────────────────────────────────────────────── */
-  async function handleSave() {
-    if (!title.trim()) { setFormError("Title is required."); return; }
-    if (!perex.trim()) { setFormError("Perex is required."); return; }
-    if (!categoryId)   { setFormError("Category is required."); return; }
-    setFormError(null);
+  const handleSave = rhfHandleSubmit(async (values) => {
+    setServerError(null);
     setSaving(true);
 
-    const keywordsArray = keywords.split(",").map((k) => k.trim()).filter(Boolean);
-    const body = {
-      title: title.trim(),
-      perex: perex.trim(),
-      content,
-      category_id: categoryId,
-      keywords: keywordsArray.length > 0 ? keywordsArray : undefined,
-    };
+    const keywordsArray = values.keywords
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean);
 
     try {
       const res = await fetch(
@@ -329,31 +364,62 @@ export function ArticleEditorPage() {
         {
           method: isNew ? "POST" : "PATCH",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: JSON.stringify({
+            title: values.title.trim(),
+            perex: values.perex.trim(),
+            content: values.content,
+            category_id: values.categoryId,
+            keywords: keywordsArray.length > 0 ? keywordsArray : undefined,
+          }),
         }
       );
+
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string; fields?: Record<string, string> };
-        setFormError(data.fields ? Object.values(data.fields).join(" ") : (data.error ?? "Failed to save article."));
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          fields?: Record<string, string>;
+        };
+        if (data.fields) {
+          const fieldMap: Partial<Record<string, keyof ArticleFormValues>> = {
+            title: "title",
+            perex: "perex",
+            content: "content",
+            category_id: "categoryId",
+            keywords: "keywords",
+          };
+          Object.entries(data.fields).forEach(([key, message]) => {
+            const field = fieldMap[key];
+            if (field) setError(field, { type: "server", message });
+            else setServerError(message);
+          });
+        } else {
+          setServerError(data.error ?? "Failed to save article.");
+        }
         return;
       }
+
       const saved = (await res.json()) as { id: string };
       if (isNew) navigate(`/${np}/articles/${saved.id}/edit`, { replace: true });
     } catch {
-      setFormError("Network error. Please try again.");
+      setServerError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
-  }
+  });
 
   /* ── Submit for review ──────────────────────────────────────────────────── */
-  async function handleSubmit() {
-    if (isNew) { setFormError("Save the article first before submitting."); return; }
-    if (!authorProfileComplete) {
-      setFormError("Complete your author profile (bio and profile picture) before submitting for review.");
+  async function handleSubmitForReview() {
+    if (isNew) {
+      setServerError("Save the article first before submitting.");
       return;
     }
-    setFormError(null);
+    if (!authorProfileComplete) {
+      setServerError(
+        "Complete your author profile (bio and profile picture) before submitting for review."
+      );
+      return;
+    }
+    setServerError(null);
     setSubmitting(true);
     try {
       const res = await fetch(
@@ -362,7 +428,7 @@ export function ArticleEditorPage() {
       );
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
-        setFormError(
+        setServerError(
           data.error === "ARTICLE_MISSING_IMAGE"
             ? "Upload at least one image before submitting."
             : data.error === "AUTHOR_PROFILE_INCOMPLETE"
@@ -374,7 +440,7 @@ export function ArticleEditorPage() {
       setArticleStatus("SUBMITTED");
       navigate(`/${np}/author-dashboard?section=my-articles`);
     } catch {
-      setFormError("Network error. Please try again.");
+      setServerError("Network error. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -393,7 +459,7 @@ export function ArticleEditorPage() {
       if (!res.ok) throw new Error();
       navigate(`/${np}/author-dashboard?section=my-articles`);
     } catch {
-      setFormError("Failed to delete article. Please try again.");
+      setServerError("Failed to delete article. Please try again.");
     } finally {
       setDeleting(false);
     }
@@ -404,7 +470,7 @@ export function ArticleEditorPage() {
     const file = e.target.files?.[0];
     if (!file || !articleId || isNew) return;
     setUploadingImage(true);
-    setFormError(null);
+    setServerError(null);
     const formData = new FormData();
     formData.append("image", file);
     try {
@@ -414,13 +480,18 @@ export function ArticleEditorPage() {
       );
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
-        setFormError(data.error ?? "Failed to upload image.");
+        setServerError(data.error ?? "Failed to upload image.");
         return;
       }
-      const img = (await res.json()) as { id: string; url: string; caption: string | null; is_primary: boolean };
+      const img = (await res.json()) as {
+        id: string;
+        url: string;
+        caption: string | null;
+        is_primary: boolean;
+      };
       setImages((prev) => [...prev, img]);
     } catch {
-      setFormError("Network error. Please try again.");
+      setServerError("Network error. Please try again.");
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -434,11 +505,14 @@ export function ArticleEditorPage() {
         `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images/${imageId}`,
         { method: "DELETE", headers: authHeaders() }
       );
-      if (res.status === 422) { setFormError("Cannot remove the only image from the article."); return; }
+      if (res.status === 422) {
+        setServerError("Cannot remove the only image from the article.");
+        return;
+      }
       if (!res.ok) throw new Error();
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     } catch {
-      setFormError("Failed to delete image. Please try again.");
+      setServerError("Failed to delete image. Please try again.");
     }
   }
 
@@ -446,7 +520,6 @@ export function ArticleEditorPage() {
   const canEdit = isNew || isDraft;
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
-
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Navbar newspaperName={np} />
@@ -476,7 +549,7 @@ export function ArticleEditorPage() {
               <Button
                 type="button"
                 size="sm"
-                onClick={handleSubmit}
+                onClick={handleSubmitForReview}
                 disabled={submitting}
               >
                 {submitting ? "Submitting…" : "Submit for Review"}
@@ -497,45 +570,57 @@ export function ArticleEditorPage() {
             {/* Left: main editor area */}
             <div className="flex min-w-0 flex-1 flex-col gap-5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-2xs font-semibold">
+                <label className="text-foreground text-2xs font-semibold" htmlFor="title">
                   Title <span className="text-destructive">*</span>
                 </label>
                 <Input
+                  id="title"
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
                   placeholder="Article title…"
                   disabled={!canEdit}
                   className="bg-card rounded-lg px-4 py-2.5 text-xs-plus font-semibold"
+                  {...register("title", { required: "Title is required." })}
                 />
+                {errors.title && (
+                  <p className="text-destructive text-2xs">{errors.title.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-2xs font-semibold">
+                <label className="text-foreground text-2xs font-semibold" htmlFor="perex">
                   Perex <span className="text-destructive">*</span>
                 </label>
                 <Textarea
-                  value={perex}
-                  onChange={(e) => setPerex(e.target.value)}
+                  id="perex"
                   placeholder="Short introduction shown in article listings…"
                   disabled={!canEdit}
                   rows={3}
                   className="bg-card rounded-lg px-4 py-3 text-sm leading-relaxed"
+                  {...register("perex", { required: "Perex is required." })}
                 />
+                {errors.perex && (
+                  <p className="text-destructive text-2xs">{errors.perex.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-foreground text-2xs font-semibold">
                   Content <span className="text-destructive">*</span>
                 </label>
-                <RichTextEditor
-                  key={editorKey}
-                  initialContent={content}
-                  onContentChange={canEdit ? setContent : () => {}}
-                  newspaperId={newspaperId || undefined}
-                  articleId={isNew ? undefined : articleId}
-                  hasCoverImage={images.some((img) => img.is_primary)}
-                  onUploadError={setFormError}
+                <Controller
+                  name="content"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      key={editorKey}
+                      initialContent={field.value}
+                      onContentChange={canEdit ? field.onChange : () => {}}
+                      newspaperId={newspaperId || undefined}
+                      articleId={isNew ? undefined : articleId}
+                      hasCoverImage={images.some((img) => img.is_primary)}
+                      onUploadError={setServerError}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -546,10 +631,9 @@ export function ArticleEditorPage() {
               canEdit={canEdit}
               articleStatus={articleStatus}
               categories={categories}
-              categoryId={categoryId}
-              setCategoryId={setCategoryId}
-              keywords={keywords}
-              setKeywords={setKeywords}
+              control={control}
+              register={register}
+              errors={errors}
               images={images}
               uploadingImage={uploadingImage}
               fileInputRef={fileInputRef}

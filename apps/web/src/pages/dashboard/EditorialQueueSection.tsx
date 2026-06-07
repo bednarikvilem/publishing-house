@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client, setArticleSubscriberOnly } from "../../lib/api";
 import type { PaginatedResponse, ReviewDecision } from "../../types";
@@ -14,11 +15,101 @@ import { DecisionForm } from "../../components/DecisionForm";
 import { STATUS_LABELS, statusToVariant } from "../../lib/articleStatus";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../components/ui/select";
 import { useToast } from "../../components/ui/toaster";
 import { formatDate } from "../../lib/utils";
 
 type Editor = { id: string; full_name: string };
+
+/* ── Assign-editor form ───────────────────────────────────────────────────── */
+
+interface AssignEditorFormValues {
+  editorId: string;
+}
+
+function AssignEditorForm({
+  editors,
+  loadingEditors,
+  isPending,
+  onSubmit,
+  onCancel,
+}: {
+  editors: Editor[];
+  loadingEditors: boolean;
+  isPending: boolean;
+  onSubmit: (editorId: string) => void;
+  onCancel: () => void;
+}) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AssignEditorFormValues>({ defaultValues: { editorId: "" } });
+
+  return (
+    <form
+      onSubmit={handleSubmit(({ editorId }) => onSubmit(editorId))}
+      className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
+    >
+      <div className="flex flex-col gap-1.5">
+        <label className="text-foreground text-2xs font-medium" htmlFor="editorId">
+          Assign Editor
+        </label>
+        {loadingEditors ? (
+          <p className="text-muted-foreground text-2xs">Loading editors…</p>
+        ) : editors.length === 0 ? (
+          <p className="text-muted-foreground text-2xs">
+            No editors available in this newspaper.
+          </p>
+        ) : (
+          <Controller
+            name="editorId"
+            control={control}
+            rules={{ required: "Please select an editor." }}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="editorId" className="mt-0.5 w-full rounded-md">
+                  <SelectValue placeholder="Select an editor…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {editors.map((editor) => (
+                    <SelectItem key={editor.id} value={editor.id}>
+                      {editor.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        )}
+        {errors.editorId && (
+          <p className="text-destructive text-2xs">{errors.editorId.message}</p>
+        )}
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={isPending || loadingEditors || editors.length === 0}
+        >
+          {isPending ? "Assigning…" : "Assign"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+/* ── Main section ─────────────────────────────────────────────────────────── */
 
 export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
   const { toast } = useToast();
@@ -27,7 +118,6 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
   const queryClient = useQueryClient();
 
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [assignEditorId, setAssignEditorId] = useState("");
 
   const queueQuery = useQuery({
     queryKey: ["editorial-queue", newspaperId, currentPage],
@@ -72,17 +162,26 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
     },
     onSuccess: () => {
       setActiveId(null);
-      setAssignEditorId("");
       invalidateQueue();
     },
-    onError: () => toast({ title: "Error", description: "Failed to assign editor. Please try again.", variant: "error" }),
+    onError: () =>
+      toast({
+        title: "Error",
+        description: "Failed to assign editor. Please try again.",
+        variant: "error",
+      }),
   });
 
   const toggleSubscriber = useMutation({
     mutationFn: ({ articleId, current }: { articleId: string; current: boolean }) =>
       setArticleSubscriberOnly(newspaperId, articleId, !current),
     onSuccess: invalidateQueue,
-    onError: () => toast({ title: "Error", description: "Failed to update subscriber-only setting. Please try again.", variant: "error" }),
+    onError: () =>
+      toast({
+        title: "Error",
+        description: "Failed to update subscriber-only setting. Please try again.",
+        variant: "error",
+      }),
   });
 
   const approve = useMutation({
@@ -108,12 +207,16 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
       setActiveId(null);
       invalidateQueue();
     },
-    onError: () => toast({ title: "Error", description: "Failed to submit review. Please try again.", variant: "error" }),
+    onError: () =>
+      toast({
+        title: "Error",
+        description: "Failed to submit review. Please try again.",
+        variant: "error",
+      }),
   });
 
   function toggleActive(articleId: string) {
     setActiveId((prev) => (prev === articleId ? null : articleId));
-    setAssignEditorId("");
   }
 
   return (
@@ -198,66 +301,15 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                   </div>
 
                   {activeId === article.id && isSubmitted && (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (!assignEditorId.trim()) return;
-                        assignEditor.mutate({
-                          articleId: article.id,
-                          editorId: assignEditorId.trim(),
-                        });
-                      }}
-                      className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
-                    >
-                      <label className="text-foreground text-2xs font-medium">
-                        Assign Editor
-                        {editorsQuery.isLoading ? (
-                          <p className="text-muted-foreground mt-1.5 text-2xs">Loading editors…</p>
-                        ) : editors.length === 0 ? (
-                          <p className="text-muted-foreground mt-1.5 text-2xs">
-                            No editors available in this newspaper.
-                          </p>
-                        ) : (
-                          <Select
-                            value={assignEditorId}
-                            onValueChange={(v) => v !== null && setAssignEditorId(v)}
-                            required
-                          >
-                            <SelectTrigger className="mt-1.5 w-full rounded-md">
-                              <SelectValue placeholder="Select an editor…" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {editors.map((editor) => (
-                                <SelectItem key={editor.id} value={editor.id}>
-                                  {editor.full_name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </label>
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setActiveId(null)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          size="sm"
-                          disabled={
-                            assignEditor.isPending ||
-                            !assignEditorId.trim() ||
-                            editors.length === 0
-                          }
-                        >
-                          {assignEditor.isPending ? "Assigning…" : "Assign"}
-                        </Button>
-                      </div>
-                    </form>
+                    <AssignEditorForm
+                      editors={editors}
+                      loadingEditors={editorsQuery.isLoading}
+                      isPending={assignEditor.isPending}
+                      onSubmit={(editorId) =>
+                        assignEditor.mutate({ articleId: article.id, editorId })
+                      }
+                      onCancel={() => setActiveId(null)}
+                    />
                   )}
 
                   {activeId === article.id && !isSubmitted && (

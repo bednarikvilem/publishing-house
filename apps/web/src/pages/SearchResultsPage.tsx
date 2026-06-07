@@ -13,17 +13,20 @@ export function SearchResultsPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const initialQuery = searchParams.get("q") ?? "";
-  const [inputValue, setInputValue] = useState(initialQuery);
+  const [inputValue, setInputValue] = useState(searchParams.get("q") ?? "");
   const [articles, setArticles] = useState<Article[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  // Sync the controlled input whenever the URL query changes (e.g. browser back/forward)
+  useEffect(() => {
+    setInputValue(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  // Fetch search results whenever the URL query or newspaper changes
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setInputValue(q);
 
     if (!q.trim() || !newspaper) {
       setArticles([]);

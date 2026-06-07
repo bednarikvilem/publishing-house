@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import type { Category } from "../../types";
 import { PencilIcon, PlusIcon, TrashIcon } from "../../components/Icons";
@@ -7,23 +8,94 @@ import { ListRow } from "../../components/ListRow";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorState } from "../../components/ErrorState";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { useToast } from "../../components/ui/toaster";
+
+interface CategoryFormValues {
+  name: string;
+}
+
+// ── Inline edit form ──────────────────────────────────────────────────────────
+
+function EditCategoryForm({
+  category,
+  onSaved,
+  onCancel,
+}: {
+  category: Category;
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    setError,
+  } = useForm<CategoryFormValues>({
+    defaultValues: { name: category.name },
+  });
+
+  async function onSubmit(data: CategoryFormValues) {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${(category as any).newspaperId}/categories/${category.id}`,
+        {
+          method: "PUT",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ name: data.name.trim() }),
+        }
+      );
+      if (!res.ok) throw new Error();
+      onSaved();
+    } catch {
+      setError("root", { message: "Failed to update category." });
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4 w-full">
+      <input
+        autoFocus
+        type="text"
+        className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-[13px] outline-none focus:ring-2"
+        {...register("name", { required: true })}
+      />
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {isSubmitting ? "Saving…" : "Save"}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-medium"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ── Main section ──────────────────────────────────────────────────────────────
 
 export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
-  const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [newName, setNewName] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
-  const [editName, setEditName] = useState("");
-  const [saving, setSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError: setFormError,
+    formState: { isSubmitting, errors },
+  } = useForm<CategoryFormValues>({ defaultValues: { name: "" } });
 
   const load = useCallback(async () => {
     if (!newspaperId) return;
-    await null;
     setLoading(true);
     try {
       const res = await fetch(
@@ -40,71 +112,47 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
   }, [newspaperId]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newName.trim()) return;
-    setSaving(true);
+  async function onCreateSubmit(data: CategoryFormValues) {
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/categories`,
         {
           method: "POST",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newName.trim() }),
+          body: JSON.stringify({ name: data.name.trim() }),
         }
       );
       if (!res.ok) throw new Error();
-      setNewName("");
+      reset();
       load();
     } catch {
-      toast({ title: "Error", description: "Failed to create category.", variant: "error" });
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function handleUpdate(id: string) {
-    if (!editName.trim()) return;
-    setSaving(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/categories/${id}`,
-        {
-          method: "PUT",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ name: editName.trim() }),
-        }
-      );
-      if (!res.ok) throw new Error();
-      setEditId(null);
-      setEditName("");
-      load();
-    } catch {
-      toast({ title: "Error", description: "Failed to update category.", variant: "error" });
-    } finally {
-      setSaving(false);
+      setFormError("root", { message: "Failed to create category." });
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this category? This will fail if articles are assigned to it.")) return;
+    if (
+      !confirm(
+        "Delete this category? This will fail if articles are assigned to it."
+      )
+    )
+      return;
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/newspapers/${newspaperId}/categories/${id}`,
         { method: "DELETE", headers: authHeaders() }
       );
       if (res.status === 409) {
-        toast({ title: "Cannot delete", description: "Articles are assigned to this category.", variant: "error" });
+        alert("Cannot delete: articles are assigned to this category.");
         return;
       }
       if (!res.ok) throw new Error();
       load();
     } catch {
-      toast({ title: "Error", description: "Failed to delete category.", variant: "error" });
+      alert("Failed to delete category.");
     }
   }
 
@@ -112,21 +160,28 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
     <div className="flex flex-col gap-7">
       <SectionTitle title="Categories" />
 
+      {/* Create form */}
       <form
-        onSubmit={handleCreate}
+        onSubmit={handleSubmit(onCreateSubmit)}
         className="border-border bg-card flex items-center gap-3 rounded-lg border px-5 py-4"
       >
-        <Input
+        <input
           type="text"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
           placeholder="New category name…"
-          className="flex-1"
+          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+          {...register("name", { required: true })}
         />
-        <Button type="submit" disabled={saving || !newName.trim()}>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
           <PlusIcon />
           Add Category
-        </Button>
+        </button>
+        {errors.root && (
+          <span className="text-destructive text-[12px]">{errors.root.message}</span>
+        )}
       </form>
 
       {error ? (
@@ -145,58 +200,37 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
             >
               <div className="flex items-center gap-4">
                 {editId === cat.id ? (
-                  <Input
-                    autoFocus
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="flex-1"
+                  <EditCategoryForm
+                    category={{ ...cat, ...(cat as any) }}
+                    onSaved={() => {
+                      setEditId(null);
+                      load();
+                    }}
+                    onCancel={() => setEditId(null)}
                   />
                 ) : (
-                  <span className="text-foreground flex-1 text-sm font-medium">
-                    {cat.name}
-                  </span>
-                )}
-                <div className="flex shrink-0 items-center gap-2">
-                  {editId === cat.id ? (
-                    <>
-                      <Button
-                        size="sm"
-                        onClick={() => handleUpdate(cat.id)}
-                        disabled={saving || !editName.trim()}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => { setEditId(null); setEditName(""); }}
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => { setEditId(cat.id); setEditName(cat.name); }}
+                  <>
+                    <span className="text-foreground flex-1 text-[14px] font-medium">
+                      {cat.name}
+                    </span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <button
+                        onClick={() => setEditId(cat.id)}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
                         aria-label="Edit category"
                       >
                         <PencilIcon />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
+                      </button>
+                      <button
                         onClick={() => handleDelete(cat.id)}
+                        className="text-muted-foreground transition-colors hover:text-[#dc2626]"
                         aria-label="Delete category"
-                        className="hover:text-destructive"
                       >
                         <TrashIcon />
-                      </Button>
-                    </>
-                  )}
-                </div>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </ListRow>
           ))}
