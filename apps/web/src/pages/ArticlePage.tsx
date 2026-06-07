@@ -39,8 +39,8 @@ const viewerTheme = {
   quote:
     "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
   heading: {
-    h1: "text-3xl-plus font-bold tracking-[-0.3px] my-3",
-    h2: "text-2xl font-bold tracking-[-0.3px] my-3",
+    h1: "text-3xl-plus font-bold tracking-snug my-3",
+    h2: "text-2xl font-bold tracking-snug my-3",
     h3: "text-xl font-bold my-2",
   },
   paragraph: "text-foreground text-base leading-[1.8] my-1",
@@ -310,11 +310,11 @@ export function ArticlePage() {
             <span className="font-medium text-white/87">Article</span>
           </nav>
           {/* Category badge */}
-          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-xs font-semibold tracking-[0.5px]">
+          <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-xs font-semibold tracking-wide-sm">
             {article.category}
           </span>
           {/* Title */}
-          <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-[1.15] font-extrabold tracking-[-0.5px] text-white">
+          <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-[1.15] font-extrabold tracking-tight-px text-white">
             {article.title}
           </h1>
           {/* Author meta */}

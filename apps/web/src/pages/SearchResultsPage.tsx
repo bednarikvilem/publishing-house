@@ -67,7 +67,7 @@ export function SearchResultsPage() {
       <div className="flex flex-col gap-6 px-16 py-12">
         {/* Search Section */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-foreground text-3xl-plus font-extrabold tracking-[-0.5px]">
+          <h1 className="text-foreground text-3xl-plus font-extrabold tracking-tight-px">
             Search Results
           </h1>
           <form onSubmit={handleSearch}>
