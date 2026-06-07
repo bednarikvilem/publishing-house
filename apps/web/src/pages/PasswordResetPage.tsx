@@ -1,51 +1,53 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
 import { CheckIcon } from "../components/Icons";
 import { slugToDisplayName } from "../lib/utils";
+import { useNewspaper } from "../hooks/useNewspaper";
+import { Button } from "../components/ui/button";
 
-// TODO: replace with a real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
+interface ResetFormValues { email: string }
 
 export function PasswordResetPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
 
-  const [email, setEmail]         = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError]         = useState<string | null>(null);
-  const [loading, setLoading]     = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { isSubmitting, errors },
+  } = useForm<ResetFormValues>({ defaultValues: { email: "" } });
+
+  async function onSubmit({ email }: ResetFormValues) {
+    if (!newspaper) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: NEWSPAPER_ID, email }),
+        body: JSON.stringify({ newspaper_id: newspaper.id, email }),
       });
 
       if (res.ok) { setSubmitted(true); return; }
 
       const body = await res.json();
       if (res.status === 422) {
-        setError(body.fields?.email ?? "Please enter a valid email address.");
+        setError("root", { message: body.fields?.email ?? "Please enter a valid email address." });
         return;
       }
-      setError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setLoading(false);
+      setError("root", { message: "Could not connect to the server. Please try again later." });
     }
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
       <AuthCard
         title={slugToDisplayName(newspaperName ?? "")}
@@ -56,13 +58,13 @@ export function PasswordResetPage() {
             <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
               <CheckIcon size={22} className="text-foreground" />
             </div>
-            <p className="text-muted-foreground text-center text-[14px]">
+            <p className="text-muted-foreground text-center text-sm">
               If that address is registered, a reset link has been sent. Check your inbox.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <p className="text-muted-foreground text-center text-[13px] leading-relaxed">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <p className="text-muted-foreground text-center text-2xs leading-relaxed">
               Enter the email address associated with your account and we'll send you a link to reset your password.
             </p>
             <FormField
@@ -70,22 +72,21 @@ export function PasswordResetPage() {
               label="Email Address"
               type="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
+              {...register("email")}
             />
-            {error && <p className="text-destructive text-center text-[13px]">{error}</p>}
-            <button
+            {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}
+            <Button
               type="submit"
-              disabled={loading}
-              className="bg-foreground text-background h-10 w-full rounded-md text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+              disabled={isSubmitting || !newspaper}
+              className="w-full"
             >
-              {loading ? "Sending…" : "Send Reset Link"}
-            </button>
+              {isSubmitting ? "Sending…" : "Send Reset Link"}
+            </Button>
           </form>
         )}
 
-        <p className="text-muted-foreground text-center text-[14px]">
+        <p className="text-muted-foreground text-center text-sm">
           Remember your password?{" "}
           <Link
             to={`/${newspaperName}/login`}

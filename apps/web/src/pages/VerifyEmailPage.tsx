@@ -17,7 +17,6 @@ export function VerifyEmailPage() {
     const token = searchParams.get("token");
 
     if (!token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMessage("No verification token found in the link.");
       setStatus("error");
       return;
@@ -54,13 +53,13 @@ export function VerifyEmailPage() {
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-        <div className="border-border bg-card flex w-full max-w-[420px] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
+        <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col gap-4 rounded-xl border p-10 text-center shadow-sm">
           {status === "loading" && (
             <>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Verifying your email…
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 Please wait a moment.
               </p>
             </>
@@ -71,15 +70,15 @@ export function VerifyEmailPage() {
               <div className="bg-muted mx-auto flex h-12 w-12 items-center justify-center rounded-full">
                 <CheckIcon size={22} className="text-foreground" />
               </div>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Email verified!
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 Your account is now active. You can sign in.
               </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Go to Sign in
               </Link>
@@ -88,15 +87,15 @@ export function VerifyEmailPage() {
 
           {status === "error" && (
             <>
-              <h2 className="text-foreground text-[22px] font-extrabold tracking-tight">
+              <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
                 Verification failed
               </h2>
-              <p className="text-muted-foreground text-[14px]">
+              <p className="text-muted-foreground text-sm">
                 {errorMessage}
               </p>
               <Link
                 to={`/${newspaperName}/login`}
-                className="text-foreground mt-2 text-[14px] font-semibold underline-offset-4 hover:underline"
+                className="text-foreground mt-2 text-sm font-semibold underline-offset-4 hover:underline"
               >
                 Back to Sign in
               </Link>

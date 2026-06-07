@@ -17,7 +17,7 @@ export function Timeline({ data, valueKey, label, color = "bg-primary" }: {
           return (
             <div
               key={i}
-              className="flex-1 flex items-end group cursor-default"
+              className="flex-1 h-full flex items-end group cursor-default"
               title={`${d.date}: ${val}`}
             >
               <div

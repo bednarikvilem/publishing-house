@@ -15,17 +15,31 @@ import { openapi } from "@elysiajs/openapi";
 import { logger } from "./utils/logger";
 import { audit } from "./utils/audit";
 import { viewRoutes } from "./routes/views_route.ts";
+import { subscriptionRoutes } from "./routes/subscriptions.ts";
+import { HttpError } from "./errors";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
-    console.error("Missing DATABASE_URL environment variable");
+    logger.error("Missing DATABASE_URL environment variable");
+    process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+    logger.error("Missing JWT_SECRET environment variable");
     process.exit(1);
 }
 
 export const app = new Elysia()
-    .use(cors())
+    .use(
+        cors({
+            origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
+            methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            allowedHeaders: ["Content-Type", "Authorization"],
+            credentials: true,
+        })
+    )
     .use(
         openapi({
             documentation: {
@@ -43,6 +57,7 @@ export const app = new Elysia()
                     { name: "Likes", description: "Liking and unliking articles" },
                     { name: "Authors", description: "Author profiles and their article listings" },
                     { name: "Admin", description: "System administration: roles, users, configuration" },
+                    { name: "Subscriptions", description: "Per-newspaper subscriptions and QR code activation" },
                 ],
             },
         })
@@ -55,6 +70,7 @@ export const app = new Elysia()
     .use(commentRoutes)
     .use(likeRoutes)
     .use(viewRoutes)
+    .use(subscriptionRoutes)
     .use(adminRoutes)
     .use(authorRoutes)
     .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }))
@@ -74,7 +90,15 @@ export const app = new Elysia()
             return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
         }
     })
+    .error({ HttpError })
     .onError(({ error, request, set }) => {
+        if (error instanceof HttpError) {
+            return new Response(
+                JSON.stringify({ error: error.code, ...(error.details ?? {}) }),
+                { status: error.status, headers: { "Content-Type": "application/json" } }
+            );
+        }
+
         set.status = set.status || 500;
 
         logger.error("Unhandled server error", {
@@ -85,9 +109,10 @@ export const app = new Elysia()
             stack: error instanceof Error ? error.stack : undefined,
         });
 
-        return {
-            error: "Internal Server Error",
-        };
+        return new Response(
+            JSON.stringify({ error: "Internal Server Error" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     })
     .listen(PORT);
 

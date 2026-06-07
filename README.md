@@ -50,8 +50,8 @@ bun install
 # 3. Start all containers
 docker compose up --build -d
 
-# 4. Apply the database schema
-cd apps/server && bun db:push
+# 4. Set up the database (creates schema + RLS policies)
+cd apps/server && bun db:setup
 
 # 5. Seed the database with initial data
 bun db:seed
@@ -117,8 +117,8 @@ bun install
 # 3. Start only the infrastructure containers
 docker compose up db redis minio minio-init -d
 
-# 4. Apply the database schema (first time only, or after schema changes)
-cd apps/server && bun db:push
+# 4. Set up the database (first time only)
+cd apps/server && bun db:setup
 
 # 5. Seed the database (first time only)
 bun db:seed
@@ -141,8 +141,8 @@ Changes are applied automatically; refresh the browser for frontend changes.
 ### After each `git pull`
 
 ```bash
-bun install          # pick up new dependencies
-cd apps/server && bun db:push   # apply any schema changes
+bun install                       # pick up new dependencies
+cd apps/server && bun db:migrate  # apply any new migrations
 ```
 
 ---
@@ -171,15 +171,74 @@ bun run format    # auto-fix formatting
 
 ---
 
+## Seed data
+
+Running `bun db:seed` populates the database with the following five newspapers:
+
+| Name | Slug | Categories |
+|------|------|------------|
+| AudioWire | `audiowire` | Pop & Rock, Rap, Electronic, Live Events |
+| The Statline | `the-statline` | Mundial, Premier League, LaLiga, Transfers & Rumors, Match Analysis |
+| The Binge Ledger | `the-binge-ledger` | Drama, Comedy & Sitcoms, Sci-Fi & Fantasy, Reality TV |
+| ClaudeDaily | `claudedaily` | AI & Machine Learning, New Tech & Gadgets, Software & Coding, Cybersecurity |
+| The PokéScope | `the-pokescope` | Video Games, Trading Card Game, Anime & Movies, Pokémon GO |
+
+### Known seed credentials
+
+| Account | Email | Password | Role |
+|---------|-------|----------|------|
+| System Administrator | `admin@newspapers.com` | `test1234` | SYSTEM_ADMINISTRATOR |
+| Director | `director@claudedaily.cz` | `test1234` | DIRECTOR |
+| ClaudeDaily manager/editor/author | `emma.bednarikova@email.cz` | `test1234` | NEWSPAPER_MANAGER, EDITOR, AUTHOR, REGISTERED_USER |
+| ClaudeDaily test author | `jan.novak@claudedaily.cz` | `test1234` | AUTHOR, REGISTERED_USER |
+| Registered user (all newspapers) | `seed@seed.com` | `test1234` | REGISTERED_USER |
+
+### Re-seeding from scratch
+
+There is no `db:reset` script. To wipe all data and re-seed, connect to the database and run:
+
+```sql
+TRUNCATE TABLE
+    audit_logs, subscription_tokens, subscriptions,
+    article_views, likes, comments, article_reviews,
+    article_images, articles, newspaper_authors,
+    user_roles, global_roles, article_category,
+    users, newspapers
+CASCADE;
+```
+
+Then run `bun db:seed` again.
+
+---
+
 ## Database tooling
 
 ```bash
 cd apps/server
 
-bun db:push       # sync Drizzle schema to the database (no migration files)
-bun db:seed       # populate with initial/seed data
-bun db:studio     # open Drizzle Studio at https://local.drizzle.studio
+bun db:setup                     # first-time init: push schema + apply RLS migrations
+bun db:seed                      # populate with initial/seed data
+bun db:generate                  # generate a new migration .sql from changes to schema.ts
+bun db:migrate                   # apply pending migrations (use after git pull, not for first-time setup)
+bun db:bootstrap <migration-tag> # mark a migration as already-applied without running it
+bun db:studio                    # open Drizzle Studio at https://local.drizzle.studio
 ```
+
+**First-time vs. ongoing:** use `bun db:setup` on a fresh database (new Docker volume). Use `bun db:migrate` to pick up new migrations after a `git pull`.
+
+Row-Level Security policies live in `apps/server/drizzle/0002_enable_rls.sql`. The app connects as the non-superuser `app_user` role created by that migration; it also sets up the session GUCs (`app.user_id`, `app.newspaper_id`, `app.roles`) used by the policies.
+
+### Creating a new migration
+
+For plain schema changes:
+
+1. Edit `apps/server/src/db/schema.ts`.
+2. `bun run db:generate` — writes the next `drizzle/NNNN_*.sql` and a matching snapshot in `drizzle/meta/`.
+3. Review the generated SQL.
+4. Commit both files together.
+5. `bun run db:migrate` to apply locally.
+
+For anything Drizzle can't express (RLS policies, SQL functions, triggers, role grants, data backfills) hand-write the file: create `apps/server/drizzle/NNNN_short_name.sql` and append a matching entry to `apps/server/drizzle/meta/_journal.json` (`idx`, `when: Date.now()`, `tag`, `breakpoints: true`).
 
 ---
 

@@ -10,11 +10,13 @@ export async function seedUsers() {
         columns: { id: true },
     });
 
+    const passwordHash = await Bun.password.hash("test1234");
+
     const randomUsers: NewUser[] = existingNewspapers.flatMap((newspaper) =>
         Array.from({ length: USERS_PER_NEWSPAPER }, () => ({
             username: faker.internet.username(),
             email: faker.internet.email(),
-            passwordHash: faker.internet.password(),
+            passwordHash,
             newspaperId: newspaper.id,
         }))
     );

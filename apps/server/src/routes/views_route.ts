@@ -1,9 +1,7 @@
 import { Elysia } from "elysia";
 import { authMiddleware } from "../middleware/auth";
-import { db } from "../db";
-import { articleViews, articles } from "../db/schema";
-import { eq, and, update } from "drizzle-orm";
 import { t } from "elysia";
+import * as viewService from "../services/views";
 
 const viewParams = t.Object({
     newspaper_id: t.String({ format: "uuid" }),
@@ -23,50 +21,15 @@ export const viewRoutes = new Elysia({ detail: { tags: ["Articles"] } })
     // Auth is optional — unauthenticated visitors still generate view counts.
     .post(
         "/api/newspapers/:newspaper_id/articles/:article_id/views",
-        async ({ params, user, body }) => {
-            const article = await db.query.articles.findFirst({
-                where: and(
-                    eq(articles.id, params.article_id),
-                    eq(articles.newspaperId, params.newspaper_id),
-                    eq(articles.state, "PUBLISHED")
-                ),
-            });
-            if (!article) {
-                return Response.json({ error: "ARTICLE_NOT_FOUND" }, { status: 404 });
-            }
-
-            const readCompleted = body?.read_completed ?? false;
-
-            if (readCompleted) {
-                const existing = user?.id
-                    ? await db.query.articleViews.findFirst({
-                        where: and(
-                            eq(articleViews.articleId, params.article_id),
-                            eq(articleViews.userId, user.id),
-                            eq(articleViews.readCompleted, false)
-                        ),
-                    })
-                    : null;
-
-                if (existing) {
-                    await db
-                        .update(articleViews)
-                        .set({ readCompleted: true })
-                        .where(eq(articleViews.id, existing.id));
-                    return Response.json({ recorded: true }, { status: 200 });
-                }
-            }
-
-            await db.insert(articleViews).values({
-                articleId: params.article_id,
-                userId: user?.id ?? null,
-                readCompleted,
-            });
-
-            return Response.json({ recorded: true }, { status: 201 });
+        async ({ params, user, body, withDb, set }) => {
+            const result = await withDb((tx) =>
+                viewService.recordView(tx, params.newspaper_id, params.article_id, user, body),
+            );
+            set.status = result.updated ? 200 : 201;
+            return { recorded: result.recorded };
         },
         {
             params: viewParams,
             body: viewBody,
-        }
+        },
     );

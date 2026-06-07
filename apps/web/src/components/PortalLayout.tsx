@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SunIcon, MoonIcon, MenuIcon, XIcon } from "./Icons";
 import { useTheme } from "../hooks/useTheme";
+import { Button } from "@/components/ui/button";
 
 export function PortalLayout({
   title,
@@ -17,18 +18,19 @@ export function PortalLayout({
   const header = (
     <div className="flex items-center justify-between px-2 pb-4">
       <span
-        className="text-foreground text-[16px] font-black tracking-[-0.5px]"
-        style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+        className="text-foreground text-base font-black tracking-tight-px font-outfit"
       >
         {title}
       </span>
-      <button
+      <Button
+        variant="ghost"
+        size="icon-sm"
         onClick={toggle}
         aria-label="Toggle dark mode"
-        className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors"
+        className="text-muted-foreground hover:text-foreground"
       >
         {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
-      </button>
+      </Button>
     </div>
   );
 
@@ -43,27 +45,30 @@ export function PortalLayout({
       {/* Mobile trigger bar */}
       <div className="border-border bg-background flex items-center justify-between border-b px-4 py-3 md:hidden">
         <span
-          className="text-foreground text-[15px] font-black tracking-[-0.5px]"
-          style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+          className="text-foreground text-xs-plus font-black tracking-tight-px font-outfit"
         >
           {title}
         </span>
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={toggle}
             aria-label="Toggle dark mode"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-2 transition-colors"
+            className="text-muted-foreground hover:text-foreground"
           >
             {isDark ? <SunIcon size={16} /> : <MoonIcon size={16} />}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground gap-1.5"
           >
             <MenuIcon size={18} />
             Menu
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -77,17 +82,18 @@ export function PortalLayout({
           <aside className="border-border bg-card absolute inset-y-0 left-0 flex w-72 flex-col gap-1 border-r px-3 py-6 shadow-xl">
             <div className="flex items-center justify-between px-2 pb-4">
               <span
-                className="text-foreground text-[16px] font-black tracking-[-0.5px]"
-                style={{ fontFamily: "Outfit, Inter, sans-serif" }}
+                className="text-foreground text-base font-black tracking-tight-px font-outfit"
               >
                 {title}
               </span>
-              <button
+              <Button
+                variant="ghost"
+                size="icon-sm"
                 onClick={() => setDrawerOpen(false)}
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1.5 transition-colors"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <XIcon size={18} />
-              </button>
+              </Button>
             </div>
             {sidebarContent}
           </aside>

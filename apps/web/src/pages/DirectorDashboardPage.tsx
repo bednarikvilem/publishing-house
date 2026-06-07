@@ -8,10 +8,12 @@ import { ListRow } from "../components/ListRow";
 import { PortalLayout } from "../components/PortalLayout";
 import { ApprovalQueue } from "./director/ApprovalQueue";
 import { PublicationQueue } from "./director/PublicationQueue";
+import { BrandingSection } from "./director/BrandingSection";
+import { Button } from "../components/ui/button";
 
-type NewspaperEntry = { id: string; name: string; slug: string };
+type NewspaperEntry = { id: string; name: string; slug: string; primary_color: string | null };
 
-type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" };
+type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry; tab: "approval" | "publication" | "statistics" | "branding" };
 
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
@@ -56,45 +58,50 @@ export function DirectorDashboardPage() {
 
   const sidebarContent = (
     <>
-      <button
+      <Button
+        variant={activeView === "overview" ? "secondary" : "ghost"}
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveView("overview")}
-        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "overview" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         All Newspapers
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={activeView === "global-statistics" ? "secondary" : "ghost"}
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveView("global-statistics")}
-        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeView === "global-statistics" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         Global Statistics
-      </button>
+      </Button>
 
       {newspapers.length > 0 && (
         <>
-          <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+          <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
             Newspapers
           </p>
           {newspapers.map((np) => {
             const isActive = typeof activeView === "object" && activeView.newspaper.id === np.id;
             return (
               <div key={np.id}>
-                <button
+                <Button
+                  variant={isActive ? "secondary" : "ghost"}
+                  className="w-full justify-start text-2xs"
                   onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
-                  className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${isActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 >
                   {np.name}
-                </button>
+                </Button>
                 {isActive && (
                   <div className="border-border ml-3 mt-0.5 flex flex-col gap-0.5 border-l pl-2">
-                    {(["approval", "publication", "statistics"] as const).map((tab) => (
-                      <button
+                    {(["approval", "publication", "statistics", "branding"] as const).map((tab) => (
+                      <Button
                         key={tab}
+                        variant={selectedTab === tab ? "secondary" : "ghost"}
+                        size="sm"
+                        className="w-full justify-start text-xs capitalize"
                         onClick={() => setActiveView({ newspaper: np, tab })}
-                        className={`rounded-md px-2 py-1.5 text-left text-[12px] font-medium transition-colors capitalize ${selectedTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                       >
-                        {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : "Statistics"}
-                      </button>
+                        {tab === "approval" ? "Approval Queue" : tab === "publication" ? "Publication Queue" : tab === "statistics" ? "Statistics" : "Branding"}
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -105,12 +112,13 @@ export function DirectorDashboardPage() {
       )}
 
       <div className="mt-auto pt-4">
-        <button
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-2xs"
           onClick={handleLogout}
-          className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-[13px] font-medium transition-colors"
         >
           Log Out
-        </button>
+        </Button>
       </div>
     </>
   );
@@ -127,13 +135,14 @@ export function DirectorDashboardPage() {
               {newspapers.map((np, i) => (
                 <ListRow key={np.id} first={i === 0} last={i === newspapers.length - 1}>
                   <div className="flex items-center gap-4">
-                    <span className="text-foreground flex-1 text-[15px] font-semibold">{np.name}</span>
-                    <button
+                    <span className="text-foreground flex-1 text-xs-plus font-semibold">{np.name}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => setActiveView({ newspaper: np, tab: "approval" })}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold"
                     >
                       Open
-                    </button>
+                    </Button>
                   </div>
                 </ListRow>
               ))}
@@ -148,6 +157,8 @@ export function DirectorDashboardPage() {
         <PublicationQueue newspaperId={selectedNewspaper.id} />
       ) : selectedNewspaper && selectedTab === "statistics" ? (
         <StatisticsSection newspaperId={selectedNewspaper.id} isDirector={false} />
+      ) : selectedNewspaper && selectedTab === "branding" ? (
+        <BrandingSection newspaperId={selectedNewspaper.id} currentColor={selectedNewspaper.primary_color} />
       ) : null}
     </PortalLayout>
   );

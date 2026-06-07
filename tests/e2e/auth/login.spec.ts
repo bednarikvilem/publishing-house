@@ -14,9 +14,15 @@ test.describe("Login flow", () => {
 
   test("shows error for invalid credentials", async ({ page }) => {
     await page.goto(`/${newspaper}/login`);
+    // Wait for the newspaper to load so the form submission isn't silently skipped
+    await page.waitForResponse((r) => r.url().includes("/api/newspapers/by-slug/"));
     await page.getByLabel("Email Address").fill("wrong@example.com");
     await page.getByLabel("Password").fill("wrongpassword");
+    const loginResp = page.waitForResponse(
+      (r) => r.url().includes("/api/auth/login") && r.request().method() === "POST"
+    );
     await page.getByRole("button", { name: "Sign In" }).click();
-    await expect(page.getByText("Invalid email or password")).toBeVisible();
+    await loginResp;
+    await expect(page.getByText("Invalid email or password.")).toBeVisible({ timeout: 10_000 });
   });
 });

@@ -36,7 +36,6 @@ export function useArticleViewTracker({
 
     // ── 1. Record initial view after 2 s on page ────────────────────────
     useEffect(() => {
-        console.log("[ViewTracker] effect run", { enabled, newspaperId, articleId });
         if (!enabled || !newspaperId || !articleId) return;
         viewRecorded.current = false;
         readRecorded.current = false;

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { FormField } from "../../components/FormField";
 
@@ -19,36 +20,55 @@ function splitFullName(full_name: string | null): [string, string] {
   return [full_name.slice(0, idx), full_name.slice(idx + 1)];
 }
 
-export function ProfileInfoCard({ profile, onSaved }: {
+interface ProfileFormValues {
+  firstName: string;
+  lastName: string;
+  username: string;
+  bio: string;
+}
+
+export function ProfileInfoCard({
+  profile,
+  onSaved,
+}: {
   profile: UserProfile;
   onSaved: (updated: UserProfile) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [firstName, setFirstName]     = useState(() => splitFullName(profile.full_name)[0]);
-  const [lastName, setLastName]       = useState(() => splitFullName(profile.full_name)[1]);
-  const [username, setUsername]       = useState(profile.username);
-  const [bio, setBio]                 = useState(profile.bio ?? "");
-  const [avatarUrl, setAvatarUrl]     = useState(profile.profile_picture);
-
-  const [saving, setSaving]                         = useState(false);
-  const [success, setSuccess]                       = useState(false);
-  const [error, setError]                           = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors]               = useState<Record<string, string>>({});
-  const [avatarUploading, setAvatarUploading]       = useState(false);
-  const [avatarError, setAvatarError]               = useState<string | null>(null);
-
   const isAuthor = profile.roles.includes("AUTHOR");
-  const initials = [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() || "?";
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setFieldErrors({});
-    setSuccess(false);
-    setSaving(true);
+  const [avatarUrl, setAvatarUrl] = useState(profile.profile_picture);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
-    const full_name = [firstName, lastName].filter(Boolean).join(" ") || undefined;
+  const [initialFirst, initialLast] = splitFullName(profile.full_name);
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileFormValues>({
+    defaultValues: {
+      firstName: initialFirst,
+      lastName: initialLast,
+      username: profile.username,
+      bio: profile.bio ?? "",
+    },
+  });
+
+  const firstName = watch("firstName");
+  const lastName = watch("lastName");
+  const initials =
+    [firstName?.[0], lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?";
+
+  async function onSubmit(data: ProfileFormValues) {
+    setSaved(false);
+    const full_name =
+      [data.firstName, data.lastName].filter(Boolean).join(" ") || undefined;
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/me`, {
@@ -56,52 +76,52 @@ export function ProfileInfoCard({ profile, onSaved }: {
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({
           full_name,
-          username: username || undefined,
-          ...(isAuthor ? { bio: bio || undefined } : {}),
+          username: data.username || undefined,
+          ...(isAuthor ? { bio: data.bio || undefined } : {}),
         }),
       });
 
       if (res.ok) {
-        const data = (await res.json()) as Partial<UserProfile>;
-        const merged: UserProfile = { ...profile, ...data };
-        const [first, last] = splitFullName(merged.full_name);
-        setFirstName(first);
-        setLastName(last);
-        setUsername(merged.username);
-        setBio(merged.bio ?? "");
-        setSuccess(true);
+        const json = (await res.json()) as Partial<UserProfile>;
+        const merged: UserProfile = { ...profile, ...json };
         onSaved(merged);
+        const [first, last] = splitFullName(merged.full_name);
+        reset({
+          firstName: first,
+          lastName: last,
+          username: merged.username,
+          bio: merged.bio ?? "",
+        });
+        setSaved(true);
         return;
       }
 
       const body = await res.json();
-
       if (res.status === 409 && body.error === "USERNAME_TAKEN") {
-        setFieldErrors({ username: "This username is already taken." });
+        setError("username", { message: "This username is already taken." });
         return;
       }
       if (res.status === 422 && body.fields) {
-        setFieldErrors(body.fields);
+        Object.entries(body.fields).forEach(([field, msg]) => {
+          setError(field as keyof ProfileFormValues, { message: msg as string });
+        });
         return;
       }
-      setError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setSaving(false);
+      setError("root", {
+        message: "Could not connect to the server. Please try again later.",
+      });
     }
   }
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setAvatarError(null);
     setAvatarUploading(true);
-
     const formData = new FormData();
     formData.append("profile_picture", file);
-
     fetch(`${API_BASE_URL}/api/users/me/profile-picture`, {
       method: "POST",
       headers: authHeaders(),
@@ -112,7 +132,9 @@ export function ProfileInfoCard({ profile, onSaved }: {
         return res.json() as Promise<{ profile_picture: string }>;
       })
       .then((data) => setAvatarUrl(data.profile_picture))
-      .catch(() => setAvatarError("Failed to upload photo. Use JPEG or PNG under 5 MB."))
+      .catch(() =>
+        setAvatarError("Failed to upload photo. Use JPEG or PNG under 5 MB.")
+      )
       .finally(() => {
         setAvatarUploading(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -121,7 +143,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
 
   return (
     <form
-      onSubmit={handleSave}
+      onSubmit={handleSubmit(onSubmit)}
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
       <h2
@@ -137,15 +159,21 @@ export function ProfileInfoCard({ profile, onSaved }: {
           {avatarUrl ? (
             <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
           ) : (
-            <span className="text-muted-foreground text-[24px] font-bold select-none">{initials}</span>
+            <span className="text-muted-foreground text-[24px] font-bold select-none">
+              {initials}
+            </span>
           )}
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-foreground text-[14px] font-semibold">Profile Picture</span>
           {isAuthor && (
             <>
-              <span className="text-muted-foreground text-[13px]">JPG, PNG or GIF. Max 2MB.</span>
-              {avatarError && <span className="text-destructive text-[12px]">{avatarError}</span>}
+              <span className="text-muted-foreground text-[13px]">
+                JPG, PNG or GIF. Max 2MB.
+              </span>
+              {avatarError && (
+                <span className="text-destructive text-[12px]">{avatarError}</span>
+              )}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -172,27 +200,26 @@ export function ProfileInfoCard({ profile, onSaved }: {
           id="firstName"
           label="First Name"
           placeholder="Sarah"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          error={errors.firstName?.message}
+          {...register("firstName")}
         />
         <FormField
           id="lastName"
           label="Last Name"
           placeholder="Mitchell"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          error={errors.lastName?.message}
+          {...register("lastName")}
         />
       </div>
 
       <FormField
         id="username"
         label="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        error={fieldErrors.username}
+        error={errors.username?.message}
+        {...register("username", { required: "Username is required" })}
       />
 
-      {/* Email — read-only, not using FormField since it has special styling */}
+      {/* Email — read-only, outside RHF */}
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="text-foreground text-[14px] font-medium">
           Email Address
@@ -212,22 +239,31 @@ export function ProfileInfoCard({ profile, onSaved }: {
           id="bio"
           label="Bio"
           placeholder="Tell readers a little about yourself…"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
           rows={3}
+          error={errors.bio?.message}
+          {...register("bio", {
+            maxLength: {
+              value: 2000,
+              message: "Bio must be 2000 characters or fewer",
+            },
+          })}
         />
       )}
 
-      {error   && <p className="text-destructive text-[13px]">{error}</p>}
-      {success && <p className="text-[13px] text-green-600">Profile updated successfully.</p>}
+      {errors.root && (
+        <p className="text-destructive text-[13px]">{errors.root.message}</p>
+      )}
+      {saved && (
+        <p className="text-[13px] text-green-600">Profile updated successfully.</p>
+      )}
 
       <div className="flex justify-end">
         <button
           type="submit"
-          disabled={saving}
+          disabled={isSubmitting}
           className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {saving ? "Saving…" : "Save Changes"}
+          {isSubmitting ? "Saving…" : "Save Changes"}
         </button>
       </div>
     </form>

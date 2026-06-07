@@ -1,16 +1,13 @@
 import { db } from "../index";
 import * as schema from "../schema";
 import type { NewNewspaper } from "../schema";
-import { slugify } from "../help_functions/slugify"
-
+import { NEWSPAPERS } from "./data/newspapers";
 
 export async function seedNewspapers() {
-    const SPECIFIC_NEWSPAPERS = ["DeníkN", "ClaudeDaily", "MuniJournal", "Forbes"];
-
-    const newspapersToInsert: NewNewspaper[] = SPECIFIC_NEWSPAPERS.map((name) => ({
-        name: name,
-        slug: slugify(name),
-    }))
+    const newspapersToInsert: NewNewspaper[] = NEWSPAPERS.map(({ name, slug }) => ({
+        name,
+        slug,
+    }));
 
     await db.insert(schema.newspapers).values(newspapersToInsert);
     console.log("Newspapers added successfully!");

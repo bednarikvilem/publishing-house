@@ -1,4 +1,22 @@
 import type { ArticleStatus } from "../types";
+import type { VariantProps } from "class-variance-authority";
+import type { badgeVariants } from "@/components/ui/badge";
+
+type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>;
+
+export function statusToVariant(status: ArticleStatus): BadgeVariant {
+  const map: Record<ArticleStatus, BadgeVariant> = {
+    DRAFT: "draft",
+    SUBMITTED: "submitted",
+    IN_REVIEW: "in-review",
+    APPROVED_BY_EDITOR: "approved-editor",
+    APPROVED_BY_MANAGER: "approved-manager",
+    APPROVED_BY_DIRECTOR: "approved-director",
+    PUBLISHED: "published",
+    REJECTED: "rejected",
+  };
+  return map[status];
+}
 
 export const STATUS_LABELS: Record<ArticleStatus, string> = {
   DRAFT: "Draft",
@@ -13,24 +31,24 @@ export const STATUS_LABELS: Record<ArticleStatus, string> = {
 
 export const STATUS_STYLES: Record<ArticleStatus, string> = {
   DRAFT: "bg-muted border border-border text-muted-foreground",
-  SUBMITTED: "bg-[#2563eb18] text-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c18] text-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b218] text-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a18] text-[#16a34a]",
-  REJECTED: "bg-[#dc262618] text-[#dc2626]",
+  SUBMITTED: "bg-blue-600/10 text-blue-600",
+  IN_REVIEW: "bg-orange-600/10 text-orange-600",
+  APPROVED_BY_EDITOR: "bg-violet-600/10 text-violet-600",
+  APPROVED_BY_MANAGER: "bg-violet-600/10 text-violet-600",
+  APPROVED_BY_DIRECTOR: "bg-cyan-600/10 text-cyan-600",
+  PUBLISHED: "bg-green-600/10 text-green-600",
+  REJECTED: "bg-destructive/10 text-destructive",
 };
 
 export const STATUS_DOT: Record<ArticleStatus, string> = {
   DRAFT: "bg-muted-foreground",
-  SUBMITTED: "bg-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a]",
-  REJECTED: "bg-[#dc2626]",
+  SUBMITTED: "bg-blue-600",
+  IN_REVIEW: "bg-orange-600",
+  APPROVED_BY_EDITOR: "bg-violet-600",
+  APPROVED_BY_MANAGER: "bg-violet-600",
+  APPROVED_BY_DIRECTOR: "bg-cyan-600",
+  PUBLISHED: "bg-green-600",
+  REJECTED: "bg-destructive",
 };
 
 export const MY_ARTICLE_FILTERS: { label: string; value: ArticleStatus | null }[] = [

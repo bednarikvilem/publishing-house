@@ -12,10 +12,10 @@ export async function seedSystemAdmin() {
         return;
     }
 
-    const passwordHash = await Bun.password.hash("admin1234");
+    const passwordHash = await Bun.password.hash("test1234");
 
     const [user] = await db.insert(schema.users).values({
-        email: "admin@admin.cz",
+        email: "admin@newspapers.com",
         username: "sysadmin",
         fullname: "System Administrator",
         passwordHash,
@@ -29,6 +29,5 @@ export async function seedSystemAdmin() {
     });
 
     console.log("System Administrator seeded!");
-    console.log("  Email:    admin@admin.cz");
-    console.log("  Password: admin1234");
+    console.log("  Email: admin@newspapers.com");
 }

@@ -11,6 +11,8 @@ import { UserProfilePage } from "./pages/UserProfilePage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ArticleEditorPage } from "./pages/ArticleEditorPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import { SetNewPasswordPage } from "./pages/SetNewPasswordPage";
+import { SubscriptionConfirmPage } from "./pages/SubscriptionConfirmPage";
 import { GlobalLoginPage } from "./pages/GlobalLoginPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { DirectorDashboardPage } from "./pages/DirectorDashboardPage";
@@ -56,6 +58,14 @@ export function App() {
       <Route
         path="/:newspaperName/verify-email"
         element={<VerifyEmailPage />}
+      />
+      <Route
+        path="/:newspaperName/reset-password"
+        element={<SetNewPasswordPage />}
+      />
+      <Route
+        path="/:newspaperName/subscription/confirm"
+        element={<SubscriptionConfirmPage />}
       />
       <Route path="/:newspaperName/profile" element={<UserProfilePage />} />
       <Route

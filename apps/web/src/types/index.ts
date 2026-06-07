@@ -26,6 +26,7 @@ export interface Newspaper {
   id: string;
   name: string;
   slug: string;
+  primary_color: string | null;
 }
 
 export interface User {
@@ -79,6 +80,7 @@ export interface Article {
   keywords: string[];
   primary_image: { url: string; caption: string } | null;
   author: ArticleAuthorSummary;
+  is_subscriber_only?: boolean;
 }
 
 export interface ArticleDetail {

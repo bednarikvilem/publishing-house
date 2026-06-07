@@ -6,23 +6,27 @@ import { ArticleCard } from "../components/ArticleCard";
 import { SearchIcon } from "../components/Icons";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { Input } from "../components/ui/input";
 
 export function SearchResultsPage() {
   const { newspaperName, newspaper } = useNewspaper();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const initialQuery = searchParams.get("q") ?? "";
-  const [inputValue, setInputValue] = useState(initialQuery);
+  const [inputValue, setInputValue] = useState(searchParams.get("q") ?? "");
   const [articles, setArticles] = useState<Article[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  // Sync the controlled input whenever the URL query changes (e.g. browser back/forward)
+  useEffect(() => {
+    setInputValue(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  // Fetch search results whenever the URL query or newspaper changes
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setInputValue(q);
 
     if (!q.trim() || !newspaper) {
       setArticles([]);
@@ -60,13 +64,13 @@ export function SearchResultsPage() {
   const query = searchParams.get("q") ?? "";
 
   return (
-    <div className="bg-background text-foreground min-h-screen w-full">
+    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       <div className="flex flex-col gap-6 px-16 py-12">
         {/* Search Section */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-foreground text-[32px] font-extrabold tracking-[-0.5px]">
+          <h1 className="text-foreground text-3xl-plus font-extrabold tracking-tight-px">
             Search Results
           </h1>
           <form onSubmit={handleSearch}>
@@ -75,12 +79,12 @@ export function SearchResultsPage() {
                 size={18}
                 className="text-muted-foreground shrink-0"
               />
-              <input
+              <Input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Search articles..."
-                className="text-foreground placeholder:text-muted-foreground flex-1 bg-transparent text-[15px] outline-none"
+                className="flex-1 border-0 bg-transparent px-0 text-xs-plus focus-visible:ring-0 h-full"
               />
             </div>
           </form>
@@ -89,13 +93,13 @@ export function SearchResultsPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           {query ? (
-            <span className="text-foreground text-[15px] font-semibold">
+            <span className="text-foreground text-xs-plus font-semibold">
               {loading
                 ? "Searching…"
                 : `${total} Result${total !== 1 ? "s" : ""}`}
             </span>
           ) : (
-            <span className="text-foreground text-[15px] font-semibold">
+            <span className="text-foreground text-xs-plus font-semibold">
               Enter a search term above
             </span>
           )}

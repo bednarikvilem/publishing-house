@@ -5,23 +5,26 @@ import { db } from "../db";
 import { users, userRoles, globalRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { isJtiBlocklisted } from "../utils/redis";
+import { withRls, type Tx } from "../db/rls";
 
 export const authMiddleware = new Elysia({ name: "auth"})
 	.use(bearer())
 	.use(jwt({ secret: process.env.JWT_SECRET! }))
 	.derive({ as: "global" }, async ({ bearer, jwt }) => {
-		if (!bearer) {
-			return { user: null, roles: [] as string[] };
-		}
+		const anonymous = {
+			user: null,
+			roles: [] as string[],
+			withDb: <T>(fn: (tx: Tx) => Promise<T>) =>
+				withRls({ userId: null, newspaperId: null, roles: [] }, fn),
+		};
+
+		if (!bearer) return anonymous;
 
 		const payload = await jwt.verify(bearer);
-
-		if (!payload) {
-			return { user: null, roles: [] as string[] };
-		}
+		if (!payload) return anonymous;
 
 		if (payload.jti && (await isJtiBlocklisted(payload.jti as string))) {
-			return { user: null, roles: [] as string[] };
+			return anonymous;
 		}
 
 		const [user] = await db
@@ -29,9 +32,7 @@ export const authMiddleware = new Elysia({ name: "auth"})
 			.from(users)
 			.where(eq(users.id, payload.userId as string));
 
-		if (!user) {
-			return { user: null, roles: [] as string[] };
-		}
+		if (!user) return anonymous;
 
 		const userRolesList = payload.newspaperId
 			? await db
@@ -50,12 +51,18 @@ export const authMiddleware = new Elysia({ name: "auth"})
 			.from(globalRoles)
 			.where(eq(globalRoles.userId, user.id));
 
+		const roles = [
+			...userRolesList.map(r => r.role),
+			...globalRolesList.map(r => r.role),
+		] as string[];
+
+		const newspaperId = (payload.newspaperId as string | undefined) ?? null;
+
 		return {
 			user,
-			roles: [
-				...userRolesList.map(r => r.role),
-				...globalRolesList.map(r => r.role),
-			] as string[],
+			roles,
+			withDb: <T>(fn: (tx: Tx) => Promise<T>) =>
+				withRls({ userId: user.id, newspaperId, roles }, fn),
 		};
 	});
 

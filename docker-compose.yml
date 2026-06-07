@@ -24,6 +24,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATABASE_URL_APP_USER: postgres://app_user:app_user@db:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_URL: redis://redis:6379
       PORT: 3000

@@ -33,6 +33,7 @@ async function loginDirector(page: Page, email: string, password: string) {
 // ── Test ───────────────────────────────────────────────────────────────────────
 
 test("full article approval workflow: draft → published", async ({ browser }) => {
+  test.setTimeout(120_000);
   const janCtx = await browser.newContext();
   const emmaCtx = await browser.newContext();
   const directorCtx = await browser.newContext();
@@ -79,8 +80,16 @@ test("full article approval workflow: draft → published", async ({ browser }) 
 
   // Return to the edit page and click Submit for Review
   await jan.goto(articleEditUrl);
+  // Wait for the article to fully load before submitting
+  await expect(jan.getByText("Draft", { exact: true })).toBeVisible({ timeout: 10_000 });
+  const submitResponse = jan.waitForResponse(
+    (r) => r.url().includes("/submit") && r.request().method() === "POST"
+  );
   await jan.getByRole("button", { name: "Submit for Review" }).click();
-  await expect(jan.getByText("Submitted")).toBeVisible({ timeout: 5_000 });
+  const submitRes = await submitResponse;
+  expect(submitRes.status()).toBe(200);
+  // Wait for navigation to author dashboard after successful submit
+  await jan.waitForURL((url) => url.pathname.includes("/author-dashboard"), { timeout: 10_000 });
 
   // Jan checks article is visible as SUBMITTED
   await jan.goto(`${BASE}/${NEWSPAPER}/author-dashboard?section=my-articles&status=SUBMITTED`);

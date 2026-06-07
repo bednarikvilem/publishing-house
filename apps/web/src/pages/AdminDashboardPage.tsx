@@ -4,6 +4,7 @@ import { API_BASE_URL, authHeaders } from "../lib/api";
 import { PortalLayout } from "../components/PortalLayout";
 import { GlobalUsersSection } from "./admin/GlobalUsersSection";
 import { NewspaperUsersSection } from "./admin/NewspaperUsersSection";
+import { Button } from "../components/ui/button";
 
 type NewspaperEntry = { id: string; name: string; slug: string };
 
@@ -47,36 +48,39 @@ export function AdminDashboardPage() {
 
   const sidebarContent = (
     <>
-      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-2 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Global
       </p>
-      <button
+      <Button
+        variant={activeSection === "global-users" ? "secondary" : "ghost"}
+        className="w-full justify-start text-2xs"
         onClick={() => setActiveSection("global-users")}
-        className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${activeSection === "global-users" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       >
         Global Users
-      </button>
+      </Button>
 
-      <p className="text-muted-foreground px-2 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+      <p className="text-muted-foreground px-2 pt-4 pb-1 text-3xs font-semibold tracking-wider uppercase">
         Newspapers
       </p>
       {newspapers.map((np) => (
-        <button
+        <Button
           key={np.id}
+          variant={typeof activeSection === "object" && activeSection.newspaper.id === np.id ? "secondary" : "ghost"}
+          className="w-full justify-start text-2xs"
           onClick={() => setActiveSection({ newspaper: np })}
-          className={`flex w-full items-center rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${typeof activeSection === "object" && activeSection.newspaper.id === np.id ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
         >
           {np.name}
-        </button>
+        </Button>
       ))}
 
       <div className="mt-auto pt-4">
-        <button
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-2xs"
           onClick={handleLogout}
-          className="text-muted-foreground hover:text-foreground w-full rounded-md px-2 py-2 text-left text-[13px] font-medium transition-colors"
         >
           Log Out
-        </button>
+        </Button>
       </div>
     </>
   );

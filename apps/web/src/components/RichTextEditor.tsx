@@ -27,6 +27,7 @@ import {
   INSERT_IMAGE_COMMAND,
   $createImageNode,
 } from "../lib/lexical/ImageNode";
+import { Button } from "@/components/ui/button";
 
 const editorTheme = {
   text: {
@@ -79,18 +80,16 @@ function ToolbarButton({
   className?: string;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="sm"
       title={title}
       onClick={onClick}
-      className={`rounded px-2.5 py-1 text-[13px] font-medium transition-colors ${
-        active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      } ${className}`}
+      className={`px-2.5 py-1 text-2xs font-medium ${active ? "bg-foreground text-background hover:bg-foreground/90 hover:text-background" : "text-muted-foreground"} ${className}`}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -273,11 +272,11 @@ export function RichTextEditor({
               <ContentEditable
                 aria-placeholder="Write your article content here…"
                 placeholder={
-                  <div className="text-muted-foreground pointer-events-none absolute top-4 left-4 text-[15px] select-none">
+                  <div className="text-muted-foreground pointer-events-none absolute top-4 left-4 text-xs-plus select-none">
                     Write your article content here…
                   </div>
                 }
-                className="text-foreground min-h-[420px] px-4 py-4 text-[15px] leading-relaxed outline-none"
+                className="text-foreground min-h-[var(--layout-editor-min-height)] px-4 py-4 text-xs-plus leading-relaxed outline-none"
               />
             }
             ErrorBoundary={LexicalErrorBoundary}

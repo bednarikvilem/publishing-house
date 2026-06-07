@@ -76,7 +76,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       <img
         src={this.__url}
         alt={this.__alt}
-        className="my-4 max-h-[480px] w-full rounded-lg object-cover"
+        className="my-4 max-h-[var(--layout-article-hero-height)] w-full rounded-lg object-cover"
       />
     );
   }

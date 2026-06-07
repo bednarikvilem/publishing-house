@@ -11,14 +11,19 @@
     "dev": "bun run --watch --env-file=../../.env src/server.ts",
     "build": "bun build src/server.ts --outdir dist",
     "db:studio": "bun --env-file=../../.env x drizzle-kit studio",
-    "db:push": "bun --env-file=../../.env x drizzle-kit push",
+    "db:generate": "bun --env-file=../../.env x drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../.env x drizzle-kit migrate",
+    "db:setup": "bun --env-file=../../.env scripts/db-setup.ts",
+    "db:bootstrap": "bun --env-file=../../.env scripts/bootstrap-migrations.ts",
     "db:seed": "bun --env-file=../../.env src/db/seed.ts",
-    "test": "bun test"
+    "test": "bun --env-file=../../.env test",
+    "subscription:renew": "bun --env-file=../../.env scripts/subscription-renewal.ts"
   },
   "devDependencies": {
     "@sinclair/typebox": "^0.34.49",
     "@types/bun": "latest",
     "@types/nodemailer": "^8.0.0",
+    "@types/qrcode": "^1.5.6",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10"
   },
@@ -36,6 +41,7 @@
     "elysia": "^1.4.28",
     "nodemailer": "^8.0.5",
     "postgres": "^3.4.9",
+    "qrcode": "^1.5.4",
     "sharp": "^0.34.0"
   }
 }

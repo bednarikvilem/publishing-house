@@ -7,10 +7,14 @@ import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { DecisionForm } from "../../components/DecisionForm";
-import { STATUS_STYLES } from "../../lib/articleStatus";
+import { STATUS_LABELS, statusToVariant } from "../../lib/articleStatus";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../components/ui/toaster";
 import { formatDate } from "../../lib/utils";
 
 export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
+  const { toast } = useToast();
   const [articles, setArticles]   = useState<QueueArticle[]>([]);
   const [loading, setLoading]     = useState(true);
   const [activeId, setActiveId]   = useState<string | null>(null);
@@ -50,7 +54,7 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
       setActiveId(null);
       load();
     } catch {
-      alert("Failed to submit decision.");
+      toast({ title: "Error", description: "Failed to submit decision.", variant: "error" });
     } finally {
       setSubmitting(false);
     }
@@ -69,24 +73,25 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
             <ListRow key={article.id} first={i === 0} last={i === articles.length - 1}>
               <div className="flex items-start gap-4">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-foreground text-[15px] font-semibold">{article.title}</span>
-                  <span className="text-muted-foreground line-clamp-2 text-[13px]">{article.perex}</span>
-                  <div className="text-muted-foreground flex gap-3 text-[12px]">
+                  <span className="text-foreground text-xs-plus font-semibold">{article.title}</span>
+                  <span className="text-muted-foreground line-clamp-2 text-2xs">{article.perex}</span>
+                  <div className="text-muted-foreground flex gap-3 text-xs">
                     <span>Author: {article.author.full_name}</span>
                     <span>Category: {article.category}</span>
                     <span>Submitted: {formatDate(article.submitted_at)}</span>
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status] ?? ""}`}>
-                    {article.status}
-                  </span>
-                  <button
+                  <Badge variant={statusToVariant(article.status)}>
+                    {STATUS_LABELS[article.status]}
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setActiveId(activeId === article.id ? null : article.id)}
-                    className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-semibold"
                   >
                     Decide
-                  </button>
+                  </Button>
                 </div>
               </div>
               {activeId === article.id && (
