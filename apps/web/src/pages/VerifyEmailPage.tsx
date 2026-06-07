@@ -17,7 +17,6 @@ export function VerifyEmailPage() {
     const token = searchParams.get("token");
 
     if (!token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMessage("No verification token found in the link.");
       setStatus("error");
       return;

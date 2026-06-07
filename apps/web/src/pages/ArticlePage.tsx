@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -93,8 +94,16 @@ export function ArticlePage() {
   const [likedByMe, setLikedByMe] = useState(false);
   const [isTogglingLike, setIsTogglingLike] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+
+  interface CommentFormValues { content: string }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isSubmitting: isSubmittingComment },
+  } = useForm<CommentFormValues>({ defaultValues: { content: "" } });
+  const commentContent = watch("content", "");
 
   const isLoggedIn = !!localStorage.getItem("token");
 
@@ -172,27 +181,20 @@ export function ArticlePage() {
     }
   }
 
-  async function handleSubmitComment(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newspaper || !articleId || !commentText.trim() || isSubmittingComment) return;
-    setIsSubmittingComment(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/comments`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ content: commentText.trim() }),
-        }
-      );
-      if (res.ok) {
-        const newComment = await res.json() as Comment;
-        setComments((prev) => [...prev, newComment]);
-        setCommentText("");
+  async function handleSubmitComment({ content }: CommentFormValues) {
+    if (!newspaper || !articleId) return;
+    const res = await fetch(
+      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/comments`,
+      {
+        method: "POST",
+        headers: { ...authHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ content: content.trim() }),
       }
-    } finally {
-      setIsSubmittingComment(false);
-    }
+    );
+    if (!res.ok) throw new Error("Failed to post comment");
+    const newComment = await res.json() as Comment;
+    setComments((prev) => [...prev, newComment]);
+    reset();
   }
 
   async function handleSubscribeFromPaywall() {
@@ -394,18 +396,17 @@ export function ArticlePage() {
 
           {/* Comment form */}
           {isLoggedIn && (
-            <form onSubmit={handleSubmitComment} className="flex flex-col gap-3">
+            <form onSubmit={handleSubmit(handleSubmitComment)} className="flex flex-col gap-3">
               <Textarea
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Write a comment…"
                 maxLength={2000}
                 rows={3}
+                {...register("content")}
               />
               <div className="flex justify-end">
                 <Button
                   type="submit"
-                  disabled={!commentText.trim() || isSubmittingComment}
+                  disabled={!commentContent.trim() || isSubmittingComment}
                 >
                   {isSubmittingComment ? "Posting…" : "Post comment"}
                 </Button>
