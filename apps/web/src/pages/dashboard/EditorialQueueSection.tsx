@@ -142,7 +142,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       <span className="text-foreground text-xs-plus leading-snug font-semibold">
                         {article.title}
                       </span>
-                      <span className="text-muted-foreground line-clamp-2 text-2xs leading-[1.4]">
+                      <span className="text-muted-foreground line-clamp-2 text-2xs leading-md">
                         {article.perex}
                       </span>
                       <div className="text-muted-foreground flex flex-wrap gap-3 text-xs">

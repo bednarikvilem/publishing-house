@@ -128,10 +128,10 @@ export function CategoryPage() {
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-3xl-minus leading-[1.2] font-extrabold tracking-tight-px">
+                <h2 className="text-card-foreground text-3xl-minus leading-xs font-extrabold tracking-tight-px">
                   {featured.title}
                 </h2>
-                <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-[1.6]">
+                <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-relaxed">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">

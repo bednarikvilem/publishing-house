@@ -43,7 +43,7 @@ const viewerTheme = {
     h2: "text-2xl font-bold tracking-snug my-3",
     h3: "text-xl font-bold my-2",
   },
-  paragraph: "text-foreground text-base leading-[1.8] my-1",
+  paragraph: "text-foreground text-base leading-xl my-1",
 };
 
 function ArticleContent({ content }: { content: string }) {
@@ -70,14 +70,14 @@ function ArticleContent({ content }: { content: string }) {
         >
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="text-foreground text-base leading-[1.8] outline-none" />
+              <ContentEditable className="text-foreground text-base leading-xl outline-none" />
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <ListPlugin />
         </LexicalComposer>
       ) : (
-        <p className="text-foreground text-base leading-[1.8]">{content}</p>
+        <p className="text-foreground text-base leading-xl">{content}</p>
       )}
     </div>
   );
@@ -314,7 +314,7 @@ export function ArticlePage() {
             {article.category}
           </span>
           {/* Title */}
-          <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-[1.15] font-extrabold tracking-tight-px text-white">
+          <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-2xs font-extrabold tracking-tight-px text-white">
             {article.title}
           </h1>
           {/* Author meta */}
@@ -346,7 +346,7 @@ export function ArticlePage() {
       {/* Article Body */}
       <section className="px-16 py-12">
         {/* Lede */}
-        <p className="text-foreground mb-6 text-lg leading-[1.7]">
+        <p className="text-foreground mb-6 text-lg leading-lg">
           {article.perex}
         </p>
 
@@ -426,7 +426,7 @@ export function ArticlePage() {
                       {formatDate(comment.created_at, "long")}
                     </span>
                   </div>
-                  <p className="text-foreground text-sm leading-[1.6]">{comment.content}</p>
+                  <p className="text-foreground text-sm leading-relaxed">{comment.content}</p>
                 </div>
               ))}
             </div>
