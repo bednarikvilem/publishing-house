@@ -127,10 +127,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
       onSubmit={handleSave}
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
-      <h2
-        className="text-foreground text-[18px] font-bold"
-        style={{ fontFamily: "Outfit, Inter, sans-serif" }}
-      >
+      <h2 className="text-foreground text-lg font-bold font-outfit">
         Profile Information
       </h2>
 
@@ -140,15 +137,15 @@ export function ProfileInfoCard({ profile, onSaved }: {
           {avatarUrl ? (
             <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
           ) : (
-            <span className="text-muted-foreground text-[24px] font-bold select-none">{initials}</span>
+            <span className="text-muted-foreground text-2xl font-bold select-none">{initials}</span>
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-foreground text-[14px] font-semibold">Profile Picture</span>
+          <span className="text-foreground text-sm font-semibold">Profile Picture</span>
           {isAuthor && (
             <>
-              <span className="text-muted-foreground text-[13px]">JPG, PNG or GIF. Max 2MB.</span>
-              {avatarError && <span className="text-destructive text-[12px]">{avatarError}</span>}
+              <span className="text-muted-foreground text-2xs">JPG, PNG or GIF. Max 2MB.</span>
+              {avatarError && <span className="text-destructive text-xs">{avatarError}</span>}
               <Button
                 type="button"
                 variant="outline"
@@ -198,7 +195,7 @@ export function ProfileInfoCard({ profile, onSaved }: {
 
       {/* Email — read-only */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-foreground text-[14px] font-medium">
+        <label htmlFor="email" className="text-foreground text-sm font-medium">
           Email Address
         </label>
         <Input
@@ -222,8 +219,8 @@ export function ProfileInfoCard({ profile, onSaved }: {
         />
       )}
 
-      {error   && <p className="text-destructive text-[13px]">{error}</p>}
-      {success && <p className="text-[13px] text-green-600">Profile updated successfully.</p>}
+      {error   && <p className="text-destructive text-2xs">{error}</p>}
+      {success && <p className="text-2xs text-green-600">Profile updated successfully.</p>}
 
       <div className="flex justify-end">
         <Button type="submit" disabled={saving}>

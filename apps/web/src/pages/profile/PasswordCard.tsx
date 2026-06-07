@@ -60,13 +60,10 @@ export function PasswordCard() {
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
       <div className="flex flex-col gap-1">
-        <h2
-          className="text-foreground text-[18px] font-bold"
-          style={{ fontFamily: "Outfit, Inter, sans-serif" }}
-        >
+        <h2 className="text-foreground text-lg font-bold font-outfit">
           Change Password
         </h2>
-        <p className="text-muted-foreground text-[14px]">
+        <p className="text-muted-foreground text-sm">
           Update your password to keep your account secure.
         </p>
       </div>
@@ -99,8 +96,8 @@ export function PasswordCard() {
         />
       </div>
 
-      {error   && <p className="text-destructive text-[13px]">{error}</p>}
-      {success && <p className="text-[13px] text-green-600">Password updated successfully.</p>}
+      {error   && <p className="text-destructive text-2xs">{error}</p>}
+      {success && <p className="text-2xs text-green-600">Password updated successfully.</p>}
 
       <div className="flex justify-end">
         <Button type="submit" disabled={saving}>

@@ -103,7 +103,7 @@ export function AuthorPage() {
           {/* Info */}
           <div className="flex flex-1 flex-col gap-3">
             {/* Breadcrumb */}
-            <p className="text-[13px] text-white/80">
+            <p className="text-2xs text-white/80">
               <Link
                 to={`/${newspaperName}`}
                 className="transition-colors hover:text-white"
@@ -116,10 +116,10 @@ export function AuthorPage() {
 
             <div className="flex items-start justify-between gap-8">
               <div className="flex flex-col gap-2">
-                <h1 className="text-[32px] leading-none font-extrabold tracking-[-0.5px] text-white">
+                <h1 className="text-3xl-plus leading-none font-extrabold tracking-tight-px text-white">
                   {author.full_name}
                 </h1>
-                <p className="max-w-[600px] text-[14px] leading-[1.6] text-white/70">
+                <p className="max-w-2xl text-sm leading-relaxed text-white/70">
                   {author.bio}
                 </p>
               </div>
@@ -127,10 +127,10 @@ export function AuthorPage() {
               {/* Stats */}
               <div className="flex shrink-0 items-center gap-8 self-center pr-4">
                 <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-[28px] font-extrabold text-white">
+                  <span className="text-3xl-minus font-extrabold text-white">
                     {formatCount(articleCount)}
                   </span>
-                  <span className="text-[12px] text-white/60">Articles</span>
+                  <span className="text-xs text-white/60">Articles</span>
                 </div>
               </div>
             </div>
@@ -160,15 +160,15 @@ export function AuthorPage() {
               </div>
               <div className="flex flex-1 flex-col justify-center gap-3 px-8 py-6">
                 <div className="flex items-center gap-2">
-                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
+                  <span className="bg-primary text-primary-foreground rounded px-2.5 py-1 text-3xs font-bold tracking-wider uppercase">
                     Featured
                   </span>
                   <CategoryBadge label={featured.category} />
                 </div>
-                <h2 className="text-card-foreground text-[28px] leading-[1.2] font-extrabold tracking-[-0.5px]">
+                <h2 className="text-card-foreground text-3xl-minus leading-xs font-extrabold tracking-tight-px">
                   {featured.title}
                 </h2>
-                <p className="text-muted-foreground line-clamp-3 text-[15px] leading-[1.6]">
+                <p className="text-muted-foreground line-clamp-3 text-xs-plus leading-relaxed">
                   {featured.perex}
                 </p>
                 <div className="mt-2 flex items-center gap-3">
@@ -184,10 +184,10 @@ export function AuthorPage() {
                     </div>
                   )}
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-card-foreground text-[13px] font-semibold">
+                    <span className="text-card-foreground text-2xs font-semibold">
                       {featured.author?.full_name}
                     </span>
-                    <span className="text-muted-foreground text-[12px]">
+                    <span className="text-muted-foreground text-xs">
                       {formatDate(featured.publication_date)}
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export function AuthorPage() {
         {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-[14px] font-medium">
+            <span className="text-muted-foreground text-sm font-medium">
               Sort by:
             </span>
             <Button
@@ -218,7 +218,7 @@ export function AuthorPage() {
               Oldest
             </Button>
           </div>
-          <span className="text-muted-foreground text-[13px]">
+          <span className="text-muted-foreground text-2xs">
             {articleCount} article{articleCount !== 1 ? "s" : ""} total
           </span>
         </div>
