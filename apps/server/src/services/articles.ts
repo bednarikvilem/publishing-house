@@ -259,7 +259,7 @@ export async function getReviewQueue(
 
     const all = await tx.query.articles.findMany({
         where: eq(articles.newspaperId, newspaperId),
-        with: { category: true },
+        with: { category: true, author: true, reviews: { with: { reviewer: true } } },
     });
 
     let filtered = all.filter((a: any) => allowedStates.includes(a.state));
@@ -276,15 +276,22 @@ export async function getReviewQueue(
     const paged = filtered.slice(offset, offset + limit);
 
     return {
-        data: paged.map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            perex: a.perex,
-            category: a.category?.categoryName ?? null,
-            status: a.state,
-            submitted_at: a.createdAt,
-            author: { id: a.authorId },
-        })),
+        data: paged.map((a: any) => {
+            const assignedReview = a.reviews?.find((r: any) => !r.decision) ?? a.reviews?.[a.reviews.length - 1];
+            return {
+                id: a.id,
+                title: a.title,
+                perex: a.perex,
+                category: a.category?.categoryName ?? null,
+                status: a.state,
+                submitted_at: a.createdAt,
+                author: { id: a.authorId, full_name: a.author?.fullname ?? null },
+                assigned_editor: assignedReview?.reviewer
+                    ? { id: assignedReview.reviewer.id, full_name: assignedReview.reviewer.fullname }
+                    : null,
+                is_subscriber_only: a.isSubscriberOnly ?? false,
+            };
+        }),
         pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
     };
 }
