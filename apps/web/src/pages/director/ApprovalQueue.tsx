@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client } from "../../lib/api";
 import type { PaginatedResponse, ReviewDecision } from "../../types";
 import type { QueueArticle } from "../../types/dashboard";
 import { LoadingState } from "../../components/LoadingState";
@@ -15,60 +16,57 @@ import { formatDate } from "../../lib/utils";
 
 export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
   const { toast } = useToast();
-  const [articles, setArticles]   = useState<QueueArticle[]>([]);
-  const [loading, setLoading]     = useState(true);
-  const [activeId, setActiveId]   = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const queryClient = useQueryClient();
+  const [activeId, setActiveId] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?view=DIRECTOR&status=APPROVED_BY_MANAGER&limit=50`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-    } catch {
-      /* empty */
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId]);
+  const queueQuery = useQuery({
+    queryKey: ["approval-queue", newspaperId],
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles.queue.get({
+          query: { page: 1, view: "DIRECTOR", status: "APPROVED_BY_MANAGER", limit: 50 },
+        });
+      if (error) throw error;
+      return data as PaginatedResponse<QueueArticle>;
+    },
+  });
 
-  useEffect(() => { load(); }, [load]);
-
-  async function handleDecision(articleId: string, decision: ReviewDecision, note: string) {
-    setSubmitting(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/status`,
-        {
-          method: "PATCH",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "APPROVE",
-            decision,
-            note: note || undefined,
-            view: "DIRECTOR",
-          }),
-        }
-      );
-      if (!res.ok) throw new Error();
+  const decide = useMutation({
+    mutationFn: async ({
+      articleId,
+      decision,
+      note,
+    }: {
+      articleId: string;
+      decision: ReviewDecision;
+      note: string;
+    }) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .status.patch({
+          action: "APPROVE",
+          decision,
+          note: note || undefined,
+          view: "DIRECTOR",
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
       setActiveId(null);
-      load();
-    } catch {
-      toast({ title: "Error", description: "Failed to submit decision.", variant: "error" });
-    } finally {
-      setSubmitting(false);
-    }
-  }
+      queryClient.invalidateQueries({ queryKey: ["approval-queue", newspaperId] });
+    },
+    onError: () =>
+      toast({ title: "Error", description: "Failed to submit decision.", variant: "error" }),
+  });
+
+  const articles = queueQuery.data?.data ?? [];
 
   return (
     <div className="flex flex-col gap-6">
       <SectionTitle title="Approval Queue" />
-      {loading ? (
+      {queueQuery.isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState message="No articles awaiting your approval." />
@@ -101,9 +99,9 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
               </div>
               {activeId === article.id && (
                 <DecisionForm
-                  onSubmit={(d, n) => handleDecision(article.id, d, n)}
+                  onSubmit={(d, n) => decide.mutate({ articleId: article.id, decision: d, note: n })}
                   onCancel={() => setActiveId(null)}
-                  submitting={submitting}
+                  submitting={decide.isPending}
                 />
               )}
             </ListRow>

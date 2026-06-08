@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
-import { API_BASE_URL, authHeaders, requestSubscription } from "../lib/api";
+import { client, toApiError, requestSubscription } from "../lib/api";
 import type { ArticleDetail } from "../types";
 import { Navbar } from "../components/Navbar";
 import { ArticleContent } from "../components/ArticleContent";
@@ -29,26 +29,28 @@ export function ArticlePage() {
     enabled: !!newspaper && !!articleId,
     retry: false,
     queryFn: async () => {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaper!.id}/articles/${articleId}`,
-        { headers: authHeaders() },
-      );
-      if (res.status === 403) {
-        const body = await res.json().catch(() => ({})) as { error?: string };
-        throw Object.assign(new Error("forbidden"), {
-          kind: body.error === "SUBSCRIPTION_REQUIRED" || isLoggedIn
-            ? "subscription_required"
-            : "unauthorized",
-        });
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaper!.id })
+        .articles({ article_id: articleId! })
+        .get();
+      if (error) {
+        const { status, value } = toApiError(error);
+        if (status === 403) {
+          throw Object.assign(new Error("forbidden"), {
+            kind: value?.error === "SUBSCRIPTION_REQUIRED" || isLoggedIn
+              ? "subscription_required"
+              : "unauthorized",
+          });
+        }
+        if (status === 401) {
+          throw Object.assign(new Error("unauthorized"), {
+            kind: isLoggedIn ? "subscription_required" : "unauthorized",
+          });
+        }
+        if (status === 404) throw Object.assign(new Error("not_found"), { kind: "not_found" });
+        throw Object.assign(new Error("error"), { kind: "error" });
       }
-      if (res.status === 401) {
-        throw Object.assign(new Error("unauthorized"), {
-          kind: isLoggedIn ? "subscription_required" : "unauthorized",
-        });
-      }
-      if (res.status === 404) throw Object.assign(new Error("not_found"), { kind: "not_found" });
-      if (!res.ok) throw Object.assign(new Error("error"), { kind: "error" });
-      return res.json() as Promise<ArticleDetail>;
+      return data as unknown as ArticleDetail;
     },
   });
 

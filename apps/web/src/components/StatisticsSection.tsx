@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import type { NewspaperStats, GlobalStats } from "./stats/types";
 import { NewspaperStatsDashboard } from "./stats/NewspaperStatsDashboard";
 import { GlobalStatsDashboard } from "./stats/GlobalStatsDashboard";
@@ -16,39 +17,34 @@ export function StatisticsSection({
   const [view, setView] = useState<"newspaper" | "global">(
     isDirector ? "global" : "newspaper"
   );
-  const [npStats,     setNpStats]     = useState<NewspaperStats | null>(null);
-  const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState<string | null>(null);
-  const [refreshKey,  setRefreshKey]  = useState(0);
 
-  useEffect(() => {
-    if (view === "newspaper" && !newspaperId) return;
+  const globalStatsQuery = useQuery({
+    queryKey: ["statistics", "global"],
+    enabled: view === "global",
+    queryFn: async () => {
+      const { data, error } = await client.api.statistics.global.get();
+      if (error) throw error;
+      return data as GlobalStats;
+    },
+  });
 
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
+  const npStatsQuery = useQuery({
+    queryKey: ["statistics", "newspaper", newspaperId],
+    enabled: view === "newspaper" && !!newspaperId,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .statistics.get();
+      if (error) throw error;
+      return data as NewspaperStats;
+    },
+  });
 
-    const url =
-      view === "global"
-        ? `${API_BASE_URL}/api/statistics/global`
-        : `${API_BASE_URL}/api/newspapers/${newspaperId}/statistics`;
-
-    fetch(url, { headers: authHeaders() })
-      .then((res) => {
-        if (!res.ok) throw new Error(`${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled) return;
-        if (view === "global") setGlobalStats(data as GlobalStats);
-        else                   setNpStats(data as NewspaperStats);
-      })
-      .catch(() => { if (!cancelled) setError("Failed to load statistics. Please try again."); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-
-    return () => { cancelled = true; };
-  }, [view, newspaperId, refreshKey]);
+  const activeQuery = view === "global" ? globalStatsQuery : npStatsQuery;
+  const loading = activeQuery.isFetching;
+  const error = activeQuery.isError;
+  const globalStats = globalStatsQuery.data;
+  const npStats = npStatsQuery.data;
 
   return (
     <div className="space-y-6">
@@ -75,7 +71,7 @@ export function StatisticsSection({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => setRefreshKey((k) => k + 1)}
+            onClick={() => activeQuery.refetch()}
             title="Refresh statistics"
             disabled={loading}
             className="text-muted-foreground hover:text-foreground"
@@ -101,7 +97,7 @@ export function StatisticsSection({
 
       {!loading && error && (
         <div className="border border-red-200 bg-red-50 rounded-xl p-5 text-red-600 text-sm">
-          {error}
+          Failed to load statistics. Please try again.
         </div>
       )}
 

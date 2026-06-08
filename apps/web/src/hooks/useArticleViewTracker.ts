@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client } from "../lib/api";
 
 interface UseArticleViewTrackerOptions {
     newspaperId: string | undefined;
@@ -21,17 +21,12 @@ export function useArticleViewTracker({
     }, []);
 
     const postView = async (readCompleted: boolean): Promise<void> => {
-        const response = await fetch(
-            `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/views`,
-            {
-                method:  "POST",
-                headers: { "Content-Type": "application/json", ...authHeaders() },
-                body:    JSON.stringify({ read_completed: readCompleted }),
-            }
-        );
-        if (!response.ok) {
-            throw new Error(`View tracking failed: ${response.status}`);
-        }
+        if (!newspaperId || !articleId) return;
+        const { error } = await client.api
+            .newspapers({ newspaper_id: newspaperId })
+            .articles({ article_id: articleId })
+            .views.post({ read_completed: readCompleted });
+        if (error) throw error;
     };
 
     // ── 1. Record initial view after 2 s on page ────────────────────────

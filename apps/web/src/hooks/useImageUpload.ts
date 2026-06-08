@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 
 export interface ArticleImage {
   id?: string;
@@ -29,20 +29,16 @@ export function useImageUpload(
     const file = e.target.files?.[0];
     if (!file || !articleId) return;
     setUploadingImage(true);
-    const formData = new FormData();
-    formData.append("image", file);
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images`,
-        { method: "POST", headers: authHeaders(), body: formData },
-      );
-      if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        onError(data.error ?? "Failed to upload image.");
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .images.post({ image: file });
+      if (error) {
+        onError(toApiError(error).value?.error ?? "Failed to upload image.");
         return;
       }
-      const img = (await res.json()) as ArticleImage;
-      setImages((prev) => [...prev, img]);
+      setImages((prev) => [...prev, data as ArticleImage]);
     } catch {
       onError("Network error. Please try again.");
     } finally {
@@ -57,15 +53,18 @@ export function useImageUpload(
   ) {
     if (!articleId) return;
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images/${imageId}`,
-        { method: "DELETE", headers: authHeaders() },
-      );
-      if (res.status === 422) {
-        onError("Cannot remove the only image from the article.");
-        return;
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .images({ image_id: imageId })
+        .delete();
+      if (error) {
+        if (toApiError(error).status === 422) {
+          onError("Cannot remove the only image from the article.");
+          return;
+        }
+        throw error;
       }
-      if (!res.ok) throw new Error();
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     } catch {
       onError("Failed to delete image. Please try again.");

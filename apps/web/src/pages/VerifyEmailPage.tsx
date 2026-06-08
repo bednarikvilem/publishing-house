@@ -1,52 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { client, type ApiError } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { CheckIcon } from "../components/Icons";
 
 export function VerifyEmailPage() {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { mutate, isSuccess, isError, error } = useMutation<void, ApiError, string>({
+    mutationFn: async (verificationToken) => {
+      const { error } = await client.api.auth["verify-email"].post({
+        token: verificationToken,
+      });
+      if (error) throw error;
+    },
+  });
 
   useEffect(() => {
-    const token = searchParams.get("token");
+    if (token) mutate(token);
+  }, [token, mutate]);
 
-    if (!token) {
-      setErrorMessage("No verification token found in the link.");
-      setStatus("error");
-      return;
-    }
+  const status: "loading" | "success" | "error" =
+    !token || isError ? "error" : isSuccess ? "success" : "loading";
 
-    fetch(`${API_BASE_URL}/api/auth/verify-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          setStatus("success");
-          return;
-        }
-        const body = await res.json().catch(() => ({}));
-        if (body.error === "INVALID_TOKEN") {
-          setErrorMessage("This verification link is invalid or has expired.");
-        } else {
-          setErrorMessage("Something went wrong. Please try again.");
-        }
-        setStatus("error");
-      })
-      .catch(() => {
-        setErrorMessage(
-          "Could not connect to the server. Please try again later."
-        );
-        setStatus("error");
-      });
-  }, [searchParams]);
+  let errorMessage: string | null = null;
+  if (!token) {
+    errorMessage = "No verification token found in the link.";
+  } else if (isError) {
+    errorMessage =
+      error?.value?.error === "INVALID_TOKEN"
+        ? "This verification link is invalid or has expired."
+        : "Something went wrong. Please try again.";
+  }
 
   return (
     <div className="bg-background text-foreground min-h-screen w-full">

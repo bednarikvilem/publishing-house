@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Type, type Static } from "@sinclair/typebox";
 import { forgotPasswordInput } from "@pb138/server/schemas/auth";
-import { API_BASE_URL } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
@@ -25,33 +26,33 @@ export function PasswordResetPage() {
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<ResetFormValues>({
     resolver: typeboxResolver(resetFormSchema),
     defaultValues: { email: "" },
   });
 
-  async function onSubmit({ email }: ResetFormValues) {
-    if (!newspaper) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: newspaper.id, email }),
+  const resetMutation = useMutation({
+    mutationFn: async ({ email }: ResetFormValues) => {
+      if (!newspaper) throw new Error("NEWSPAPER_UNAVAILABLE");
+      const { error } = await client.api.auth["forgot-password"].post({
+        email,
+        newspaper_id: newspaper.id,
       });
-
-      if (res.ok) { setSubmitted(true); return; }
-
-      const body = await res.json();
-      if (res.status === 422) {
-        setError("root", { message: body.fields?.email ?? "Please enter a valid email address." });
-        return;
+      if (error) throw error;
+    },
+    onSuccess: () => setSubmitted(true),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 422) {
+        setError("root", {
+          message: value?.fields?.email ?? "Please enter a valid email address.",
+        });
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", { message: "Could not connect to the server. Please try again later." });
-    }
-  }
+    },
+  });
 
   return (
     <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
@@ -70,7 +71,10 @@ export function PasswordResetPage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit((values) => resetMutation.mutate(values))}
+            className="flex flex-col gap-4"
+          >
             <p className="text-muted-foreground text-center text-2xs leading-relaxed">
               Enter the email address associated with your account and we'll send you a link to reset your password.
             </p>
@@ -86,10 +90,10 @@ export function PasswordResetPage() {
             {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}
             <Button
               type="submit"
-              disabled={isSubmitting || !newspaper}
+              disabled={resetMutation.isPending || !newspaper}
               className="w-full"
             >
-              {isSubmitting ? "Sending…" : "Send Reset Link"}
+              {resetMutation.isPending ? "Sending…" : "Send Reset Link"}
             </Button>
           </form>
         )}

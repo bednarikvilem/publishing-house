@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Type, type Static } from "@sinclair/typebox";
 import { registerInput } from "@pb138/server/schemas/auth";
-import { API_BASE_URL } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import { typeboxResolver, emptyToUndefined } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
@@ -23,7 +24,7 @@ export function SignUpPage() {
     handleSubmit,
     setError,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignUpFormValues>({
     resolver: typeboxResolver(signUpFormSchema),
     defaultValues: { email: "", username: "", password: "", full_name: "" },
@@ -34,48 +35,46 @@ export function SignUpPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  async function onValid(values: SignUpFormValues) {
-    setFormError(null);
-    setConfirmError(null);
-
-    if (values.password !== confirmPassword) {
-      setConfirmError("Passwords do not match");
-      return;
-    }
-    if (!newspaper) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: newspaper.id, ...values }),
+  const registerMutation = useMutation({
+    mutationFn: async (values: SignUpFormValues) => {
+      if (!newspaper) throw new Error("NEWSPAPER_UNAVAILABLE");
+      const { error } = await client.api.auth.register.post({
+        ...values,
+        newspaper_id: newspaper.id,
       });
-
-      if (res.status === 201) { setSuccess(true); return; }
-
-      const text = await res.text();
-      let body: { error?: string; fields?: Record<string, string> } = {};
-      try { body = JSON.parse(text); } catch { body = { error: text.trim() }; }
-      if (res.status === 409) {
-        if (body.error === "EMAIL_TAKEN") {
+      if (error) throw error;
+    },
+    onSuccess: () => setSuccess(true),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 409) {
+        if (value?.error === "EMAIL_TAKEN") {
           setError("email", { message: "This email is already registered" });
-        } else if (body.error === "USERNAME_TAKEN") {
+        } else if (value?.error === "USERNAME_TAKEN") {
           setError("username", { message: "This username is already taken" });
         } else {
           setFormError("An account with these details already exists.");
         }
         return;
       }
-      if (res.status === 422 && body.fields) {
-        for (const [field, message] of Object.entries(body.fields)) {
+      if (status === 422 && value?.fields) {
+        for (const [field, message] of Object.entries(value.fields)) {
           setError(field as keyof SignUpFormValues, { message });
         }
         return;
       }
       setFormError("Something went wrong. Please try again.");
-    } catch {
-      setFormError("Could not connect to the server. Please try again later.");
+    },
+  });
+
+  function onValid(values: SignUpFormValues) {
+    setFormError(null);
+    setConfirmError(null);
+    if (values.password !== confirmPassword) {
+      setConfirmError("Passwords do not match");
+      return;
     }
+    registerMutation.mutate(values);
   }
 
   if (success) {
@@ -167,10 +166,10 @@ export function SignUpPage() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || !newspaper}
+            disabled={registerMutation.isPending || !newspaper}
             className="w-full"
           >
-            {isSubmitting ? "Creating account…" : "Create Account"}
+            {registerMutation.isPending ? "Creating account…" : "Create Account"}
           </Button>
 
           <div className="flex items-center gap-3">

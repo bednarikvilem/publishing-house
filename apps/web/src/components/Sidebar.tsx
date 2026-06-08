@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useUser } from "../hooks/useUser";
 import {
   BarChartIcon,
   FileTextIcon,
@@ -236,17 +236,8 @@ interface SidebarProps {
 export function Sidebar({ children }: SidebarProps) {
   const { newspaperName } = useParams<{ newspaperName: string }>();
   const np = newspaperName ?? "";
-  const [user, setUser] = useState<UserMe | null>(null);
+  const { user } = useUser();
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) =>
-        res.ok ? (res.json() as Promise<UserMe>) : Promise.reject()
-      )
-      .then(setUser)
-      .catch(() => {});
-  }, []);
 
   const roles = new Set(user?.roles ?? []);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client } from "../lib/api";
 import { Button } from "./ui/button";
 
 interface ArticleActionsProps {
@@ -25,12 +25,12 @@ export function ArticleActions({
 
   const toggleLike = useMutation({
     mutationFn: async (wasLiked: boolean) => {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/likes`,
-        { method: wasLiked ? "DELETE" : "POST", headers: authHeaders() },
-      );
-      if (!res.ok) throw new Error();
-      return res.json() as Promise<{ likes_count: number }>;
+      const likes = client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId }).likes;
+      const { data, error } = wasLiked ? await likes.delete() : await likes.post();
+      if (error) throw error;
+      return data as { likes_count: number };
     },
     onMutate: (wasLiked) => {
       setLikedByMe(!wasLiked);

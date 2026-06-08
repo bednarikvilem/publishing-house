@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useUser } from "../hooks/useUser";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import { useNewspaper } from "../hooks/useNewspaper";
@@ -27,21 +26,12 @@ export function DashboardPage() {
   const { newspaper } = useNewspaper();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [userRoles, setUserRoles] = useState<string[]>([]);
-  const [rolesLoaded, setRolesLoaded] = useState(false);
+  const { user, isLoading: userLoading } = useUser();
+  const userRoles = user?.roles ?? [];
+  const rolesLoaded = !userLoading;
 
   const np = newspaperName ?? "";
   const newspaperId = newspaper?.id ?? "";
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) =>
-        res.ok ? (res.json() as Promise<{ roles: string[] }>) : Promise.reject()
-      )
-      .then((data) => setUserRoles(data.roles ?? []))
-      .catch(() => {})
-      .finally(() => setRolesLoaded(true));
-  }, []);
 
   const sectionParam = searchParams.get("section");
   const activeSection =

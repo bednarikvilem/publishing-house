@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { client, toApiError } from "../../lib/api";
 import { useAvatarUpload } from "../../hooks/useAvatarUpload";
 import { FormField } from "../../components/FormField";
 import { Button } from "../../components/ui/button";
@@ -56,7 +57,7 @@ export function ProfileInfoCard({
     setError,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ProfileFormValues>({
     defaultValues: {
       firstName: initialFirst,
@@ -71,54 +72,47 @@ export function ProfileInfoCard({
   const initials =
     [firstName?.[0], lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?";
 
-  async function onSubmit(data: ProfileFormValues) {
-    setSaved(false);
-    const full_name =
-      [data.firstName, data.lastName].filter(Boolean).join(" ") || undefined;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({
-          full_name,
-          username: data.username || undefined,
-          ...(isAuthor ? { bio: data.bio || undefined } : {}),
-        }),
+  const updateProfile = useMutation({
+    mutationFn: async (data: ProfileFormValues) => {
+      const full_name =
+        [data.firstName, data.lastName].filter(Boolean).join(" ") || undefined;
+      const { data: result, error } = await client.api.users.me.put({
+        full_name,
+        username: data.username || undefined,
+        ...(isAuthor ? { bio: data.bio || undefined } : {}),
       });
-
-      if (res.ok) {
-        const json = (await res.json()) as Partial<UserProfile>;
-        const merged: UserProfile = { ...profile, ...json };
-        onSaved(merged);
-        const [first, last] = splitFullName(merged.full_name);
-        reset({
-          firstName: first,
-          lastName: last,
-          username: merged.username,
-          bio: merged.bio ?? "",
-        });
-        setSaved(true);
-        return;
-      }
-
-      const body = await res.json();
-      if (res.status === 409 && body.error === "USERNAME_TAKEN") {
+      if (error) throw error;
+      return result as Partial<UserProfile>;
+    },
+    onSuccess: (json) => {
+      const merged: UserProfile = { ...profile, ...json };
+      onSaved(merged);
+      const [first, last] = splitFullName(merged.full_name);
+      reset({
+        firstName: first,
+        lastName: last,
+        username: merged.username,
+        bio: merged.bio ?? "",
+      });
+      setSaved(true);
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 409 && value?.error === "USERNAME_TAKEN") {
         setError("username", { message: "This username is already taken." });
-        return;
-      }
-      if (res.status === 422 && body.fields) {
-        Object.entries(body.fields).forEach(([field, msg]) => {
-          setError(field as keyof ProfileFormValues, { message: msg as string });
+      } else if (status === 422 && value?.fields) {
+        Object.entries(value.fields).forEach(([field, msg]) => {
+          setError(field as keyof ProfileFormValues, { message: msg });
         });
-        return;
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", {
-        message: "Could not connect to the server. Please try again later.",
-      });
-    }
+    },
+  });
+
+  function onSubmit(data: ProfileFormValues) {
+    setSaved(false);
+    updateProfile.mutate(data);
   }
 
   return (
@@ -242,10 +236,10 @@ export function ProfileInfoCard({
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={updateProfile.isPending}
           className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
-          {isSubmitting ? "Saving…" : "Save Changes"}
+          {updateProfile.isPending ? "Saving…" : "Save Changes"}
         </Button>
       </div>
     </form>

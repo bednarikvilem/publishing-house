@@ -14,7 +14,7 @@ import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
 import { useUser } from "../hooks/useUser";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
-import { API_BASE_URL, authHeaders, client, requestSubscription } from "../lib/api";
+import { client, requestSubscription } from "../lib/api";
 import { slugToDisplayName } from "../lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,10 +95,7 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   }
 
   async function handleLogout() {
-    await fetch(`${API_BASE_URL}/api/auth/logout`, {
-      method: "POST",
-      headers: authHeaders(),
-    }).catch(() => {});
+    await client.api.auth.logout.post().catch(() => {});
     localStorage.removeItem("token");
     localStorage.removeItem("newspaper_id");
     queryClient.setQueryData(["me"], null);

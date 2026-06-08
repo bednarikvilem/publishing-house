@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client, toApiError } from "../../lib/api";
 import type { Category } from "../../types";
 import { PencilIcon, PlusIcon, TrashIcon } from "../../components/Icons";
 import { SectionTitle } from "../../components/SectionTitle";
@@ -18,10 +19,12 @@ interface CategoryFormValues {
 // ── Inline edit form ──────────────────────────────────────────────────────────
 
 function EditCategoryForm({
+  newspaperId,
   category,
   onSaved,
   onCancel,
 }: {
+  newspaperId: string;
   category: Category;
   onSaved: () => void;
   onCancel: () => void;
@@ -29,31 +32,28 @@ function EditCategoryForm({
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
     setError,
   } = useForm<CategoryFormValues>({
     defaultValues: { name: category.name },
   });
 
-  async function onSubmit(data: CategoryFormValues) {
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${(category as any).newspaperId}/categories/${category.id}`,
-        {
-          method: "PUT",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ name: data.name.trim() }),
-        }
-      );
-      if (!res.ok) throw new Error();
-      onSaved();
-    } catch {
-      setError("root", { message: "Failed to update category." });
-    }
-  }
+  const update = useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .categories({ category_id: category.id })
+        .put({ name: name.trim() });
+      if (error) throw error;
+    },
+    onSuccess: onSaved,
+    onError: () => setError("root", { message: "Failed to update category." }),
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4 w-full">
+    <form
+      onSubmit={handleSubmit((data) => update.mutate(data.name))}
+      className="flex items-center gap-4 w-full"
+    >
       <Input
         autoFocus
         type="text"
@@ -63,11 +63,11 @@ function EditCategoryForm({
       <div className="flex shrink-0 items-center gap-2">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={update.isPending}
           size="sm"
           className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
-          {isSubmitting ? "Saving…" : "Save"}
+          {update.isPending ? "Saving…" : "Save"}
         </Button>
         <Button
           type="button"
@@ -85,9 +85,7 @@ function EditCategoryForm({
 // ── Main section ──────────────────────────────────────────────────────────────
 
 export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const queryClient = useQueryClient();
   const [editId, setEditId] = useState<string | null>(null);
 
   const {
@@ -95,70 +93,68 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
     handleSubmit,
     reset,
     setError: setFormError,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<CategoryFormValues>({ defaultValues: { name: "" } });
 
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/categories`
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: Category[] };
-      setCategories(data.data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId]);
+  const categoriesQuery = useQuery({
+    queryKey: ["categories", newspaperId],
+    enabled: !!newspaperId,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .categories.get();
+      if (error) throw error;
+      return (data as { data: Category[] }).data;
+    },
+  });
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["categories", newspaperId] });
 
-  async function onCreateSubmit(data: CategoryFormValues) {
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/categories`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ name: data.name.trim() }),
-        }
-      );
-      if (!res.ok) throw new Error();
+  const createCategory = useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .categories.post({ name: name.trim() });
+      if (error) throw error;
+    },
+    onSuccess: () => {
       reset();
-      load();
-    } catch {
-      setFormError("root", { message: "Failed to create category." });
-    }
-  }
+      invalidate();
+    },
+    onError: () => setFormError("root", { message: "Failed to create category." }),
+  });
 
-  async function handleDelete(id: string) {
+  const deleteCategory = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .categories({ category_id: id })
+        .delete();
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+    onError: (err) => {
+      const { status } = toApiError(err);
+      alert(
+        status === 409
+          ? "Cannot delete: articles are assigned to this category."
+          : "Failed to delete category.",
+      );
+    },
+  });
+
+  function handleDelete(id: string) {
     if (
       !confirm(
-        "Delete this category? This will fail if articles are assigned to it."
+        "Delete this category? This will fail if articles are assigned to it.",
       )
     )
       return;
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/categories/${id}`,
-        { method: "DELETE", headers: authHeaders() }
-      );
-      if (res.status === 409) {
-        alert("Cannot delete: articles are assigned to this category.");
-        return;
-      }
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      alert("Failed to delete category.");
-    }
+    deleteCategory.mutate(id);
   }
+
+  const categories = categoriesQuery.data ?? [];
 
   return (
     <div className="flex flex-col gap-7">
@@ -166,7 +162,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
 
       {/* Create form */}
       <form
-        onSubmit={handleSubmit(onCreateSubmit)}
+        onSubmit={handleSubmit((data) => createCategory.mutate(data.name))}
         className="border-border bg-card flex items-center gap-3 rounded-lg border px-5 py-4"
       >
         <Input
@@ -177,7 +173,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         />
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={createCategory.isPending}
           className="bg-foreground text-background rounded-md gap-2 text-[13px] font-semibold hover:bg-foreground hover:opacity-90"
         >
           <PlusIcon />
@@ -188,9 +184,9 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         )}
       </form>
 
-      {error ? (
+      {categoriesQuery.isError ? (
         <ErrorState />
-      ) : loading ? (
+      ) : categoriesQuery.isLoading ? (
         <LoadingState />
       ) : categories.length === 0 ? (
         <EmptyState message="No categories yet. Add one above." />
@@ -205,10 +201,11 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
               <div className="flex items-center gap-4">
                 {editId === cat.id ? (
                   <EditCategoryForm
-                    category={{ ...cat, ...(cat as any) }}
+                    newspaperId={newspaperId}
+                    category={cat}
                     onSaved={() => {
                       setEditId(null);
-                      load();
+                      invalidate();
                     }}
                     onCancel={() => setEditId(null)}
                   />
@@ -231,7 +228,7 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                         onClick={() => handleDelete(cat.id)}
                         variant="ghost"
                         size="icon-sm"
-                        className="text-muted-foreground hover:text-[#dc2626]"
+                        className="text-muted-foreground hover:text-destructive"
                         aria-label="Delete category"
                       >
                         <TrashIcon />

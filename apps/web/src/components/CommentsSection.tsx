@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { MessageCircle } from "lucide-react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client } from "../lib/api";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { formatDate } from "../lib/utils";
@@ -37,16 +37,11 @@ export function CommentsSection({
 
   const postComment = useMutation({
     mutationFn: async ({ content }: CommentFormValues) => {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/comments`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ content: content.trim() }),
-        },
-      );
-      if (!res.ok) throw new Error("Failed to post comment");
-      return res.json() as Promise<Comment>;
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .comments.post({ content: content.trim() });
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });

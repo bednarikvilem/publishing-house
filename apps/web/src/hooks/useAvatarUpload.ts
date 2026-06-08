@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client } from "../lib/api";
 
 export function useAvatarUpload(initialUrl: string | null) {
   const [avatarUrl, setAvatarUrl] = useState(initialUrl);
@@ -12,17 +12,12 @@ export function useAvatarUpload(initialUrl: string | null) {
     if (!file) return;
     setError(null);
     setUploading(true);
-    const formData = new FormData();
-    formData.append("profile_picture", file);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/me/profile-picture`, {
-        method: "POST",
-        headers: authHeaders(),
-        body: formData,
+      const { data, error } = await client.api.users.me["profile-picture"].post({
+        profile_picture: file,
       });
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { profile_picture: string };
-      setAvatarUrl(data.profile_picture);
+      if (error) throw error;
+      setAvatarUrl((data as { profile_picture: string }).profile_picture);
     } catch {
       setError("Failed to upload photo. Use JPEG or PNG under 5 MB.");
     } finally {

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Static } from "@sinclair/typebox";
 import { createGlobalUserInput } from "@pb138/server/schemas/auth";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { client, toApiError } from "../../lib/api";
 import { typeboxResolver, emptyToUndefined } from "../../lib/validation";
 import { PlusIcon } from "../../components/Icons";
 import { LoadingState } from "../../components/LoadingState";
@@ -28,11 +29,11 @@ type GlobalUser = {
   roles: string[];
 };
 
+type GlobalRole = "DIRECTOR" | "SYSTEM_ADMINISTRATOR";
 type CreateGlobalUserFormValues = Static<typeof createGlobalUserInput>;
 
 export function GlobalUsersSection() {
-  const [globalUsers, setGlobalUsers] = useState<GlobalUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
 
   const {
@@ -41,75 +42,70 @@ export function GlobalUsersSection() {
     setError,
     reset,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateGlobalUserFormValues>({
     resolver: typeboxResolver(createGlobalUserInput),
     defaultValues: { role: "DIRECTOR" },
   });
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/global/users`, {
-        headers: authHeaders(),
-      });
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: GlobalUser[] };
-      setGlobalUsers(data.data);
-    } catch {
-      /* empty */
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const usersQuery = useQuery({
+    queryKey: ["global-users"],
+    queryFn: async () => {
+      const { data, error } = await client.api.global.users.get();
+      if (error) throw error;
+      return (data as { data: GlobalUser[] }).data;
+    },
+  });
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  async function onSubmit(data: CreateGlobalUserFormValues) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/global/users`, {
-        method: "POST",
-        headers: { ...authHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.status === 409) {
-        const json = (await res.json()) as { error: string };
+  const createUser = useMutation({
+    mutationFn: async (values: CreateGlobalUserFormValues) => {
+      const { error } = await client.api.global.users.post(values);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setShowCreate(false);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["global-users"] });
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 409) {
         setError("root", {
           message:
-            json.error === "ROLE_ALREADY_HELD_GLOBALLY"
+            value?.error === "ROLE_ALREADY_HELD_GLOBALLY"
               ? "A user already holds this global role."
               : "Email is already taken.",
         });
-        return;
+      } else {
+        setError("root", { message: "Failed to create global user." });
       }
-      if (!res.ok) throw new Error();
-      setShowCreate(false);
-      reset();
-      load();
-    } catch {
-      setError("root", { message: "Failed to create global user." });
-    }
+    },
+  });
+
+  const removeRole = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: GlobalRole }) => {
+      const { error } = await client.api
+        .users({ user_id: userId })["global-roles"]({ role })
+        .delete();
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["global-users"] }),
+    onError: (err) => {
+      const { status } = toApiError(err);
+      alert(
+        status === 422
+          ? "Cannot remove your own SYSTEM_ADMINISTRATOR role."
+          : "Failed to remove role.",
+      );
+    },
+  });
+
+  function handleRemove(userId: string, role: string) {
+    if (!confirm(`Remove ${role} from this user?`)) return;
+    removeRole.mutate({ userId, role: role as GlobalRole });
   }
 
-  async function handleRemove(userId: string, role: string) {
-    if (!confirm(`Remove ${role} from this user?`)) return;
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/users/${userId}/global-roles/${role}`,
-        { method: "DELETE", headers: authHeaders() }
-      );
-      if (res.status === 422) {
-        alert("Cannot remove your own SYSTEM_ADMINISTRATOR role.");
-        return;
-      }
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      alert("Failed to remove role.");
-    }
-  }
+  const globalUsers = usersQuery.data ?? [];
 
   return (
     <div className="flex flex-col gap-6">
@@ -126,7 +122,7 @@ export function GlobalUsersSection() {
 
       {showCreate && (
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => createUser.mutate(values))}
           className="border-border bg-card flex flex-col gap-4 rounded-lg border p-5"
         >
           <p className="text-foreground text-[14px] font-semibold">
@@ -204,17 +200,17 @@ export function GlobalUsersSection() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={createUser.isPending}
               size="sm"
               className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
             >
-              {isSubmitting ? "Creating…" : "Create"}
+              {createUser.isPending ? "Creating…" : "Create"}
             </Button>
           </div>
         </form>
       )}
 
-      {loading ? (
+      {usersQuery.isLoading ? (
         <LoadingState />
       ) : globalUsers.length === 0 ? (
         <EmptyState message="No global users yet." />
@@ -245,7 +241,7 @@ export function GlobalUsersSection() {
                           onClick={() => handleRemove(u.id, role)}
                           variant="ghost"
                           size="icon-xs"
-                          className="ml-0.5 hover:bg-transparent hover:text-[#dc2626]"
+                          className="ml-0.5 hover:bg-transparent hover:text-destructive"
                           aria-label={`Remove ${role}`}
                         >
                           ×

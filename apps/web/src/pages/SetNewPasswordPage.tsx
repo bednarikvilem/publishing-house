@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { Type, type Static } from "@sinclair/typebox";
 import { resetPasswordInput } from "@pb138/server/schemas/auth";
-import { API_BASE_URL } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
@@ -24,7 +25,7 @@ export function SetNewPasswordPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SetPasswordFormValues>({
     resolver: typeboxResolver(setPasswordSchema),
     defaultValues: { password: "" },
@@ -35,31 +36,34 @@ export function SetNewPasswordPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  async function onValid({ password }: SetPasswordFormValues) {
+  const resetMutation = useMutation({
+    mutationFn: async (password: string) => {
+      if (!token) throw new Error("NO_TOKEN");
+      const { error } = await client.api.auth["reset-password"].post({
+        token,
+        password,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => setSuccess(true),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 400 && value?.error === "INVALID_TOKEN") {
+        setFormError("This link has expired or is invalid. Please request a new one.");
+      } else {
+        setFormError("Something went wrong. Please try again.");
+      }
+    },
+  });
+
+  function onValid({ password }: SetPasswordFormValues) {
     setFormError(null);
     setConfirmError(null);
     if (password !== confirmPassword) {
       setConfirmError("Passwords do not match.");
       return;
     }
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
-
-      if (res.ok) { setSuccess(true); return; }
-
-      const body = await res.json().catch(() => ({}));
-      if (res.status === 400 && body.error === "INVALID_TOKEN") {
-        setFormError("This link has expired or is invalid. Please request a new one.");
-      } else {
-        setFormError("Something went wrong. Please try again.");
-      }
-    } catch {
-      setFormError("Could not connect to the server. Please try again later.");
-    }
+    resetMutation.mutate(password);
   }
 
   const themeClass = newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : "";
@@ -146,10 +150,10 @@ export function SetNewPasswordPage() {
             )}
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={resetMutation.isPending}
               className="w-full"
             >
-              {isSubmitting ? "Resetting…" : "Reset Password"}
+              {resetMutation.isPending ? "Resetting…" : "Reset Password"}
             </Button>
           </form>
         )}

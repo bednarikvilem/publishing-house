@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import { useToast } from "../components/ui/toaster";
 
 export type UserEntry = {
@@ -11,6 +11,8 @@ export type UserEntry = {
   email_verified: boolean | null;
 };
 
+type NewspaperRole = "REGISTERED_USER" | "AUTHOR" | "EDITOR" | "NEWSPAPER_MANAGER";
+
 export function useNewspaperUsers(newspaperId: string) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -19,31 +21,25 @@ export function useNewspaperUsers(newspaperId: string) {
   const { data: users = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users?limit=100`,
-        { headers: authHeaders() },
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: UserEntry[] };
-      return data.data;
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .users.get({ query: { page: 1, limit: 100 } });
+      if (error) throw error;
+      return (data as { data: UserEntry[] }).data;
     },
   });
 
   const assignRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users/${userId}/roles`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ role }),
-        },
-      );
-      if (res.status === 409) {
-        const data = (await res.json()) as { error: string };
-        throw Object.assign(new Error("conflict"), { code: data.error });
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .users({ user_id: userId })
+        .roles.post({ role: role as NewspaperRole });
+      if (error) {
+        const { status, value } = toApiError(error);
+        if (status === 409) throw Object.assign(new Error("conflict"), { code: value?.error });
+        throw new Error();
       }
-      if (!res.ok) throw new Error();
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onError: (err: Error & { code?: string }) => {
@@ -67,11 +63,12 @@ export function useNewspaperUsers(newspaperId: string) {
       if (role === "REGISTERED_USER") {
         throw Object.assign(new Error("not-allowed"), { code: "BASE_ROLE" });
       }
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users/${userId}/roles/${role}`,
-        { method: "DELETE", headers: authHeaders() },
-      );
-      if (!res.ok) throw new Error();
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .users({ user_id: userId })
+        .roles({ role: role as NewspaperRole })
+        .delete();
+      if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onError: (err: Error & { code?: string }) => {

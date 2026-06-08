@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { client, toApiError } from "../../lib/api";
 import { FormField } from "../../components/FormField";
 import { Button } from "../../components/ui/button";
 
@@ -15,38 +16,28 @@ export function PasswordCard() {
     setError,
     reset,
     getValues,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors },
   } = useForm<PasswordFormValues>();
 
-  async function onSubmit(data: PasswordFormValues) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ password: data.newPassword }),
-      });
-
-      if (res.ok) {
-        reset();
-        return;
+  const changePassword = useMutation({
+    mutationFn: async (newPassword: string) => {
+      const { error } = await client.api.users.me.put({ password: newPassword });
+      if (error) throw error;
+    },
+    onSuccess: () => reset(),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 422 && value?.fields?.password) {
+        setError("newPassword", { message: value.fields.password });
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-
-      const body = await res.json();
-      if (res.status === 422 && body.fields?.password) {
-        setError("newPassword", { message: body.fields.password });
-        return;
-      }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", {
-        message: "Could not connect to the server. Please try again later.",
-      });
-    }
-  }
+    },
+  });
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => changePassword.mutate(data.newPassword))}
       className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8"
     >
       <div className="flex flex-col gap-1">
@@ -93,17 +84,17 @@ export function PasswordCard() {
       {errors.root && (
         <p className="text-destructive text-[13px]">{errors.root.message}</p>
       )}
-      {isSubmitSuccessful && (
+      {changePassword.isSuccess && (
         <p className="text-[13px] text-green-600">Password updated successfully.</p>
       )}
 
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={changePassword.isPending}
           className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
-          {isSubmitting ? "Updating…" : "Update Password"}
+          {changePassword.isPending ? "Updating…" : "Update Password"}
         </Button>
       </div>
     </form>

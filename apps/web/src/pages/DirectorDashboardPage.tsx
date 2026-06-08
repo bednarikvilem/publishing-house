@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL, authHeaders, client } from "../lib/api";
+import { client } from "../lib/api";
 import { useUser } from "../hooks/useUser";
+import { useLogout } from "../hooks/useLogout";
 import { StatisticsSection } from "../components/StatisticsSection";
 import { LoadingState } from "../components/LoadingState";
 import { SectionTitle } from "../components/SectionTitle";
@@ -23,6 +24,7 @@ export function DirectorDashboardPage() {
 
   const { user, isLoading: userLoading } = useUser();
   const isDirector = user?.roles.includes("DIRECTOR") ?? false;
+  const logout = useLogout("/director");
 
   useEffect(() => {
     if (!userLoading && (!user || !isDirector)) {
@@ -41,9 +43,7 @@ export function DirectorDashboardPage() {
   });
 
   function handleLogout() {
-    fetch(`${API_BASE_URL}/api/auth/logout`, { method: "POST", headers: authHeaders() }).catch(() => { /* empty */ });
-    localStorage.removeItem("token");
-    navigate("/director");
+    logout.mutate();
   }
 
   if (userLoading || !isDirector) {

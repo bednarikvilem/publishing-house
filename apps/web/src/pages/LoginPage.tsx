@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { Type, type Static } from "@sinclair/typebox";
 import { loginInput } from "@pb138/server/schemas/auth";
-import { API_BASE_URL } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
@@ -24,42 +25,42 @@ export function LoginPage() {
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: typeboxResolver(loginFormSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  async function onSubmit({ email, password }: LoginFormValues) {
-    if (!newspaper) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: newspaper.id, email, password }),
+  const loginMutation = useMutation({
+    mutationFn: async (values: LoginFormValues) => {
+      if (!newspaper) throw new Error("NEWSPAPER_UNAVAILABLE");
+      const { data, error } = await client.api.auth.login.post({
+        ...values,
+        newspaper_id: newspaper.id,
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("newspaper_id", newspaper.id);
-        navigate(`/${newspaperName}`);
-        return;
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      if (newspaper) localStorage.setItem("newspaper_id", newspaper.id);
+      navigate(`/${newspaperName}`);
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 401) {
+        setError("root", { message: "Invalid email or password." });
+      } else if (status === 404) {
+        setError("root", { message: "Newspaper not found." });
+      } else if (status === 403 && value?.error === "EMAIL_NOT_VERIFIED") {
+        setError("root", {
+          message: "Please verify your email address before signing in.",
+        });
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-
-      if (res.status === 401) { setError("root", { message: "Invalid email or password." }); return; }
-      if (res.status === 404) { setError("root", { message: "Newspaper not found." }); return; }
-      let body: { error?: string } = {};
-      try { body = await res.json(); } catch {}
-      if (res.status === 403 && body.error === "EMAIL_NOT_VERIFIED") {
-        setError("root", { message: "Please verify your email address before signing in." });
-        return;
-      }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", { message: "Could not connect to the server. Please try again later." });
-    }
-  }
+    },
+  });
 
   return (
     <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
@@ -68,7 +69,10 @@ export function LoginPage() {
         title={slugToDisplayName(newspaperName ?? "")}
         subtitle="Sign in to your account"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit((values) => loginMutation.mutate(values))}
+          className="flex flex-col gap-4"
+        >
           <FormField
             id="email"
             label="Email Address"
@@ -108,10 +112,10 @@ export function LoginPage() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || !newspaper}
+            disabled={loginMutation.isPending || !newspaper}
             className="w-full"
           >
-            {isSubmitting ? "Signing in…" : "Sign In"}
+            {loginMutation.isPending ? "Signing in…" : "Sign In"}
           </Button>
 
           <div className="flex items-center gap-3">
