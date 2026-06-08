@@ -123,7 +123,7 @@ export function ArticlePage() {
       .then(async (res) => {
         if (res.status === 403) {
           const body = await res.json().catch(() => ({})) as { error?: string };
-          if (body.error === "SUBSCRIPTION_REQUIRED") {
+          if (body.error === "SUBSCRIPTION_REQUIRED" || isLoggedIn) {
             setError("subscription_required");
           } else {
             setError("unauthorized");
@@ -131,7 +131,7 @@ export function ArticlePage() {
           return null;
         }
         if (res.status === 401) {
-          setError("unauthorized");
+          setError(isLoggedIn ? "subscription_required" : "unauthorized");
           return null;
         }
         if (res.status === 404) {
