@@ -214,10 +214,12 @@ export function ArticlePage() {
         <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
           <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
             <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
-              Subscriber-only content
+              Subscribers only
             </h2>
             <p className="text-muted-foreground text-sm">
-              You do not have access to this article.
+              {isLoggedIn
+                ? "This article is available to subscribers only. Subscribe to keep reading."
+                : "This article is available to subscribers only. Sign in or create an account to subscribe."}
             </p>
             {subscribeMessage ? (
               <p className="text-muted-foreground text-sm">{subscribeMessage}</p>
@@ -226,15 +228,23 @@ export function ArticlePage() {
                 onClick={handleSubscribeFromPaywall}
                 className="mt-2"
               >
-                Subscribe
+                Subscribe now
               </Button>
             ) : (
-              <a
-                href={`/${newspaperName}/login`}
-                className="bg-primary text-primary-foreground mt-2 rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90"
-              >
-                Log in to subscribe
-              </a>
+              <div className="mt-2 flex gap-3">
+                <a
+                  href={`/${newspaperName}/login`}
+                  className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
+                >
+                  Sign in
+                </a>
+                <a
+                  href={`/${newspaperName}/register`}
+                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
+                >
+                  Create account
+                </a>
+              </div>
             )}
           </div>
         </div>
@@ -243,12 +253,54 @@ export function ArticlePage() {
   }
 
   if (error) {
+    if (error === "unauthorized") {
+      return (
+        <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+          <Navbar newspaperName={newspaperName ?? ""} />
+          <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
+            <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
+              {isLoggedIn ? (
+                <>
+                  <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
+                    Access denied
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    You don't have permission to view this article.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
+                    Sign in to read this article
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    Create a free account or sign in to access the full article.
+                  </p>
+                  <div className="mt-2 flex gap-3">
+                    <a
+                      href={`/${newspaperName}/login`}
+                      className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
+                    >
+                      Sign in
+                    </a>
+                    <a
+                      href={`/${newspaperName}/register`}
+                      className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
+                    >
+                      Create account
+                    </a>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
     const message =
-      error === "unauthorized"
-        ? "You do not have access to this article."
-        : error === "not_found"
-          ? "This article could not be found."
-          : "Failed to load the article. Please try again later.";
+      error === "not_found"
+        ? "This article could not be found."
+        : "Failed to load the article. Please try again later.";
     return (
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName ?? ""} />
