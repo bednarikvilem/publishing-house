@@ -1,201 +1,64 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ListNode, ListItemNode } from "@lexical/list";
-import { Heart, MessageCircle } from "lucide-react";
-import { ImageNode } from "../lib/lexical/ImageNode";
 import { API_BASE_URL, authHeaders, requestSubscription } from "../lib/api";
-import type { ArticleDetail, Comment } from "../types";
+import type { ArticleDetail } from "../types";
 import { Navbar } from "../components/Navbar";
+import { ArticleContent } from "../components/ArticleContent";
+import { ArticleActions } from "../components/ArticleActions";
+import { CommentsSection } from "../components/CommentsSection";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useArticleViewTracker } from "../hooks/useArticleViewTracker";
 import { Button } from "../components/ui/button";
-import { Textarea } from "../components/ui/textarea";
 import { formatDate } from "../lib/utils";
+import { useState } from "react";
 
 function estimateReadTime(content: string) {
   const words = content.trim().split(/\s+/).length;
   return Math.max(1, Math.round(words / 200));
 }
 
-const viewerTheme = {
-  text: {
-    bold: "font-bold",
-    italic: "italic",
-    underline: "underline",
-    strikethrough: "line-through",
-  },
-  list: {
-    ul: "list-disc pl-6 my-2",
-    ol: "list-decimal pl-6 my-2",
-    listitem: "my-0.5",
-    nested: { listitem: "list-none" },
-  },
-  quote:
-    "border-l-4 border-border bg-muted px-8 py-6 text-foreground italic my-3",
-  heading: {
-    h1: "text-3xl-plus font-bold tracking-snug my-3",
-    h2: "text-2xl font-bold tracking-snug my-3",
-    h3: "text-xl font-bold my-2",
-  },
-  paragraph: "text-foreground text-base leading-xl my-1",
-};
-
-function ArticleContent({ content }: { content: string }) {
-  let editorState: string | undefined;
-  try {
-    const parsed = JSON.parse(content);
-    if (parsed.root) editorState = content;
-  } catch {
-    // plain text fallback
-  }
-
-  return (
-    <div className="flex flex-col gap-6">
-      {editorState ? (
-        <LexicalComposer
-          initialConfig={{
-            namespace: "ArticleViewer",
-            theme: viewerTheme,
-            nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, ImageNode],
-            onError: (error: Error) => console.error("Lexical error:", error),
-            editorState,
-            editable: false,
-          }}
-        >
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className="text-foreground text-base leading-xl outline-none" />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <ListPlugin />
-        </LexicalComposer>
-      ) : (
-        <p className="text-foreground text-base leading-xl">{content}</p>
-      )}
-    </div>
-  );
-}
-
 export function ArticlePage() {
   const { articleId } = useParams<{ articleId: string }>();
   const { newspaperName, newspaper } = useNewspaper();
-  const [article, setArticle] = useState<ArticleDetail | null>(null);
-  const [error, setError] = useState<"unauthorized" | "subscription_required" | "not_found" | "error" | null>(null);
   const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
-  const [likesCount, setLikesCount] = useState(0);
-  const [likedByMe, setLikedByMe] = useState(false);
-  const [isTogglingLike, setIsTogglingLike] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  interface CommentFormValues { content: string }
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { isSubmitting: isSubmittingComment },
-  } = useForm<CommentFormValues>({ defaultValues: { content: "" } });
-  const commentContent = watch("content", "");
 
   const isLoggedIn = !!localStorage.getItem("token");
 
-  const { sentinelRef } = useArticleViewTracker({
-    newspaperId: newspaper?.id,
-    articleId: articleId,
-    enabled: article !== null,
+  const { data: article = null, isLoading, error } = useQuery({
+    queryKey: ["article", newspaper?.id, articleId],
+    enabled: !!newspaper && !!articleId,
+    retry: false,
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_BASE_URL}/api/newspapers/${newspaper!.id}/articles/${articleId}`,
+        { headers: authHeaders() },
+      );
+      if (res.status === 403) {
+        const body = await res.json().catch(() => ({})) as { error?: string };
+        throw Object.assign(new Error("forbidden"), {
+          kind: body.error === "SUBSCRIPTION_REQUIRED" || isLoggedIn
+            ? "subscription_required"
+            : "unauthorized",
+        });
+      }
+      if (res.status === 401) {
+        throw Object.assign(new Error("unauthorized"), {
+          kind: isLoggedIn ? "subscription_required" : "unauthorized",
+        });
+      }
+      if (res.status === 404) throw Object.assign(new Error("not_found"), { kind: "not_found" });
+      if (!res.ok) throw Object.assign(new Error("error"), { kind: "error" });
+      return res.json() as Promise<ArticleDetail>;
+    },
   });
 
-  useEffect(() => {
-    if (!newspaper || !articleId) return;
-    setError(null);
-    fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}`,
-      { headers: authHeaders() }
-    )
-      .then(async (res) => {
-        if (res.status === 403) {
-          const body = await res.json().catch(() => ({})) as { error?: string };
-          if (body.error === "SUBSCRIPTION_REQUIRED" || isLoggedIn) {
-            setError("subscription_required");
-          } else {
-            setError("unauthorized");
-          }
-          return null;
-        }
-        if (res.status === 401) {
-          setError(isLoggedIn ? "subscription_required" : "unauthorized");
-          return null;
-        }
-        if (res.status === 404) {
-          setError("not_found");
-          return null;
-        }
-        if (!res.ok) {
-          setError("error");
-          return null;
-        }
-        return res.json() as Promise<ArticleDetail>;
-      })
-      .then((data) => {
-        if (data) {
-          setArticle(data);
-          setLikesCount(data.likes_count);
-          setLikedByMe(data.liked_by_me);
-          setComments(data.comments);
-        }
-      })
-      .catch(() => setError("error"));
-  }, [newspaper, articleId]);
+  const errorKind = error ? (error as Error & { kind?: string }).kind ?? "error" : null;
 
-  async function handleToggleLike() {
-    if (!newspaper || !articleId || isTogglingLike) return;
-    setIsTogglingLike(true);
-    const wasLiked = likedByMe;
-    setLikedByMe(!wasLiked);
-    setLikesCount((c) => c + (wasLiked ? -1 : 1));
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/likes`,
-        { method: wasLiked ? "DELETE" : "POST", headers: authHeaders() }
-      );
-      if (res.ok) {
-        const data = await res.json() as { likes_count: number };
-        setLikesCount(data.likes_count);
-      } else {
-        setLikedByMe(wasLiked);
-        setLikesCount((c) => c + (wasLiked ? 1 : -1));
-      }
-    } catch {
-      setLikedByMe(wasLiked);
-      setLikesCount((c) => c + (wasLiked ? 1 : -1));
-    } finally {
-      setIsTogglingLike(false);
-    }
-  }
-
-  async function handleSubmitComment({ content }: CommentFormValues) {
-    if (!newspaper || !articleId) return;
-    const res = await fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/${articleId}/comments`,
-      {
-        method: "POST",
-        headers: { ...authHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify({ content: content.trim() }),
-      }
-    );
-    if (!res.ok) throw new Error("Failed to post comment");
-    const newComment = await res.json() as Comment;
-    setComments((prev) => [...prev, newComment]);
-    reset();
-  }
+  const { sentinelRef } = useArticleViewTracker({
+    newspaperId: newspaper?.id,
+    articleId,
+    enabled: article !== null,
+  });
 
   async function handleSubscribeFromPaywall() {
     if (!newspaper) return;
@@ -207,9 +70,11 @@ export function ArticlePage() {
     }
   }
 
-  if (error === "subscription_required") {
+  const themeClass = `bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`;
+
+  if (errorKind === "subscription_required") {
     return (
-      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+      <div className={themeClass}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
           <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
@@ -224,24 +89,15 @@ export function ArticlePage() {
             {subscribeMessage ? (
               <p className="text-muted-foreground text-sm">{subscribeMessage}</p>
             ) : isLoggedIn ? (
-              <Button
-                onClick={handleSubscribeFromPaywall}
-                className="mt-2"
-              >
+              <Button onClick={handleSubscribeFromPaywall} className="mt-2">
                 Subscribe now
               </Button>
             ) : (
               <div className="mt-2 flex gap-3">
-                <a
-                  href={`/${newspaperName}/login`}
-                  className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
-                >
+                <a href={`/${newspaperName}/login`} className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors">
                   Sign in
                 </a>
-                <a
-                  href={`/${newspaperName}/register`}
-                  className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
-                >
+                <a href={`/${newspaperName}/register`} className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90">
                   Create account
                 </a>
               </div>
@@ -252,57 +108,39 @@ export function ArticlePage() {
     );
   }
 
-  if (error) {
-    if (error === "unauthorized") {
-      return (
-        <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
-          <Navbar newspaperName={newspaperName ?? ""} />
-          <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
-            <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
-              {isLoggedIn ? (
-                <>
-                  <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
-                    Access denied
-                  </h2>
-                  <p className="text-muted-foreground text-sm">
-                    You don't have permission to view this article.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">
-                    Sign in to read this article
-                  </h2>
-                  <p className="text-muted-foreground text-sm">
-                    Create a free account or sign in to access the full article.
-                  </p>
-                  <div className="mt-2 flex gap-3">
-                    <a
-                      href={`/${newspaperName}/login`}
-                      className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
-                    >
-                      Sign in
-                    </a>
-                    <a
-                      href={`/${newspaperName}/register`}
-                      className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90"
-                    >
-                      Create account
-                    </a>
-                  </div>
-                </>
-              )}
-            </div>
+  if (errorKind === "unauthorized") {
+    return (
+      <div className={themeClass}>
+        <Navbar newspaperName={newspaperName ?? ""} />
+        <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-4 py-12">
+          <div className="border-border bg-card flex w-full max-w-[var(--layout-auth-card-max-width)] flex-col items-center gap-4 rounded-xl border p-10 text-center shadow-sm">
+            {isLoggedIn ? (
+              <>
+                <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">Access denied</h2>
+                <p className="text-muted-foreground text-sm">You don't have permission to view this article.</p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-foreground text-xl-plus font-extrabold tracking-tight">Sign in to read this article</h2>
+                <p className="text-muted-foreground text-sm">Create a free account or sign in to access the full article.</p>
+                <div className="mt-2 flex gap-3">
+                  <a href={`/${newspaperName}/login`} className="text-foreground hover:bg-muted rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors">Sign in</a>
+                  <a href={`/${newspaperName}/register`} className="bg-primary text-primary-foreground rounded-lg px-5 py-2.5 text-sm font-semibold hover:opacity-90">Create account</a>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      );
-    }
-    const message =
-      error === "not_found"
-        ? "This article could not be found."
-        : "Failed to load the article. Please try again later.";
+      </div>
+    );
+  }
+
+  if (errorKind) {
+    const message = errorKind === "not_found"
+      ? "This article could not be found."
+      : "Failed to load the article. Please try again later.";
     return (
-      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+      <div className={themeClass}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="flex h-64 flex-col items-center justify-center gap-3">
           <p className="text-muted-foreground text-xs-plus">{message}</p>
@@ -311,9 +149,9 @@ export function ArticlePage() {
     );
   }
 
-  if (!article) {
+  if (isLoading || !article) {
     return (
-      <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+      <div className={themeClass}>
         <Navbar newspaperName={newspaperName ?? ""} />
         <div className="text-muted-foreground flex h-64 items-center justify-center text-xs-plus">
           Loading…
@@ -326,72 +164,40 @@ export function ArticlePage() {
   const readTime = estimateReadTime(article.content);
 
   return (
-    <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
+    <div className={themeClass}>
       <Navbar newspaperName={newspaperName ?? ""} />
 
       {/* Hero */}
       <div className="relative h-[var(--layout-article-hero-height)] w-full overflow-hidden">
-        {/* Background image */}
         {primaryImage ? (
-          <img
-            src={primaryImage.url}
-            alt={primaryImage.caption}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          <img src={primaryImage.url} alt={primaryImage.caption} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="bg-muted absolute inset-0" />
         )}
-        {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/67" />
-        {/* Content anchored to bottom */}
         <div className="absolute inset-0 flex flex-col justify-end gap-4 px-16 pb-12">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-2xs">
-            <Link
-              to={`/${newspaperName}`}
-              className="text-white/67 hover:text-white/90"
-            >
-              Home
-            </Link>
+            <Link to={`/${newspaperName}`} className="text-white/67 hover:text-white/90">Home</Link>
             <span className="text-white/40">/</span>
-            <Link
-              to={`/${newspaperName}/category/${article.category_slug}`}
-              className="text-white/67 hover:text-white/90"
-            >
-              {article.category}
-            </Link>
+            <Link to={`/${newspaperName}/category/${article.category_slug}`} className="text-white/67 hover:text-white/90">{article.category}</Link>
             <span className="text-white/40">/</span>
             <span className="font-medium text-white/87">Article</span>
           </nav>
-          {/* Category badge */}
           <span className="bg-primary text-primary-foreground w-fit rounded px-2.5 py-1 text-xs font-semibold tracking-wide-sm">
             {article.category}
           </span>
-          {/* Title */}
           <h1 className="max-w-[var(--layout-article-title-max-width)] text-4xl-plus leading-2xs font-extrabold tracking-tight-px text-white">
             {article.title}
           </h1>
-          {/* Author meta */}
-          <Link
-            to={`/${newspaperName}/authors/${article.author.id}`}
-            className="flex w-fit items-center gap-4 transition-opacity hover:opacity-80"
-          >
+          <Link to={`/${newspaperName}/authors/${article.author.id}`} className="flex w-fit items-center gap-4 transition-opacity hover:opacity-80">
             {article.author.profile_picture ? (
-              <img
-                src={article.author.profile_picture}
-                alt={article.author.full_name}
-                className="h-9 w-9 rounded-full object-cover ring-1 ring-white/27"
-              />
+              <img src={article.author.profile_picture} alt={article.author.full_name} className="h-9 w-9 rounded-full object-cover ring-1 ring-white/27" />
             ) : (
               <div className="h-9 w-9 rounded-full bg-white/20 ring-1 ring-white/27" />
             )}
             <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-semibold text-white/90">
-                By {article.author.full_name}
-              </span>
-              <span className="text-2xs text-white/67">
-                {formatDate(article.publication_date, "long")} · {readTime} min read
-              </span>
+              <span className="text-sm font-semibold text-white/90">By {article.author.full_name}</span>
+              <span className="text-2xs text-white/67">{formatDate(article.publication_date, "long")} · {readTime} min read</span>
             </div>
           </Link>
         </div>
@@ -400,16 +206,9 @@ export function ArticlePage() {
       {/* Article Body */}
       <section className="px-6 py-12">
         <div className="mx-auto w-full max-w-3xl">
-          {/* Lede */}
-          <p className="text-foreground mb-6 text-lg leading-lg">
-            {article.perex}
-          </p>
-
+          <p className="text-foreground mb-6 text-lg leading-lg">{article.perex}</p>
           <hr className="border-border mb-6" />
-
           <ArticleContent content={article.content} />
-
-          {/* Article read tracking sentinel */}
           <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
         </div>
       </section>
@@ -417,77 +216,22 @@ export function ArticlePage() {
       {/* Likes & Comments */}
       <section className="px-6 pb-16">
         <div className="mx-auto w-full max-w-3xl">
-        <hr className="border-border mb-8" />
-
-        {/* Like button */}
-        <div className="mb-10 flex items-center gap-3">
-          {isLoggedIn ? (
-            <Button
-              variant={likedByMe ? "outline" : "outline"}
-              onClick={handleToggleLike}
-              disabled={isTogglingLike}
-              className={likedByMe ? "border-red-400 bg-red-50 text-red-600 hover:bg-red-100 rounded-full" : "rounded-full"}
-            >
-              <Heart
-                size={16}
-                className={likedByMe ? "fill-red-500 stroke-red-500" : ""}
-              />
-              {likesCount} {likesCount === 1 ? "Like" : "Likes"}
-            </Button>
-          ) : (
-            <span className="text-muted-foreground flex items-center gap-2 text-sm">
-              <Heart size={16} />
-              {likesCount} {likesCount === 1 ? "Like" : "Likes"}
-            </span>
-          )}
-        </div>
-
-        {/* Comments */}
-        <div className="flex flex-col gap-6">
-          <h2 className="flex items-center gap-2 text-xl font-bold">
-            <MessageCircle size={20} />
-            Comments ({comments.length})
-          </h2>
-
-          {/* Comment form */}
-          {isLoggedIn && (
-            <form onSubmit={handleSubmit(handleSubmitComment)} className="flex flex-col gap-3">
-              <Textarea
-                placeholder="Write a comment…"
-                maxLength={2000}
-                rows={3}
-                {...register("content")}
-              />
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  disabled={!commentContent.trim() || isSubmittingComment}
-                >
-                  {isSubmittingComment ? "Posting…" : "Post comment"}
-                </Button>
-              </div>
-            </form>
-          )}
-
-          {/* Comment list */}
-          {comments.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No comments yet. Be the first!</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="border-border rounded-lg border p-4">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="text-2xs font-semibold">@{comment.author.username}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {formatDate(comment.created_at, "long")}
-                    </span>
-                  </div>
-                  <p className="text-foreground text-sm leading-relaxed">{comment.content}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          <hr className="border-border mb-8" />
+          <div className="mb-10 flex items-center gap-3">
+            <ArticleActions
+              articleId={articleId!}
+              newspaperId={newspaper!.id}
+              initialLikesCount={article.likes_count}
+              initialLikedByMe={article.liked_by_me}
+              isLoggedIn={isLoggedIn}
+            />
+          </div>
+          <CommentsSection
+            articleId={articleId!}
+            newspaperId={newspaper!.id}
+            initialComments={article.comments}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
       </section>
     </div>

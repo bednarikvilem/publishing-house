@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ChevronDownIcon,
@@ -12,23 +12,19 @@ import {
 } from "./Icons";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { useTheme } from "../hooks/useTheme";
-import { API_BASE_URL, authHeaders, client, requestSubscription, getSubscriptionStatus } from "../lib/api";
+import { useUser } from "../hooks/useUser";
+import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { API_BASE_URL, authHeaders, client, requestSubscription } from "../lib/api";
 import { slugToDisplayName } from "../lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-interface UserInfo {
-  full_name: string | null;
-  username: string;
-  roles: string[];
-}
 
 interface NavbarProps {
   newspaperName: string;
   displayName?: string;
 }
 
-function getInitials(user: UserInfo): string {
+function getInitials(user: { full_name: string | null; username: string }): string {
   if (user.full_name) {
     const parts = user.full_name.trim().split(/\s+/);
     return parts.map((p) => p[0]).join("").slice(0, 2).toUpperCase();
@@ -42,12 +38,11 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
   const { newspaper } = useNewspaper();
   const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
-  const [user, setUser] = useState<UserInfo | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
-  const [subscriptionStatus, setSubscriptionStatus] = useState<{ is_active: boolean; expires_at: string | null } | null>(null);
   const [subscribeMessage, setSubscribeMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,25 +68,12 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     },
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const loggedInNewspaperId = localStorage.getItem("newspaper_id");
-    if (!token || !newspaper || loggedInNewspaperId !== newspaper.id) {
-      setUser(null);
-      setSubscriptionStatus(null);
-      return;
-    }
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<UserInfo>;
-      })
-      .then((data) => setUser(data))
-      .catch(() => setUser(null));
-    getSubscriptionStatus(newspaper.id)
-      .then((s) => setSubscriptionStatus(s))
-      .catch(() => {});
-  }, [newspaper]);
+  const { user: fetchedUser } = useUser();
+  const { subscriptionStatus } = useSubscriptionStatus(newspaper?.id);
+
+  // Only show the logged-in user when they authenticated against this specific newspaper
+  const loggedInNewspaperId = localStorage.getItem("newspaper_id");
+  const user = (newspaper && loggedInNewspaperId === newspaper.id) ? fetchedUser : null;
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -119,7 +101,8 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
     }).catch(() => {});
     localStorage.removeItem("token");
     localStorage.removeItem("newspaper_id");
-    setUser(null);
+    queryClient.setQueryData(["me"], null);
+    queryClient.setQueryData(["subscription-status", newspaper?.id], null);
     setUserMenuOpen(false);
     setMobileMenuOpen(false);
     navigate(`/${newspaperName}/login`);

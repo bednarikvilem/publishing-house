@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
-
-// TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
+import { useNewspaper } from "../hooks/useNewspaper";
+import { formatDate } from "../lib/utils";
 
 type ArticleStatus =
   | "DRAFT"
@@ -119,55 +119,35 @@ function PlusIcon() {
   );
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 export function AuthorDashboardPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [searchParams, setSearchParams] = useSearchParams();
+  const newspaperId = newspaper?.id ?? null;
 
   const activeStatus =
     (searchParams.get("status") as ArticleStatus | null) ?? null;
   const currentPage = Number(searchParams.get("page") ?? "1");
 
-  const [articles, setArticles] = useState<DashboardArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
-    setError(false);
-
-    const params = new URLSearchParams();
-    if (activeStatus) params.set("status", activeStatus);
-    params.set("page", String(currentPage));
-    params.set("limit", "20");
-
-    fetch(
-      `${API_BASE_URL}/api/newspapers/${NEWSPAPER_ID}/articles/mine?${params}`,
-      { headers: authHeaders() }
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<DashboardResponse>;
-      })
-      .then((data) => {
-        setArticles(data.data);
-        setPagination({
-          total: data.pagination.total,
-          total_pages: data.pagination.total_pages,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["my-articles", newspaperId, activeStatus, currentPage],
+    enabled: !!newspaperId,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId! })
+        .articles.mine.get({
+          query: {
+            ...(activeStatus ? { status: activeStatus } : {}),
+            page: currentPage,
+            limit: 20,
+          },
         });
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [activeStatus, currentPage]);
+      if (error) throw error;
+      return data as DashboardResponse;
+    },
+  });
+
+  const articles = data?.data ?? [];
+  const pagination = data?.pagination ?? { total: 0, total_pages: 1 };
 
   function setStatus(status: ArticleStatus | null) {
     const next = new URLSearchParams();
@@ -185,7 +165,6 @@ export function AuthorDashboardPage() {
     FILTER_STATUSES.find((s) => s.value === activeStatus)?.label ??
     "All Articles";
 
-  // Status filter section passed as children into the Sidebar
   const statusFilter = (
     <div className="flex flex-col gap-0.5">
       <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
@@ -228,9 +207,7 @@ export function AuthorDashboardPage() {
       <div className="flex flex-1">
         <Sidebar>{statusFilter}</Sidebar>
 
-        {/* Main Content */}
         <main className="flex flex-1 flex-col gap-7 px-12 py-8">
-          {/* Page Title */}
           <div className="flex items-center justify-between">
             <h1 className="text-foreground text-[24px] font-bold">
               {activeNavLabel}
@@ -244,12 +221,11 @@ export function AuthorDashboardPage() {
             </Link>
           </div>
 
-          {/* Article List */}
-          {error ? (
+          {isError ? (
             <p className="text-muted-foreground py-16 text-center">
               Failed to load articles. Please sign in and try again.
             </p>
-          ) : loading ? (
+          ) : isLoading ? (
             <p className="text-muted-foreground py-16 text-center">Loading…</p>
           ) : articles.length === 0 ? (
             <p className="text-muted-foreground py-16 text-center">
@@ -274,7 +250,6 @@ export function AuthorDashboardPage() {
                           : "border-r border-b border-l"
                       } ${isLast ? "rounded-b-lg" : ""}`}
                     >
-                      {/* Article Info */}
                       <div className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="text-foreground text-[15px] leading-snug font-semibold">
                           {article.title}
@@ -297,7 +272,6 @@ export function AuthorDashboardPage() {
                         </span>
                       </div>
 
-                      {/* Status & Actions */}
                       <div className="flex shrink-0 items-center gap-3">
                         <span
                           className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
@@ -319,7 +293,6 @@ export function AuthorDashboardPage() {
                 })}
               </div>
 
-              {/* Pagination */}
               {pagination.total_pages > 1 && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground text-[13px]">

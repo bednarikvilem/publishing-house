@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL, authHeaders, client } from "../lib/api";
+import { useUser } from "../hooks/useUser";
 import { StatisticsSection } from "../components/StatisticsSection";
 import { LoadingState } from "../components/LoadingState";
 import { SectionTitle } from "../components/SectionTitle";
@@ -17,27 +19,26 @@ type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry
 
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
-  const [newspapers, setNewspapers]   = useState<NewspaperEntry[]>([]);
-  const [activeView, setActiveView]   = useState<ActiveView>("overview");
-  const [authChecked, setAuthChecked] = useState(false);
+  const [activeView, setActiveView] = useState<ActiveView>("overview");
+
+  const { user, isLoading: userLoading } = useUser();
+  const isDirector = user?.roles.includes("DIRECTOR") ?? false;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) => res.ok ? res.json() as Promise<{ roles: string[] }> : Promise.reject())
-      .then((data) => {
-        if (!data.roles.includes("DIRECTOR")) navigate("/director");
-        else setAuthChecked(true);
-      })
-      .catch(() => navigate("/director"));
-  }, [navigate]);
+    if (!userLoading && (!user || !isDirector)) {
+      navigate("/director");
+    }
+  }, [userLoading, user, isDirector, navigate]);
 
-  useEffect(() => {
-    if (!authChecked) return;
-    fetch(`${API_BASE_URL}/api/newspapers`, { headers: authHeaders() })
-      .then((res) => res.ok ? res.json() as Promise<{ data: NewspaperEntry[] }> : Promise.reject())
-      .then((data) => setNewspapers(data.data))
-      .catch(() => { /* empty */ });
-  }, [authChecked]);
+  const { data: newspapers = [] } = useQuery({
+    queryKey: ["newspapers"],
+    enabled: isDirector,
+    queryFn: async () => {
+      const { data, error } = await client.api.newspapers.get();
+      if (error) throw error;
+      return (data as { data: NewspaperEntry[] }).data;
+    },
+  });
 
   function handleLogout() {
     fetch(`${API_BASE_URL}/api/auth/logout`, { method: "POST", headers: authHeaders() }).catch(() => { /* empty */ });
@@ -45,7 +46,7 @@ export function DirectorDashboardPage() {
     navigate("/director");
   }
 
-  if (!authChecked) {
+  if (userLoading || !isDirector) {
     return (
       <div className="bg-background text-foreground flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">Loading…</p>
