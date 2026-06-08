@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import type { Static } from "@sinclair/typebox";
+import { globalLoginInput } from "@pb138/server/schemas/auth";
 import { API_BASE_URL } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { useTheme } from "../hooks/useTheme";
 import { SunIcon, MoonIcon } from "../components/Icons";
 import { AuthCard } from "../components/AuthCard";
@@ -13,7 +16,7 @@ interface GlobalLoginPageProps {
   redirectTo: string;
 }
 
-interface LoginFormValues { email: string; password: string }
+type LoginFormValues = Static<typeof globalLoginInput>;
 
 export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPageProps) {
   const navigate = useNavigate();
@@ -23,7 +26,10 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
-  } = useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
+  } = useForm<LoginFormValues>({
+    resolver: typeboxResolver(globalLoginInput),
+    defaultValues: { email: "", password: "" },
+  });
 
   async function onSubmit({ email, password }: LoginFormValues) {
     try {
@@ -72,6 +78,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
             type="email"
             placeholder="you@example.com"
             required
+            error={errors.email?.message}
             {...register("email")}
           />
           <FormField
@@ -80,6 +87,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
             type="password"
             placeholder="Enter your password"
             required
+            error={errors.password?.message}
             {...register("password")}
           />
 

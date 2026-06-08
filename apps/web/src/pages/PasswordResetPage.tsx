@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { Type, type Static } from "@sinclair/typebox";
+import { forgotPasswordInput } from "@pb138/server/schemas/auth";
 import { API_BASE_URL } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
@@ -10,7 +13,8 @@ import { slugToDisplayName } from "../lib/utils";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { Button } from "../components/ui/button";
 
-interface ResetFormValues { email: string }
+const resetFormSchema = Type.Omit(forgotPasswordInput, ["newspaper_id"]);
+type ResetFormValues = Static<typeof resetFormSchema>;
 
 export function PasswordResetPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -22,7 +26,10 @@ export function PasswordResetPage() {
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
-  } = useForm<ResetFormValues>({ defaultValues: { email: "" } });
+  } = useForm<ResetFormValues>({
+    resolver: typeboxResolver(resetFormSchema),
+    defaultValues: { email: "" },
+  });
 
   async function onSubmit({ email }: ResetFormValues) {
     if (!newspaper) return;
@@ -73,6 +80,7 @@ export function PasswordResetPage() {
               type="email"
               placeholder="you@example.com"
               required
+              error={errors.email?.message}
               {...register("email")}
             />
             {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}

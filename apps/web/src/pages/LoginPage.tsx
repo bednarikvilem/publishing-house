@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { Type, type Static } from "@sinclair/typebox";
+import { loginInput } from "@pb138/server/schemas/auth";
 import { API_BASE_URL } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
@@ -10,7 +13,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 
-interface LoginFormValues { email: string; password: string }
+const loginFormSchema = Type.Omit(loginInput, ["newspaper_id"]);
+type LoginFormValues = Static<typeof loginFormSchema>;
 
 export function LoginPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -21,7 +25,10 @@ export function LoginPage() {
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
-  } = useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
+  } = useForm<LoginFormValues>({
+    resolver: typeboxResolver(loginFormSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   async function onSubmit({ email, password }: LoginFormValues) {
     if (!newspaper) return;
@@ -68,6 +75,7 @@ export function LoginPage() {
             type="email"
             placeholder="you@example.com"
             required
+            error={errors.email?.message}
             {...register("email")}
           />
 
@@ -88,8 +96,12 @@ export function LoginPage() {
               type="password"
               placeholder="Enter your password"
               required
+              aria-invalid={!!errors.password}
               {...register("password")}
             />
+            {errors.password && (
+              <span className="text-destructive text-xs">{errors.password.message}</span>
+            )}
           </div>
 
           {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}

@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import type { Static } from "@sinclair/typebox";
+import { createGlobalUserInput } from "@pb138/server/schemas/auth";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { typeboxResolver, emptyToUndefined } from "../../lib/validation";
 import { PlusIcon } from "../../components/Icons";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
@@ -25,13 +28,7 @@ type GlobalUser = {
   roles: string[];
 };
 
-interface CreateGlobalUserFormValues {
-  email: string;
-  username: string;
-  full_name: string;
-  password: string;
-  role: "DIRECTOR" | "SYSTEM_ADMINISTRATOR";
-}
+type CreateGlobalUserFormValues = Static<typeof createGlobalUserInput>;
 
 export function GlobalUsersSection() {
   const [globalUsers, setGlobalUsers] = useState<GlobalUser[]>([]);
@@ -46,6 +43,7 @@ export function GlobalUsersSection() {
     control,
     formState: { errors, isSubmitting },
   } = useForm<CreateGlobalUserFormValues>({
+    resolver: typeboxResolver(createGlobalUserInput),
     defaultValues: { role: "DIRECTOR" },
   });
 
@@ -141,7 +139,7 @@ export function GlobalUsersSection() {
               type="email"
               required
               error={errors.email?.message}
-              {...register("email", { required: "Email is required" })}
+              {...register("email")}
             />
             <FormField
               id="username"
@@ -149,14 +147,14 @@ export function GlobalUsersSection() {
               type="text"
               required
               error={errors.username?.message}
-              {...register("username", { required: "Username is required" })}
+              {...register("username")}
             />
             <FormField
               id="full_name"
               label="Full Name"
               type="text"
               error={errors.full_name?.message}
-              {...register("full_name")}
+              {...register("full_name", { setValueAs: emptyToUndefined })}
             />
             <FormField
               id="password"
@@ -164,10 +162,7 @@ export function GlobalUsersSection() {
               type="password"
               required
               error={errors.password?.message}
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 8, message: "At least 8 characters" },
-              })}
+              {...register("password")}
             />
             <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-[14px]">
