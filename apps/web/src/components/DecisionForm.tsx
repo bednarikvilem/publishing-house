@@ -38,9 +38,9 @@ export function DecisionForm({
   }
 
   const decisionStyles: Record<ReviewDecision, string> = {
-    APPROVE: "bg-[#16a34a] text-white",
-    REJECT: "bg-[#dc2626] text-white",
-    REQUEST_REVISION: "bg-[#ea580c] text-white",
+    APPROVE: "bg-success text-white",
+    REJECT: "bg-destructive text-white",
+    REQUEST_REVISION: "bg-warning text-white",
   };
   const inactiveStyle =
     "border-border bg-background text-muted-foreground hover:bg-muted border";
