@@ -7,7 +7,6 @@ import {
     ConflictError,
     ForbiddenError,
     NotFoundError,
-    UnauthorizedError,
     UnprocessableError,
 } from "../errors";
 import type { AuthUser, Roles } from "./context";
@@ -40,11 +39,7 @@ let systemConfig = {
     },
 };
 
-function requireSystemAdmin(user: AuthUser | null, roles: Roles) {
-    if (!user) {
-        logger.warn("Admin action failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
+function requireSystemAdmin(user: AuthUser, roles: Roles) {
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) {
         logger.warn("Admin action failed: forbidden", { userId: user.id, roles });
         throw new ForbiddenError("FORBIDDEN");
@@ -54,7 +49,7 @@ function requireSystemAdmin(user: AuthUser | null, roles: Roles) {
 export async function listNewspaperUsers(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     query: Static<typeof adminUsersListQuery>,
 ) {
@@ -104,7 +99,7 @@ export async function listNewspaperUsers(
     );
 
     logger.info("Admin fetched users", {
-        userId: user!.id,
+        userId: user.id,
         newspaperId,
         page,
         limit,
@@ -121,7 +116,7 @@ export async function assignRole(
     tx: Tx,
     newspaperId: string,
     userId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof assignRoleBody>,
 ) {
@@ -182,8 +177,8 @@ export async function assignRole(
         ),
     });
 
-    await audit({ userId: user!.id, operationType: "ROLE_ASSIGNED", targetObjectId: userId, result: "SUCCESS" });
-    logger.info("Role assigned", { assignedBy: user!.id, targetUserId: userId, role, newspaperId });
+    await audit({ userId: user.id, operationType: "ROLE_ASSIGNED", targetObjectId: userId, result: "SUCCESS" });
+    logger.info("Role assigned", { assignedBy: user.id, targetUserId: userId, role, newspaperId });
 
     return {
         user_id: userId,
@@ -196,7 +191,7 @@ export async function removeRole(
     newspaperId: string,
     userId: string,
     role: Static<typeof NewspaperRoleEnum>,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
     requireSystemAdmin(user, roles);
@@ -233,8 +228,8 @@ export async function removeRole(
         ),
     });
 
-    await audit({ userId: user!.id, operationType: "ROLE_REMOVED", targetObjectId: userId, result: "SUCCESS" });
-    logger.info("Role removed", { removedBy: user!.id, targetUserId: userId, role });
+    await audit({ userId: user.id, operationType: "ROLE_REMOVED", targetObjectId: userId, result: "SUCCESS" });
+    logger.info("Role removed", { removedBy: user.id, targetUserId: userId, role });
 
     return {
         user_id: userId,
@@ -245,11 +240,9 @@ export async function removeRole(
 export async function getStatistics(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
-
     const isDirector = roles.includes("DIRECTOR");
     const isManager = roles.includes("NEWSPAPER_MANAGER");
 
@@ -550,8 +543,7 @@ export async function getStatistics(
     };
 }
 
-export async function getGlobalStatistics(tx: Tx, user: AuthUser | null, roles: Roles) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
+export async function getGlobalStatistics(tx: Tx, user: AuthUser, roles: Roles) {
     if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
         throw new ForbiddenError("FORBIDDEN");
     }
@@ -644,8 +636,7 @@ export async function getGlobalStatistics(tx: Tx, user: AuthUser | null, roles: 
     return { totals, per_newspaper: perNewspaper };
 }
 
-export async function listGlobalUsers(tx: Tx, user: AuthUser | null, roles: Roles) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
+export async function listGlobalUsers(tx: Tx, user: AuthUser, roles: Roles) {
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) throw new ForbiddenError("FORBIDDEN");
 
     const globalUsersList = await tx
@@ -673,11 +664,10 @@ export async function listGlobalUsers(tx: Tx, user: AuthUser | null, roles: Role
 
 export async function createGlobalUser(
     tx: Tx,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof createGlobalUserInput>,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) throw new ForbiddenError("FORBIDDEN");
 
     const { email, username, password, full_name, role } = body;
@@ -716,10 +706,10 @@ export async function createGlobalUser(
     };
 }
 
-export async function getConfig(user: AuthUser | null, roles: Roles) {
+export async function getConfig(user: AuthUser, roles: Roles) {
     requireSystemAdmin(user, roles);
 
-    logger.info("System config fetched", { userId: user!.id });
+    logger.info("System config fetched", { userId: user.id });
 
     return systemConfig;
 }
@@ -727,11 +717,10 @@ export async function getConfig(user: AuthUser | null, roles: Roles) {
 export async function assignGlobalRole(
     tx: Tx,
     userId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof assignGlobalRoleBody>,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) throw new ForbiddenError("FORBIDDEN");
 
     const { role } = body;
@@ -765,10 +754,9 @@ export async function removeGlobalRole(
     tx: Tx,
     userId: string,
     role: Static<typeof GlobalRoleEnum>,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("SYSTEM_ADMINISTRATOR")) throw new ForbiddenError("FORBIDDEN");
 
     if (userId === user.id && role === "SYSTEM_ADMINISTRATOR") {
@@ -801,7 +789,7 @@ export async function removeGlobalRole(
 }
 
 export async function updateConfig(
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof adminConfigBody>,
 ) {
@@ -817,8 +805,8 @@ export async function updateConfig(
         systemConfig.uploads = { ...systemConfig.uploads, ...body.uploads };
     }
 
-    await audit({ userId: user!.id, operationType: "SYSTEM_CONFIG_UPDATED", result: "SUCCESS" });
-    logger.info("System config updated", { updatedBy: user!.id, sections: Object.keys(body) });
+    await audit({ userId: user.id, operationType: "SYSTEM_CONFIG_UPDATED", result: "SUCCESS" });
+    logger.info("System config updated", { updatedBy: user.id, sections: Object.keys(body) });
 
     return systemConfig;
 }

@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import {
 	commentCreateParams,
 	commentDeleteParams,
@@ -10,7 +10,7 @@ import {
 import * as commentService from "../services/comments";
 
 export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
-    .use(authMiddleware)
+    .use(auth)
 
     // POST /api/newspapers/:newspaper_id/articles/:article_id/comments — REGISTERED_USER
     .post(
@@ -22,6 +22,7 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: commentCreateParams,
         body: commentBody,
     })
@@ -36,12 +37,14 @@ export const commentRoutes = new Elysia({ detail: { tags: ["Comments"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: commentDeleteParams,
     })
 
     // GET /api/newspapers/:newspaper_id/comments — moderation (EDITOR, MANAGER, SYSTEM_ADMIN)
     .get("/api/newspapers/:newspaper_id/comments", ({ params, user, roles, query, withDb }) =>
         withDb((tx) => commentService.listCommentsForModeration(tx, params.newspaper_id, user, roles, query)), {
+        requireAuth: true,
         params: commentModerationParams,
         query: commentModerationQuery,
     });

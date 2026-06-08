@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import { likeRouteParams } from "../schemas/likes";
 import * as likeService from "../services/likes";
 
 export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
-    .use(authMiddleware)
+    .use(auth)
 
     // POST /api/newspapers/:newspaper_id/articles/:article_id/likes
     .post(
@@ -16,6 +16,7 @@ export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: likeRouteParams,
     })
 
@@ -24,5 +25,6 @@ export const likeRoutes = new Elysia({ detail: { tags: ["Likes"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/likes",
         ({ params, user, withDb }) =>
             withDb((tx) => likeService.unlikeArticle(tx, params.article_id, user)), {
+        requireAuth: true,
         params: likeRouteParams,
     });

@@ -2,7 +2,7 @@ import { comments, articles, newspapers } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
+import { ForbiddenError, NotFoundError } from "../errors";
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type { commentBody } from "../schemas/comments";
@@ -12,14 +12,9 @@ export async function postComment(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     body: Static<typeof commentBody>,
 ) {
-    if (!user) {
-        logger.warn("Comment post failed: unauthorized", { articleId });
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
@@ -67,14 +62,9 @@ export async function deleteComment(
     tx: Tx,
     articleId: string,
     commentId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) {
-        logger.warn("Comment delete failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     const comment = await tx.query.comments.findFirst({
         where: eq(comments.id, commentId),
     });
@@ -112,15 +102,10 @@ export async function deleteComment(
 export async function listCommentsForModeration(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     query: { page: number; limit: number; article_id?: string },
 ) {
-    if (!user) {
-        logger.warn("Comment moderation fetch failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     const hasAccess =
         roles.includes("EDITOR") ||
         roles.includes("NEWSPAPER_MANAGER") ||

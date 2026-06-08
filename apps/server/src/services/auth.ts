@@ -3,7 +3,7 @@ import { users, userRoles, globalRoles, newspapers } from "../db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { blocklistJti } from "../utils/redis";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email";
-import { JWT_EXPIRATION } from "../utils/jwt";
+import { JWT_EXPIRATION, type Jwt, type JwtClaims } from "../utils/jwt";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
 import {
@@ -23,11 +23,6 @@ import type {
     globalLoginInput,
 } from "../schemas/auth";
 import type { Static } from "elysia";
-
-type Jwt = {
-    sign: (payload: any) => Promise<string>;
-    verify: (token?: string) => Promise<any>;
-};
 
 export async function register(body: Static<typeof registerInput>, jwt: Jwt) {
     const { email, username, password, newspaper_id, full_name } = body;
@@ -168,15 +163,15 @@ export async function logout(bearer: string | undefined, jwt: Jwt) {
         throw new UnauthorizedError("Missing token");
     }
 
-    const payload = await jwt.verify(bearer);
+    const payload = (await jwt.verify(bearer)) as JwtClaims | false;
 
     if (!payload) {
         throw new UnauthorizedError("Invalid token");
     }
 
-    if (payload.jti && payload.exp) {
+    if (!payload.type && payload.jti && payload.exp) {
         const ttl = Math.max(0, Number(payload.exp) - Math.floor(Date.now() / 1000));
-        await blocklistJti(payload.jti as string, ttl);
+        await blocklistJti(payload.jti, ttl);
     }
 
     await audit({ userId: String(payload.userId), operationType: "USER_LOGOUT", result: "SUCCESS" });
@@ -188,7 +183,7 @@ export async function logout(bearer: string | undefined, jwt: Jwt) {
 export async function verifyEmail(body: Static<typeof verifyEmailInput>, jwt: Jwt) {
     const { token } = body;
 
-    const payload = await jwt.verify(token);
+    const payload = (await jwt.verify(token)) as JwtClaims | false;
 
     if (!payload || payload.type !== "email_verification") {
         logger.warn("Email verification failed - invalid token");
@@ -198,7 +193,7 @@ export async function verifyEmail(body: Static<typeof verifyEmailInput>, jwt: Jw
     const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.id, payload.userId as string));
+        .where(eq(users.id, payload.userId));
 
     if (!user) {
         throw new NotFoundError("User not found");
@@ -249,7 +244,7 @@ export async function forgotPassword(body: Static<typeof forgotPasswordInput>, j
 export async function resetPassword(body: Static<typeof resetPasswordInput>, jwt: Jwt) {
     const { token, password } = body;
 
-    const payload = await jwt.verify(token);
+    const payload = (await jwt.verify(token)) as JwtClaims | false;
 
     if (!payload || payload.type !== "password_reset") {
         logger.warn("Password reset failed - invalid token");
@@ -259,7 +254,7 @@ export async function resetPassword(body: Static<typeof resetPasswordInput>, jwt
     const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.id, payload.userId as string));
+        .where(eq(users.id, payload.userId));
 
     if (!user) {
         throw new NotFoundError("User not found");

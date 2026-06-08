@@ -3,18 +3,13 @@ import { users, newspaperAuthors } from "../db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
-import { ConflictError, ForbiddenError, UnauthorizedError, UnprocessableError } from "../errors";
+import { ConflictError, ForbiddenError, UnprocessableError } from "../errors";
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
 import type { updateMeBody } from "../schemas/users";
 import type { Tx } from "../db/rls";
 
-export async function getMe(tx: Tx, user: AuthUser | null, roles: Roles) {
-    if (!user) {
-        logger.warn("Fetch current user failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
+export async function getMe(tx: Tx, user: AuthUser, roles: Roles) {
     const authorProfile = user.newspaperId
         ? await tx.query.newspaperAuthors.findFirst({
             where: and(
@@ -40,12 +35,10 @@ export async function getMe(tx: Tx, user: AuthUser | null, roles: Roles) {
 
 export async function updateMe(
     tx: Tx,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof updateMeBody>,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
-
     const { username, full_name, bio, password } = body;
 
     if (bio !== undefined && !roles.includes("AUTHOR")) {
@@ -109,11 +102,10 @@ export async function updateMe(
 // never reads routing/status from it.
 export async function updateProfilePicture(
     tx: Tx,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     request: Request,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("AUTHOR")) throw new ForbiddenError("FORBIDDEN");
 
     let profilePictureUrl: string | null = null;

@@ -2,7 +2,7 @@ import { likes, articles } from "../db/schema";
 import { eq, and, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
-import { ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
+import { ConflictError, ForbiddenError, NotFoundError } from "../errors";
 import type { AuthUser } from "./context";
 import type { Tx } from "../db/rls";
 
@@ -10,13 +10,8 @@ export async function likeArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
 ) {
-    if (!user) {
-        logger.warn("Like failed: unauthorized", { articleId, newspaperId });
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     if (user.newspaperId !== newspaperId) {
         logger.warn("Like failed: forbidden (cross-newspaper)", {
             userId: user.id,
@@ -67,13 +62,8 @@ export async function likeArticle(
 export async function unlikeArticle(
     tx: Tx,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
 ) {
-    if (!user) {
-        logger.warn("Unlike failed: unauthorized", { articleId });
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),

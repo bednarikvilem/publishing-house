@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import {
 	newspaperOnlyParams, articleRouteParams, articleImageParams,
 	articlesListQuery, articlesSearchQuery, articlesMineQuery,
@@ -10,7 +10,7 @@ import {
 import * as articleService from "../services/articles";
 
 export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
-    .use(authMiddleware)
+    .use(auth)
 
     // ── GET /api/newspapers/:newspaper_id/articles/search ─────────────────
     .get(
@@ -26,6 +26,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/mine",
         ({ params, user, roles, query, withDb }) =>
             withDb((tx) => articleService.listMyArticles(tx, params.newspaper_id, user, roles, query)), {
+        requireAuth: true,
         params: newspaperOnlyParams,
         query: articlesMineQuery,
     })
@@ -35,6 +36,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/mine/:article_id",
         ({ params, user, roles, withDb }) =>
             withDb((tx) => articleService.getMyArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -43,6 +45,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/queue",
         ({ params, user, roles, query, withDb }) =>
             withDb((tx) => articleService.getReviewQueue(tx, params.newspaper_id, user, roles, query)), {
+        requireAuth: true,
         params: newspaperOnlyParams,
         query: articlesQueueQuery,
     })
@@ -61,6 +64,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id",
         ({ params, user, withDb }) =>
             withDb((tx) => articleService.getArticle(tx, params.newspaper_id, params.article_id, user)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -74,6 +78,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: newspaperOnlyParams,
         body: createArticleBody,
     })
@@ -83,6 +88,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.updateArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: updateArticleBody,
     })
@@ -97,6 +103,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -105,6 +112,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/submit",
         ({ params, user, roles, withDb }) =>
             withDb((tx) => articleService.submitArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -118,6 +126,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -131,6 +140,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: articleImageParams,
     })
 
@@ -139,6 +149,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/assign-editor",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.assignEditor(tx, params.newspaper_id, params.article_id, user, roles, body)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: assignEditorBody,
     })
@@ -148,6 +159,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/review",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.reviewArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: reviewBody,
     })
@@ -157,6 +169,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/approve",
         ({ params, user, roles, body, query, withDb }) =>
             withDb((tx) => articleService.approveArticle(tx, params.newspaper_id, params.article_id, user, roles, body, query)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: reviewBody,
         query: articleApproveQuery,
@@ -167,6 +180,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/schedule",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.scheduleArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: scheduleBody,
     })
@@ -176,6 +190,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/publish",
         ({ params, user, roles, withDb }) =>
             withDb((tx) => articleService.publishArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -184,6 +199,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/subscriber-only",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.setSubscriberOnly(tx, params.newspaper_id, params.article_id, user, roles, body.is_subscriber_only)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: subscriberOnlyBody,
     });

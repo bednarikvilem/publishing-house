@@ -6,7 +6,6 @@ import {
     ConflictError,
     ForbiddenError,
     NotFoundError,
-    UnauthorizedError,
     UnprocessableError,
 } from "../errors";
 import type { AuthUser, Roles } from "./context";
@@ -68,15 +67,10 @@ export async function listCategories(tx: Tx, newspaperId: string) {
 export async function createCategory(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof categoryBody>,
 ) {
-    if (!user) {
-        logger.warn("Category create failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     if (!canManage(roles)) {
         logger.warn("Category create failed: forbidden", { userId: user.id, roles });
         throw new ForbiddenError("FORBIDDEN");
@@ -117,15 +111,10 @@ export async function createCategory(
 export async function updateCategory(
     tx: Tx,
     categoryId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof categoryBody> | undefined,
 ) {
-    if (!user) {
-        logger.warn("Category update failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     if (!canManage(roles)) {
         logger.warn("Category update failed: forbidden", { userId: user.id, roles });
         throw new ForbiddenError("FORBIDDEN");
@@ -160,14 +149,9 @@ export async function updateCategory(
 export async function deleteCategory(
     tx: Tx,
     categoryId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) {
-        logger.warn("Category delete failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
     if (!canManage(roles)) {
         logger.warn("Category delete failed: forbidden", { userId: user.id, roles });
         throw new ForbiddenError("FORBIDDEN");

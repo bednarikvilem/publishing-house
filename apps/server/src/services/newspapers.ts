@@ -1,7 +1,7 @@
 import { newspapers, users, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { logger } from "../utils/logger";
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
+import { ForbiddenError, NotFoundError } from "../errors";
 import { type NewspaperColor } from "../schemas/newspapers";
 import type { AuthUser, Roles } from "./context";
 import type { Tx } from "../db/rls";
@@ -10,12 +10,7 @@ function serializeNewspaper(n: { id: string; name: string; slug: string; primary
     return { id: n.id, name: n.name, slug: n.slug, primary_color: n.primaryColor ?? null };
 }
 
-export async function listNewspapers(tx: Tx, user: AuthUser | null, roles: Roles) {
-    if (!user) {
-        logger.warn("Fetch newspapers failed: unauthorized", {});
-        throw new UnauthorizedError("UNAUTHORIZED");
-    }
-
+export async function listNewspapers(tx: Tx, user: AuthUser, roles: Roles) {
     if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
         logger.warn("Fetch newspapers failed: forbidden", { userId: user.id, roles });
         throw new ForbiddenError("FORBIDDEN");
@@ -55,10 +50,9 @@ export async function updateNewspaperColor(
     tx: Tx,
     newspaperId: string,
     color: NewspaperColor | null,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
     if (!roles.includes("DIRECTOR") && !roles.includes("SYSTEM_ADMINISTRATOR")) {
         throw new ForbiddenError("FORBIDDEN");
     }
@@ -77,8 +71,7 @@ export async function updateNewspaperColor(
     return serializeNewspaper({ ...newspaper, primaryColor: color });
 }
 
-export async function getEditors(tx: Tx, newspaperId: string, user: AuthUser | null, roles: Roles) {
-    if (!user) throw new UnauthorizedError("UNAUTHORIZED");
+export async function getEditors(tx: Tx, newspaperId: string, user: AuthUser, roles: Roles) {
     if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError("FORBIDDEN");
 
     const newspaper = await tx.query.newspapers.findFirst({
