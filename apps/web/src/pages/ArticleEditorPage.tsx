@@ -118,6 +118,7 @@ function EditorSidebar({
               <Select
                 value={field.value}
                 onValueChange={(v) => v !== null && field.onChange(v)}
+                items={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
               >
                 <SelectTrigger id="categoryId" className="w-full" disabled={!canEdit}>
                   <SelectValue placeholder="Select category…" />
@@ -521,7 +522,7 @@ export function ArticleEditorPage() {
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col">
+    <div className={`bg-background text-foreground flex min-h-screen flex-col${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
       <Navbar newspaperName={np} />
 
       <main className="flex flex-1 flex-col gap-6 px-8 py-6 md:px-12">

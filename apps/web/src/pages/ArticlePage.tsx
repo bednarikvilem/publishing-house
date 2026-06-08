@@ -346,22 +346,25 @@ export function ArticlePage() {
       </div>
 
       {/* Article Body */}
-      <section className="px-16 py-12">
-        {/* Lede */}
-        <p className="text-foreground mb-6 text-lg leading-lg">
-          {article.perex}
-        </p>
+      <section className="px-6 py-12">
+        <div className="mx-auto w-full max-w-3xl">
+          {/* Lede */}
+          <p className="text-foreground mb-6 text-lg leading-lg">
+            {article.perex}
+          </p>
 
-        <hr className="border-border mb-6" />
+          <hr className="border-border mb-6" />
 
-        <ArticleContent content={article.content} />
+          <ArticleContent content={article.content} />
 
-        {/* Article read tracking sentinel */}
-        <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
+          {/* Article read tracking sentinel */}
+          <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
+        </div>
       </section>
 
       {/* Likes & Comments */}
-      <section className="px-16 pb-16">
+      <section className="px-6 pb-16">
+        <div className="mx-auto w-full max-w-3xl">
         <hr className="border-border mb-8" />
 
         {/* Like button */}
@@ -432,6 +435,7 @@ export function ArticlePage() {
               ))}
             </div>
           )}
+        </div>
         </div>
       </section>
     </div>

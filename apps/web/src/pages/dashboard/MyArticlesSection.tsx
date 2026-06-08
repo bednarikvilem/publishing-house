@@ -76,7 +76,7 @@ export function MyArticlesSection({
         action={
           <Link
             to={`/${newspaperName}/articles/new`}
-            className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
+            className="bg-primary text-primary-foreground flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
           >
             <PlusIcon />
             New Article

@@ -139,25 +139,6 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           {displayName}
         </Link>
 
-        {/* Desktop nav links */}
-        <nav className="hidden items-center gap-6 md:flex">
-          <Link
-            to={`/${newspaperName}`}
-            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
-          >
-            Home
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/${newspaperName}/category/${cat.slug}`}
-              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
-            >
-              {cat.name}
-            </Link>
-          ))}
-        </nav>
-
         {/* Desktop search bar */}
         <form onSubmit={handleSearch} className="hidden flex-1 md:flex">
           <div className="relative flex-1 max-w-sm">
@@ -285,6 +266,29 @@ export function Navbar({ newspaperName, displayName }: NavbarProps) {
           </Button>
         </div>
       </div>
+
+      {/* ── Category strip (desktop) ────────────────────────────────────── */}
+      {categories.length > 0 && (
+        <nav className="border-border hidden overflow-x-auto border-t md:flex">
+          <div className="flex items-center gap-1 px-6 md:px-12">
+            <Link
+              to={`/${newspaperName}`}
+              className="text-muted-foreground hover:text-foreground shrink-0 px-3 py-2.5 text-sm font-medium transition-colors"
+            >
+              Home
+            </Link>
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/${newspaperName}/category/${cat.slug}`}
+                className="text-muted-foreground hover:text-foreground shrink-0 px-3 py-2.5 text-sm font-medium transition-colors"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* ── Mobile menu ─────────────────────────────────────────────────── */}
       {mobileMenuOpen && (

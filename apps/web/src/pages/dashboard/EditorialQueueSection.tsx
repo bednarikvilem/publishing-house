@@ -73,7 +73,11 @@ function AssignEditorForm({
             control={control}
             rules={{ required: "Please select an editor." }}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+                items={editors.map((e) => ({ value: e.id, label: e.full_name }))}
+              >
                 <SelectTrigger id="editorId" className="mt-0.5 w-full rounded-md">
                   <SelectValue placeholder="Select an editor…" />
                 </SelectTrigger>
