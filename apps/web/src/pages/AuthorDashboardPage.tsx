@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
+import { Button } from "../components/ui/button";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { formatDate } from "../lib/utils";
 
@@ -171,13 +172,14 @@ export function AuthorDashboardPage() {
         Filter by Status
       </p>
       {FILTER_STATUSES.map((item) => (
-        <button
+        <Button
           key={String(item.value)}
           onClick={() => setStatus(item.value)}
-          className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+          variant="ghost"
+          className={`w-full justify-start gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium ${
             activeStatus === item.value
               ? "bg-muted text-foreground"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              : "text-muted-foreground"
           }`}
         >
           {item.value ? (
@@ -195,7 +197,7 @@ export function AuthorDashboardPage() {
                 {pagination.total}
               </span>
             )}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -301,20 +303,22 @@ export function AuthorDashboardPage() {
                     {pagination.total !== 1 ? "s" : ""}
                   </span>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => setPage(currentPage - 1)}
                       disabled={currentPage <= 1}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
+                      variant="outline"
+                      size="sm"
                     >
                       Previous
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setPage(currentPage + 1)}
                       disabled={currentPage >= pagination.total_pages}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
+                      variant="outline"
+                      size="sm"
                     >
                       Next
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

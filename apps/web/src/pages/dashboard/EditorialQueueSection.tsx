@@ -11,6 +11,7 @@ import { DecisionForm } from "../../components/DecisionForm";
 import { STATUS_LABELS, statusToVariant } from "../../lib/articleStatus";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -51,9 +52,9 @@ function AssignEditorForm({
       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
     >
       <div className="flex flex-col gap-1.5">
-        <label className="text-foreground text-2xs font-medium" htmlFor="editorId">
+        <Label className="text-foreground text-2xs font-medium" htmlFor="editorId">
           Assign Editor
-        </label>
+        </Label>
         {loadingEditors ? (
           <p className="text-muted-foreground text-2xs">Loading editors…</p>
         ) : editors.length === 0 ? (

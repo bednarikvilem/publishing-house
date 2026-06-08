@@ -3,6 +3,7 @@ import { Controller } from "react-hook-form";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectTrigger,
@@ -84,9 +85,9 @@ export function EditorSidebar({
         <h2 className="text-foreground text-2xs font-semibold">Details</h2>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-xs font-medium" htmlFor="categoryId">
+          <Label className="text-muted-foreground text-xs font-medium" htmlFor="categoryId">
             Category <span className="text-destructive">*</span>
-          </label>
+          </Label>
           <Controller
             name="categoryId"
             control={control}
@@ -116,9 +117,9 @@ export function EditorSidebar({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground text-xs font-medium" htmlFor="keywords">
+          <Label className="text-muted-foreground text-xs font-medium" htmlFor="keywords">
             Keywords
-          </label>
+          </Label>
           <Input
             id="keywords"
             type="text"

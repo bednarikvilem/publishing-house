@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 
 interface UserProfile {
   id: string;
@@ -174,15 +177,17 @@ export function ProfileInfoCard({
               {avatarError && (
                 <span className="text-destructive text-[12px]">{avatarError}</span>
               )}
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={avatarUploading}
-                className="border-border bg-background text-foreground hover:bg-muted w-fit rounded-md border px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60"
+                className="w-fit rounded-md"
               >
                 {avatarUploading ? "Uploading…" : "Change Photo"}
-              </button>
-              <input
+              </Button>
+              <Input
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/gif"
@@ -221,15 +226,15 @@ export function ProfileInfoCard({
 
       {/* Email — read-only, outside RHF */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-foreground text-[14px] font-medium">
+        <Label htmlFor="email" className="text-foreground text-[14px]">
           Email Address
-        </label>
-        <input
+        </Label>
+        <Input
           id="email"
           type="email"
           value={profile.email}
           readOnly
-          className="border-input bg-muted text-muted-foreground h-10 w-full cursor-not-allowed rounded-md border px-3 text-[14px]"
+          className="rounded-md bg-muted text-muted-foreground cursor-not-allowed text-[14px]"
         />
       </div>
 
@@ -258,13 +263,13 @@ export function ProfileInfoCard({
       )}
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
           {isSubmitting ? "Saving…" : "Save Changes"}
-        </button>
+        </Button>
       </div>
     </form>
   );

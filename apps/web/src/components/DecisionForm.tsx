@@ -1,5 +1,8 @@
 import { useForm, useWatch } from "react-hook-form";
 import type { ReviewDecision } from "../types";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 interface DecisionFormValues {
   decision: ReviewDecision;
@@ -51,7 +54,7 @@ export function DecisionForm({
       <div className="flex gap-2">
         {(["APPROVE", "REJECT", "REQUEST_REVISION"] as ReviewDecision[]).map((d) => (
           <label key={d} className="cursor-pointer">
-            <input
+            <Input
               type="radio"
               value={d}
               className="sr-only"
@@ -71,14 +74,14 @@ export function DecisionForm({
       </div>
 
       <div className="flex flex-col gap-1">
-        <textarea
+        <Textarea
           placeholder={
             noteRequired
               ? "Note is required for this decision…"
               : "Optional note for the author…"
           }
           rows={3}
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+          className="rounded-md text-[13px]"
           {...register("note", {
             validate: (val) =>
               !noteRequired || val.trim().length > 0
@@ -92,20 +95,22 @@ export function DecisionForm({
       </div>
 
       <div className="flex justify-end gap-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={onCancel}
-          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={submitting}
-          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+          size="sm"
+          className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
           {submitting ? "Submitting…" : "Submit"}
-        </button>
+        </Button>
       </div>
     </form>
   );

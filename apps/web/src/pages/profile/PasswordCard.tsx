@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
 
 interface PasswordFormValues {
   newPassword: string;
@@ -97,13 +98,13 @@ export function PasswordCard() {
       )}
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-foreground text-background rounded-md px-5 py-2 text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
           {isSubmitting ? "Updating…" : "Update Password"}
-        </button>
+        </Button>
       </div>
     </form>
   );

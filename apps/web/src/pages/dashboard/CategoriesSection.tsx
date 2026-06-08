@@ -8,6 +8,8 @@ import { ListRow } from "../../components/ListRow";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorState } from "../../components/ErrorState";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 interface CategoryFormValues {
   name: string;
@@ -52,27 +54,29 @@ function EditCategoryForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4 w-full">
-      <input
+      <Input
         autoFocus
         type="text"
-        className="border-border bg-background text-foreground focus:ring-ring flex-1 rounded-md border px-3 py-1.5 text-[13px] outline-none focus:ring-2"
+        className="flex-1 rounded-md text-[13px]"
         {...register("name", { required: true })}
       />
       <div className="flex shrink-0 items-center gap-2">
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-foreground text-background rounded-md px-3 py-1.5 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+          size="sm"
+          className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
         >
           {isSubmitting ? "Saving…" : "Save"}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={onCancel}
-          className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[12px] font-medium"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -165,20 +169,20 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
         onSubmit={handleSubmit(onCreateSubmit)}
         className="border-border bg-card flex items-center gap-3 rounded-lg border px-5 py-4"
       >
-        <input
+        <Input
           type="text"
           placeholder="New category name…"
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-md border px-3 py-2 text-[13px] outline-none focus:ring-2"
+          className="flex-1 rounded-md text-[13px]"
           {...register("name", { required: true })}
         />
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="bg-foreground text-background rounded-md gap-2 text-[13px] font-semibold hover:bg-foreground hover:opacity-90"
         >
           <PlusIcon />
           Add Category
-        </button>
+        </Button>
         {errors.root && (
           <span className="text-destructive text-[12px]">{errors.root.message}</span>
         )}
@@ -214,20 +218,24 @@ export function CategoriesSection({ newspaperId }: { newspaperId: string }) {
                       {cat.name}
                     </span>
                     <div className="flex shrink-0 items-center gap-2">
-                      <button
+                      <Button
                         onClick={() => setEditId(cat.id)}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-foreground"
                         aria-label="Edit category"
                       >
                         <PencilIcon />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleDelete(cat.id)}
-                        className="text-muted-foreground transition-colors hover:text-[#dc2626]"
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-[#dc2626]"
                         aria-label="Delete category"
                       >
                         <TrashIcon />
-                      </button>
+                      </Button>
                     </div>
                   </>
                 )}

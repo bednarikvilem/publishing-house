@@ -8,6 +8,7 @@ import { useNewspaper } from "../hooks/useNewspaper";
 import { slugToDisplayName } from "../lib/utils";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
 interface LoginFormValues { email: string; password: string }
 
@@ -72,9 +73,9 @@ export function LoginPage() {
 
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-foreground text-sm font-medium">
+              <Label htmlFor="password" className="text-foreground">
                 Password
-              </label>
+              </Label>
               <Link
                 to={`/${newspaperName}/forgot-password`}
                 className="text-muted-foreground hover:text-foreground text-2xs font-medium transition-colors"

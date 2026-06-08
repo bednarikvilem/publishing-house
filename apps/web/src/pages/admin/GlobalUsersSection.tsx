@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { PlusIcon } from "../../components/Icons";
 import { LoadingState } from "../../components/LoadingState";
@@ -7,6 +7,15 @@ import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 type GlobalUser = {
   id: string;
@@ -34,6 +43,7 @@ export function GlobalUsersSection() {
     handleSubmit,
     setError,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CreateGlobalUserFormValues>({
     defaultValues: { role: "DIRECTOR" },
@@ -107,13 +117,13 @@ export function GlobalUsersSection() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <SectionTitle title="Global Users" />
-        <button
+        <Button
           onClick={() => setShowCreate((v) => !v)}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
+          className="bg-foreground text-background rounded-md gap-2 text-[13px] font-semibold hover:bg-foreground hover:opacity-90"
         >
           <PlusIcon />
           New Global User
-        </button>
+        </Button>
       </div>
 
       {showCreate && (
@@ -160,16 +170,24 @@ export function GlobalUsersSection() {
               })}
             />
             <div className="flex flex-col gap-1.5">
-              <label className="text-foreground text-[14px] font-medium">
+              <Label className="text-foreground text-[14px]">
                 Role
-              </label>
-              <select
-                className="border-border bg-background text-foreground focus:ring-ring h-9 rounded-md border px-3 text-[13px] outline-none focus:ring-2"
-                {...register("role")}
-              >
-                <option value="DIRECTOR">DIRECTOR</option>
-                <option value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</option>
-              </select>
+              </Label>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full rounded-md">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DIRECTOR">DIRECTOR</SelectItem>
+                      <SelectItem value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 
@@ -178,23 +196,25 @@ export function GlobalUsersSection() {
           )}
 
           <div className="flex justify-end gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => {
                 setShowCreate(false);
                 reset();
               }}
-              className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px]"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold disabled:opacity-50"
+              size="sm"
+              className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
             >
               {isSubmitting ? "Creating…" : "Create"}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -226,13 +246,15 @@ export function GlobalUsersSection() {
                         className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium"
                       >
                         {role}
-                        <button
+                        <Button
                           onClick={() => handleRemove(u.id, role)}
-                          className="ml-0.5 transition-colors hover:text-[#dc2626]"
+                          variant="ghost"
+                          size="icon-xs"
+                          className="ml-0.5 hover:bg-transparent hover:text-[#dc2626]"
                           aria-label={`Remove ${role}`}
                         >
                           ×
-                        </button>
+                        </Button>
                       </span>
                     ))}
                   </div>

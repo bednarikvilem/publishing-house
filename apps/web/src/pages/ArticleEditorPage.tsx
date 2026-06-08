@@ -11,6 +11,7 @@ import { useImageUpload } from "../hooks/useImageUpload";
 import type { ArticleFormValues } from "../hooks/useArticleEditor";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 
 export function ArticleEditorPage() {
@@ -120,9 +121,9 @@ export function ArticleEditorPage() {
             {/* Left: main editor area */}
             <div className="flex min-w-0 flex-1 flex-col gap-5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-2xs font-semibold" htmlFor="title">
+                <Label className="text-foreground text-2xs font-semibold" htmlFor="title">
                   Title <span className="text-destructive">*</span>
-                </label>
+                </Label>
                 <Input
                   id="title"
                   type="text"
@@ -137,9 +138,9 @@ export function ArticleEditorPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-2xs font-semibold" htmlFor="perex">
+                <Label className="text-foreground text-2xs font-semibold" htmlFor="perex">
                   Perex <span className="text-destructive">*</span>
-                </label>
+                </Label>
                 <Textarea
                   id="perex"
                   placeholder="Short introduction shown in article listings…"
@@ -154,9 +155,9 @@ export function ArticleEditorPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-foreground text-2xs font-semibold">
+                <Label className="text-foreground text-2xs font-semibold">
                   Content <span className="text-destructive">*</span>
-                </label>
+                </Label>
                 <Controller
                   name="content"
                   control={control}
