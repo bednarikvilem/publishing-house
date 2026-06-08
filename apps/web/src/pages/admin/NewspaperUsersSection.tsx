@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
@@ -23,18 +22,9 @@ import {
   DialogDescription,
   DialogClose,
 } from "../../components/ui/dialog";
-import { useToast } from "../../components/ui/toaster";
+import { useNewspaperUsers, type UserEntry } from "../../hooks/useNewspaperUsers";
 
 type NewspaperEntry = { id: string; name: string; slug: string };
-
-type UserEntry = {
-  id: string;
-  email: string;
-  username: string;
-  full_name: string | null;
-  roles: string[];
-  email_verified: boolean | null;
-};
 
 const NEWSPAPER_ROLES = ["REGISTERED_USER", "AUTHOR", "EDITOR", "NEWSPAPER_MANAGER"];
 
@@ -46,16 +36,15 @@ interface AssignRoleFormValues {
 
 function AssignRoleForm({
   user,
-  newspaperId,
+  onAssign,
   onSuccess,
   onCancel,
 }: {
   user: UserEntry;
-  newspaperId: string;
+  onAssign: (role: string) => Promise<void>;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
-  const { toast } = useToast();
   const [saving, setSaving] = useState(false);
 
   const { control, handleSubmit } = useForm<AssignRoleFormValues>({
@@ -67,30 +56,10 @@ function AssignRoleForm({
   async function onSubmit({ role }: AssignRoleFormValues) {
     setSaving(true);
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/users/${user.id}/roles`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ role }),
-        }
-      );
-      if (res.status === 409) {
-        const data = (await res.json()) as { error: string };
-        toast({
-          title: "Conflict",
-          description:
-            data.error === "MANAGER_ALREADY_EXISTS"
-              ? "This newspaper already has a manager. Remove the existing one first."
-              : "User already has this role.",
-          variant: "error",
-        });
-        return;
-      }
-      if (!res.ok) throw new Error();
+      await onAssign(role);
       onSuccess();
     } catch {
-      toast({ title: "Error", description: "Failed to assign role.", variant: "error" });
+      // errors handled by useNewspaperUsers
     } finally {
       setSaving(false);
     }
@@ -133,57 +102,13 @@ function AssignRoleForm({
 /* ── Main section ─────────────────────────────────────────────────────────── */
 
 export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry }) {
-  const { toast } = useToast();
-  const [users, setUsers] = useState<UserEntry[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaper.id}/users?limit=100`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: UserEntry[] };
-      setUsers(data.data);
-    } catch {
-      /* empty */
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaper.id]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  async function handleRemoveRole(userId: string, role: string) {
-    if (role === "REGISTERED_USER") {
-      toast({
-        title: "Not allowed",
-        description: "Cannot remove the base REGISTERED_USER role.",
-        variant: "error",
-      });
-      return;
-    }
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaper.id}/users/${userId}/roles/${role}`,
-        { method: "DELETE", headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      toast({ title: "Error", description: "Failed to remove role.", variant: "error" });
-    }
-  }
+  const { users, isLoading, assignRole, removeRole } = useNewspaperUsers(newspaper.id);
 
   return (
     <div className="flex flex-col gap-6">
       <SectionTitle title={`Users — ${newspaper.name}`} />
-      {loading ? (
+      {isLoading ? (
         <LoadingState />
       ) : users.length === 0 ? (
         <EmptyState message="No users in this newspaper." />
@@ -230,7 +155,7 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
                                   render={
                                     <Button
                                       variant="destructive"
-                                      onClick={() => handleRemoveRole(user.id, role)}
+                                      onClick={() => removeRole(user.id, role)}
                                     />
                                   }
                                 >
@@ -256,11 +181,8 @@ export function NewspaperUsersSection({ newspaper }: { newspaper: NewspaperEntry
               {activeUserId === user.id && (
                 <AssignRoleForm
                   user={user}
-                  newspaperId={newspaper.id}
-                  onSuccess={() => {
-                    setActiveUserId(null);
-                    load();
-                  }}
+                  onAssign={(role) => assignRole(user.id, role)}
+                  onSuccess={() => setActiveUserId(null)}
                   onCancel={() => setActiveUserId(null)}
                 />
               )}

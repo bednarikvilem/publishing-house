@@ -1,28 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRightIcon, StarIcon } from "../components/Icons";
-import { API_BASE_URL } from "../lib/api";
-import type { Article, ArticlesResponse } from "../types/article";
 import { ArticleCard } from "../components/ArticleCard";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { Navbar } from "../components/Navbar";
 import { useNewspaper } from "../hooks/useNewspaper";
+import { useHomepageArticles } from "../hooks/useHomepageArticles";
 import { formatDate } from "../lib/utils";
 
 export function NewspaperHomepage() {
   const { newspaperName, newspaper, notFound } = useNewspaper();
-  const [articles, setArticles] = useState<Article[]>([]);
-
-  useEffect(() => {
-    if (!newspaper) return;
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/articles`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<ArticlesResponse>;
-      })
-      .then((data) => setArticles(data.data))
-      .catch(() => {});
-  }, [newspaper]);
+  const { articles } = useHomepageArticles(newspaper?.id);
 
   if (notFound) {
     return (

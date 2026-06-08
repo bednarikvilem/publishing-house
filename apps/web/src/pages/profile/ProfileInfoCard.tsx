@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useAvatarUpload } from "../../hooks/useAvatarUpload";
 import { FormField } from "../../components/FormField";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -37,12 +38,14 @@ export function ProfileInfoCard({
   profile: UserProfile;
   onSaved: (updated: UserProfile) => void;
 }) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const isAuthor = profile.roles.includes("AUTHOR");
-
-  const [avatarUrl, setAvatarUrl] = useState(profile.profile_picture);
-  const [avatarUploading, setAvatarUploading] = useState(false);
-  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const {
+    avatarUrl,
+    uploading: avatarUploading,
+    error: avatarError,
+    fileInputRef,
+    handleFileChange: handleAvatarChange,
+  } = useAvatarUpload(profile.profile_picture);
   const [saved, setSaved] = useState(false);
 
   const [initialFirst, initialLast] = splitFullName(profile.full_name);
@@ -116,32 +119,6 @@ export function ProfileInfoCard({
         message: "Could not connect to the server. Please try again later.",
       });
     }
-  }
-
-  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setAvatarError(null);
-    setAvatarUploading(true);
-    const formData = new FormData();
-    formData.append("profile_picture", file);
-    fetch(`${API_BASE_URL}/api/users/me/profile-picture`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: formData,
-    })
-      .then((res) => {
-        if (!res.ok) throw res;
-        return res.json() as Promise<{ profile_picture: string }>;
-      })
-      .then((data) => setAvatarUrl(data.profile_picture))
-      .catch(() =>
-        setAvatarError("Failed to upload photo. Use JPEG or PNG under 5 MB.")
-      )
-      .finally(() => {
-        setAvatarUploading(false);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      });
   }
 
   return (

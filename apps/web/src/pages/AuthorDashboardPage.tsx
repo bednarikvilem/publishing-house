@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "../lib/api";
@@ -7,16 +6,13 @@ import { Sidebar } from "../components/Sidebar";
 import { Button } from "../components/ui/button";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { formatDate } from "../lib/utils";
-
-type ArticleStatus =
-  | "DRAFT"
-  | "SUBMITTED"
-  | "IN_REVIEW"
-  | "APPROVED_BY_EDITOR"
-  | "APPROVED_BY_MANAGER"
-  | "APPROVED_BY_DIRECTOR"
-  | "PUBLISHED"
-  | "REJECTED";
+import type { ArticleStatus } from "../types";
+import {
+  STATUS_LABELS,
+  STATUS_STYLES,
+  STATUS_DOT,
+  MY_ARTICLE_FILTERS,
+} from "../lib/articleStatus";
 
 interface DashboardArticle {
   id: string;
@@ -40,48 +36,6 @@ interface DashboardResponse {
   };
 }
 
-const STATUS_LABELS: Record<ArticleStatus, string> = {
-  DRAFT: "Draft",
-  SUBMITTED: "Submitted",
-  IN_REVIEW: "In Review",
-  APPROVED_BY_EDITOR: "Editor Approved",
-  APPROVED_BY_MANAGER: "Manager Approved",
-  APPROVED_BY_DIRECTOR: "Director Approved",
-  PUBLISHED: "Published",
-  REJECTED: "Rejected",
-};
-
-const STATUS_STYLES: Record<ArticleStatus, string> = {
-  DRAFT: "bg-muted border border-border text-muted-foreground",
-  SUBMITTED: "bg-[#2563eb18] text-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c18] text-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b218] text-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a18] text-[#16a34a]",
-  REJECTED: "bg-[#dc262618] text-[#dc2626]",
-};
-
-const STATUS_DOT: Record<ArticleStatus, string> = {
-  DRAFT: "bg-muted-foreground",
-  SUBMITTED: "bg-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a]",
-  REJECTED: "bg-[#dc2626]",
-};
-
-const FILTER_STATUSES: { label: string; value: ArticleStatus | null }[] = [
-  { label: "All Articles", value: null },
-  { label: "Drafts", value: "DRAFT" },
-  { label: "Submitted", value: "SUBMITTED" },
-  { label: "In Review", value: "IN_REVIEW" },
-  { label: "Approved", value: "APPROVED_BY_EDITOR" },
-  { label: "Published", value: "PUBLISHED" },
-  { label: "Rejected", value: "REJECTED" },
-];
 
 function PencilIcon() {
   return (
@@ -163,7 +117,7 @@ export function AuthorDashboardPage() {
   }
 
   const activeNavLabel =
-    FILTER_STATUSES.find((s) => s.value === activeStatus)?.label ??
+    MY_ARTICLE_FILTERS.find((s) => s.value === activeStatus)?.label ??
     "All Articles";
 
   const statusFilter = (
@@ -171,7 +125,7 @@ export function AuthorDashboardPage() {
       <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
         Filter by Status
       </p>
-      {FILTER_STATUSES.map((item) => (
+      {MY_ARTICLE_FILTERS.map((item) => (
         <Button
           key={String(item.value)}
           onClick={() => setStatus(item.value)}
