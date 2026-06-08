@@ -179,8 +179,12 @@ export function useArticleEditor(
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/submit`,
-        { method: "POST", headers: authHeaders() },
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/status`,
+        {
+          method: "PATCH",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "SUBMIT" }),
+        },
       );
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };

@@ -66,11 +66,11 @@ export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/review`,
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/status`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ decision, note: note || undefined }),
+          body: JSON.stringify({ action: "REVIEW", decision, note: note || undefined }),
         }
       );
       if (!res.ok) throw new Error();

@@ -93,6 +93,35 @@ export const subscriberOnlyBody = t.Object({
 	is_subscriber_only: t.Boolean(),
 });
 
+const ReviewDecision = t.Union([
+	t.Literal("APPROVE"),
+	t.Literal("REJECT"),
+	t.Literal("REQUEST_REVISION"),
+]);
+
+export const articleTransitionBody = t.Union([
+	t.Object({ action: t.Literal("SUBMIT") }),
+	t.Object({ action: t.Literal("ASSIGN_EDITOR"), editor_id: Uuid }),
+	t.Object({
+		action: t.Literal("REVIEW"),
+		decision: ReviewDecision,
+		note: t.Optional(t.String({ minLength: 1 })),
+	}),
+	t.Object({
+		action: t.Literal("APPROVE"),
+		decision: ReviewDecision,
+		note: t.Optional(t.String({ minLength: 1 })),
+		view: t.Optional(
+			t.Union([t.Literal("NEWSPAPER_MANAGER"), t.Literal("DIRECTOR")])
+		),
+	}),
+	t.Object({
+		action: t.Literal("SCHEDULE"),
+		publication_date: t.String({ format: "date-time" }),
+	}),
+	t.Object({ action: t.Literal("PUBLISH") }),
+]);
+
 const PrimaryImage = t.Nullable(
 	t.Pick(imageSelectBase, ["url", "caption"])
 );

@@ -3,9 +3,9 @@ import { auth } from "../middleware/auth";
 import {
 	newspaperOnlyParams, articleRouteParams, articleImageParams,
 	articlesListQuery, articlesSearchQuery, articlesMineQuery,
-	articlesQueueQuery, articleApproveQuery,
-	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
-	scheduleBody, subscriberOnlyBody,
+	articlesQueueQuery,
+	createArticleBody, updateArticleBody, articleTransitionBody,
+	subscriberOnlyBody,
 } from "../schemas/articles";
 import * as articleService from "../services/articles";
 
@@ -107,13 +107,30 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         params: articleRouteParams,
     })
 
-    // ── POST .../articles/:article_id/submit ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/submit",
-        ({ params, user, roles, withDb }) =>
-            withDb((tx) => articleService.submitArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+    // ── PATCH .../articles/:article_id/status ────────────────────────────
+    .patch(
+        "/api/newspapers/:newspaper_id/articles/:article_id/status",
+        ({ params, user, roles, body, withDb }) =>
+            withDb((tx) => {
+                const { newspaper_id, article_id } = params;
+                switch (body.action) {
+                    case "SUBMIT":
+                        return articleService.submitArticle(tx, newspaper_id, article_id, user, roles);
+                    case "ASSIGN_EDITOR":
+                        return articleService.assignEditor(tx, newspaper_id, article_id, user, roles, { editor_id: body.editor_id });
+                    case "REVIEW":
+                        return articleService.reviewArticle(tx, newspaper_id, article_id, user, roles, { decision: body.decision, note: body.note });
+                    case "APPROVE":
+                        return articleService.approveArticle(tx, newspaper_id, article_id, user, roles, { decision: body.decision, note: body.note }, { view: body.view });
+                    case "SCHEDULE":
+                        return articleService.scheduleArticle(tx, newspaper_id, article_id, user, roles, { publication_date: body.publication_date });
+                    case "PUBLISH":
+                        return articleService.publishArticle(tx, newspaper_id, article_id, user, roles);
+                }
+            }), {
         requireAuth: true,
         params: articleRouteParams,
+        body: articleTransitionBody,
     })
 
     // ── POST .../articles/:article_id/images ─────────────────────────────
@@ -142,56 +159,6 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         }, {
         requireAuth: true,
         params: articleImageParams,
-    })
-
-    // ── POST .../articles/:article_id/assign-editor ───────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/assign-editor",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.assignEditor(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        requireAuth: true,
-        params: articleRouteParams,
-        body: assignEditorBody,
-    })
-
-    // ── POST .../articles/:article_id/review ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/review",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.reviewArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        requireAuth: true,
-        params: articleRouteParams,
-        body: reviewBody,
-    })
-
-    // ── POST .../articles/:article_id/approve ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/approve",
-        ({ params, user, roles, body, query, withDb }) =>
-            withDb((tx) => articleService.approveArticle(tx, params.newspaper_id, params.article_id, user, roles, body, query)), {
-        requireAuth: true,
-        params: articleRouteParams,
-        body: reviewBody,
-        query: articleApproveQuery,
-    })
-
-    // ── POST .../articles/:article_id/schedule ────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/schedule",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.scheduleArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        requireAuth: true,
-        params: articleRouteParams,
-        body: scheduleBody,
-    })
-
-    // ── POST .../articles/:article_id/publish ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/publish",
-        ({ params, user, roles, withDb }) =>
-            withDb((tx) => articleService.publishArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
-        requireAuth: true,
-        params: articleRouteParams,
     })
 
     // ── PATCH .../articles/:article_id/subscriber-only — NEWSPAPER_MANAGER

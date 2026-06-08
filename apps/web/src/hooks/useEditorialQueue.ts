@@ -48,8 +48,8 @@ export function useEditorialQueue(newspaperId: string) {
     mutationFn: async ({ articleId, editorId }: { articleId: string; editorId: string }) => {
       const { error } = await client.api
         .newspapers({ newspaper_id: newspaperId })
-        .articles({ article_id: articleId })["assign-editor"]
-        .post({ editor_id: editorId });
+        .articles({ article_id: articleId })
+        .status.patch({ action: "ASSIGN_EDITOR", editor_id: editorId });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -89,10 +89,12 @@ export function useEditorialQueue(newspaperId: string) {
       const { error } = await client.api
         .newspapers({ newspaper_id: newspaperId })
         .articles({ article_id: articleId })
-        .approve.post(
-          { decision, note: note || undefined },
-          { query: { view: "NEWSPAPER_MANAGER" } },
-        );
+        .status.patch({
+          action: "APPROVE",
+          decision,
+          note: note || undefined,
+          view: "NEWSPAPER_MANAGER",
+        });
       if (error) throw error;
     },
     onSuccess: () => {

@@ -39,8 +39,12 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
     setPublishing(articleId);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/publish`,
-        { method: "POST", headers: authHeaders() }
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/status`,
+        {
+          method: "PATCH",
+          headers: { ...authHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "PUBLISH" }),
+        }
       );
       if (!res.ok) throw new Error();
       load();

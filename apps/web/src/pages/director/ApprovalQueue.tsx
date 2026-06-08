@@ -43,11 +43,16 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/approve?view=DIRECTOR`,
+        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/status`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ decision, note: note || undefined }),
+          body: JSON.stringify({
+            action: "APPROVE",
+            decision,
+            note: note || undefined,
+            view: "DIRECTOR",
+          }),
         }
       );
       if (!res.ok) throw new Error();
