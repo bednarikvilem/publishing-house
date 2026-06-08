@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import {
     adminUsersListParams,
     adminUsersListQuery,
@@ -15,7 +15,9 @@ import { createGlobalUserInput } from "../schemas/auth";
 import * as adminService from "../services/admin";
 
 export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
-    .use(authMiddleware)
+    .use(auth)
+    .guard({ requireAuth: true }, (app) =>
+        app
 
     // ── GET /api/newspapers/:newspaper_id/users — SYSTEM_ADMINISTRATOR ────
     .get("/api/newspapers/:newspaper_id/users", ({ params, user, roles, query, withDb }) =>
@@ -97,4 +99,4 @@ export const adminRoutes = new Elysia({ detail: { tags: ["Admin"] } })
     .put("/api/admin/config", ({ user, roles, body }) =>
         adminService.updateConfig(user, roles, body), {
         body: adminConfigBody,
-    });
+    }));

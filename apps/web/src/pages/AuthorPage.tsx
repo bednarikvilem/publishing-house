@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UserIcon } from "../components/Icons";
 import { Link, useParams } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import { formatDate } from "../lib/utils";
 import type { AuthorPublicProfile, Article } from "../types";
 import { CategoryBadge } from "../components/CategoryBadge";
@@ -33,31 +34,26 @@ function sortArticles(
 export function AuthorPage() {
   const { authorId } = useParams<{ authorId: string }>();
   const { newspaperName, newspaper } = useNewspaper();
-
-  const [author, setAuthor] = useState<AuthorPublicProfile | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
-  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!newspaper || !authorId) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAuthor(null);
-    setError(false);
-    setSortOrder("latest");
-
-    fetch(`${API_BASE_URL}/api/newspapers/${newspaper.id}/authors/${authorId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<AuthorPublicProfile>;
-      })
-      .then((data) => setAuthor(data))
-      .catch(() => setError(true));
-  }, [newspaper, authorId]);
+  const { data: author = null, isLoading, isError } = useQuery({
+    queryKey: ["author", newspaper?.id, authorId],
+    enabled: !!newspaper && !!authorId,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaper!.id })
+        .authors({ author_id: authorId! })
+        .get({ query: { page: 1, limit: 50 } });
+      if (error) throw error;
+      return data as unknown as AuthorPublicProfile;
+    },
+  });
 
   const sorted = sortArticles(author?.articles.data, sortOrder);
   const [featured, ...rest] = sorted;
 
-  if (error) {
+  if (isError) {
     return (
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />
@@ -68,7 +64,7 @@ export function AuthorPage() {
     );
   }
 
-  if (!author) {
+  if (isLoading || !author) {
     return (
       <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
         <Navbar newspaperName={newspaperName} />

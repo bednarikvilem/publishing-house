@@ -1,16 +1,16 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import {
 	newspaperOnlyParams, articleRouteParams, articleImageParams,
 	articlesListQuery, articlesSearchQuery, articlesMineQuery,
-	articlesQueueQuery, articleApproveQuery,
-	createArticleBody, updateArticleBody, assignEditorBody, reviewBody,
-	scheduleBody, subscriberOnlyBody,
+	articlesQueueQuery,
+	createArticleBody, updateArticleBody, articleTransitionBody,
+	subscriberOnlyBody,
 } from "../schemas/articles";
 import * as articleService from "../services/articles";
 
 export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
-    .use(authMiddleware)
+    .use(auth)
 
     // ── GET /api/newspapers/:newspaper_id/articles/search ─────────────────
     .get(
@@ -26,6 +26,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/mine",
         ({ params, user, roles, query, withDb }) =>
             withDb((tx) => articleService.listMyArticles(tx, params.newspaper_id, user, roles, query)), {
+        requireAuth: true,
         params: newspaperOnlyParams,
         query: articlesMineQuery,
     })
@@ -35,6 +36,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/mine/:article_id",
         ({ params, user, roles, withDb }) =>
             withDb((tx) => articleService.getMyArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -43,6 +45,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/queue",
         ({ params, user, roles, query, withDb }) =>
             withDb((tx) => articleService.getReviewQueue(tx, params.newspaper_id, user, roles, query)), {
+        requireAuth: true,
         params: newspaperOnlyParams,
         query: articlesQueueQuery,
     })
@@ -61,6 +64,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id",
         ({ params, user, withDb }) =>
             withDb((tx) => articleService.getArticle(tx, params.newspaper_id, params.article_id, user)), {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -74,6 +78,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: newspaperOnlyParams,
         body: createArticleBody,
     })
@@ -83,6 +88,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.updateArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: updateArticleBody,
     })
@@ -97,15 +103,34 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
-    // ── POST .../articles/:article_id/submit ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/submit",
-        ({ params, user, roles, withDb }) =>
-            withDb((tx) => articleService.submitArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
+    // ── PATCH .../articles/:article_id/status ────────────────────────────
+    .patch(
+        "/api/newspapers/:newspaper_id/articles/:article_id/status",
+        ({ params, user, roles, body, withDb }) =>
+            withDb((tx) => {
+                const { newspaper_id, article_id } = params;
+                switch (body.action) {
+                    case "SUBMIT":
+                        return articleService.submitArticle(tx, newspaper_id, article_id, user, roles);
+                    case "ASSIGN_EDITOR":
+                        return articleService.assignEditor(tx, newspaper_id, article_id, user, roles, { editor_id: body.editor_id });
+                    case "REVIEW":
+                        return articleService.reviewArticle(tx, newspaper_id, article_id, user, roles, { decision: body.decision, note: body.note });
+                    case "APPROVE":
+                        return articleService.approveArticle(tx, newspaper_id, article_id, user, roles, { decision: body.decision, note: body.note }, { view: body.view });
+                    case "SCHEDULE":
+                        return articleService.scheduleArticle(tx, newspaper_id, article_id, user, roles, { publication_date: body.publication_date });
+                    case "PUBLISH":
+                        return articleService.publishArticle(tx, newspaper_id, article_id, user, roles);
+                }
+            }), {
+        requireAuth: true,
         params: articleRouteParams,
+        body: articleTransitionBody,
     })
 
     // ── POST .../articles/:article_id/images ─────────────────────────────
@@ -118,6 +143,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 201;
             return result;
         }, {
+        requireAuth: true,
         params: articleRouteParams,
     })
 
@@ -131,52 +157,8 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: articleImageParams,
-    })
-
-    // ── POST .../articles/:article_id/assign-editor ───────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/assign-editor",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.assignEditor(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        params: articleRouteParams,
-        body: assignEditorBody,
-    })
-
-    // ── POST .../articles/:article_id/review ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/review",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.reviewArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        params: articleRouteParams,
-        body: reviewBody,
-    })
-
-    // ── POST .../articles/:article_id/approve ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/approve",
-        ({ params, user, roles, body, query, withDb }) =>
-            withDb((tx) => articleService.approveArticle(tx, params.newspaper_id, params.article_id, user, roles, body, query)), {
-        params: articleRouteParams,
-        body: reviewBody,
-        query: articleApproveQuery,
-    })
-
-    // ── POST .../articles/:article_id/schedule ────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/schedule",
-        ({ params, user, roles, body, withDb }) =>
-            withDb((tx) => articleService.scheduleArticle(tx, params.newspaper_id, params.article_id, user, roles, body)), {
-        params: articleRouteParams,
-        body: scheduleBody,
-    })
-
-    // ── POST .../articles/:article_id/publish ─────────────────────────────
-    .post(
-        "/api/newspapers/:newspaper_id/articles/:article_id/publish",
-        ({ params, user, roles, withDb }) =>
-            withDb((tx) => articleService.publishArticle(tx, params.newspaper_id, params.article_id, user, roles)), {
-        params: articleRouteParams,
     })
 
     // ── PATCH .../articles/:article_id/subscriber-only — NEWSPAPER_MANAGER
@@ -184,6 +166,7 @@ export const articleRoutes = new Elysia({ detail: { tags: ["Articles"] } })
         "/api/newspapers/:newspaper_id/articles/:article_id/subscriber-only",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => articleService.setSubscriberOnly(tx, params.newspaper_id, params.article_id, user, roles, body.is_subscriber_only)), {
+        requireAuth: true,
         params: articleRouteParams,
         body: subscriberOnlyBody,
     });

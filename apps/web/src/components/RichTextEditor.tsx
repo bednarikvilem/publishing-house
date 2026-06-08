@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -21,7 +22,7 @@ import {
   FORMAT_TEXT_COMMAND,
   type EditorState,
 } from "lexical";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { client, toApiError } from "../lib/api";
 import {
   ImageNode,
   INSERT_IMAGE_COMMAND,
@@ -108,8 +109,30 @@ function ToolbarPlugin({
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = useMutation({
+    mutationFn: async (file: File) => {
+      if (!newspaperId || !articleId) throw new Error("ARTICLE_NOT_SAVED");
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .images.post({ image: file });
+      if (error) throw error;
+      return { img: data as { url: string; caption: string | null }, file };
+    },
+    onSuccess: ({ img, file }) => {
+      editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+        url: img.url,
+        alt: img.caption ?? file.name,
+      });
+    },
+    onError: (err) => {
+      const { value } = toApiError(err);
+      onUploadError?.(value?.error ?? "Failed to upload image.");
+    },
+  });
+  const uploading = uploadImage.isPending;
 
   useEffect(() => {
     return editor.registerUpdateListener(() => {
@@ -124,33 +147,11 @@ function ToolbarPlugin({
     });
   }, [editor]);
 
-  async function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !newspaperId || !articleId) return;
     e.target.value = "";
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("image", file);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/images`,
-        { method: "POST", headers: authHeaders(), body: formData }
-      );
-      if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        onUploadError?.(data.error ?? "Failed to upload image.");
-        return;
-      }
-      const img = (await res.json()) as { url: string; caption: string | null };
-      editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-        url: img.url,
-        alt: img.caption ?? file.name,
-      });
-    } catch {
-      onUploadError?.("Network error while uploading image.");
-    } finally {
-      setUploading(false);
-    }
+    uploadImage.mutate(file);
   }
 
   const articleSaved = Boolean(newspaperId && articleId);

@@ -1,10 +1,6 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { client, setArticleSubscriberOnly } from "../../lib/api";
-import type { PaginatedResponse, ReviewDecision } from "../../types";
-import type { QueueArticle } from "../../types/dashboard";
+import { useEditorialQueue } from "../../hooks/useEditorialQueue";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { Pagination } from "../../components/Pagination";
@@ -15,6 +11,7 @@ import { DecisionForm } from "../../components/DecisionForm";
 import { STATUS_LABELS, statusToVariant } from "../../lib/articleStatus";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -22,12 +19,9 @@ import {
   SelectContent,
   SelectItem,
 } from "../../components/ui/select";
-import { useToast } from "../../components/ui/toaster";
 import { formatDate } from "../../lib/utils";
 
 type Editor = { id: string; full_name: string };
-
-/* ── Assign-editor form ───────────────────────────────────────────────────── */
 
 interface AssignEditorFormValues {
   editorId: string;
@@ -58,9 +52,9 @@ function AssignEditorForm({
       className="border-border bg-muted/30 mt-3 flex flex-col gap-3 rounded-lg border p-4"
     >
       <div className="flex flex-col gap-1.5">
-        <label className="text-foreground text-2xs font-medium" htmlFor="editorId">
+        <Label className="text-foreground text-2xs font-medium" htmlFor="editorId">
           Assign Editor
-        </label>
+        </Label>
         {loadingEditors ? (
           <p className="text-muted-foreground text-2xs">Loading editors…</p>
         ) : editors.length === 0 ? (
@@ -73,7 +67,11 @@ function AssignEditorForm({
             control={control}
             rules={{ required: "Please select an editor." }}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+                items={editors.map((e) => ({ value: e.id, label: e.full_name }))}
+              >
                 <SelectTrigger id="editorId" className="mt-0.5 w-full rounded-md">
                   <SelectValue placeholder="Select an editor…" />
                 </SelectTrigger>
@@ -109,123 +107,31 @@ function AssignEditorForm({
   );
 }
 
-/* ── Main section ─────────────────────────────────────────────────────────── */
-
 export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) {
-  const { toast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get("page") ?? "1");
-  const queryClient = useQueryClient();
-
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  const queueQuery = useQuery({
-    queryKey: ["editorial-queue", newspaperId, currentPage],
-    queryFn: async () => {
-      const { data, error } = await client.api
-        .newspapers({ newspaper_id: newspaperId })
-        .articles.queue.get({
-          query: { page: currentPage, limit: 20, view: "NEWSPAPER_MANAGER" },
-        });
-      if (error) throw error;
-      return data as PaginatedResponse<QueueArticle>;
-    },
-  });
-
-  const articles = queueQuery.data?.data ?? [];
-  const totalPages = queueQuery.data?.pagination.total_pages ?? 1;
-  const total = queueQuery.data?.pagination.total ?? 0;
-
-  const editorsQuery = useQuery({
-    queryKey: ["editors", newspaperId],
-    enabled: activeId !== null,
-    queryFn: async () => {
-      const { data, error } = await client.api
-        .newspapers({ newspaper_id: newspaperId })
-        .editors.get();
-      if (error) throw error;
-      return (data as { data: Editor[] }).data;
-    },
-  });
-  const editors = editorsQuery.data ?? [];
-
-  const invalidateQueue = () =>
-    queryClient.invalidateQueries({ queryKey: ["editorial-queue", newspaperId] });
-
-  const assignEditor = useMutation({
-    mutationFn: async ({ articleId, editorId }: { articleId: string; editorId: string }) => {
-      const { error } = await client.api
-        .newspapers({ newspaper_id: newspaperId })
-        .articles({ article_id: articleId })["assign-editor"]
-        .post({ editor_id: editorId });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setActiveId(null);
-      invalidateQueue();
-    },
-    onError: () =>
-      toast({
-        title: "Error",
-        description: "Failed to assign editor. Please try again.",
-        variant: "error",
-      }),
-  });
-
-  const toggleSubscriber = useMutation({
-    mutationFn: ({ articleId, current }: { articleId: string; current: boolean }) =>
-      setArticleSubscriberOnly(newspaperId, articleId, !current),
-    onSuccess: invalidateQueue,
-    onError: () =>
-      toast({
-        title: "Error",
-        description: "Failed to update subscriber-only setting. Please try again.",
-        variant: "error",
-      }),
-  });
-
-  const approve = useMutation({
-    mutationFn: async ({
-      articleId,
-      decision,
-      note,
-    }: {
-      articleId: string;
-      decision: ReviewDecision;
-      note: string;
-    }) => {
-      const { error } = await client.api
-        .newspapers({ newspaper_id: newspaperId })
-        .articles({ article_id: articleId })
-        .approve.post(
-          { decision, note: note || undefined },
-          { query: { view: "NEWSPAPER_MANAGER" } }
-        );
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setActiveId(null);
-      invalidateQueue();
-    },
-    onError: () =>
-      toast({
-        title: "Error",
-        description: "Failed to submit review. Please try again.",
-        variant: "error",
-      }),
-  });
-
-  function toggleActive(articleId: string) {
-    setActiveId((prev) => (prev === articleId ? null : articleId));
-  }
+  const {
+    articles,
+    totalPages,
+    total,
+    currentPage,
+    isLoading,
+    isError,
+    editors,
+    loadingEditors,
+    activeId,
+    toggleActive,
+    setPage,
+    assignEditor,
+    toggleSubscriber,
+    approve,
+  } = useEditorialQueue(newspaperId);
 
   return (
     <div className="flex flex-col gap-7">
       <SectionTitle title="Editorial Queue" />
 
-      {queueQuery.isError ? (
+      {isError ? (
         <ErrorState />
-      ) : queueQuery.isLoading ? (
+      ) : isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState message="No articles awaiting editorial action." />
@@ -303,12 +209,12 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                   {activeId === article.id && isSubmitted && (
                     <AssignEditorForm
                       editors={editors}
-                      loadingEditors={editorsQuery.isLoading}
+                      loadingEditors={loadingEditors}
                       isPending={assignEditor.isPending}
                       onSubmit={(editorId) =>
                         assignEditor.mutate({ articleId: article.id, editorId })
                       }
-                      onCancel={() => setActiveId(null)}
+                      onCancel={() => toggleActive(article.id)}
                     />
                   )}
 
@@ -317,7 +223,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
                       onSubmit={(d, n) =>
                         approve.mutate({ articleId: article.id, decision: d, note: n })
                       }
-                      onCancel={() => setActiveId(null)}
+                      onCancel={() => toggleActive(article.id)}
                       submitting={approve.isPending}
                     />
                   )}
@@ -329,11 +235,7 @@ export function EditorialQueueSection({ newspaperId }: { newspaperId: string }) 
             currentPage={currentPage}
             totalPages={totalPages}
             total={total}
-            onPageChange={(p) => {
-              const next = new URLSearchParams(searchParams);
-              next.set("page", String(p));
-              setSearchParams(next);
-            }}
+            onPageChange={setPage}
           />
         </>
       )}

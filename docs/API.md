@@ -1150,12 +1150,15 @@ Side effects:
 
 ---
 
-### POST /api/newspapers/:newspaper_id/articles/:article_id/submit
+### PATCH /api/newspapers/:newspaper_id/articles/:article_id/status
 
-Submit a draft article for editorial review. Transitions the article from `DRAFT`
-to `SUBMITTED`. The article must have at least one image before it can be submitted.
+Drive an article through its editorial workflow. The transition is selected by
+the `action` field in the request body; each action carries its own payload and
+has its own role and state requirements. This single endpoint replaces the
+former verb endpoints `/submit`, `/assign-editor`, `/review`, `/approve`,
+`/schedule`, and `/publish`.
 
-**Auth required:** Yes — `AUTHOR` (own articles only)
+**Auth required:** Yes — the role required depends on the action (see table below)
 
 **URL parameters:**
 
@@ -1167,16 +1170,77 @@ to `SUBMITTED`. The article must have at least one image before it can be submit
 **Headers:**
 ```
 Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Request body:**
+
+The `action` field is required and discriminates the payload:
+
+| action        | Required role                 | Payload fields         | State transition                                               |
+|---------------|-------------------------------|------------------------|----------------------------------------------------------------|
+| SUBMIT        | AUTHOR (own article)          | —                      | DRAFT → SUBMITTED                                              |
+| ASSIGN_EDITOR | NEWSPAPER_MANAGER             | editor_id              | SUBMITTED → IN_REVIEW                                          |
+| REVIEW        | EDITOR (assigned)             | decision, note?        | IN_REVIEW → APPROVED_BY_EDITOR / REJECTED / DRAFT             |
+| APPROVE       | NEWSPAPER_MANAGER or DIRECTOR | decision, note?, view? | APPROVED_BY_EDITOR → APPROVED_BY_MANAGER → APPROVED_BY_DIRECTOR |
+| SCHEDULE      | NEWSPAPER_MANAGER or DIRECTOR | publication_date       | sets publication date on an APPROVED_BY_DIRECTOR article       |
+| PUBLISH       | NEWSPAPER_MANAGER or DIRECTOR | —                      | APPROVED_BY_DIRECTOR → PUBLISHED                              |
+
+Field rules:
+```
+┌──────────────────┬─────────────────────────────────────────────────────────┐
+│      Field       │                          Notes                          │
+├──────────────────┼─────────────────────────────────────────────────────────┤
+│ action           │ required; one of SUBMIT, ASSIGN_EDITOR, REVIEW, APPROVE, │
+│                  │ SCHEDULE, PUBLISH                                       │
+│ editor_id        │ ASSIGN_EDITOR only; UUID of an EDITOR in this newspaper  │
+│ decision         │ REVIEW/APPROVE only; one of APPROVE, REJECT,             │
+│                  │ REQUEST_REVISION                                        │
+│ note             │ REVIEW/APPROVE only; feedback for the author, required   │
+│                  │ when decision is REJECT or REQUEST_REVISION             │
+│ view             │ APPROVE only; role perspective NEWSPAPER_MANAGER or     │
+│                  │ DIRECTOR. Must be a role the caller holds. Defaults to  │
+│                  │ DIRECTOR if held, otherwise NEWSPAPER_MANAGER           │
+│ publication_date │ SCHEDULE only; ISO 8601 datetime, must be in the future │
+└──────────────────┴─────────────────────────────────────────────────────────┘
+```
+
+**Example request bodies:**
+```json
+{ "action": "SUBMIT" }
+{ "action": "ASSIGN_EDITOR", "editor_id": "u7u8u9..." }
+{ "action": "REVIEW", "decision": "APPROVE", "note": "Looks good." }
+{ "action": "APPROVE", "decision": "APPROVE", "view": "NEWSPAPER_MANAGER" }
+{ "action": "SCHEDULE", "publication_date": "2026-05-01T08:00:00Z" }
+{ "action": "PUBLISH" }
 ```
 
 **Responses:**
 
-`200 OK`
+`200 OK` — the body shape depends on the action.
+
+SUBMIT / APPROVE:
+```json
+{ "id": "a1b2c3...", "status": "SUBMITTED" }
+```
+
+ASSIGN_EDITOR:
 ```json
 {
     "id": "a1b2c3...",
-    "status": "SUBMITTED"
+    "status": "IN_REVIEW",
+    "assigned_editor": { "id": "u7u8u9...", "full_name": "Eva Editorová" }
 }
+```
+
+REVIEW:
+```json
+{ "id": "a1b2c3...", "status": "APPROVED_BY_EDITOR", "note": "Looks good." }
+```
+
+SCHEDULE / PUBLISH:
+```json
+{ "id": "a1b2c3...", "status": "PUBLISHED", "publication_date": "2026-05-01T08:00:00Z" }
 ```
 
 `401 Unauthorized` — no token provided
@@ -1184,23 +1248,29 @@ Authorization: Bearer <token>
 { "error": "UNAUTHORIZED" }
 ```
 
-`403 Forbidden` — article belongs to another author or is not in DRAFT state
+`403 Forbidden` — caller lacks the role required for the action, the article is
+not in the expected state for it, or the article belongs to another author
 ```json
 { "error": "FORBIDDEN" }
 ```
 
-`404 Not Found` — article does not exist
+`404 Not Found` — article (or, for ASSIGN_EDITOR, the editor) does not exist
 ```json
 { "error": "ARTICLE_NOT_FOUND" }
 ```
 
-`422 Unprocessable Entity` — article cannot be submitted (e.g., missing required image)
+`422 Unprocessable Entity` — the action cannot be applied in the article's
+current state, a required field is missing, or the publication date is invalid
 ```json
-{ "error": "ARTICLE_MISSING_IMAGE" }
+{ "error": "INVALID_ARTICLE_STATE" }
 ```
 
 Side effects:
-- Creates an audit log entry (operation: ARTICLE_SUBMITTED)
+- SUBMIT requires at least one image, otherwise `422 ARTICLE_MISSING_IMAGE`
+- REVIEW and APPROVE notify the author by email on rejection or revision request
+- Creates an audit log entry for the matching operation (ARTICLE_SUBMITTED,
+  ARTICLE_EDITOR_ASSIGNED, ARTICLE_REVIEWED, ARTICLE_APPROVED, ARTICLE_REJECTED,
+  ARTICLE_SCHEDULED, ARTICLE_PUBLISHED)
 
 ---
 
@@ -1317,371 +1387,6 @@ Authorization: Bearer <token>
 Side effects:
 - If the deleted image was primary, the next image in upload order becomes primary
 - Creates an audit log entry (operation: ARTICLE_IMAGE_DELETED)
-
----
-
-### POST /api/newspapers/:newspaper_id/articles/:article_id/assign-editor
-
-Assign an editor to a submitted article. Transitions the article from `SUBMITTED`
-to `IN_REVIEW`.
-
-**Auth required:** Yes — `NEWSPAPER_MANAGER`
-
-**URL parameters:**
-
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| article_id   | UUID of the article   |
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Request body:**
-```json
-{ "editor_id": "u7u8u9..." }
-```
-
-Field rules:
-```
-┌───────────┬──────────┬────────────────────────────────────────────┐
-│   Field   │ Required │                  Notes                     │
-├───────────┼──────────┼────────────────────────────────────────────┤
-│ editor_id │ yes      │ UUID of a user with the EDITOR role in     │
-│           │          │ this newspaper                             │
-└───────────┴──────────┴────────────────────────────────────────────┘
-```
-
-**Responses:**
-
-`200 OK`
-```json
-{
-    "id": "a1b2c3...",
-    "status": "IN_REVIEW",
-    "assigned_editor": {
-        "id": "u7u8u9...",
-        "full_name": "Eva Editorová"
-    }
-}
-```
-
-`401 Unauthorized` — no token provided
-```json
-{ "error": "UNAUTHORIZED" }
-```
-
-`403 Forbidden` — user does not have NEWSPAPER_MANAGER role in this newspaper
-```json
-{ "error": "FORBIDDEN" }
-```
-
-`404 Not Found` — article or editor does not exist
-```json
-{ "error": "ARTICLE_NOT_FOUND" }
-```
-
-`422 Unprocessable Entity` — article is not in SUBMITTED state, or target user is not an editor
-```json
-{ "error": "INVALID_ARTICLE_STATE" }
-```
-
-Side effects:
-- Creates an audit log entry (operation: ARTICLE_EDITOR_ASSIGNED)
-
----
-
-### POST /api/newspapers/:newspaper_id/articles/:article_id/review
-
-Submit a review decision for an article that is `IN_REVIEW`. The assigned
-editor may approve the article, reject it, or return it to the author for revision.
-
-**Auth required:** Yes — `EDITOR` (assigned to this article)
-
-**URL parameters:**
-
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| article_id   | UUID of the article   |
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Request body:**
-```json
-{
-    "decision": "APPROVE",
-    "note": "Well written, approved for manager review."
-}
-```
-
-Field rules:
-```
-┌──────────┬──────────┬───────────────────────────────────────────────────────┐
-│  Field   │ Required │                       Notes                           │
-├──────────┼──────────┼───────────────────────────────────────────────────────┤
-│ decision │ yes      │ one of: APPROVE, REJECT, REQUEST_REVISION             │
-├──────────┼──────────┼───────────────────────────────────────────────────────┤
-│ note     │ no       │ feedback for the author; required when decision is     │
-│          │          │ REJECT or REQUEST_REVISION                             │
-└──────────┴──────────┴───────────────────────────────────────────────────────┘
-```
-
-State transitions:
-- `APPROVE` → article moves to `APPROVED_BY_EDITOR`
-- `REJECT` → article moves to `REJECTED`
-- `REQUEST_REVISION` → article moves back to `DRAFT`
-
-**Responses:**
-
-`200 OK`
-```json
-{
-    "id": "a1b2c3...",
-    "status": "APPROVED_BY_EDITOR",
-    "note": "Well written, approved for manager review."
-}
-```
-
-`401 Unauthorized` — no token provided
-```json
-{ "error": "UNAUTHORIZED" }
-```
-
-`403 Forbidden` — user is not the assigned editor for this article
-```json
-{ "error": "FORBIDDEN" }
-```
-
-`404 Not Found` — article does not exist
-```json
-{ "error": "ARTICLE_NOT_FOUND" }
-```
-
-`422 Unprocessable Entity` — article is not in IN_REVIEW state, or note missing for rejection
-```json
-{ "error": "INVALID_ARTICLE_STATE" }
-```
-
-Side effects:
-- Notifies the article's author of the decision by email
-- Creates an audit log entry (operation: ARTICLE_REVIEWED)
-
----
-
-### POST /api/newspapers/:newspaper_id/articles/:article_id/approve
-
-Approve an article, advancing it to the next stage in the workflow.
-The effect of this call depends on the caller's role:
-- `NEWSPAPER_MANAGER`: advances from `APPROVED_BY_EDITOR` → `APPROVED_BY_MANAGER`
-- `DIRECTOR`: advances from `APPROVED_BY_MANAGER` → `APPROVED_BY_DIRECTOR`
-
-Managers and Directors may also reject the article or return it to draft at this stage.
-
-**Auth required:** Yes — `NEWSPAPER_MANAGER` or `DIRECTOR`
-
-**URL parameters:**
-
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| article_id   | UUID of the article   |
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Query parameters:**
-
-| Parameter | Type   | Required | Default | Description                                                                                                                        |
-|-----------|--------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------|
-| view      | string | no       | —       | Role perspective to use: `NEWSPAPER_MANAGER` or `DIRECTOR`. Must be a role the caller holds. When omitted, defaults to `DIRECTOR` if the caller holds that role, otherwise `NEWSPAPER_MANAGER`. |
-
-**Request body:**
-```json
-{
-    "decision": "APPROVE",
-    "note": "Approved for publication schedule."
-}
-```
-
-Field rules:
-```
-┌──────────┬──────────┬──────────────────────────────────────────────────────┐
-│  Field   │ Required │                      Notes                           │
-├──────────┼──────────┼──────────────────────────────────────────────────────┤
-│ decision │ yes      │ one of: APPROVE, REJECT, REQUEST_REVISION            │
-├──────────┼──────────┼──────────────────────────────────────────────────────┤
-│ note     │ no       │ feedback; required when REJECT or REQUEST_REVISION    │
-└──────────┴──────────┴──────────────────────────────────────────────────────┘
-```
-
-**Responses:**
-
-`200 OK`
-```json
-{
-    "id": "a1b2c3...",
-    "status": "APPROVED_BY_MANAGER"
-}
-```
-
-`401 Unauthorized` — no token provided
-```json
-{ "error": "UNAUTHORIZED" }
-```
-
-`403 Forbidden` — user does not have the required role, or article is not in the expected state for this role
-```json
-{ "error": "FORBIDDEN" }
-```
-
-`404 Not Found` — article does not exist
-```json
-{ "error": "ARTICLE_NOT_FOUND" }
-```
-
-`422 Unprocessable Entity` — article is not in the correct state for this approval step
-```json
-{ "error": "INVALID_ARTICLE_STATE" }
-```
-
-Side effects:
-- Notifies the author by email on rejection or revision request
-- Creates an audit log entry (operation: ARTICLE_APPROVED or ARTICLE_REJECTED)
-
----
-
-### POST /api/newspapers/:newspaper_id/articles/:article_id/schedule
-
-Set the publication date for a fully approved article (`APPROVED_BY_DIRECTOR`).
-The article will be automatically published at the specified date and time.
-
-**Auth required:** Yes — `NEWSPAPER_MANAGER` or `DIRECTOR`
-
-**URL parameters:**
-
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| article_id   | UUID of the article   |
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Request body:**
-```json
-{
-    "publication_date": "2026-05-01T08:00:00Z"
-}
-```
-
-Field rules:
-```
-┌──────────────────┬──────────┬────────────────────────────────────────────────┐
-│      Field       │ Required │                    Notes                       │
-├──────────────────┼──────────┼────────────────────────────────────────────────┤
-│ publication_date │ yes      │ ISO 8601 datetime; must be in the future        │
-└──────────────────┴──────────┴────────────────────────────────────────────────┘
-```
-
-**Responses:**
-
-`200 OK`
-```json
-{
-    "id": "a1b2c3...",
-    "status": "APPROVED_BY_DIRECTOR",
-    "publication_date": "2026-05-01T08:00:00Z"
-}
-```
-
-`401 Unauthorized` — no token provided
-```json
-{ "error": "UNAUTHORIZED" }
-```
-
-`403 Forbidden` — user does not have NEWSPAPER_MANAGER role in this newspaper
-```json
-{ "error": "FORBIDDEN" }
-```
-
-`404 Not Found` — article does not exist
-```json
-{ "error": "ARTICLE_NOT_FOUND" }
-```
-
-`422 Unprocessable Entity` — article is not in APPROVED_BY_DIRECTOR state, or date is in the past
-```json
-{ "error": "INVALID_PUBLICATION_DATE" }
-```
-
-Side effects:
-- Creates an audit log entry (operation: ARTICLE_SCHEDULED)
-
----
-
-### POST /api/newspapers/:newspaper_id/articles/:article_id/publish
-
-Immediately publish an article that has been fully approved (`APPROVED_BY_DIRECTOR`).
-Sets the article state to `PUBLISHED` and records the current timestamp as the
-publication date.
-
-**Auth required:** Yes — `DIRECTOR` or `NEWSPAPER_MANAGER`
-
-**URL parameters:**
-
-| Parameter    | Description           |
-|--------------|-----------------------|
-| newspaper_id | UUID of the newspaper |
-| article_id   | UUID of the article   |
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Responses:**
-
-`200 OK`
-```json
-{
-    "id": "a1b2c3...",
-    "status": "PUBLISHED",
-    "publication_date": "2026-05-01T08:00:00Z"
-}
-```
-
-`401 Unauthorized` — no token provided
-```json
-{ "error": "UNAUTHORIZED" }
-```
-
-`403 Forbidden` — user does not have the required role
-```json
-{ "error": "FORBIDDEN" }
-```
-
-`404 Not Found` — article does not exist
-```json
-{ "error": "ARTICLE_NOT_FOUND" }
-```
-
-`422 Unprocessable Entity` — article is not in APPROVED_BY_DIRECTOR state
-```json
-{ "error": "INVALID_ARTICLE_STATE" }
-```
-
-Side effects:
-- Creates an audit log entry (operation: ARTICLE_PUBLISHED)
 
 ---
 

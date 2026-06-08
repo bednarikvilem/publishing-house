@@ -16,7 +16,7 @@ import {
 import { eq, and, desc, count } from "drizzle-orm";
 import { logger } from "../utils/logger";
 import { audit } from "../utils/audit";
-import { ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableError } from "../errors";
+import { ForbiddenError, NotFoundError, UnprocessableError } from "../errors";
 import { getSubscriptionStatus } from "./subscriptions";
 import type { AuthUser, Roles } from "./context";
 import type { Static } from "elysia";
@@ -120,11 +120,10 @@ export async function searchArticles(
 export async function listMyArticles(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     query: Static<typeof articlesMineQuery>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const newspaper = await tx.query.newspapers.findFirst({
@@ -178,10 +177,9 @@ export async function getMyArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -220,12 +218,10 @@ export async function getMyArticle(
 export async function getReviewQueue(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     query: Static<typeof articlesQueueQuery>,
 ) {
-    if (!user) throw new UnauthorizedError();
-
     const isEditor = roles.includes("EDITOR");
     const isManager = roles.includes("NEWSPAPER_MANAGER");
     const isDirector = roles.includes("DIRECTOR");
@@ -259,7 +255,7 @@ export async function getReviewQueue(
 
     const all = await tx.query.articles.findMany({
         where: eq(articles.newspaperId, newspaperId),
-        with: { category: true },
+        with: { category: true, author: true, reviews: { with: { reviewer: true } } },
     });
 
     let filtered = all.filter((a: any) => allowedStates.includes(a.state));
@@ -276,15 +272,22 @@ export async function getReviewQueue(
     const paged = filtered.slice(offset, offset + limit);
 
     return {
-        data: paged.map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            perex: a.perex,
-            category: a.category?.categoryName ?? null,
-            status: a.state,
-            submitted_at: a.createdAt,
-            author: { id: a.authorId },
-        })),
+        data: paged.map((a: any) => {
+            const assignedReview = a.reviews?.find((r: any) => !r.decision) ?? a.reviews?.[a.reviews.length - 1];
+            return {
+                id: a.id,
+                title: a.title,
+                perex: a.perex,
+                category: a.category?.categoryName ?? null,
+                status: a.state,
+                submitted_at: a.createdAt,
+                author: { id: a.authorId, full_name: a.author?.fullname ?? null },
+                assigned_editor: assignedReview?.reviewer
+                    ? { id: assignedReview.reviewer.id, full_name: assignedReview.reviewer.fullname }
+                    : null,
+                is_subscriber_only: a.isSubscriberOnly ?? false,
+            };
+        }),
         pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
     };
 }
@@ -351,9 +354,8 @@ export async function getArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (user.newspaperId !== newspaperId) throw new ForbiddenError();
     const article = await tx.query.articles.findFirst({
         where: and(
@@ -430,11 +432,10 @@ export async function getArticle(
 export async function createArticle(
     tx: Tx,
     newspaperId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof createArticleBody>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
     if (user.newspaperId !== newspaperId) throw new ForbiddenError();
 
@@ -493,11 +494,10 @@ export async function updateArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof updateArticleBody>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -551,11 +551,9 @@ export async function deleteArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError();
-
     const article = await tx.query.articles.findFirst({
         where: and(
             eq(articles.id, articleId),
@@ -578,10 +576,9 @@ export async function submitArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -630,11 +627,10 @@ export async function uploadArticleImage(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     request: Request,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -704,10 +700,9 @@ export async function deleteArticleImage(
     newspaperId: string,
     articleId: string,
     imageId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("AUTHOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -753,11 +748,10 @@ export async function assignEditor(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof assignEditorBody>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -817,11 +811,10 @@ export async function reviewArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof reviewBody>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("EDITOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -869,12 +862,11 @@ export async function approveArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof reviewBody>,
     query: Static<typeof articleApproveQuery>,
 ) {
-    if (!user) throw new UnauthorizedError();
     const isManager = roles.includes("NEWSPAPER_MANAGER");
     const isDirector = roles.includes("DIRECTOR");
     if (!isManager && !isDirector) throw new ForbiddenError();
@@ -957,11 +949,10 @@ export async function scheduleArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     body: Static<typeof scheduleBody>,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("NEWSPAPER_MANAGER") && !roles.includes("DIRECTOR")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -1000,10 +991,9 @@ export async function publishArticle(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("DIRECTOR") && !roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({
@@ -1037,11 +1027,10 @@ export async function setSubscriberOnly(
     tx: Tx,
     newspaperId: string,
     articleId: string,
-    user: AuthUser | null,
+    user: AuthUser,
     roles: Roles,
     isSubscriberOnly: boolean,
 ) {
-    if (!user) throw new UnauthorizedError();
     if (!roles.includes("NEWSPAPER_MANAGER")) throw new ForbiddenError();
 
     const article = await tx.query.articles.findFirst({

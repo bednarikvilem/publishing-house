@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client } from "../../lib/api";
 import type { PaginatedResponse, ReviewDecision } from "../../types";
 import type { QueueArticle } from "../../types/dashboard";
 import { SectionTitle } from "../../components/SectionTitle";
@@ -19,77 +20,61 @@ import { formatDate } from "../../lib/utils";
 
 export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") ?? "1");
-
-  const [articles, setArticles] = useState<QueueArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
-  const load = useCallback(async () => {
-    if (!newspaperId) return;
-    await null;
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: "20",
-        view: "EDITOR",
-      });
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?${params}`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-      setPagination({
-        total: data.pagination.total,
-        total_pages: data.pagination.total_pages,
-      });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId, currentPage]);
+  const queueQuery = useQuery({
+    queryKey: ["review-queue", newspaperId, currentPage],
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles.queue.get({
+          query: { page: currentPage, limit: 20, view: "EDITOR" },
+        });
+      if (error) throw error;
+      return data as PaginatedResponse<QueueArticle>;
+    },
+  });
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
-
-  async function handleReview(articleId: string, decision: ReviewDecision, note: string) {
-    setSubmitting(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/review`,
-        {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ decision, note: note || undefined }),
-        }
-      );
-      if (!res.ok) throw new Error();
+  const review = useMutation({
+    mutationFn: async ({
+      articleId,
+      decision,
+      note,
+    }: {
+      articleId: string;
+      decision: ReviewDecision;
+      note: string;
+    }) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .status.patch({ action: "REVIEW", decision, note: note || undefined });
+      if (error) throw error;
+    },
+    onSuccess: () => {
       setActiveId(null);
-      load();
-    } catch {
-      toast({ title: "Error", description: "Failed to submit review. Please try again.", variant: "error" });
-    } finally {
-      setSubmitting(false);
-    }
-  }
+      queryClient.invalidateQueries({ queryKey: ["review-queue", newspaperId] });
+    },
+    onError: () =>
+      toast({
+        title: "Error",
+        description: "Failed to submit review. Please try again.",
+        variant: "error",
+      }),
+  });
+
+  const articles = queueQuery.data?.data ?? [];
 
   return (
     <div className="flex flex-col gap-7">
       <SectionTitle title="Review Queue" />
 
-      {error ? (
+      {queueQuery.isError ? (
         <ErrorState />
-      ) : loading ? (
+      ) : queueQuery.isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState message="No articles awaiting your review." />
@@ -131,9 +116,11 @@ export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
                 </div>
                 {activeId === article.id && (
                   <DecisionForm
-                    onSubmit={(d, n) => handleReview(article.id, d, n)}
+                    onSubmit={(d, n) =>
+                      review.mutate({ articleId: article.id, decision: d, note: n })
+                    }
                     onCancel={() => setActiveId(null)}
-                    submitting={submitting}
+                    submitting={review.isPending}
                   />
                 )}
               </ListRow>
@@ -141,8 +128,8 @@ export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
           </div>
           <Pagination
             currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
+            totalPages={queueQuery.data?.pagination.total_pages ?? 1}
+            total={queueQuery.data?.pagination.total ?? 0}
             onPageChange={(p) => {
               const next = new URLSearchParams(searchParams);
               next.set("page", String(p));

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { StarIcon } from "../components/Icons";
-import { API_BASE_URL } from "../lib/api";
+import { client } from "../lib/api";
 import type { Article, ArticlesResponse } from "../types/article";
 import { CategoryBadge } from "../components/CategoryBadge";
 import { ArticleCard } from "../components/ArticleCard";
@@ -33,27 +34,21 @@ export function CategoryPage() {
   const { newspaper, newspaperName } = useNewspaper();
   const { categorySlug, category } = useCategory(newspaper?.id);
 
-  const [articles, setArticles] = useState<Article[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
 
-  useEffect(() => {
-    if (!newspaper || !category) return;
+  const articlesQuery = useQuery({
+    queryKey: ["category-articles", newspaper?.id, category?.slug],
+    enabled: !!newspaper && !!category,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaper!.id })
+        .articles.get({ query: { page: 1, limit: 20, category: category!.slug } });
+      if (error) throw error;
+      return data as ArticlesResponse;
+    },
+  });
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setArticles([]);
-    fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles?category=${category.slug}`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<ArticlesResponse>;
-      })
-      .then((data) => {
-        setArticles(data.data);
-      })
-      .catch(() => {});
-  }, [newspaper, category]);
-
+  const articles = articlesQuery.data?.data ?? [];
   const sorted = sortArticles(articles, sortOrder);
   const [featured, ...rest] = sorted;
 

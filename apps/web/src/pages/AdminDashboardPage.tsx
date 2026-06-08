@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
+import { useUser } from "../hooks/useUser";
+import { useLogout } from "../hooks/useLogout";
 import { PortalLayout } from "../components/PortalLayout";
 import { GlobalUsersSection } from "./admin/GlobalUsersSection";
 import { NewspaperUsersSection } from "./admin/NewspaperUsersSection";
@@ -10,32 +13,29 @@ type NewspaperEntry = { id: string; name: string; slug: string };
 
 export function AdminDashboardPage() {
   const navigate = useNavigate();
-  const [newspapers, setNewspapers]     = useState<NewspaperEntry[]>([]);
   const [activeSection, setActiveSection] = useState<"global-users" | { newspaper: NewspaperEntry }>("global-users");
-  const [authChecked, setAuthChecked]   = useState(false);
+
+  const { user, isLoading: userLoading, isError } = useUser();
+  const isAdmin = user?.roles.includes("SYSTEM_ADMINISTRATOR") ?? false;
+  const authChecked = isAdmin;
+  const logout = useLogout("/admin");
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) => res.ok ? res.json() as Promise<{ roles: string[] }> : Promise.reject())
-      .then((data) => {
-        if (!data.roles.includes("SYSTEM_ADMINISTRATOR")) navigate("/admin");
-        else setAuthChecked(true);
-      })
-      .catch(() => navigate("/admin"));
-  }, [navigate]);
+    if (isError || (!userLoading && user && !isAdmin)) navigate("/admin");
+  }, [isError, userLoading, user, isAdmin, navigate]);
 
-  useEffect(() => {
-    if (!authChecked) return;
-    fetch(`${API_BASE_URL}/api/newspapers`, { headers: authHeaders() })
-      .then((res) => res.ok ? res.json() as Promise<{ data: NewspaperEntry[] }> : Promise.reject())
-      .then((data) => setNewspapers(data.data))
-      .catch(() => { /* empty */ });
-  }, [authChecked]);
+  const { data: newspapers = [] } = useQuery({
+    queryKey: ["newspapers"],
+    enabled: authChecked,
+    queryFn: async () => {
+      const { data, error } = await client.api.newspapers.get();
+      if (error) throw error;
+      return (data as { data: NewspaperEntry[] }).data;
+    },
+  });
 
   function handleLogout() {
-    fetch(`${API_BASE_URL}/api/auth/logout`, { method: "POST", headers: authHeaders() }).catch(() => { /* empty */ });
-    localStorage.removeItem("token");
-    navigate("/admin");
+    logout.mutate();
   }
 
   if (!authChecked) {

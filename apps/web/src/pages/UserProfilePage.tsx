@@ -1,36 +1,15 @@
-import { useEffect, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { ProfileInfoCard } from "./profile/ProfileInfoCard";
 import { PasswordCard } from "./profile/PasswordCard";
 import { DangerZoneCard } from "./profile/DangerZoneCard";
 import { useNewspaper } from "../hooks/useNewspaper";
-
-interface UserProfile {
-  id: string;
-  email: string;
-  username: string;
-  full_name: string | null;
-  bio: string | null;
-  profile_picture: string | null;
-  email_verified: boolean;
-  roles: string[];
-}
+import { useUser } from "../hooks/useUser";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function UserProfilePage() {
   const { newspaperName, newspaper } = useNewspaper();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loadError, setLoadError] = useState(false);
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/users/me`, { headers: authHeaders() })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<UserProfile>;
-      })
-      .then((data) => setProfile(data))
-      .catch(() => setLoadError(true));
-  }, []);
+  const { user: profile, isLoading, isError } = useUser();
+  const queryClient = useQueryClient();
 
   return (
     <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
@@ -43,11 +22,11 @@ export function UserProfilePage() {
           My Profile
         </h1>
 
-        {loadError ? (
+        {isError ? (
           <p className="text-muted-foreground py-16 text-center">
             Failed to load profile. Please sign in and try again.
           </p>
-        ) : !profile ? (
+        ) : isLoading || !profile ? (
           <p className="text-muted-foreground py-16 text-center">Loading…</p>
         ) : (
           <>
@@ -65,7 +44,10 @@ export function UserProfilePage() {
                 </p>
               </div>
             )}
-            <ProfileInfoCard profile={profile} onSaved={(updated) => setProfile(updated)} />
+            <ProfileInfoCard
+              profile={profile}
+              onSaved={() => queryClient.invalidateQueries({ queryKey: ["me"] })}
+            />
             <PasswordCard />
             <DangerZoneCard />
           </>

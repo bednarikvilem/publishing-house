@@ -1,6 +1,7 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface BaseProps {
   id: string;
@@ -24,10 +25,10 @@ export function FormField(props: FormFieldProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-foreground text-sm font-medium">
+      <Label htmlFor={id} className="text-foreground">
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
-      </label>
+      </Label>
       {as === "textarea" ? (
         <Textarea
           id={id}

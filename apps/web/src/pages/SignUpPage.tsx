@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { Type, type Static } from "@sinclair/typebox";
+import { registerInput } from "@pb138/server/schemas/auth";
+import { client, toApiError } from "../lib/api";
+import { typeboxResolver, emptyToUndefined } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
@@ -8,66 +13,68 @@ import { useNewspaper } from "../hooks/useNewspaper";
 import { slugToDisplayName } from "../lib/utils";
 import { Button } from "../components/ui/button";
 
+const signUpFormSchema = Type.Omit(registerInput, ["newspaper_id"]);
+type SignUpFormValues = Static<typeof signUpFormSchema>;
+
 export function SignUpPage() {
   const { newspaperName, newspaper } = useNewspaper();
 
-  const [fullName, setFullName]           = useState("");
-  const [username, setUsername]           = useState("");
-  const [email, setEmail]                 = useState("");
-  const [password, setPassword]           = useState("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    getValues,
+    formState: { errors },
+  } = useForm<SignUpFormValues>({
+    resolver: typeboxResolver(signUpFormSchema),
+    defaultValues: { email: "", username: "", password: "", full_name: "" },
+  });
+
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError]                 = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors]     = useState<Record<string, string>>({});
-  const [loading, setLoading]             = useState(false);
-  const [success, setSuccess]             = useState(false);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setFieldErrors({});
-
-    if (password !== confirmPassword) {
-      setFieldErrors({ confirmPassword: "Passwords do not match" });
-      return;
-    }
-    if (!newspaper) return;
-
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          newspaper_id: newspaper.id,
-          email,
-          username,
-          full_name: fullName || undefined,
-          password,
-        }),
+  const registerMutation = useMutation({
+    mutationFn: async (values: SignUpFormValues) => {
+      if (!newspaper) throw new Error("NEWSPAPER_UNAVAILABLE");
+      const { error } = await client.api.auth.register.post({
+        ...values,
+        newspaper_id: newspaper.id,
       });
-
-      if (res.status === 201) { setSuccess(true); return; }
-
-      const text = await res.text();
-      let body: { error?: string; fields?: Record<string, string> } = {};
-      try { body = JSON.parse(text); } catch { body = { error: text.trim() }; }
-      if (res.status === 409) {
-        if (body.error === "EMAIL_TAKEN") {
-          setFieldErrors({ email: "This email is already registered" });
-        } else if (body.error === "USERNAME_TAKEN") {
-          setFieldErrors({ username: "This username is already taken" });
+      if (error) throw error;
+    },
+    onSuccess: () => setSuccess(true),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 409) {
+        if (value?.error === "EMAIL_TAKEN") {
+          setError("email", { message: "This email is already registered" });
+        } else if (value?.error === "USERNAME_TAKEN") {
+          setError("username", { message: "This username is already taken" });
         } else {
-          setError("An account with these details already exists.");
+          setFormError("An account with these details already exists.");
         }
         return;
       }
-      if (res.status === 422 && body.fields) { setFieldErrors(body.fields); return; }
-      setError("Something went wrong. Please try again.");
-    } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setLoading(false);
+      if (status === 422 && value?.fields) {
+        for (const [field, message] of Object.entries(value.fields)) {
+          setError(field as keyof SignUpFormValues, { message });
+        }
+        return;
+      }
+      setFormError("Something went wrong. Please try again.");
+    },
+  });
+
+  function onValid(values: SignUpFormValues) {
+    setFormError(null);
+    setConfirmError(null);
+    if (values.password !== confirmPassword) {
+      setConfirmError("Passwords do not match");
+      return;
     }
+    registerMutation.mutate(values);
   }
 
   if (success) {
@@ -81,7 +88,7 @@ export function SignUpPage() {
             </h2>
             <p className="text-muted-foreground text-sm leading-relaxed">
               We sent a confirmation link to{" "}
-              <span className="text-foreground font-semibold">{email}</span>.
+              <span className="text-foreground font-semibold">{getValues("email")}</span>.
               Please verify your address to activate your account.
             </p>
             <Link
@@ -103,44 +110,41 @@ export function SignUpPage() {
         title={slugToDisplayName(newspaperName ?? "")}
         subtitle="Create your account"
       >
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
           <FormField
             id="fullName"
             label="Full Name"
             type="text"
             placeholder="John Doe"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            error={errors.full_name?.message}
+            {...register("full_name", { setValueAs: emptyToUndefined })}
           />
           <FormField
             id="username"
             label="Username"
             type="text"
             placeholder="jannovak"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
             required
-            error={fieldErrors.username}
+            error={errors.username?.message}
+            {...register("username")}
           />
           <FormField
             id="email"
             label="Email Address"
             type="email"
             placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
-            error={fieldErrors.email}
+            error={errors.email?.message}
+            {...register("email")}
           />
           <FormField
             id="password"
             label="Password"
             type="password"
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
-            error={fieldErrors.password}
+            error={errors.password?.message}
+            {...register("password")}
           />
           <FormField
             id="confirmPassword"
@@ -150,7 +154,7 @@ export function SignUpPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            error={fieldErrors.confirmPassword}
+            error={confirmError ?? undefined}
           />
 
           <p className="text-muted-foreground text-center text-2xs">
@@ -158,14 +162,14 @@ export function SignUpPage() {
             <span className="text-foreground font-semibold">Terms &amp; Privacy Policy</span>
           </p>
 
-          {error && <p className="text-destructive text-center text-2xs">{error}</p>}
+          {formError && <p className="text-destructive text-center text-2xs">{formError}</p>}
 
           <Button
             type="submit"
-            disabled={loading || !newspaper}
+            disabled={registerMutation.isPending || !newspaper}
             className="w-full"
           >
-            {loading ? "Creating account…" : "Create Account"}
+            {registerMutation.isPending ? "Creating account…" : "Create Account"}
           </Button>
 
           <div className="flex items-center gap-3">

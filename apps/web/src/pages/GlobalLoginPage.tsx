@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import type { Static } from "@sinclair/typebox";
+import { globalLoginInput } from "@pb138/server/schemas/auth";
+import { client, toApiError } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { useTheme } from "../hooks/useTheme";
 import { SunIcon, MoonIcon } from "../components/Icons";
 import { AuthCard } from "../components/AuthCard";
@@ -13,7 +17,7 @@ interface GlobalLoginPageProps {
   redirectTo: string;
 }
 
-interface LoginFormValues { email: string; password: string }
+type LoginFormValues = Static<typeof globalLoginInput>;
 
 export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPageProps) {
   const navigate = useNavigate();
@@ -22,35 +26,33 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitting, errors },
-  } = useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: typeboxResolver(globalLoginInput),
+    defaultValues: { email: "", password: "" },
+  });
 
-  async function onSubmit({ email, password }: LoginFormValues) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/global/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        navigate(redirectTo);
-        return;
-      }
-
-      const body = await res.json();
-      if (res.status === 401) { setError("root", { message: "Invalid email or password." }); return; }
-      if (res.status === 403 && body.error === "EMAIL_NOT_VERIFIED") {
+  const loginMutation = useMutation({
+    mutationFn: async (values: LoginFormValues) => {
+      const { data, error } = await client.api.auth.global.login.post(values);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      navigate(redirectTo);
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 401) {
+        setError("root", { message: "Invalid email or password." });
+      } else if (status === 403 && value?.error === "EMAIL_NOT_VERIFIED") {
         setError("root", { message: "This account has not been verified." });
-        return;
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", { message: "Could not connect to the server. Please try again later." });
-    }
-  }
+    },
+  });
 
   return (
     <div className="bg-background text-foreground min-h-screen w-full">
@@ -65,13 +67,17 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
       </Button>
 
       <AuthCard title={title} subtitle={subtitle}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit((values) => loginMutation.mutate(values))}
+          className="flex flex-col gap-4"
+        >
           <FormField
             id="email"
             label="Email Address"
             type="email"
             placeholder="you@example.com"
             required
+            error={errors.email?.message}
             {...register("email")}
           />
           <FormField
@@ -80,6 +86,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
             type="password"
             placeholder="Enter your password"
             required
+            error={errors.password?.message}
             {...register("password")}
           />
 
@@ -87,10 +94,10 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={loginMutation.isPending}
             className="w-full"
           >
-            {isSubmitting ? "Signing in…" : "Sign In"}
+            {loginMutation.isPending ? "Signing in…" : "Sign In"}
           </Button>
         </form>
       </AuthCard>

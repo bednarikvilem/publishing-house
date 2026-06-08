@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { Type, type Static } from "@sinclair/typebox";
+import { loginInput } from "@pb138/server/schemas/auth";
+import { client, toApiError } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
@@ -8,8 +12,10 @@ import { useNewspaper } from "../hooks/useNewspaper";
 import { slugToDisplayName } from "../lib/utils";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
-interface LoginFormValues { email: string; password: string }
+const loginFormSchema = Type.Omit(loginInput, ["newspaper_id"]);
+type LoginFormValues = Static<typeof loginFormSchema>;
 
 export function LoginPage() {
   const { newspaperName, newspaper } = useNewspaper();
@@ -19,39 +25,42 @@ export function LoginPage() {
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitting, errors },
-  } = useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: typeboxResolver(loginFormSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  async function onSubmit({ email, password }: LoginFormValues) {
-    if (!newspaper) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newspaper_id: newspaper.id, email, password }),
+  const loginMutation = useMutation({
+    mutationFn: async (values: LoginFormValues) => {
+      if (!newspaper) throw new Error("NEWSPAPER_UNAVAILABLE");
+      const { data, error } = await client.api.auth.login.post({
+        ...values,
+        newspaper_id: newspaper.id,
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("newspaper_id", newspaper.id);
-        navigate(`/${newspaperName}`);
-        return;
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      if (newspaper) localStorage.setItem("newspaper_id", newspaper.id);
+      navigate(`/${newspaperName}`);
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 401) {
+        setError("root", { message: "Invalid email or password." });
+      } else if (status === 404) {
+        setError("root", { message: "Newspaper not found." });
+      } else if (status === 403 && value?.error === "EMAIL_NOT_VERIFIED") {
+        setError("root", {
+          message: "Please verify your email address before signing in.",
+        });
+      } else {
+        setError("root", { message: "Something went wrong. Please try again." });
       }
-
-      if (res.status === 401) { setError("root", { message: "Invalid email or password." }); return; }
-      if (res.status === 404) { setError("root", { message: "Newspaper not found." }); return; }
-      let body: { error?: string } = {};
-      try { body = await res.json(); } catch {}
-      if (res.status === 403 && body.error === "EMAIL_NOT_VERIFIED") {
-        setError("root", { message: "Please verify your email address before signing in." });
-        return;
-      }
-      setError("root", { message: "Something went wrong. Please try again." });
-    } catch {
-      setError("root", { message: "Could not connect to the server. Please try again later." });
-    }
-  }
+    },
+  });
 
   return (
     <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>
@@ -60,21 +69,25 @@ export function LoginPage() {
         title={slugToDisplayName(newspaperName ?? "")}
         subtitle="Sign in to your account"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit((values) => loginMutation.mutate(values))}
+          className="flex flex-col gap-4"
+        >
           <FormField
             id="email"
             label="Email Address"
             type="email"
             placeholder="you@example.com"
             required
+            error={errors.email?.message}
             {...register("email")}
           />
 
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-foreground text-sm font-medium">
+              <Label htmlFor="password" className="text-foreground">
                 Password
-              </label>
+              </Label>
               <Link
                 to={`/${newspaperName}/forgot-password`}
                 className="text-muted-foreground hover:text-foreground text-2xs font-medium transition-colors"
@@ -87,18 +100,22 @@ export function LoginPage() {
               type="password"
               placeholder="Enter your password"
               required
+              aria-invalid={!!errors.password}
               {...register("password")}
             />
+            {errors.password && (
+              <span className="text-destructive text-xs">{errors.password.message}</span>
+            )}
           </div>
 
           {errors.root && <p className="text-destructive text-center text-2xs">{errors.root.message}</p>}
 
           <Button
             type="submit"
-            disabled={isSubmitting || !newspaper}
+            disabled={loginMutation.isPending || !newspaper}
             className="w-full"
           >
-            {isSubmitting ? "Signing in…" : "Sign In"}
+            {loginMutation.isPending ? "Signing in…" : "Sign In"}
           </Button>
 
           <div className="flex items-center gap-3">

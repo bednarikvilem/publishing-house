@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client } from "../../lib/api";
 import type { PaginatedResponse } from "../../types";
 import type { QueueArticle } from "../../types/dashboard";
 import { LoadingState } from "../../components/LoadingState";
@@ -11,50 +11,46 @@ import { useToast } from "../../components/ui/toaster";
 
 export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
   const { toast } = useToast();
-  const [articles, setArticles]     = useState<QueueArticle[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [publishing, setPublishing] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/queue?view=DIRECTOR&status=APPROVED_BY_DIRECTOR&limit=50`,
-        { headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as PaginatedResponse<QueueArticle>;
-      setArticles(data.data);
-    } catch {
-      /* empty */
-    } finally {
-      setLoading(false);
-    }
-  }, [newspaperId]);
+  const queueQuery = useQuery({
+    queryKey: ["publication-queue", newspaperId],
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles.queue.get({
+          query: { page: 1, view: "DIRECTOR", status: "APPROVED_BY_DIRECTOR", limit: 50 },
+        });
+      if (error) throw error;
+      return data as PaginatedResponse<QueueArticle>;
+    },
+  });
 
-  useEffect(() => { load(); }, [load]);
+  const publish = useMutation({
+    mutationFn: async (articleId: string) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles({ article_id: articleId })
+        .status.patch({ action: "PUBLISH" });
+      if (error) throw error;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["publication-queue", newspaperId] }),
+    onError: () =>
+      toast({ title: "Error", description: "Failed to publish article.", variant: "error" }),
+  });
 
-  async function handlePublish(articleId: string) {
+  function handlePublish(articleId: string) {
     if (!confirm("Publish this article immediately?")) return;
-    setPublishing(articleId);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/${articleId}/publish`,
-        { method: "POST", headers: authHeaders() }
-      );
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      toast({ title: "Error", description: "Failed to publish article.", variant: "error" });
-    } finally {
-      setPublishing(null);
-    }
+    publish.mutate(articleId);
   }
+
+  const articles = queueQuery.data?.data ?? [];
 
   return (
     <div className="flex flex-col gap-6">
       <SectionTitle title="Publication Queue" />
-      {loading ? (
+      {queueQuery.isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState message="No articles ready for publication." />
@@ -73,10 +69,12 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
                 </div>
                 <Button
                   onClick={() => handlePublish(article.id)}
-                  disabled={publishing === article.id}
+                  disabled={publish.isPending && publish.variables === article.id}
                   size="sm"
                 >
-                  {publishing === article.id ? "Publishing…" : "Publish"}
+                  {publish.isPending && publish.variables === article.id
+                    ? "Publishing…"
+                    : "Publish"}
                 </Button>
               </div>
             </ListRow>

@@ -1,12 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Static } from "@sinclair/typebox";
+import { createGlobalUserInput } from "@pb138/server/schemas/auth";
+import { client, toApiError } from "../../lib/api";
+import { typeboxResolver, emptyToUndefined } from "../../lib/validation";
 import { PlusIcon } from "../../components/Icons";
 import { LoadingState } from "../../components/LoadingState";
 import { EmptyState } from "../../components/EmptyState";
 import { SectionTitle } from "../../components/SectionTitle";
 import { ListRow } from "../../components/ListRow";
 import { FormField } from "../../components/FormField";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 type GlobalUser = {
   id: string;
@@ -16,17 +29,11 @@ type GlobalUser = {
   roles: string[];
 };
 
-interface CreateGlobalUserFormValues {
-  email: string;
-  username: string;
-  full_name: string;
-  password: string;
-  role: "DIRECTOR" | "SYSTEM_ADMINISTRATOR";
-}
+type GlobalRole = "DIRECTOR" | "SYSTEM_ADMINISTRATOR";
+type CreateGlobalUserFormValues = Static<typeof createGlobalUserInput>;
 
 export function GlobalUsersSection() {
-  const [globalUsers, setGlobalUsers] = useState<GlobalUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
 
   const {
@@ -34,91 +41,88 @@ export function GlobalUsersSection() {
     handleSubmit,
     setError,
     reset,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { errors },
   } = useForm<CreateGlobalUserFormValues>({
+    resolver: typeboxResolver(createGlobalUserInput),
     defaultValues: { role: "DIRECTOR" },
   });
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/global/users`, {
-        headers: authHeaders(),
-      });
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as { data: GlobalUser[] };
-      setGlobalUsers(data.data);
-    } catch {
-      /* empty */
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const usersQuery = useQuery({
+    queryKey: ["global-users"],
+    queryFn: async () => {
+      const { data, error } = await client.api.global.users.get();
+      if (error) throw error;
+      return (data as { data: GlobalUser[] }).data;
+    },
+  });
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  async function onSubmit(data: CreateGlobalUserFormValues) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/global/users`, {
-        method: "POST",
-        headers: { ...authHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.status === 409) {
-        const json = (await res.json()) as { error: string };
+  const createUser = useMutation({
+    mutationFn: async (values: CreateGlobalUserFormValues) => {
+      const { error } = await client.api.global.users.post(values);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setShowCreate(false);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["global-users"] });
+    },
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 409) {
         setError("root", {
           message:
-            json.error === "ROLE_ALREADY_HELD_GLOBALLY"
+            value?.error === "ROLE_ALREADY_HELD_GLOBALLY"
               ? "A user already holds this global role."
               : "Email is already taken.",
         });
-        return;
+      } else {
+        setError("root", { message: "Failed to create global user." });
       }
-      if (!res.ok) throw new Error();
-      setShowCreate(false);
-      reset();
-      load();
-    } catch {
-      setError("root", { message: "Failed to create global user." });
-    }
+    },
+  });
+
+  const removeRole = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: GlobalRole }) => {
+      const { error } = await client.api
+        .users({ user_id: userId })["global-roles"]({ role })
+        .delete();
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["global-users"] }),
+    onError: (err) => {
+      const { status } = toApiError(err);
+      alert(
+        status === 422
+          ? "Cannot remove your own SYSTEM_ADMINISTRATOR role."
+          : "Failed to remove role.",
+      );
+    },
+  });
+
+  function handleRemove(userId: string, role: string) {
+    if (!confirm(`Remove ${role} from this user?`)) return;
+    removeRole.mutate({ userId, role: role as GlobalRole });
   }
 
-  async function handleRemove(userId: string, role: string) {
-    if (!confirm(`Remove ${role} from this user?`)) return;
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/users/${userId}/global-roles/${role}`,
-        { method: "DELETE", headers: authHeaders() }
-      );
-      if (res.status === 422) {
-        alert("Cannot remove your own SYSTEM_ADMINISTRATOR role.");
-        return;
-      }
-      if (!res.ok) throw new Error();
-      load();
-    } catch {
-      alert("Failed to remove role.");
-    }
-  }
+  const globalUsers = usersQuery.data ?? [];
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <SectionTitle title="Global Users" />
-        <button
+        <Button
           onClick={() => setShowCreate((v) => !v)}
-          className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity hover:opacity-90"
+          className="bg-foreground text-background rounded-md gap-2 text-[13px] font-semibold hover:bg-foreground hover:opacity-90"
         >
           <PlusIcon />
           New Global User
-        </button>
+        </Button>
       </div>
 
       {showCreate && (
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => createUser.mutate(values))}
           className="border-border bg-card flex flex-col gap-4 rounded-lg border p-5"
         >
           <p className="text-foreground text-[14px] font-semibold">
@@ -131,7 +135,7 @@ export function GlobalUsersSection() {
               type="email"
               required
               error={errors.email?.message}
-              {...register("email", { required: "Email is required" })}
+              {...register("email")}
             />
             <FormField
               id="username"
@@ -139,14 +143,14 @@ export function GlobalUsersSection() {
               type="text"
               required
               error={errors.username?.message}
-              {...register("username", { required: "Username is required" })}
+              {...register("username")}
             />
             <FormField
               id="full_name"
               label="Full Name"
               type="text"
               error={errors.full_name?.message}
-              {...register("full_name")}
+              {...register("full_name", { setValueAs: emptyToUndefined })}
             />
             <FormField
               id="password"
@@ -154,22 +158,27 @@ export function GlobalUsersSection() {
               type="password"
               required
               error={errors.password?.message}
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 8, message: "At least 8 characters" },
-              })}
+              {...register("password")}
             />
             <div className="flex flex-col gap-1.5">
-              <label className="text-foreground text-[14px] font-medium">
+              <Label className="text-foreground text-[14px]">
                 Role
-              </label>
-              <select
-                className="border-border bg-background text-foreground focus:ring-ring h-9 rounded-md border px-3 text-[13px] outline-none focus:ring-2"
-                {...register("role")}
-              >
-                <option value="DIRECTOR">DIRECTOR</option>
-                <option value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</option>
-              </select>
+              </Label>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full rounded-md">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DIRECTOR">DIRECTOR</SelectItem>
+                      <SelectItem value="SYSTEM_ADMINISTRATOR">SYSTEM_ADMINISTRATOR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 
@@ -178,28 +187,30 @@ export function GlobalUsersSection() {
           )}
 
           <div className="flex justify-end gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => {
                 setShowCreate(false);
                 reset();
               }}
-              className="border-border text-muted-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px]"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting}
-              className="bg-foreground text-background rounded-md px-3 py-1.5 text-[13px] font-semibold disabled:opacity-50"
+              disabled={createUser.isPending}
+              size="sm"
+              className="bg-foreground text-background rounded-md font-semibold hover:bg-foreground hover:opacity-90"
             >
-              {isSubmitting ? "Creating…" : "Create"}
-            </button>
+              {createUser.isPending ? "Creating…" : "Create"}
+            </Button>
           </div>
         </form>
       )}
 
-      {loading ? (
+      {usersQuery.isLoading ? (
         <LoadingState />
       ) : globalUsers.length === 0 ? (
         <EmptyState message="No global users yet." />
@@ -226,13 +237,15 @@ export function GlobalUsersSection() {
                         className="bg-muted text-muted-foreground flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium"
                       >
                         {role}
-                        <button
+                        <Button
                           onClick={() => handleRemove(u.id, role)}
-                          className="ml-0.5 transition-colors hover:text-[#dc2626]"
+                          variant="ghost"
+                          size="icon-xs"
+                          className="ml-0.5 hover:bg-transparent hover:text-destructive"
                           aria-label={`Remove ${role}`}
                         >
                           ×
-                        </button>
+                        </Button>
                       </span>
                     ))}
                   </div>

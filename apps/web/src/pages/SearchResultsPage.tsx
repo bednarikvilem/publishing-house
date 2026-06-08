@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import type { Article, PaginatedResponse } from "../types";
 import { ArticleCard } from "../components/ArticleCard";
 import { SearchIcon } from "../components/Icons";
@@ -14,43 +15,29 @@ export function SearchResultsPage() {
   const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState(searchParams.get("q") ?? "");
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const query = searchParams.get("q") ?? "";
 
   // Sync the controlled input whenever the URL query changes (e.g. browser back/forward)
   useEffect(() => {
     setInputValue(searchParams.get("q") ?? "");
   }, [searchParams]);
 
-  // Fetch search results whenever the URL query or newspaper changes
-  useEffect(() => {
-    const q = searchParams.get("q") ?? "";
+  const searchQuery = useQuery({
+    queryKey: ["search", newspaper?.id, query],
+    enabled: !!newspaper && !!query.trim(),
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaper!.id })
+        .articles.search.get({ query: { q: query, page: 1, limit: 20 } });
+      if (error) throw error;
+      return data as PaginatedResponse<Article>;
+    },
+  });
 
-    if (!q.trim() || !newspaper) {
-      setArticles([]);
-      setTotal(0);
-      return;
-    }
-
-    setLoading(true);
-    setError(false);
-
-    fetch(
-      `${API_BASE_URL}/api/newspapers/${newspaper.id}/articles/search?q=${encodeURIComponent(q)}`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json() as Promise<PaginatedResponse<Article>>;
-      })
-      .then((data) => {
-        setArticles(data.data);
-        setTotal(data.pagination.total);
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [searchParams, newspaper]);
+  const articles = searchQuery.data?.data ?? [];
+  const total = searchQuery.data?.pagination.total ?? 0;
+  const loading = searchQuery.isLoading;
+  const error = searchQuery.isError;
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -60,8 +47,6 @@ export function SearchResultsPage() {
       );
     }
   }
-
-  const query = searchParams.get("q") ?? "";
 
   return (
     <div className={`bg-background text-foreground min-h-screen w-full${newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : ""}`}>

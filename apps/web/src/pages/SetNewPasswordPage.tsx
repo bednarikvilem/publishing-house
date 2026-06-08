@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { API_BASE_URL } from "../lib/api";
+import { Type, type Static } from "@sinclair/typebox";
+import { resetPasswordInput } from "@pb138/server/schemas/auth";
+import { client, toApiError } from "../lib/api";
+import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
 import { FormField } from "../components/FormField";
@@ -9,45 +14,56 @@ import { slugToDisplayName } from "../lib/utils";
 import { useNewspaper } from "../hooks/useNewspaper";
 import { Button } from "../components/ui/button";
 
+const setPasswordSchema = Type.Omit(resetPasswordInput, ["token"]);
+type SetPasswordFormValues = Static<typeof setPasswordSchema>;
+
 export function SetNewPasswordPage() {
   const { newspaperName, newspaper } = useNewspaper();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  const [password, setPassword]               = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError]                     = useState<string | null>(null);
-  const [loading, setLoading]                 = useState(false);
-  const [success, setSuccess]                 = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SetPasswordFormValues>({
+    resolver: typeboxResolver(setPasswordSchema),
+    defaultValues: { password: "" },
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmError, setConfirmError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const resetMutation = useMutation({
+    mutationFn: async (password: string) => {
+      if (!token) throw new Error("NO_TOKEN");
+      const { error } = await client.api.auth["reset-password"].post({
+        token,
+        password,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => setSuccess(true),
+    onError: (err) => {
+      const { status, value } = toApiError(err);
+      if (status === 400 && value?.error === "INVALID_TOKEN") {
+        setFormError("This link has expired or is invalid. Please request a new one.");
+      } else {
+        setFormError("Something went wrong. Please try again.");
+      }
+    },
+  });
+
+  function onValid({ password }: SetPasswordFormValues) {
+    setFormError(null);
+    setConfirmError(null);
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setConfirmError("Passwords do not match.");
       return;
     }
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
-
-      if (res.ok) { setSuccess(true); return; }
-
-      const body = await res.json().catch(() => ({}));
-      if (res.status === 400 && body.error === "INVALID_TOKEN") {
-        setError("This link has expired or is invalid. Please request a new one.");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } catch {
-      setError("Could not connect to the server. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
+    resetMutation.mutate(password);
   }
 
   const themeClass = newspaper?.primary_color ? ` theme-${newspaper.primary_color}` : "";
@@ -99,15 +115,15 @@ export function SetNewPasswordPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
             <FormField
               id="password"
               label="New Password"
               type="password"
               placeholder="Enter your new password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
+              error={errors.password?.message}
+              {...register("password")}
             />
             <FormField
               id="confirmPassword"
@@ -117,11 +133,12 @@ export function SetNewPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              error={confirmError ?? undefined}
             />
-            {error && (
+            {formError && (
               <div className="flex flex-col gap-1 text-center">
-                <p className="text-destructive text-2xs">{error}</p>
-                {error.includes("expired or is invalid") && (
+                <p className="text-destructive text-2xs">{formError}</p>
+                {formError.includes("expired or is invalid") && (
                   <Link
                     to={`/${newspaperName}/forgot-password`}
                     className="text-foreground text-2xs font-semibold underline-offset-4 hover:underline"
@@ -133,10 +150,10 @@ export function SetNewPasswordPage() {
             )}
             <Button
               type="submit"
-              disabled={loading}
+              disabled={resetMutation.isPending}
               className="w-full"
             >
-              {loading ? "Resetting…" : "Reset Password"}
+              {resetMutation.isPending ? "Resetting…" : "Reset Password"}
             </Button>
           </form>
         )}

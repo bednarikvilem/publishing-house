@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
-import { authMiddleware } from "../middleware/auth";
+import { auth } from "../middleware/auth";
 import { categoryListParams, categoryRouteParams, categoryBody } from "../schemas/categories";
 import * as categoryService from "../services/categories";
 
 export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
-    .use(authMiddleware)
+    .use(auth)
 
     // GET /api/newspapers/:newspaper_id/categories/by-slug/:slug — public
     .get("/api/newspapers/:newspaper_id/categories/by-slug/:slug", ({ params, withDb }: any) =>
@@ -24,6 +24,7 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         set.status = 201;
         return result;
     }, {
+        requireAuth: true,
         params: categoryListParams,
         body: categoryBody,
     })
@@ -33,6 +34,7 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
         "/api/newspapers/:newspaper_id/categories/:category_id",
         ({ params, user, roles, body, withDb }) =>
             withDb((tx) => categoryService.updateCategory(tx, params.category_id, user, roles, body)), {
+        requireAuth: true,
         params: categoryRouteParams,
         body: categoryBody,
     })
@@ -45,5 +47,6 @@ export const categoryRoutes = new Elysia({ detail: { tags: ["Categories"] } })
             set.status = 204;
             return null;
         }, {
+        requireAuth: true,
         params: categoryRouteParams,
     });

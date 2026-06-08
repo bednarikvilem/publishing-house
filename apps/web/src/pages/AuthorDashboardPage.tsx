@@ -1,21 +1,18 @@
-import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../lib/api";
+import { Link, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
-
-// TODO: replace with real newspaper_id once a public lookup-by-name endpoint exists
-const NEWSPAPER_ID = "550e8400-e29b-41d4-a716-446655440000";
-
-type ArticleStatus =
-  | "DRAFT"
-  | "SUBMITTED"
-  | "IN_REVIEW"
-  | "APPROVED_BY_EDITOR"
-  | "APPROVED_BY_MANAGER"
-  | "APPROVED_BY_DIRECTOR"
-  | "PUBLISHED"
-  | "REJECTED";
+import { Button } from "../components/ui/button";
+import { useNewspaper } from "../hooks/useNewspaper";
+import { formatDate } from "../lib/utils";
+import type { ArticleStatus } from "../types";
+import {
+  STATUS_LABELS,
+  STATUS_STYLES,
+  STATUS_DOT,
+  MY_ARTICLE_FILTERS,
+} from "../lib/articleStatus";
 
 interface DashboardArticle {
   id: string;
@@ -39,48 +36,6 @@ interface DashboardResponse {
   };
 }
 
-const STATUS_LABELS: Record<ArticleStatus, string> = {
-  DRAFT: "Draft",
-  SUBMITTED: "Submitted",
-  IN_REVIEW: "In Review",
-  APPROVED_BY_EDITOR: "Editor Approved",
-  APPROVED_BY_MANAGER: "Manager Approved",
-  APPROVED_BY_DIRECTOR: "Director Approved",
-  PUBLISHED: "Published",
-  REJECTED: "Rejected",
-};
-
-const STATUS_STYLES: Record<ArticleStatus, string> = {
-  DRAFT: "bg-muted border border-border text-muted-foreground",
-  SUBMITTED: "bg-[#2563eb18] text-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c18] text-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed18] text-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b218] text-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a18] text-[#16a34a]",
-  REJECTED: "bg-[#dc262618] text-[#dc2626]",
-};
-
-const STATUS_DOT: Record<ArticleStatus, string> = {
-  DRAFT: "bg-muted-foreground",
-  SUBMITTED: "bg-[#2563eb]",
-  IN_REVIEW: "bg-[#ea580c]",
-  APPROVED_BY_EDITOR: "bg-[#7c3aed]",
-  APPROVED_BY_MANAGER: "bg-[#7c3aed]",
-  APPROVED_BY_DIRECTOR: "bg-[#0891b2]",
-  PUBLISHED: "bg-[#16a34a]",
-  REJECTED: "bg-[#dc2626]",
-};
-
-const FILTER_STATUSES: { label: string; value: ArticleStatus | null }[] = [
-  { label: "All Articles", value: null },
-  { label: "Drafts", value: "DRAFT" },
-  { label: "Submitted", value: "SUBMITTED" },
-  { label: "In Review", value: "IN_REVIEW" },
-  { label: "Approved", value: "APPROVED_BY_EDITOR" },
-  { label: "Published", value: "PUBLISHED" },
-  { label: "Rejected", value: "REJECTED" },
-];
 
 function PencilIcon() {
   return (
@@ -119,55 +74,35 @@ function PlusIcon() {
   );
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 export function AuthorDashboardPage() {
-  const { newspaperName } = useParams<{ newspaperName: string }>();
+  const { newspaperName, newspaper } = useNewspaper();
   const [searchParams, setSearchParams] = useSearchParams();
+  const newspaperId = newspaper?.id ?? null;
 
   const activeStatus =
     (searchParams.get("status") as ArticleStatus | null) ?? null;
   const currentPage = Number(searchParams.get("page") ?? "1");
 
-  const [articles, setArticles] = useState<DashboardArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
-    setError(false);
-
-    const params = new URLSearchParams();
-    if (activeStatus) params.set("status", activeStatus);
-    params.set("page", String(currentPage));
-    params.set("limit", "20");
-
-    fetch(
-      `${API_BASE_URL}/api/newspapers/${NEWSPAPER_ID}/articles/mine?${params}`,
-      { headers: authHeaders() }
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<DashboardResponse>;
-      })
-      .then((data) => {
-        setArticles(data.data);
-        setPagination({
-          total: data.pagination.total,
-          total_pages: data.pagination.total_pages,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["my-articles", newspaperId, activeStatus, currentPage],
+    enabled: !!newspaperId,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId! })
+        .articles.mine.get({
+          query: {
+            ...(activeStatus ? { status: activeStatus } : {}),
+            page: currentPage,
+            limit: 20,
+          },
         });
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [activeStatus, currentPage]);
+      if (error) throw error;
+      return data as DashboardResponse;
+    },
+  });
+
+  const articles = data?.data ?? [];
+  const pagination = data?.pagination ?? { total: 0, total_pages: 1 };
 
   function setStatus(status: ArticleStatus | null) {
     const next = new URLSearchParams();
@@ -182,23 +117,23 @@ export function AuthorDashboardPage() {
   }
 
   const activeNavLabel =
-    FILTER_STATUSES.find((s) => s.value === activeStatus)?.label ??
+    MY_ARTICLE_FILTERS.find((s) => s.value === activeStatus)?.label ??
     "All Articles";
 
-  // Status filter section passed as children into the Sidebar
   const statusFilter = (
     <div className="flex flex-col gap-0.5">
       <p className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-semibold tracking-wider uppercase">
         Filter by Status
       </p>
-      {FILTER_STATUSES.map((item) => (
-        <button
+      {MY_ARTICLE_FILTERS.map((item) => (
+        <Button
           key={String(item.value)}
           onClick={() => setStatus(item.value)}
-          className={`flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium transition-colors ${
+          variant="ghost"
+          className={`w-full justify-start gap-2.5 rounded-md px-2 py-2 text-[13px] font-medium ${
             activeStatus === item.value
               ? "bg-muted text-foreground"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              : "text-muted-foreground"
           }`}
         >
           {item.value ? (
@@ -216,7 +151,7 @@ export function AuthorDashboardPage() {
                 {pagination.total}
               </span>
             )}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -228,9 +163,7 @@ export function AuthorDashboardPage() {
       <div className="flex flex-1">
         <Sidebar>{statusFilter}</Sidebar>
 
-        {/* Main Content */}
         <main className="flex flex-1 flex-col gap-7 px-12 py-8">
-          {/* Page Title */}
           <div className="flex items-center justify-between">
             <h1 className="text-foreground text-[24px] font-bold">
               {activeNavLabel}
@@ -244,12 +177,11 @@ export function AuthorDashboardPage() {
             </Link>
           </div>
 
-          {/* Article List */}
-          {error ? (
+          {isError ? (
             <p className="text-muted-foreground py-16 text-center">
               Failed to load articles. Please sign in and try again.
             </p>
-          ) : loading ? (
+          ) : isLoading ? (
             <p className="text-muted-foreground py-16 text-center">Loading…</p>
           ) : articles.length === 0 ? (
             <p className="text-muted-foreground py-16 text-center">
@@ -274,7 +206,6 @@ export function AuthorDashboardPage() {
                           : "border-r border-b border-l"
                       } ${isLast ? "rounded-b-lg" : ""}`}
                     >
-                      {/* Article Info */}
                       <div className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="text-foreground text-[15px] leading-snug font-semibold">
                           {article.title}
@@ -297,7 +228,6 @@ export function AuthorDashboardPage() {
                         </span>
                       </div>
 
-                      {/* Status & Actions */}
                       <div className="flex shrink-0 items-center gap-3">
                         <span
                           className={`rounded-full px-3 py-1 text-[12px] font-semibold ${STATUS_STYLES[article.status]}`}
@@ -319,7 +249,6 @@ export function AuthorDashboardPage() {
                 })}
               </div>
 
-              {/* Pagination */}
               {pagination.total_pages > 1 && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground text-[13px]">
@@ -328,20 +257,22 @@ export function AuthorDashboardPage() {
                     {pagination.total !== 1 ? "s" : ""}
                   </span>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => setPage(currentPage - 1)}
                       disabled={currentPage <= 1}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
+                      variant="outline"
+                      size="sm"
                     >
                       Previous
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setPage(currentPage + 1)}
                       disabled={currentPage >= pagination.total_pages}
-                      className="border-border text-foreground hover:bg-muted rounded-md border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:opacity-40"
+                      variant="outline"
+                      size="sm"
                     >
                       Next
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

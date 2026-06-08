@@ -6,6 +6,9 @@ import { users, userRoles, globalRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { isJtiBlocklisted } from "../utils/redis";
 import { withRls, type Tx } from "../db/rls";
+import { UnauthorizedError, ForbiddenError } from "../errors";
+import type { JwtClaims } from "../utils/jwt";
+import type { Role } from "../services/context";
 
 export const authMiddleware = new Elysia({ name: "auth"})
 	.use(bearer())
@@ -13,24 +16,26 @@ export const authMiddleware = new Elysia({ name: "auth"})
 	.derive({ as: "global" }, async ({ bearer, jwt }) => {
 		const anonymous = {
 			user: null,
-			roles: [] as string[],
+			roles: [] as Role[],
 			withDb: <T>(fn: (tx: Tx) => Promise<T>) =>
 				withRls({ userId: null, newspaperId: null, roles: [] }, fn),
 		};
 
 		if (!bearer) return anonymous;
 
-		const payload = await jwt.verify(bearer);
+		const payload = (await jwt.verify(bearer)) as JwtClaims | false;
 		if (!payload) return anonymous;
 
-		if (payload.jti && (await isJtiBlocklisted(payload.jti as string))) {
+		if (payload.type) return anonymous;
+
+		if (payload.jti && (await isJtiBlocklisted(payload.jti))) {
 			return anonymous;
 		}
 
 		const [user] = await db
 			.select()
 			.from(users)
-			.where(eq(users.id, payload.userId as string));
+			.where(eq(users.id, payload.userId));
 
 		if (!user) return anonymous;
 
@@ -41,7 +46,7 @@ export const authMiddleware = new Elysia({ name: "auth"})
 				.where(
 					and(
 						eq(userRoles.userId, user.id),
-						eq(userRoles.newspaperId, payload.newspaperId as string)
+						eq(userRoles.newspaperId, payload.newspaperId)
 					)
 				)
 			: [];
@@ -54,9 +59,9 @@ export const authMiddleware = new Elysia({ name: "auth"})
 		const roles = [
 			...userRolesList.map(r => r.role),
 			...globalRolesList.map(r => r.role),
-		] as string[];
+		] as Role[];
 
-		const newspaperId = (payload.newspaperId as string | undefined) ?? null;
+		const newspaperId = payload.newspaperId ?? null;
 
 		return {
 			user,
@@ -66,20 +71,23 @@ export const authMiddleware = new Elysia({ name: "auth"})
 		};
 	});
 
-export const requireAuth = new Elysia({ name: "requireAuth" })
+export const auth = new Elysia({ name: "auth-guards" })
 	.use(authMiddleware)
-	.onBeforeHandle(({ user }) => {
-		if (!user) {
-			return Response.json({ error: "Unauthorized" }, { status: 401 });
-		}
+	.macro({
+		requireAuth: {
+			resolve({ user }) {
+				if (!user) throw new UnauthorizedError();
+				return { user };
+			},
+		},
+		requireRole(role: Role) {
+			return {
+				resolve({ user, roles }) {
+					if (!user) throw new UnauthorizedError();
+					if (!roles.includes(role)) throw new ForbiddenError();
+					return { user };
+				},
+			};
+		},
 	});
-
-export const requireRole = (role: string) =>
-	new Elysia({ name: `requireRole-${role}` })
-		.use(requireAuth)
-		.onBeforeHandle(({ roles }) => {
-			if (!roles.includes(role)) {
-				return Response.json({ error: "Forbidden" }, { status: 403 });
-			}
-		});
 

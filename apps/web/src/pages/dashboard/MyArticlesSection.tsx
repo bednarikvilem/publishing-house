@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "../../lib/api";
 import type { ArticleStatus, PaginatedResponse } from "../../types";
 import type { DashboardArticle } from "../../types/dashboard";
 import { PencilIcon, PlusIcon } from "../../components/Icons";
@@ -25,40 +25,21 @@ export function MyArticlesSection({
   const activeStatus = (searchParams.get("status") as ArticleStatus | null) ?? null;
   const currentPage = Number(searchParams.get("page") ?? "1");
 
-  const [articles, setArticles] = useState<DashboardArticle[]>([]);
-  const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (!newspaperId) return;
-    async function doFetch() {
-      setLoading(true);
-      setError(false);
-      try {
-        const params = new URLSearchParams();
-        if (activeStatus) params.set("status", activeStatus);
-        params.set("page", String(currentPage));
-        params.set("limit", "20");
-        const res = await fetch(
-          `${API_BASE_URL}/api/newspapers/${newspaperId}/articles/mine?${params}`,
-          { headers: authHeaders() }
-        );
-        if (!res.ok) throw new Error();
-        const data = (await res.json()) as PaginatedResponse<DashboardArticle>;
-        setArticles(data.data);
-        setPagination({
-          total: data.pagination.total,
-          total_pages: data.pagination.total_pages,
+  const articlesQuery = useQuery({
+    queryKey: ["my-articles", newspaperId, activeStatus, currentPage],
+    enabled: !!newspaperId,
+    queryFn: async () => {
+      const { data, error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .articles.mine.get({
+          query: { page: currentPage, limit: 20, status: activeStatus ?? undefined },
         });
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    doFetch();
-  }, [newspaperId, activeStatus, currentPage]);
+      if (error) throw error;
+      return data as PaginatedResponse<DashboardArticle>;
+    },
+  });
+
+  const articles = articlesQuery.data?.data ?? [];
 
   function setPage(page: number) {
     const next = new URLSearchParams(searchParams);
@@ -76,7 +57,7 @@ export function MyArticlesSection({
         action={
           <Link
             to={`/${newspaperName}/articles/new`}
-            className="bg-foreground text-background flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
+            className="bg-primary text-primary-foreground flex items-center gap-2 rounded-md px-4 py-2 text-2xs font-semibold transition-opacity hover:opacity-90"
           >
             <PlusIcon />
             New Article
@@ -84,9 +65,9 @@ export function MyArticlesSection({
         }
       />
 
-      {error ? (
+      {articlesQuery.isError ? (
         <ErrorState message="Failed to load articles. Please sign in and try again." />
-      ) : loading ? (
+      ) : articlesQuery.isLoading ? (
         <LoadingState />
       ) : articles.length === 0 ? (
         <EmptyState
@@ -147,8 +128,8 @@ export function MyArticlesSection({
           </div>
           <Pagination
             currentPage={currentPage}
-            totalPages={pagination.total_pages}
-            total={pagination.total}
+            totalPages={articlesQuery.data?.pagination.total_pages ?? 1}
+            total={articlesQuery.data?.pagination.total ?? 0}
             onPageChange={setPage}
           />
         </>

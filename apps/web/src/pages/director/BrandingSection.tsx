@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { API_BASE_URL, authHeaders } from "../../lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { client } from "../../lib/api";
 import { SectionTitle } from "../../components/SectionTitle";
 import { Button } from "../../components/ui/button";
 
@@ -24,21 +25,26 @@ export function BrandingSection({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSelect(key: string | null) {
+  const updateColor = useMutation({
+    mutationFn: async (key: string | null) => {
+      const { error } = await client.api
+        .newspapers({ newspaper_id: newspaperId })
+        .patch({ primary_color: key });
+      if (error) throw error;
+      return key;
+    },
+    onSuccess: (key) => {
+      setSelected(key);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    },
+    onError: () => setError("Failed to save color. Please try again."),
+  });
+
+  function handleSelect(key: string | null) {
     setError(null);
     setSaved(false);
-    const res = await fetch(`${API_BASE_URL}/api/newspapers/${newspaperId}`, {
-      method: "PATCH",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify({ primary_color: key }),
-    });
-    if (!res.ok) {
-      setError("Failed to save color. Please try again.");
-      return;
-    }
-    setSelected(key);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    updateColor.mutate(key);
   }
 
   return (

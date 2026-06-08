@@ -2,6 +2,14 @@ import type { GlobalStats } from "./types";
 import { KpiCard } from "./KpiCard";
 import { StatCard } from "./StatCard";
 import { Icons } from "./internal";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCell,
+} from "../ui/table";
 
 export function GlobalStatsDashboard({ data }: { data: GlobalStats }) {
   const maxViews = Math.max(...data.per_newspaper.map((n) => n.total_views), 1);
@@ -18,46 +26,44 @@ export function GlobalStatsDashboard({ data }: { data: GlobalStats }) {
       </div>
 
       <StatCard title="Newspaper Comparison" icon={<Icons.Globe />}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                {["Newspaper", "Subscribers", "Published", "Views", "Read-Through", "Likes", "Comments", ""].map((h) => (
-                  <th
-                    key={h}
-                    className={`pb-3 text-muted-foreground font-medium ${h === "Newspaper" ? "text-left" : "text-right"}`}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((np, i) => (
-                <tr key={np.newspaper_id} className="border-b border-border/50 last:border-0">
-                  <td className="py-3 font-medium text-foreground">
-                    {i === 0 && <span className="mr-1.5 text-yellow-500 text-xs">★</span>}
-                    {np.newspaper_name}
-                  </td>
-                  <td className="py-3 text-right text-foreground">{np.subscribers.toLocaleString()}</td>
-                  <td className="py-3 text-right text-foreground">{np.total_published.toLocaleString()}</td>
-                  <td className="py-3 text-right text-foreground">{np.total_views.toLocaleString()}</td>
-                  <td className="py-3 text-right text-foreground">{np.read_through_rate}%</td>
-                  <td className="py-3 text-right text-foreground">{np.total_likes.toLocaleString()}</td>
-                  <td className="py-3 text-right text-foreground">{np.total_comments.toLocaleString()}</td>
-                  <td className="py-3 pl-3 w-24">
-                    <div className="bg-muted rounded-full h-1.5">
-                      <div
-                        className="bg-primary h-1.5 rounded-full"
-                        style={{ width: `${Math.round((np.total_views / maxViews) * 100)}%` }}
-                      />
-                    </div>
-                  </td>
-                </tr>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border hover:bg-transparent">
+              {["Newspaper", "Subscribers", "Published", "Views", "Read-Through", "Likes", "Comments", ""].map((h) => (
+                <TableHead
+                  key={h}
+                  className={`h-auto px-0 pb-3 font-medium ${h === "Newspaper" ? "" : "text-right"}`}
+                >
+                  {h}
+                </TableHead>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sorted.map((np, i) => (
+              <TableRow key={np.newspaper_id} className="border-border/50 last:border-0">
+                <TableCell className="px-0 py-3 font-medium text-foreground">
+                  {i === 0 && <span className="mr-1.5 text-yellow-500 text-xs">★</span>}
+                  {np.newspaper_name}
+                </TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.subscribers.toLocaleString()}</TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.total_published.toLocaleString()}</TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.total_views.toLocaleString()}</TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.read_through_rate}%</TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.total_likes.toLocaleString()}</TableCell>
+                <TableCell className="px-0 py-3 text-right text-foreground">{np.total_comments.toLocaleString()}</TableCell>
+                <TableCell className="w-24 py-3 pl-3 pr-0">
+                  <div className="bg-muted rounded-full h-1.5">
+                    <div
+                      className="bg-primary h-1.5 rounded-full"
+                      style={{ width: `${Math.round((np.total_views / maxViews) * 100)}%` }}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </StatCard>
     </div>
   );
