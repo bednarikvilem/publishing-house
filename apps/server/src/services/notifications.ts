@@ -11,6 +11,10 @@ import {
 
 const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
 
+function dispatch(promise: Promise<unknown>, context: Record<string, unknown>): void {
+	void promise.catch((err) => logger.warn("notification email failed", { ...context, err }));
+}
+
 function newspaperDashboardLink(slug: string): string {
 	return `${frontendUrl}/${slug}/author-dashboard`;
 }
@@ -69,8 +73,9 @@ export async function notifyArticleSubmitted(
 		const slug = await getNewspaperSlug(tx, article.newspaperId);
 		if (!slug) return;
 		const link = newspaperDashboardLink(slug);
-		await Promise.all(
-			managers.map((m) => sendManagerArticleReadyEmail(m.email, article.title, link)),
+		dispatch(
+			Promise.all(managers.map((m) => sendManagerArticleReadyEmail(m.email, article.title, link))),
+			{ event: "notifyArticleSubmitted", articleId: article.id },
 		);
 	} catch (err) {
 		logger.warn("notifyArticleSubmitted failed", { articleId: article.id, err });
@@ -87,14 +92,17 @@ export async function notifyEditorAssigned(
 		const slug = await getNewspaperSlug(tx, article.newspaperId);
 		const link = slug ? newspaperDashboardLink(slug) : frontendUrl;
 
-		await Promise.all([
-			editor.email
-				? sendEditorAssignmentEmail(editor.email, article.title, link)
-				: Promise.resolve(),
-			author?.email
-				? sendAuthorStateChangeEmail(author.email, article.title, "IN_REVIEW")
-				: Promise.resolve(),
-		]);
+		dispatch(
+			Promise.all([
+				editor.email
+					? sendEditorAssignmentEmail(editor.email, article.title, link)
+					: Promise.resolve(),
+				author?.email
+					? sendAuthorStateChangeEmail(author.email, article.title, "IN_REVIEW")
+					: Promise.resolve(),
+			]),
+			{ event: "notifyEditorAssigned", articleId: article.id },
+		);
 	} catch (err) {
 		logger.warn("notifyEditorAssigned failed", { articleId: article.id, err });
 	}
@@ -110,7 +118,10 @@ export async function notifyEditorReviewed(
 	try {
 		const author = await tx.query.users.findFirst({ where: eq(users.id, article.authorId) });
 		if (author?.email) {
-			await sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName);
+			dispatch(
+				sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName),
+				{ event: "notifyEditorReviewed", articleId: article.id },
+			);
 		}
 
 		if (newState === "APPROVED_BY_EDITOR") {
@@ -121,8 +132,9 @@ export async function notifyEditorReviewed(
 			const slug = await getNewspaperSlug(tx, article.newspaperId);
 			if (slug) {
 				const link = newspaperDashboardLink(slug);
-				await Promise.all(
-					managers.map((m) => sendManagerArticleReadyEmail(m.email, article.title, link)),
+				dispatch(
+					Promise.all(managers.map((m) => sendManagerArticleReadyEmail(m.email, article.title, link))),
+					{ event: "notifyEditorReviewed", articleId: article.id },
 				);
 			}
 		}
@@ -141,7 +153,10 @@ export async function notifyManagerApproved(
 	try {
 		const author = await tx.query.users.findFirst({ where: eq(users.id, article.authorId) });
 		if (author?.email) {
-			await sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName);
+			dispatch(
+				sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName),
+				{ event: "notifyManagerApproved", articleId: article.id },
+			);
 		}
 
 		if (newState === "APPROVED_BY_MANAGER") {
@@ -149,7 +164,10 @@ export async function notifyManagerApproved(
 			if (!director) {
 				logger.warn("notifyManagerApproved: no director found");
 			} else {
-				await sendDirectorArticleReadyEmail(director.email, article.title, directorDashboardLink());
+				dispatch(
+					sendDirectorArticleReadyEmail(director.email, article.title, directorDashboardLink()),
+					{ event: "notifyManagerApproved", articleId: article.id },
+				);
 			}
 		}
 	} catch (err) {
@@ -167,7 +185,10 @@ export async function notifyDirectorApproved(
 	try {
 		const author = await tx.query.users.findFirst({ where: eq(users.id, article.authorId) });
 		if (author?.email) {
-			await sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName);
+			dispatch(
+				sendAuthorStateChangeEmail(author.email, article.title, newState, feedback, reviewerName),
+				{ event: "notifyDirectorApproved", articleId: article.id },
+			);
 		}
 	} catch (err) {
 		logger.warn("notifyDirectorApproved failed", { articleId: article.id, err });
@@ -183,7 +204,10 @@ export async function notifyArticlePublished(
 		const slug = await getNewspaperSlug(tx, article.newspaperId);
 		const link = slug ? articlePublicLink(slug, article.id) : null;
 		if (author?.email) {
-			await sendAuthorStateChangeEmail(author.email, article.title, "PUBLISHED", null, null, link);
+			dispatch(
+				sendAuthorStateChangeEmail(author.email, article.title, "PUBLISHED", null, null, link),
+				{ event: "notifyArticlePublished", articleId: article.id },
+			);
 		}
 	} catch (err) {
 		logger.warn("notifyArticlePublished failed", { articleId: article.id, err });
