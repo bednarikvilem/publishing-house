@@ -1,7 +1,13 @@
 import { Empty } from "./internal";
 
+function fmtDay(value: number | string | Date | undefined): string {
+  if (value == null) return "";
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString().slice(0, 10);
+}
+
 export function Timeline({ data, valueKey, label, color = "bg-primary" }: {
-  data: Record<string, number | string>[];
+  data: Record<string, number | string | Date>[];
   valueKey: string;
   label: string;
   color?: string;
@@ -18,7 +24,7 @@ export function Timeline({ data, valueKey, label, color = "bg-primary" }: {
             <div
               key={i}
               className="flex-1 h-full flex items-end group cursor-default"
-              title={`${d.date}: ${val}`}
+              title={`${fmtDay(d.date)}: ${val}`}
             >
               <div
                 className={`w-full ${color} group-hover:opacity-70 rounded-sm transition-opacity`}
@@ -29,8 +35,8 @@ export function Timeline({ data, valueKey, label, color = "bg-primary" }: {
         })}
       </div>
       <div className="flex justify-between text-xs text-muted-foreground mt-1">
-        <span>{data[0]?.date}</span>
-        <span>{data[data.length - 1]?.date}</span>
+        <span>{fmtDay(data[0]?.date)}</span>
+        <span>{fmtDay(data[data.length - 1]?.date)}</span>
       </div>
     </div>
   );
