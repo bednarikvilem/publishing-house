@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "../lib/api";
 import { useUser } from "../hooks/useUser";
 import { useLogout } from "../hooks/useLogout";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { PortalLayout } from "../components/PortalLayout";
 import { GlobalUsersSection } from "./admin/GlobalUsersSection";
 import { NewspaperUsersSection } from "./admin/NewspaperUsersSection";
@@ -14,6 +15,7 @@ type NewspaperEntry = { id: string; name: string; slug: string };
 export function AdminDashboardPage() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<"global-users" | { newspaper: NewspaperEntry }>("global-users");
+  useDocumentTitle("Administration");
 
   const { user, isLoading: userLoading, isError } = useUser();
   const isAdmin = user?.roles.includes("SYSTEM_ADMINISTRATOR") ?? false;
