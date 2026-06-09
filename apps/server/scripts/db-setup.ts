@@ -69,6 +69,7 @@ const customMigrations = [
     "0002_enable_rls",
     "0004_fix_author_visibility",
     "0006_add_subscriptions_rls",
+    "0007_fix_article_reviews_write",
 ];
 
 console.log("→ [2/3] Applying RLS migrations…");

@@ -12,6 +12,12 @@ export interface UserInfo {
   roles: string[];
 }
 
+export async function fetchMe(): Promise<UserInfo> {
+  const { data, error } = await client.api.users.me.get();
+  if (error) throw error;
+  return data as UserInfo;
+}
+
 export function useUser() {
   const token = localStorage.getItem("token");
 
@@ -19,11 +25,7 @@ export function useUser() {
     queryKey: ["me"],
     enabled: !!token,
     retry: false,
-    queryFn: async () => {
-      const { data, error } = await client.api.users.me.get();
-      if (error) throw error;
-      return data as UserInfo;
-    },
+    queryFn: fetchMe,
   });
 
   return { user, isLoading, isError };

@@ -54,9 +54,12 @@ export function ReviewQueueSection({ newspaperId }: { newspaperId: string }) {
         .status.patch({ action: "REVIEW", decision, note: note || undefined });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, { articleId }) => {
       setActiveId(null);
-      queryClient.invalidateQueries({ queryKey: ["review-queue", newspaperId] });
+      for (const key of ["review-queue", "editorial-queue", "approval-queue", "publication-queue"]) {
+        queryClient.invalidateQueries({ queryKey: [key, newspaperId] });
+      }
+      queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
     },
     onError: () =>
       toast({

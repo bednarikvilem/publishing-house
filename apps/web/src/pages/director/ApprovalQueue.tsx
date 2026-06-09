@@ -53,9 +53,12 @@ export function ApprovalQueue({ newspaperId }: { newspaperId: string }) {
         });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, { articleId }) => {
       setActiveId(null);
-      queryClient.invalidateQueries({ queryKey: ["approval-queue", newspaperId] });
+      for (const key of ["approval-queue", "publication-queue", "editorial-queue", "review-queue"]) {
+        queryClient.invalidateQueries({ queryKey: [key, newspaperId] });
+      }
+      queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
     },
     onError: () =>
       toast({ title: "Error", description: "Failed to submit decision.", variant: "error" }),

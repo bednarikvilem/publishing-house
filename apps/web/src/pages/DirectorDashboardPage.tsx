@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "../lib/api";
 import { useUser } from "../hooks/useUser";
 import { useLogout } from "../hooks/useLogout";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { StatisticsSection } from "../components/StatisticsSection";
 import { LoadingState } from "../components/LoadingState";
 import { SectionTitle } from "../components/SectionTitle";
@@ -21,6 +22,7 @@ type ActiveView = "overview" | "global-statistics" | { newspaper: NewspaperEntry
 export function DirectorDashboardPage() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState<ActiveView>("overview");
+  useDocumentTitle("Director Dashboard");
 
   const { user, isLoading: userLoading } = useUser();
   const isDirector = user?.roles.includes("DIRECTOR") ?? false;

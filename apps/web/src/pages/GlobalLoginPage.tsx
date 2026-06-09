@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type { Static } from "@sinclair/typebox";
 import { globalLoginInput } from "@pb138/server/schemas/auth";
 import { client, toApiError } from "../lib/api";
+import { fetchMe } from "../hooks/useUser";
 import { typeboxResolver } from "../lib/validation";
 import { useTheme } from "../hooks/useTheme";
 import { SunIcon, MoonIcon } from "../components/Icons";
@@ -21,6 +22,7 @@ type LoginFormValues = Static<typeof globalLoginInput>;
 
 export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPageProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { isDark, toggle } = useTheme();
   const {
     register,
@@ -40,6 +42,7 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
+      queryClient.prefetchQuery({ queryKey: ["me"], queryFn: fetchMe });
       navigate(redirectTo);
     },
     onError: (err) => {

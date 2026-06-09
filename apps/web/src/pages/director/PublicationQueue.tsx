@@ -34,8 +34,10 @@ export function PublicationQueue({ newspaperId }: { newspaperId: string }) {
         .status.patch({ action: "PUBLISH" });
       if (error) throw error;
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["publication-queue", newspaperId] }),
+    onSuccess: (_data, articleId) => {
+      queryClient.invalidateQueries({ queryKey: ["publication-queue", newspaperId] });
+      queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
+    },
     onError: () =>
       toast({ title: "Error", description: "Failed to publish article.", variant: "error" }),
   });

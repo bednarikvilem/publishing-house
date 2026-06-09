@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type { UseFormSetValue, UseFormSetError } from "react-hook-form";
 import { client, toApiError } from "../lib/api";
@@ -36,7 +36,15 @@ export function useArticleEditor(
   bumpEditorKey: () => void,
 ) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isNew = !articleId || articleId === "new";
+
+  const invalidateMyArticles = () => {
+    queryClient.invalidateQueries({ queryKey: ["my-articles", newspaperId] });
+    if (articleId && articleId !== "new") {
+      queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
+    }
+  };
 
   const [articleStatus, setArticleStatus] = useState<ArticleStatus>("DRAFT");
   const [saving, setSaving] = useState(false);
@@ -146,6 +154,7 @@ export function useArticleEditor(
         }
         return;
       }
+      invalidateMyArticles();
       if (isNew && saved) {
         navigate(`/${newspaperName}/articles/${(saved as { id: string }).id}/edit`, {
           replace: true,
@@ -189,6 +198,7 @@ export function useArticleEditor(
         return;
       }
       setArticleStatus("SUBMITTED");
+      invalidateMyArticles();
       navigate(`/${newspaperName}/author-dashboard?section=my-articles`);
     } catch {
       setServerError("Network error. Please try again.");
@@ -208,6 +218,7 @@ export function useArticleEditor(
         .articles({ article_id: articleId! })
         .delete();
       if (error) throw error;
+      invalidateMyArticles();
       navigate(`/${newspaperName}/author-dashboard?section=my-articles`);
     } catch {
       setServerError("Failed to delete article. Please try again.");

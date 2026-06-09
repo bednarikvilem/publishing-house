@@ -44,6 +44,13 @@ export function useEditorialQueue(newspaperId: string) {
   const invalidateQueue = () =>
     queryClient.invalidateQueries({ queryKey: ["editorial-queue", newspaperId] });
 
+  const invalidateAfterTransition = (articleId: string) => {
+    for (const key of ["editorial-queue", "review-queue", "approval-queue", "publication-queue"]) {
+      queryClient.invalidateQueries({ queryKey: [key, newspaperId] });
+    }
+    queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
+  };
+
   const assignEditor = useMutation({
     mutationFn: async ({ articleId, editorId }: { articleId: string; editorId: string }) => {
       const { error } = await client.api
@@ -52,9 +59,9 @@ export function useEditorialQueue(newspaperId: string) {
         .status.patch({ action: "ASSIGN_EDITOR", editor_id: editorId });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, { articleId }) => {
       setActiveId(null);
-      invalidateQueue();
+      invalidateAfterTransition(articleId);
     },
     onError: () =>
       toast({
@@ -67,7 +74,10 @@ export function useEditorialQueue(newspaperId: string) {
   const toggleSubscriber = useMutation({
     mutationFn: ({ articleId, current }: { articleId: string; current: boolean }) =>
       setArticleSubscriberOnly(newspaperId, articleId, !current),
-    onSuccess: invalidateQueue,
+    onSuccess: (_data, { articleId }) => {
+      invalidateQueue();
+      queryClient.invalidateQueries({ queryKey: ["article", newspaperId, articleId] });
+    },
     onError: () =>
       toast({
         title: "Error",
@@ -97,9 +107,9 @@ export function useEditorialQueue(newspaperId: string) {
         });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, { articleId }) => {
       setActiveId(null);
-      invalidateQueue();
+      invalidateAfterTransition(articleId);
     },
     onError: () =>
       toast({
