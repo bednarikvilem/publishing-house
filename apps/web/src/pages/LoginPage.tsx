@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { Type, type Static } from "@sinclair/typebox";
 import { loginInput } from "@pb138/server/schemas/auth";
 import { client, toApiError } from "../lib/api";
+import { fetchMe } from "../hooks/useUser";
 import { typeboxResolver } from "../lib/validation";
 import { Navbar } from "../components/Navbar";
 import { AuthCard } from "../components/AuthCard";
@@ -20,6 +21,7 @@ type LoginFormValues = Static<typeof loginFormSchema>;
 export function LoginPage() {
   const { newspaperName, newspaper } = useNewspaper();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -44,6 +46,7 @@ export function LoginPage() {
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
       if (newspaper) localStorage.setItem("newspaper_id", newspaper.id);
+      queryClient.prefetchQuery({ queryKey: ["me"], queryFn: fetchMe });
       navigate(`/${newspaperName}`);
     },
     onError: (err) => {
