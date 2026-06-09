@@ -43,10 +43,11 @@ export function LoginPage() {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       localStorage.setItem("token", data.token);
       if (newspaper) localStorage.setItem("newspaper_id", newspaper.id);
-      queryClient.prefetchQuery({ queryKey: ["me"], queryFn: fetchMe });
+      const me = await fetchMe().catch(() => null);
+      if (me) queryClient.setQueryData(["me"], me);
       navigate(`/${newspaperName}`);
     },
     onError: (err) => {
