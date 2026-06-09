@@ -40,9 +40,10 @@ export function GlobalLoginPage({ title, subtitle, redirectTo }: GlobalLoginPage
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       localStorage.setItem("token", data.token);
-      queryClient.prefetchQuery({ queryKey: ["me"], queryFn: fetchMe });
+      const me = await fetchMe().catch(() => null);
+      if (me) queryClient.setQueryData(["me"], me);
       navigate(redirectTo);
     },
     onError: (err) => {
